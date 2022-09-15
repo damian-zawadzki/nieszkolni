@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>My pronunciation</h1>
+
+<div class="list_container">
+	<ul class="list">
+
+		{% for entry in entries %}
+
+			<li class="list_item">
+
+				<div class="list_content_inside">{{ entry }}</div>
+
+			</li>
+
+		{% endfor %}
+
+	</ul>
+</div>
+
+{% include 'footer.html' %}
+{% endblock %}

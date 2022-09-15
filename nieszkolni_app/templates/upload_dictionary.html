@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% include 'staff_menu.html' %}
+{% load static %}
+
+<h1>Upload dictionary</h1>
+
+<form action="{% url 'upload_dictionary' %}" method="POST" enctype="multipart/form-data"> 
+{% csrf_token %}
+
+    <div class="flex-parent jc-center">
+        <button type="button" class="button_main" onclick="showHide()">
+            <label style="margin: 25px; font-weight: bold;">
+                    Browse
+                <input type="file" style="display: none; margin: 25px;" name="csv_file" required="True" class="input_content">
+            </label>
+        </button>
+        <label id="file_upload" style="display: none;" id="file_upload">
+            <span class="button_main">File</span>
+        </label>                    
+    </div>
+
+    <div class="flex-parent jc-center">                    
+         <button type="submit" class="button_main">Upload</button>
+    </div>
+
+</form>
+
+<script type="text/javascript">
+
+    function showHide() {
+      var file = document.getElementById("file_upload");
+      if (file.style.display === "none") {
+        file.style.display = "block";
+      } else {
+        file.style.display = "none";
+      }
+    }
+
+</script>
+
+{% endblock %}

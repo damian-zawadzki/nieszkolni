@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% include 'staff_menu.html' %}
+
+<h1>Extend a curriculum</h1>
+
+<form method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Name</label>
+
+          {% if names|length == 1 %}
+
+            <input type="text" class="input_content input_prefilled" name="name" value="{{ names.0 }}">
+
+          {% else %}
+        <select required class="input_content" name="name">
+
+            <option disabled selected value></option>
+            {% for name in names %}
+            <option value="{{ name }}">{{ name }}</option>
+            {% endfor %}
+
+          {% endif %}
+
+      </select>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Type</label>
+
+        <input type="text" class="input_content input_prefilled" name="assignment_type" value="{{ assignment_type }}">
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+     <div class="input_container">
+      <label class="input_label">Deadline</label>
+      <input required type="date" class="input_content" name="deadline">
+    </div>
+  </div>
+
+  {% if assignment_type == 'reading' %}
+  <div class="flex-parent jc-center"> 
+     <div class="input_container">
+      <label class="input_label">Reference</label>
+        <select class="input_content" name="reference">
+
+          <option disabled selected value></option>
+           {% for entry in entries %}
+          <option value="{{ entry }}">{{ entry }}</option>
+          {% endfor %}
+
+        </select>
+    </div>
+  </div>
+
+  {% else %}
+
+  <input type="hidden" name="reference" value="-">
+
+  {% endif %}
+
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Title</label>
+
+      {% if assignment_type == 'sentences' %}
+
+        <select class="input_content" name="title">
+          <option disabled selected value></option>
+           {% for entry in entries %}
+          <option value="Translate {{ entry }}">Translate {{ entry }}</option>
+          {% endfor %}
+        </select>
+
+      {% else %}
+
+        <input required type="text" class="input_content" name="title">
+
+      {% endif%}
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Content</label>
+      {% if assignment_type == 'sentences' %}
+        <textarea class="input_content input_paragraph" cols="2" wrap="hard" name="content">Click the button below and translate 10 sentences. For the best effects, refrain from using dictionary or Google Translate.</textarea>
+      {% else %}
+        <input required type="text" class="input_content input_paragraph" name="content">
+      {% endif %}
+    </div>
+  </div>
+
+{% if assignment_type == 'sentences' %}
+
+  <input type="hidden" name="resources" value="-">
+  <input type="hidden" name="conditions" value="-">
+
+{% elif assignment_type == 'reading' %}
+
+  <input type="hidden" name="conditions" value="-">
+  
+{% else %}
+
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Resources</label>
+      <textarea required type="text" class="input_content input_paragraph" name="resources"></textarea>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Conditions</label>
+      <textarea required type="text" class="input_content input_paragraph" name="conditions"></textarea>
+    </div>
+  </div>
+
+{% endif %}
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="curriculum_action" value="plan_curriculum">Plan</button>
+  </div>
+
+</form>
+
+{% endblock %}

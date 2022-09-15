@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>Catalogues</h1>
+
+<div class="list_container">
+	<ul class="list">
+
+		{% for catalogue in catalogues %}
+
+			<form action="{% url 'catalogues_list_of_phrases' %}" method="POST">
+				{% csrf_token %}
+				<li class="list_item">
+
+					<input type="hidden" name="catalogue_title" value="{{ catalogue.0 }}">
+					<input type="hidden" name="catalogue_number" value="{{ catalogue.1 }}">
+					<div class="list_content">{{ catalogue.0 }}</div>
+					<div class="list_content_inside">{{ catalogue.1 }}</div>
+
+					<button type="submit" class="list_button button_main" name="go_to" value="details">Details</button>
+
+
+				</li>
+			</form>
+
+		{% endfor %}
+
+	</ul>
+</div>
+
+{% include 'footer.html' %}
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>Composer</h1>
+
+<form method="POST">
+  {% csrf_token %}
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+
+      <label class="input_label">Name</label>
+        <select required class="input_content" name="name">
+          <option disabled selected value></option>
+
+          {% for current_client in current_clients %}
+          <option value="{{ current_client }}">{{ current_client }}</option>
+          {% endfor %}
+
+      </select>
+
+      <label class="input_label">Type</label>
+      <select required class="input_content" name="search">
+
+          <option disabled selected value></option>
+          <option value="sentences">Sentences</option>
+          <option value="list_numbers">Lists</option>
+
+
+      </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+  <button type="submit" class="button_main" name="composer_action" value="search">Search</button>
+  </div>
+
+</form>
+
+<div class="table_container">
+  <li class="table_header table_row">
+    <div id="header_1">Status</div>
+    <div id="header_2">List number</div>
+    <div id="header_3">Sentence number</div>
+    <div id="header_4">Sentence id</div>
+    <div id="header_5">Name</div>
+    <div id="header_6">English</div>
+    <div id="header_7">Polish</div>
+  </li>
+{% for entry in entries %}
+  <li class="table_row">
+    <div id="column_1">{{ entry.0 }}</div>
+    <div id="column_2">{{ entry.1 }}</div>
+    <div id="column_3">{{ entry.2 }}</div>
+    <div id="column_4">{{ entry.3 }}</div>
+    <div id="column_5">{{ entry.4 }}</div>
+    <div id="column_6">{{ entry.5 }}</div>
+    <div id="column_7">{{ entry.6 }}</div>
+  </li>
+{% endfor %}
+</div>
+
+{% include 'footer.html' %}
+{% endblock %}

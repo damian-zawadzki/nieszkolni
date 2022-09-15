@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1></h1>
+
+	<div class="flex-parent jc-center">
+
+		{% if assignment.11 == 'uncompleted' %}
+
+			<div class="task_card">
+
+		{% else %}
+
+			<div class="task_card list_item_complted">
+
+		{% endif %}
+
+	  
+	    <div class="task_card_container">
+	      <div class="task_card_title">{{ assignment.7 }}</div>
+	      <div class="task_card_details"><b>Deadline:</b> {{ assignment.1 }} <b>Item:</b> {{ assignment.0 }}</div>
+	      <div class="task_card_content">{{ assignment.8 }}</div>
+
+	      {% if assignment.6 == 'reading' %}
+
+	      	<div><b>Resources</b></div>
+	      	<div class="task_card_content"><span><a href="{{ assignment.10 }}">Here.</a></span></div>
+
+	      {% elif assignment.10 != '-' %}
+
+	      	<div><b>Resources</b></div>
+	      	<div class="task_card_content"><span>{{ assignment.10 }}</span></div>
+
+	      {% endif %}
+
+	    {% if assignment.6 == 'no_submission' %}
+	    {% else %}
+
+		<form action="{% url 'submit_assignment' %}" method="POST">
+			{% csrf_token %}
+
+				<div class="flex-parent jc-center">
+					<input type="hidden" name="item" value="{{ assignment.0 }}">
+					<input type="hidden" name="current_user" value="{{ current_user }}">
+					<input type="hidden" name="assignment_type" value="{{ assignment.6 }}">
+					<input type="hidden" name="title" value="{{ assignment.7 }}">
+
+					{% if assignment.6 == 'sentences' %}
+
+						<button type="submit" class="button_main" name="go_to" value="translation">Translate</button>
+
+					{% elif assignment.6 == 'reading' %}
+
+						<button type="submit" class="button_main" name="go_to" value="marking_as_read">Mark as read</button>
+
+					{% else %}
+
+						<button type="submit" class="button_main" name="go_to" value="submission">Submit</button>
+
+					{% endif %}
+
+				</div>
+
+		</form>
+
+
+		{% endif %}
+
+
+	    </div>
+	  </div>
+	</div>
+
+{% endblock %}

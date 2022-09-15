@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<ul>
+	<li class="side_navigation_item">
+	  <h5>MENU</h5>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" href="{% url 'switch_clients'%}">SWITCH CLIENTS</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" href="{% url 'agenda'%}">AGENDA</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" href="{% url 'check_homework'%}">HOMEWORK CHECK</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" href="{% url 'session_mode'%}">SESSION MODE</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" href="{% url 'report_listening'%}">REPORT LISTENING</a>
+	</li>
+</ul>
+
+
+{% endblock %}

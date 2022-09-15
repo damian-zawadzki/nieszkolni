@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>Report reading</h1>
+
+<form action="{% url 'report_reading' %}" method="POST">
+  {% csrf_token %}
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Link</label>
+      <input type="url" class="input_content" name="link">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+  	<button type="submit" class="button_main">Add</button>
+  </div>
+
+</form>
+
+{% include 'footer.html' %}
+{% endblock %}

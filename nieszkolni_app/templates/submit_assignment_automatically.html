@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% include 'profile_menu.html' %}
+
+<h1>Submit an assignment</h1>
+
+<form action="{% url 'submit_assignment' %}" method="POST">
+  {% csrf_token %}
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Item</label>
+      <input type="number" class="input_content input_prefilled" name="item" value="{{ item }}" readonly required>
+    </div>
+  </div>
+  <div class="flex-parent jc-center"> 
+     <div class="input_container">
+      <label class="input_label">Name</label>
+      <input type="text" class="input_content input_prefilled" name="name" value="{{ name }}" readonly required>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label for="assignment_type" class="input_label">Type</label>
+
+      <select class="input_content input_prefilled" name="assignment_type" id="assignment_type">
+        <option value="{{ assignment_type }}" required>{{ assignment_type }}</option>
+      </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Title</label>
+      <input type="text" class="input_content" name="title" required>
+    </div>
+  </div>
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Content</label>
+      <textarea type="text" class="input_content input_paragraph" name="content" required></textarea>
+    </div>
+  </div>
+  <div class="flex-parent jc-center">
+  <button type="submit" class="button_main" name="go_to" value="database">Submit</button>
+  </div>
+</form>
+
+{% endblock %}

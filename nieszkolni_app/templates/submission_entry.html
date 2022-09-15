@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<div class="flex-parent jc-center">
+	<div class="assignment_card">
+    <div class="task_card_container">
+      <div class="task_card_title">{{ submission.1 }}</div>
+      <div class="task_card_details"><b>Date:</b> {{ submission.0 }} <b>Number of words:</b> {{ submission.3 }}</div>
+      <div class="task_card_content">{{ submission.2 }}</div>
+    </div>
+  </div>
+</div>
+
+{% if submission.9 != 'graded' %}
+{% else %}
+
+<div class="flex-parent jc-center">
+  <div class="assignment_card">
+    <div class="task_card_container">
+      <div class="task_card_details"><b>Grade:</b> {{ submission.6 }} <b>Major errors:</b> {{ submission.7 }} <b>Minor errors:</b> {{ submission.8 }}</div>
+      <div class="task_card_content">{{ submission.5 }}</div>
+    </div>
+  </div>
+</div>
+
+{% endif %}
+
+{% include 'footer.html' %}
+{% endblock %}

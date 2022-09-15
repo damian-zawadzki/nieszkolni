@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>Dictionary</h1>
+
+<div class="list_container">
+	<ul class="list">
+
+		{% for phrase in dictionary %}
+
+			<form action="{% url 'upload_dictionary' %}" method="POST">
+				{% csrf_token %}
+				<li class="list_item">
+
+					<div class="list_content">{{ phrase.english }}</div>
+					<div class="list_content_inside">{{ phrase.polish }}</div>
+
+				</li>
+			</form>
+
+		{% endfor %}
+
+	</ul>
+</div>
+
+{% include 'footer.html' %}
+{% endblock %}

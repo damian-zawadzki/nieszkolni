@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+<h1>Curricula</h1>
+
+<div class="list_container">
+	<ul class="list">
+		
+		{% for assignment in assignments %}
+
+			<form action="{% url 'assignment' %}" method="POST">
+				{% csrf_token %}
+				<li class="list_item">
+
+					<div class="list_content">{{ assignment.1 }}</div>
+					<div class="list_content_small">{{ assignment.0 }}</div>
+					<div class="list_content_inside">{{ assignment.3 }}</div>
+					<div class="list_content_inside" style="margin-left: auto;">{{ assignment.4 }}</div>
+
+					<input type="hidden" name="item" value="{{ assignment.0 }}">
+					<button type="submit" class="list_button button_main" name="go_to" value="assignment">More</button>
+
+				</li>
+			</form>
+
+		{% endfor %}
+
+	</ul>
+</div>
+
+{% include 'footer.html' %}
+{% endblock %}

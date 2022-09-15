@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>My submissions</h1>
+
+<div class="list_container">
+	<ul class="list">
+
+		{% for submission in submissions %}
+			
+			<form action="{% url 'list_of_submissions' %}" method="POST">
+				{% csrf_token %}
+				<li class="list_item">
+
+					<div class="list_content">{{ submission.0 }}</div>
+					<div class="list_content_inside">{{ submission.1 }}</div>
+					<div class="list_content_small">{{ submission.3 }}</div>
+
+					<input type="hidden" name="unique_id" value="{{ submission.4 }}">
+
+					<div class="list_button">
+						<button type="submit" class="button_main" name="submission_action" value="explore">Explore</button>
+					</div>
+
+				</li>
+			</form>
+
+		{% endfor %}
+
+	</ul>
+</div>
+
+{% include 'footer.html' %}
+{% endblock %}

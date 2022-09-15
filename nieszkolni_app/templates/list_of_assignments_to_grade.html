@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>Assignments to grade</h1>
+
+<div class="list_container">
+	<ul class="list">
+
+		{% for essay in essays %}
+			
+			<form action="{% url 'list_of_assignments_to_grade' %}" method="POST">
+				{% csrf_token %}
+				<li class="list_item">
+
+					<div class="list_content">{{ essay.1 }}</div>
+					<div class="list_content_inside">{{ essay.2 }}</div>
+					<div class="list_content_small">{{ essay.0 }}</div>
+
+					<input type="hidden" name="unique_id" value="{{ essay.4 }}">
+
+					<div class="list_button">
+						<button type="submit" class="button_main" name="revision_action" value="grade_assignment">Review</button>
+					</div>
+
+				</li>
+			</form>
+
+		{% endfor %}
+
+	</ul>
+</div>
+
+{% include 'footer.html' %}
+{% endblock %}

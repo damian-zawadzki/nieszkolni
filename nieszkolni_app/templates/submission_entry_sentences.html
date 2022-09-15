@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<div class="flex-parent jc-center">
+  <div class="assignment_card">
+    <div class="task_card_container">
+      <div class="task_card_title">{{ title }}</div>
+      <div class="task_card_details"><b>Date:</b> {{ date }}</div>
+        
+        {% for sentence in sentences %}
+          {% if status != 'graded' %}
+          {% else %}
+
+            <div class="task_card_description">({{ sentence.0 }})</div>
+
+          {% endif %}
+
+          <div class="task_card_content_important_line">{{ forloop.counter }}. {{ sentence.1 }}</div>
+          <div class="task_card_content task_card_content_line">{{ sentence.2 }}</div>
+        {% endfor %}</br>
+
+    
+    </div>
+  </div>
+</div>
+
+{% include 'footer.html' %}
+{% endblock %}

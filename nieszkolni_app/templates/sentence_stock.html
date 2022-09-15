@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>Sentence stock</h1>
+
+<div class="list_container">
+	<ul class="list">
+
+		{% for sentence in sentences %}
+
+			<form action="{% url 'sentence_stock' %}" method="POST">
+				{% csrf_token %}
+				<li class="list_item">
+
+					<div class="list_content">{{ sentence.0 }}</div>
+					<div class="list_content_inside">{{ sentence.1 }}</div>
+					<div class="list_content_small">{{ sentence.2 }}</div>
+
+				</li>
+			</form>
+
+		{% endfor %}
+
+	</ul>
+</div>
+
+{% include 'footer.html' %}
+{% endblock %}

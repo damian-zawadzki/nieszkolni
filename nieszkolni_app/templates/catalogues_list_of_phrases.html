@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>Catalogue {{ catalogue_title }}</h1>
+
+<div class="list_container">
+	<ul class="list">
+
+		{% for phrase in phrases %}
+
+		<li class="list_item">
+
+			<div class="list_content_item">{{ phrase }}</div>
+
+		</li>
+
+		{% endfor %}
+
+	</ul>
+</div>
+
+{% include 'footer.html' %}
+{% endblock %}

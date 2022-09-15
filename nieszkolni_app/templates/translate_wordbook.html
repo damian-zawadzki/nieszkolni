@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+{% if entries == None %}
+{% else %}
+
+  <h1>Wordbook</h1>
+
+    <div class="flex-parent jc-center">
+
+      {% if entries.2 == 'rejected' %}
+      <div class="phrase_card phrase_card_wrong">
+      {% else %}
+      <div class="phrase_card">
+      {% endif %}
+
+        <div class="phrase_card_container">
+          <h5 class="phrase_card_question">{{ entries.1 }}</h5>
+          
+        <form method="POST">
+          {% csrf_token %}
+
+          <div class="flex-parent jc-center">
+            <div class="input_container">
+              <input type="text" class="input_content_solo" name="polish">
+              <input type="hidden" class="input_content_solo" name="unique_id" value="{{ entries.0 }}">
+            </div>
+          </div>
+
+          <div class="flex-parent jc-center">
+
+          <button type="submit" class="button_main" name="wordbook_action" value="save">Save</button>
+          <button type="submit" class="button_main" name="wordbook_action" value="delete">Delete</button>
+
+          </div>
+        </form>
+
+
+        </div>
+      </div>
+    </div>
+
+{% endif %}
+
+{% endblock %}

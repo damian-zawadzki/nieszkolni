@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<div class="flex-parent jc-center">
+  <div class="phrase_card">
+    <div class="phrase_card_container">
+      <h5 class="phrase_card_question">{{ polish }}</h5>
+      <form action="{% url 'vocabulary' %}" method="POST">
+        {% csrf_token %}
+        <button type="submit" class="button_main"  name="answer" value="show" style="text-decoration: none;">Show</button>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="flex-parent jc-center keep_distance">
+  <div class="counter old_counter">{{ old_due_today }}</div>
+  <div class="counter new_counter">{{ new_due_today }}</div>
+  <div class="counter problematic_counter">{{ problematic_due_today }}</div>
+  <form action="{% url 'vocabulary' %}" method="POST">
+      {% csrf_token %}
+    <button type="submit" class="counter" name="answer" value="edit"><img src="{% static '/images/pencil.png' %}" width="15" height="15"></button>
+  </form>
+</div>
+
+{% endblock %}

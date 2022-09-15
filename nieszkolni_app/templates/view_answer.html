@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %} 
+
+<div class="flex-parent jc-center">
+ <form action="{% url 'view_answer' %}" method="POST">
+    {% csrf_token %}
+    <div class="phrase_card">
+      <div class="phrase_card_container">
+        <h5 class="phrase_card_question">{{ polish }}</h5>
+        <p class="phrase_card_answer"><span class="section">{{ english }}</span></p>
+        <input type="hidden" name="deck" value="{{ deck }}">
+
+        {% if interval != 0 %}
+
+        <button type="submit" class="button_main" value="incorrect" name="answer">Incorrect</button>
+        <button type="submit" class="button_main" value="hard" name="answer">Hard</button>
+        <button type="submit" class="button_main" value="easy" name="answer">Easy</button>
+
+        {% else %}
+
+        <button type="submit" class="button_main" value="incorrect" name="answer">Incorrect</button>
+        <button type="submit" class="button_main" value="hard" name="answer" id="Hard">Correct</button>
+
+        {% endif %}
+
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="flex-parent jc-center keep_distance">
+  <div class="counter old_counter">{{ old_due_today }}</div>
+  <div class="counter new_counter">{{ new_due_today }}</div>
+  <div class="counter problematic_counter">{{ problematic_due_today }}</div>
+  <form action="{% url 'view_answer' %}" method="POST">
+      {% csrf_token %}
+    <button type="submit" class="counter" name="answer" value="edit"><img src="{% static '/images/pencil.png' %}" width="15" height="15"></button>
+  </form>
+</div>
+
+
+{% endblock %}

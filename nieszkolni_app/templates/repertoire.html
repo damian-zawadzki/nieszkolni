@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>Repertoire</h1>
+
+<form action="{% url 'repertoire' %}" method="POST">
+  {% csrf_token %}
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Title</label>
+      <input type="text" class="input_content" name="title">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Duration (min)</label>
+      <input type="number" class="input_content" name="duration">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Type</label>
+      <select class="input_content" name="title_type">
+        <option disabled selected value></option>
+        <option value="tv_series">TV series</option>
+        <option value="movie">movie</option>
+        <option value="audiobook">audiobook</option>
+        <option value="podcast">podcast</option>
+        <option value="video">video</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+  	<button type="submit" class="button_main" name="repertoire_action" value="add">Add</button>
+  </div>
+
+</form>
+
+{% for title in titles %}
+	<form action="{% url 'repertoire' %}" method="POST">
+		{% csrf_token %}
+
+		<div class="flex-parent jc-center">
+			<div class="assignment_card">
+			    <div class="task_card_container">
+			      <div class="task_card_title">{{ title.0 }}</div>
+			      <div class="task_card_details"><b>Duration:</b> {{ title.1 }} <b>Type:</b> {{ title.2 }}</div>
+
+				<div class="flex-parent jc-center">
+					<input type="hidden" name="title" value="{{ title.0 }}">
+		  			<button type="submit" class="button_main" name="repertoire_action" value="delete">Delete</button>
+		  		</div>
+
+		    </div>
+		  </div>
+		</div>
+
+
+
+	</form>
+{% endfor %}
+
+{% include 'footer.html' %}
+{% endblock %}

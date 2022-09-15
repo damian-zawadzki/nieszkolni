@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<div class="avatar">
+	<div class="avatar_frame">
+		<img class="avatar_image" src="https://docs.google.com/drawings/d/e/2PACX-1vSKvMq0KG0vSeCV4hzfm25JTF4hO1lAo4l6RSrE9UDuq5Ye6uBWh4flnlnvvrHOaGciCk_0nYZAX_tW/pub?w=1028&h=1030" width="175" height="175">
+	</div>
+	<div class="avatar_name">
+		<h1>{{ user.first_name.upper }} {{ user.last_name.upper }}</h1>
+	</div>
+
+</div>
+
+<ul class="side_navigation_menu">
+	<li class="side_navigation_item">
+	  <h5>MENU</h5>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" href="{% url 'assignments'%}">MY ASSIGNMENTS</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" href="{% url 'my_pronunciation'%}">MY PRONUNCIATION</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" href="{% url 'memories'%}">MY MEMORIES</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" href="{% url 'vocabulary'%}">MY VOCABULARY</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" href="{% url 'sentences'%}">MY SENTENCES</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" href="{% url 'submit_assignment'%}">MY SUBMISSIONS</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" href="{% url 'list_of_submissions'%}">MY ASSIGNMENTS</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" href="{% url 'report_reading'%}">MY READING</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" href="{% url 'options'%}">MY SETTINGS</a>
+</ul>
+
+
+
+{% endblock %}

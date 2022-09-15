@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>Submit an assignment</h1>
+
+<form action="{% url 'submit_assignment' %}" method="POST">
+  {% csrf_token %}
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Item</label>
+      <input type="number" class="input_content" name="item" required>
+    </div>
+  </div>
+  <div class="flex-parent jc-center"> 
+     <div class="input_container">
+      <label class="input_label">Name</label>
+      <input type="text" class="input_content" name="name" required>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label for="assignment_type" class="input_label">Type</label>
+
+      <select class="input_content" name="assignment_type" id="assignment_type">
+        <option value="essay" required>essay</option>
+        <option value="assignment" required>other assignment</option>
+        <option value="wordfinder" required>wordfinder</option>
+      </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Title</label>
+      <input type="text" class="input_content" name="title" required>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Content</label>
+      <textarea type="text" class="input_content input_paragraph" name="content" required></textarea>
+    </div>
+  </div>
+  
+  <div class="flex-parent jc-center">
+  <button type="submit" class="button_main" name="go_to" value="database">Submit</button>
+  </div>
+</form>
+
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<div class="flex-parent jc-center">
+ <form action="{% url 'edit_card' %}" method="POST">
+    {% csrf_token %}
+    <div class="phrase_card">
+      <div class="phrase_card_container">
+        <div class="flex-parent jc-center"> 
+           <div class="input_container">
+            <label class="input_label">Polish</label>
+            <input type="hidden" class="input_content" name="card_id" value='{{ card_id }}'>
+            <input type="text" class="input_content" name="polish" value='{{ polish }}'>
+          </div>
+        </div>
+        <div class="flex-parent jc-center">
+           <div class="input_container">
+            <label class="input_label">English</label>
+            <input type="text" class="input_content" name="english" value='{{ english }}'>
+          </div>
+        </div>
+
+        <button type="submit" class="button_main" value="edit" name="change">Edit</button>
+        <button type="submit" class="button_main" value="delete" name="change">Delete</button>
+
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

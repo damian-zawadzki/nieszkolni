@@ -1,0 +1,26 @@
+{% block 'content' %}
+
+<nav class="side_navigation">
+	<ul>
+	<li class="side_navigation_item">
+	  <h5>COACH MENU</h5>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'switch_clients'%}">SWITCH CLIENTS</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'agenda'%}">AGENDA</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'check_homework'%}">HOMEWORK CHECK</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'session_mode'%}">SESSION MODE</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'report_listening'%}">REPORT LISTENING</a>
+	</li>
+</ul>
+</nav>
+
+{% endblock %}

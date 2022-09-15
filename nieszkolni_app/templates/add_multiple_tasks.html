@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% include 'staff_menu.html' %}
+
+<h1>Add multiple tasks</h1>
+
+<form method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Name</label>
+      
+
+
+          {% if names|length == 1 %}
+            <input type="text" class="input_content input_prefilled" name="name" value="{{ names.0 }}">
+
+          {% else %}
+        <select required class="input_content" name="name">
+
+            <option disabled selected value></option>
+            {% for name in names %}
+            <option value="{{ name }}">{{ name }}</option>
+            {% endfor %}
+
+          {% endif %}
+
+      </select>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Type</label>
+      <select required class="input_content" name="assignment_type">
+          <option disabled selected value></option>
+          <option value="essay">essay</option>
+          <option value="assignment">assignment</option>
+          <option value="wordfinder">wordfinder</option>
+          <option value="sentence_translation">sentence translation</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Title</label>
+      <input required type="text" class="input_content" name="title">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Content</label>
+      <input required type="text" class="input_content" name="content">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="curriculum_action" value="choose_filters">Filter</button>
+  </div>
+
+</form>
+
+<form method="POST">
+  {% csrf_token %}
+
+  <div class="flex-parent jc-center"> 
+     <div class="input_container">
+      <label class="input_label">Starting date</label>
+      <input required type="date" class="input_content" name="deadline">
+    </div>
+  </div>
+
+
+
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">First list</label> 
+        <select class="input_content">
+          {% for entry in entries %}
+          <option>{{ entry.0 }}</option>
+          {% endfor %}
+        </select>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Last list</label> 
+        <select class="input_content">
+          {% for entry in entries%}
+          <option>{{ entry.0 }}</option>
+          {% endfor %}
+        </select>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Conditions</label>
+      <textarea required type="text" class="input_content input_paragraph" name="conditions"></textarea>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main">Extend</button>
+  </div>
+
+</form>
+
+{% endblock %}

@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>Register a client</h1>
+
+<form method="POST">
+	{% csrf_token %}
+  <div class="flex-parent jc-center"> 
+     <div class="input_container">
+      <label class="input_label">First name</label>
+      <input type="text" class="input_content" name="first_name" required>
+    </div>
+  </div>
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Last name</label>
+      <input type="text" class="input_content" name="last_name" required>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container input_radio_width input_radio_margin-bottom">
+      <label class="input_label">School</label>
+
+
+      {% for school in schools %}
+      <label for="{{ school }}" class="input_label input_radio_container">
+        <input type="radio" class="input_radio" name="school" value="{{ school }}" id="{{ school }}" required>
+        <span class="input_radio_circle"></span>{{ school }}
+      </label>
+      {% endfor %}
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Password</label>
+      <input type="password" class="input_content" name="password" required>
+    </div>
+  </div>
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Phone number</label>
+      <input type="tel" class="input_content" name="phone_number" required>
+    </div>
+  </div>
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Contact email address</label>
+      <input type="email" class="input_content" name="contact_email_address" required>
+    </div>
+  </div>
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Internal email address</label>
+      <input type="email" class="input_content" name="internal_email_address" required>
+    </div>
+  </div>
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Meeting duration</label>
+      <input type="number" class="input_content" name="meeting_duration" required>
+    </div>
+  </div>
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Price</label>
+      <input type="number" class="input_content" name="price" required>
+    </div>
+  </div>
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Acquisition channel</label>
+      <input type="text" class="input_content" name="acquisition_channel" required>
+    </div>
+  </div>
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Recommenders</label>
+      <input type="text" class="input_content" name="recommenders" required>
+    </div>
+  </div>
+  
+  <div class="flex-parent jc-center"> 
+    <div class="input_container input_radio_width">
+      <label class="input_label">Coach</label>
+
+
+      {% for coach in coaches %}
+      <label for="{{ coach }}" class="input_label input_radio_container">
+        <input type="radio" class="input_radio" name="coach" value="{{ coach }}" id="{{ coach }}" required>
+        <span class="input_radio_circle"></span>{{ coach }}
+      </label>
+      {% endfor %}
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container input_radio_width input_radio_margin-top">
+      <label class="input_label">Level</label>
+
+
+      {% for level in levels %}
+      <label for="{{ level }}" class="input_label input_radio_container">
+        <input type="radio" class="input_radio" name="level" value="{{ level }}" id="{{ level }}" required>
+        <span class="input_radio_circle"></span>{{ level }}
+      </label>
+      {% endfor %}
+
+    </div>
+  </div>
+  <div class="flex-parent jc-center"> 
+    <div class="input_container input_radio_width input_radio_margin-top">
+      <label class="input_label">Test user</label>
+
+
+      <label for="yes" class="input_label input_radio_container">
+        <input type="radio" class="input_radio" name="test_user" value="yes" id="yes" required>
+        <span class="input_radio_circle"></span>Yes
+      </label>
+
+      <label for="no" class="input_label input_radio_container">
+        <input type="radio" class="input_radio" name="test_user" value="no" id="no" required>
+        <span class="input_radio_circle"></span>No
+      </label>
+
+    </div>
+  </div>
+  <div class="flex-parent jc-center">
+  <button type="submit" class="button_main" name="register" value="client_and_user">Register both client and user</button>
+  </div>
+  <div class="flex-parent jc-center">
+  <button type="submit" class="button_main" name="register" value="client">Register only client</button>
+  </div>
+</form>
+
+{% endblock %}

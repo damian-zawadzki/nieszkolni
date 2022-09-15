@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% include 'staff_menu.html' %}
+
+<h1>Extend a curriculum</h1>
+
+<form method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Name</label>
+
+          {% if names|length == 1 %}
+
+            <input type="text" class="input_content input_prefilled" name="name" value="{{ names.0 }}">
+
+          {% else %}
+        <select required class="input_content" name="name">
+
+            <option disabled selected value></option>
+            {% for name in names %}
+            <option value="{{ name }}">{{ name }}</option>
+            {% endfor %}
+
+          {% endif %}
+
+      </select>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Type</label>
+
+      {% if names|length == 1 %}
+
+        <input type="text" class="input_content input_prefilled" name="name" value="{{ assignment_type.0 }}">
+
+      {% else %}
+        <select required class="input_content" name="assignment_type">
+            <option disabled selected value></option>
+            <option value="essay">essay</option>
+            <option value="assignment">assignment</option>
+            <option value="wordfinder">wordfinder</option>
+            <option value="sentences">sentences</option>
+            <option value="reading">reading</option>
+        </select>
+
+      {% endif %}
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="curriculum_action" value="choose_filters">Filter</button>
+  </div>
+
+</form>
+
+{% endblock %}

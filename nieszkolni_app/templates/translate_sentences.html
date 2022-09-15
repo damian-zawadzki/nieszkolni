@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% include 'profile_menu.html' %}
+
+<h1>{{ title }}</h1>
+
+<form action="{% url 'submit_assignment' %}" method="POST">
+  {% csrf_token %}
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Item</label>
+      <input type="number" class="input_content input_prefilled" name="item" value="{{ item }}" readonly required>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+     <div class="input_container">
+      <label class="input_label">Name</label>
+      <input type="text" class="input_content input_prefilled" name="name" value="{{ name }}" readonly required>
+    </div>
+  </div>
+
+{% for sentence in sentences %}
+  <div class="flex-parent jc-center"> 
+     <div class="input_long_container">
+      <label class="input_label input_long_label">{{ sentence.1 }}</label>
+      <input type="hidden" name="polish_{{ forloop.counter0 }}" value="{{ sentence.1 }}">
+      <input type="hidden" name="sentence_number_{{ forloop.counter0 }}" value="{{ sentence.0 }}">
+      <textarea type="text" class="input_content input_paragraph" name="translation_{{ forloop.counter0 }}" required></textarea>
+    </div>
+  </div>
+{% endfor %}
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container input_radio_width">
+      <label class="input_label input_radio_container">
+        <input type="radio" class="input_radio" required>
+        <span class="input_radio_circle"></span>
+        <span class="input_radio_label">I did not use Anki when translating the sentences.</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container input_radio_width">
+      <label class="input_label input_radio_container">
+        <input type="radio" class="input_radio" required>
+        <span class="input_radio_circle"></span>
+        <span class="input_radio_label">I did not use Google Translate when translating the sentences.</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container input_radio_width">
+      <label class="input_label input_radio_container">
+        <input type="radio" class="input_radio" required>
+        <span class="input_radio_circle"></span>
+        <span class="input_radio_label">I did not use dictionaries when translating the sentences.</span>
+      </label>
+    </div>
+  </div>
+
+  <input type="hidden" name="assignment_type" value="sentences">
+  <input type="hidden" name="title" value="{{ title }}">
+
+  <div class="flex-parent jc-center">
+    <button type="submit" class="button_main" name="go_to" value="translated_sentences">Submit</button>
+  </div>
+
+</form>
+
+{% endblock %}

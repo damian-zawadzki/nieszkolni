@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<ul>
+	<li class="side_navigation_item">
+	  <h5>STAFF MENU</h5>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'register_user'%}">USER REGISTRATION</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'register_client'%}">CLIENT REGISTRATION</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'display_curricula'%}">CURRICULA</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'upload_curriculum'%}">CURRICULUM UPLOAD</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'add_curriculum'%}">CURRICULUM EXTENSION</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'dictionary'%}">DICTIONARY</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'upload_dictionary'%}">DICTIONARY UPLOAD</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'translate_wordbook'%}">WORDBOOK TRANSLATION</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'approve_wordbook'%}">WORDBOOK APPROVAL</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'translate_sentencebook'%}">SENTENCEBOOK TRANSLATION</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'approve_sentencebook'%}">SENTENCEBOOK APPROVAL</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'upload_catalogues'%}">CATALOGUE UPLOAD</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'catalogues'%}">CATALOGUES</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'upload_sentence_stock'%}">SENTENCE STOCK UPLOAD</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'sentence_stock'%}">SENTENCE STOCK</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'upload_sets'%}">SETS UPLOAD</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'composer'%}">COMPOSER</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'composed_sentences'%}">COMPOSED SENTENCES</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'prompts'%}">PROMPTS</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'stream'%}">STREAM</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'list_of_assignments_to_grade'%}">GRADE ASSIGNMENTS</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'grade_sentences'%}">GRADE SENTENCES</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'library'%}">LIBRARY</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'library_line' %}">LIBRARY LINE</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'repertoire' %}">REPERTOIRE</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'repertoire_line' %}">REPERTOIRE LINE</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'download_assignments' %}">DOWNLOAD ASSIGNMENTS</a>
+	</li>
+</ul>
+
+{% endblock %}

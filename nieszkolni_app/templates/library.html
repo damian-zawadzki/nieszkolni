@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>Library</h1>
+
+<form action="{% url 'library' %}" method="POST">
+  {% csrf_token %}
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Position number</label>
+      <input type="number" min="1000" max="9999" class="input_content" name="position_number">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Title</label>
+      <input type="text" class="input_content" name="title">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Link</label>
+      <input type="url" class="input_content" name="link">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Wordcount</label>
+      <input type="number" class="input_content" name="wordcount">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+  	<button type="submit" class="button_main" name="library_action" value="add">Add</button>
+  </div>
+
+</form>
+
+{% for position in positions %}
+	<form action="{% url 'library' %}" method="POST">
+		{% csrf_token %}
+
+		<div class="flex-parent jc-center">
+			<div class="assignment_card">
+			    <div class="task_card_container">
+			      <div class="task_card_title">{{ position.1 }}</div>
+			      <div class="task_card_details"><b>Number:</b> {{ position.0 }} <b>Number of words:</b> {{ position.2 }}</div>
+			      <div class="task_card_content"><a href="{{ position.3 }}" target="_blank">Link</a></div>
+
+				<div class="flex-parent jc-center">
+					<input type="hidden" name="position_number" value="{{ position.0 }}">
+		  			<button type="submit" class="button_main" name="library_action" value="delete">Delete</button>
+		  		</div>
+
+		    </div>
+		  </div>
+		</div>
+
+
+
+	</form>
+{% endfor %}
+
+{% include 'footer.html' %}
+{% endblock %}

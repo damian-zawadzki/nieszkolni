@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+{% if link == None %}
+
+<h1>Library line</h1>
+
+{% else %}
+
+<h1>Library line</h1>
+
+<div class="flex-parent jc-center">
+  <div class="phrase_card">
+
+    <div class="phrase_card_container">
+      <h5 class="phrase_card_question">Student: {{ link.0 }}</h5>
+      <h5 class="phrase_card_description"><a href="{{ link.1 }}" target="_blank">Click here.</a></h5>
+      
+    <form method="POST">
+      {% csrf_token %}
+
+      <div class="flex-parent jc-center">
+        <div class="input_container">
+          <input type="hidden" name="name" value="{{ link.0 }}">
+          <input type="hidden" name="link" value="{{ link.1 }}">
+          <input type="text" class="input_content_solo input_content_solo_long" name="title" placeholder="title">
+          <input type="number" class="input_content_solo input_content_solo_long" name="wordcount" placeholder="wordcount">
+          
+        </div>
+      </div>
+
+      <div class="flex-parent jc-center">
+        <button type="submit" class="button_main" name="library_line_action" value="save">Save</button>
+      </div>
+
+    </form>
+
+
+    </div>
+  </div>
+</div>
+
+{% endif %}
+
+{% endblock %}

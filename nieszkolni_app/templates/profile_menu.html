@@ -1,0 +1,38 @@
+{% block 'content' %}
+
+<nav class="side_navigation">
+	<ul>
+	<li class="side_navigation_item">
+	  <h5>DASHBOARD</h5>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'assignments'%}">MY TO-DO LIST</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'my_pronunciation'%}">PRONUNCIATION</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'memories'%}">MEMORIES</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'vocabulary'%}">VOCABULARY</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'sentences'%}">SENTENCES</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'options'%}">SETTINGS</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'submit_assignment'%}">SUBMISSIONS</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'list_of_submissions'%}">SUBMISSIONS LIST</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'report_reading'%}">REPORT READING</a>
+	</li>
+</ul>
+</nav>
+
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>Download assignments</h1>
+
+<form action="{% url 'download_assignments' %}" method="POST">
+  {% csrf_token %}
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">From</label>
+      <input type="date" class="input_content" name="start_date">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">To</label>
+      <input type="date" class="input_content" name="end_date">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+  	<button type="submit" class="button_main">Download</button>
+  </div>
+
+</form>
+
+{% include 'footer.html' %}
+{% endblock %}

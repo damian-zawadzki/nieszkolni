@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+{% if entries == None %}
+{% else %}
+
+  <h1>Approve sentencebook entries</h1>
+
+    <div class="flex-parent jc-center">
+      <div class="phrase_card">
+        <div class="phrase_card_container">
+          <h5 class="phrase_card_question">{{ entries.1 }}</h5>
+          <p class="phrase_card_answer"><span class="section">{{ entries.2 }}</span></p>
+          
+        <form method="POST">
+          {% csrf_token %}
+
+          <input type="hidden" class="input_content_solo" name="unique_id" value="{{ entries.0 }}">
+
+          <div class="flex-parent jc-center">
+
+          <button type="submit" class="button_main" name="sentencebook_action" value="approve">Approve</button>
+          <button type="submit" class="button_main" name="sentencebook_action" value="reject">Reject</button>
+
+          </div>
+        </form>
+
+
+        </div>
+      </div>
+    </div>
+
+{% endif %}
+
+{% endblock %}

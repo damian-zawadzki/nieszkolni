@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>Prompts</h1>
+
+
+<div class="flex-parent jc-center">	
+	<form action="{% url 'prompts' %}" method="POST">
+		{% csrf_token %}
+
+		<div class="input_container">
+			<label class="input_label">Prompts</label>
+			<input type="text" name="prompt" class="input_content">
+
+			<label class="input_label">Parent</label>
+			<input type="text" name="parent" class="input_content">
+
+			<label class="input_label">Patern</label>
+			<input type="text" name="pattern" class="input_content">
+		</div>
+
+		<div class="flex-parent jc-center">
+			<button type="submit" class="button_main" name="prompts_action" value="add_prompt">Add</button>
+		</div>
+
+	</form>
+</div>
+
+<div class="list_container">
+	<ul class="list">
+
+		{% for prompt in prompts %}
+			
+			<form action="{% url 'prompts' %}" method="POST">
+				{% csrf_token %}
+				<li class="list_item">
+
+					<div class="list_content">{{ prompt.0 }}</div>
+					<div class="list_content_inside">{{ prompt.1 }}</div>
+					<div class="list_content_small">{{ prompt.2 }}</div>
+
+					<input type="hidden" name="prompt" value="{{ prompt.0 }}">
+					<input type="hidden" name="parent" value="{{ prompt.1 }}">
+					<button type="submit" class="list_button button_main" name="prompts_action" value="delete_prompt">Delete</button>
+
+				</li>
+			</form>
+
+		{% endfor %}
+
+	</ul>
+</div>
+
+{% include 'footer.html' %}
+{% endblock %}

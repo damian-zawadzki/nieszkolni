@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>Report listening</h1>
+
+<form action="{% url 'report_listening' %}" method="POST">
+  {% csrf_token %}
+
+  <div class="input_container">
+    <label for="title_input" class="input_label">Title</label>  
+    <input id="title_input" name="title" type="text" class="input_content" list="list_of_titles">
+      <datalist name="title" id="list_of_titles">
+          {% for title in titles %}
+          <option value="{{ title.0 }}"></option>
+          {% endfor %}
+      </datalist>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Number of episodes</label>
+      <input type="number" class="input_content" name="number_of_episodes">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+  	<button type="submit" class="button_main">Add</button>
+  </div>
+
+</form>
+
+{% include 'footer.html' %}
+{% endblock %}
