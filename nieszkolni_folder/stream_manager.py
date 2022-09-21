@@ -41,8 +41,8 @@ class StreamManager:
                 '{stream_user}',
                 '{status}'
                 )
-                # ON CONFLICT
-                # DO NOTHING
+                ON CONFLICT
+                DO NOTHING
                 ''')
 
     def display_stream(self):
