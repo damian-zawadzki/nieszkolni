@@ -18,7 +18,6 @@ class StreamManager:
         date_number = TimeMachine().today_number()
         date = TimeMachine().today()
         status = "active"
-        user = user
 
         with connection.cursor() as cursor:
             cursor.execute(f'''
@@ -42,8 +41,8 @@ class StreamManager:
                 '{user}',
                 '{status}'
                 )
-                ON CONFLICT
-                DO NOTHING
+                # ON CONFLICT
+                # DO NOTHING
                 ''')
 
     def display_stream(self):
