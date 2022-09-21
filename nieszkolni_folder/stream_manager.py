@@ -13,7 +13,7 @@ class StreamManager:
     def __init__(self):
         pass
 
-    def add_to_stream(self, name, command, value, user):
+    def add_to_stream(self, name, command, value, stream_user):
         stamp = TimeMachine().now_number()
         date_number = TimeMachine().today_number()
         date = TimeMachine().today()
@@ -28,7 +28,7 @@ class StreamManager:
                 name,
                 command,
                 value,
-                user,
+                stream_user,
                 status
                 )
                 VALUES (
@@ -38,7 +38,7 @@ class StreamManager:
                 '{name}',
                 '{command}',
                 '{value}',
-                '{user}',
+                '{stream_user}',
                 '{status}'
                 )
                 # ON CONFLICT
@@ -48,7 +48,7 @@ class StreamManager:
     def display_stream(self):
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                SELECT stamp, date_number, date, name, command, value, user, status, id
+                SELECT stamp, date_number, date, name, command, value, stream_user, status, id
                 FROM nieszkolni_app_stream
                 ''')
 
@@ -66,7 +66,7 @@ class StreamManager:
     def display_stream_entry(self, unique_id):
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                SELECT stamp, date_number, date, name, command, value, user, status
+                SELECT stamp, date_number, date, name, command, value, stream_user, status
                 FROM nieszkolni_app_stream
                 WHERE id = {unique_id}
                 ''')

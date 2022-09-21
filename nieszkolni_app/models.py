@@ -170,7 +170,7 @@ class Stream(models.Model):
     name = models.CharField(max_length=200, default="")
     command = models.CharField(max_length=200, default="")
     value = models.CharField(max_length=200, default="")
-    user = models.CharField(max_length=200, default="")
+    stream_user = models.CharField(max_length=200, default="")
     status = models.CharField(max_length=200, default="active")
 
 
