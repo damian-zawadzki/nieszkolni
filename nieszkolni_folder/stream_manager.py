@@ -18,6 +18,7 @@ class StreamManager:
         date_number = TimeMachine().today_number()
         date = TimeMachine().today()
         status = "active"
+        user = user
 
         with connection.cursor() as cursor:
             cursor.execute(f'''
