@@ -27,4 +27,4 @@ class CurrentClientsManager:
 
     def switch_current_client(self, coach, client):
         with connection.cursor() as cursor:
-            cursor.execute(f"INSERT INTO nieszkolni_app_currentclient (coach, name) VALUES ('{coach}', '{client}') ON CONFLICT nieszkolni_app_currentclient.coach DO UPDATE SET name = '{client}' WHERE coach = '{coach}'")
+            cursor.execute(f"INSERT INTO nieszkolni_app_currentclient (coach, name) VALUES ('{coach}', '{client}') ON CONFLICT (coach) DO UPDATE SET name = '{client}'")
