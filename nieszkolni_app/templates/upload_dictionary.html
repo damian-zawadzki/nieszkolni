@@ -9,7 +9,7 @@
 {% csrf_token %}
 
     <div class="flex-parent jc-center">
-        <button type="button" class="button_main" onclick="showHide()">
+        <button type="button" class="button_main">
             <label style="margin: 25px; font-weight: bold;">
                     Browse
                 <input type="file" style="display: none; margin: 25px;" name="csv_file" required="True" class="input_content">
@@ -25,18 +25,5 @@
     </div>
 
 </form>
-
-<script type="text/javascript">
-
-    function showHide() {
-      var file = document.getElementById("file_upload");
-      if (file.style.display === "none") {
-        file.style.display = "block";
-      } else {
-        file.style.display = "none";
-      }
-    }
-
-</script>
 
 {% endblock %}
