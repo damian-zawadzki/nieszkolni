@@ -109,6 +109,9 @@ class StreamManager:
         start_date = TimeMachine().date_to_number(start)
         end_date = TimeMachine().date_to_number(end)
 
+        start_date = 8000
+        end_date = 9000
+
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 SELECT
