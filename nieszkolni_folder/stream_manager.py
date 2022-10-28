@@ -127,7 +127,6 @@ class StreamManager:
                 ''')
 
             rows = cursor.fetchall()
-            rows = [("a", "c", "e")]
 
             return rows
 
