@@ -225,16 +225,6 @@ def view_answer(request):
                         "english": english
                         })
             else:
-                try:
-                    engine = pyttsx3.init()
-                except:
-                    pass
-
-                try:
-                    engine.stop()
-                except:
-                    pass
-
                 deck = request.POST["deck"]
 
                 all_due_entries = VocabularyManager().display_due_entries(current_user, deck)
@@ -251,14 +241,12 @@ def view_answer(request):
                 english_2 = re.sub(r"\ssb$", " somebody", english_1)
                 english_3 = re.sub(r"\ssth\s", " something ", english_2)
                 english_4 = re.sub(r"\ssth$", " something", english_3)
+
+                engine = pyttsx3.init()
                 engine.say(english_4)
+                engine.runAndWait()
+                engine.stop()
 
-                try:
-                    engine.runAndWait()
-                    engine.stop()
-
-                except:
-                    pass
 
         # If no button is clicked
         return render(request, 'view_answer.html', {
