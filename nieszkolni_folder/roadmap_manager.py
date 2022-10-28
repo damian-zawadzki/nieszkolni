@@ -538,12 +538,15 @@ class RoadmapManager:
 
             data = cursor.fetchone()
 
-            degrees = dict()
-            degrees.update({"associate": data[0]})
-            degrees.update({"bachelor": data[1]})
-            degrees.update({"master": data[2]})
-            degrees.update({"doctorate": data[3]})
-            degrees.update({"professor": data[4]})
+            if data is None:
+                degrees = dict()
+            else:
+                degrees = dict()
+                degrees.update({"associate": data[0]})
+                degrees.update({"bachelor": data[1]})
+                degrees.update({"master": data[2]})
+                degrees.update({"doctorate": data[3]})
+                degrees.update({"professor": data[4]})
 
             return degrees
 

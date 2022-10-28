@@ -76,13 +76,22 @@
 		<div class="inscription_below">THE END OF THE COURSE</br>{{ current_degree.upper }}</div>
 	</div>
 
-{% else %}
+{% elif current_degree_status == 'granted' %}
 
 	<div class="block">
 		<div>
 			<img class="avatar_image" src="https://docs.google.com/drawings/d/e/2PACX-1vQNMMEU13OwUQ_EFRgtMNa4ctHo41y7cKMgM8lEDrAMAiss_zvcE0-xSUxf-nVb4wDaViuhhQXWC16_/pub?w=685&h=686" width="50" height="50">
 		</div>
 		<div class="inscription_below">THE END OF THE COURSE</br>{{ current_degree.upper }}</div>
+	</div>
+
+{% else %}
+
+	<div class="block">
+		<div>
+			<img class="avatar_image" src="https://docs.google.com/drawings/d/e/2PACX-1vQPU82bIgaEybDHe_-2vc92GRSe7aRAF7VzB-SjRp4jMACuDevX6khz4CEP7qJz8MMfv3NjCIG-9RvD/pub?w=685&h=686" width="50" height="50">
+		</div>
+		<div class="inscription_below">THE BEGINNING OF THE COURSE</br></div>
 	</div>
 
 {% endif %}
