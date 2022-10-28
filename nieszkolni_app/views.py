@@ -444,7 +444,7 @@ def list_current_users(request):
 
         if request.method == "POST":
             if request.POST["action_on_user"] == "more":
-                name = request.POST["name"]
+                name = request.POST["client"]
 
                 client_details = ClientsManager().load_client(name)
                 user_type = client_details[0]
