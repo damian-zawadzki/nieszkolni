@@ -243,7 +243,7 @@ class KnowledgeManager:
                 WHERE id = {unique_id}
                 ''')
 
-    def approve_book_entry(self, unique_id, user):
+    def approve_book_entry(self, unique_id, current_user):
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 UPDATE nieszkolni_app_book
@@ -266,7 +266,7 @@ class KnowledgeManager:
             client = entry[3]
             coach = entry[4]
 
-            self.upload_dictionary(english, polish, user, publication_date, deck)
+            self.upload_dictionary(english, polish, current_user, publication_date, deck)
             VocabularyManager().add_entry(client, deck, english, polish, coach)
 
             with connection.cursor() as cursor:
