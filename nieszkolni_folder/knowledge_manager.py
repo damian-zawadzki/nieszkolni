@@ -87,7 +87,7 @@ class KnowledgeManager:
 
             return result
 
-    def upload_dictionary(self, english, polish, user, publication_date, deck):
+    def upload_dictionary(self, english, polish, publicating_user, publication_date, deck):
         english = english.replace('"', "")
         english = english.replace("'", "’")
 
@@ -96,15 +96,24 @@ class KnowledgeManager:
 
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                INSERT INTO nieszkolni_app_dictionary
-                (english, polish, user, publication_date, deck)
-                VALUES
-                ('{english}', '{polish}', '{user}', {publication_date}, '{deck}')
+                INSERT INTO nieszkolni_app_dictionary (
+                english,
+                polish,
+                publicating_user,
+                publication_date,
+                deck
+                )
+                VALUES (
+                '{english}',
+                '{polish}',
+                '{publicating_user}',
+                {publication_date},
+                '{deck}')
                 ON CONFLICT (english)
                 DO UPDATE SET 
                 english = '{english}',
                 polish = '{polish}',
-                user = '{user}',
+                publicating_user = '{publicating_user}',
                 publication_date = {publication_date},
                 deck = '{deck}'
                 ''')
@@ -112,7 +121,7 @@ class KnowledgeManager:
     def display_dictionary(self):
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                SELECT english, polish, user, publication_date, deck
+                SELECT english, polish, publicating_user, publication_date, deck
                 FROM nieszkolni_app_dictionary
                 ''')
             entries = cursor.fetchall()
@@ -122,7 +131,7 @@ class KnowledgeManager:
                 dictionary_entry = {
                     "english": entry[0],
                     "polish": entry[1],
-                    "user": entry[2],
+                    "publicating_user": entry[2],
                     "publication_date": entry[3],
                     "deck": entry[4]
                 }
@@ -243,7 +252,7 @@ class KnowledgeManager:
                 WHERE id = {unique_id}
                 ''')
 
-    def approve_book_entry(self, unique_id, current_user):
+    def approve_book_entry(self, unique_id, publicating_user):
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 UPDATE nieszkolni_app_book
@@ -266,7 +275,7 @@ class KnowledgeManager:
             client = entry[3]
             coach = entry[4]
 
-            self.upload_dictionary(english, polish, current_user, publication_date, deck)
+            self.upload_dictionary(english, polish, publicating_user, publication_date, deck)
             VocabularyManager().add_entry(client, deck, english, polish, coach)
 
             with connection.cursor() as cursor:

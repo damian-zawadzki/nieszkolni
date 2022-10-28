@@ -124,7 +124,7 @@ class Pronunciation(models.Model):
 class Dictionary(models.Model):
     english = models.CharField(max_length=200, default="", primary_key=True)
     polish = models.CharField(max_length=200, default="")
-    user = models.CharField(max_length=200, default="")
+    publicating_user = models.CharField(max_length=200, default="")
     publication_date = models.IntegerField()
     deck = models.CharField(max_length=200, default="")
 
