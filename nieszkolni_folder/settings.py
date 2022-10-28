@@ -18,8 +18,8 @@ SECRET_KEY = 'django-insecure-zm)m79i&zj-=dqjj3xswp_9y+__@mel(c@73ye73i+%a#pnggq
 DEBUG = True
 # DEBUG_PROPAGATE_EXCEPTIONS = True
 
-# ALLOWED_HOSTS = ["192.168.8.109"]
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["192.168.8.101"]
+# ALLOWED_HOSTS = []
 
 
 # Application definition

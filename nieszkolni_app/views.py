@@ -584,39 +584,51 @@ def profile(request):
         activity_points = StreamManager().display_activity(current_user)
         target = StreamManager().display_activity_target(current_user)
 
+        if request.method == "POST":
+            if request.POST["action_on_profile"] == "more":
+                roadmap_id_number = request.POST["roadmap_id_number"]
+                roadmap_details = RoadmapManager().display_roadmap_details(roadmap_id_number)
+                course = roadmap_details[2]
+                course_details = RoadmapManager().display_course(course)
+                grades = RoadmapManager().display_grades(current_user, course)
+                result = RoadmapManager().display_final_grade(current_user, course)
+                threshold = RoadmapManager().display_course_threshold(course)
+
+                if result >= threshold:
+                    status = "passed"
+                elif result == -1:
+                    status = "ongoing"
+                else:
+                    status = "failed"
+
+                RoadmapManager().update_roadmap(roadmap_id_number, status)
+
+                deadline = TimeMachine().number_to_system_date(roadmap_details[4])
+
+                return render(request, "display_roadmap_details.html", {
+                    "roadmap_details": roadmap_details,
+                    "course_details": course_details,
+                    "deadline": deadline,
+                    "grades": grades,
+                    "status": status
+                    })
+        
         if user_agent.is_mobile:
-            return render(request, "m_profile.html", {})
+            return render(request, "m_profile.html", {
+                "courses": courses,
+                "display_name": display_name,
+                "avatar": avatar,
+                "current_degree": current_degree,
+                "early_admission": early_admission,
+                "semesters": semesters,
+                "semester_duration": semester_duration,
+                "current_degree_status": current_degree_status,
+                "end_of_semester": end_of_semester,
+                "activity_points": activity_points,
+                "target": target
+                })
 
         else:
-            if request.method == "POST":
-                if request.POST["action_on_profile"] == "more":
-                    roadmap_id_number = request.POST["roadmap_id_number"]
-                    roadmap_details = RoadmapManager().display_roadmap_details(roadmap_id_number)
-                    course = roadmap_details[2]
-                    course_details = RoadmapManager().display_course(course)
-                    grades = RoadmapManager().display_grades(current_user, course)
-                    result = RoadmapManager().display_final_grade(current_user, course)
-                    threshold = RoadmapManager().display_course_threshold(course)
-
-                    if result >= threshold:
-                        status = "passed"
-                    elif result == -1:
-                        status = "ongoing"
-                    else:
-                        status = "failed"
-
-                    RoadmapManager().update_roadmap(roadmap_id_number, status)
-
-                    deadline = TimeMachine().number_to_system_date(roadmap_details[4])
-
-                    return render(request, "display_roadmap_details.html", {
-                        "roadmap_details": roadmap_details,
-                        "course_details": course_details,
-                        "deadline": deadline,
-                        "grades": grades,
-                        "status": status
-                        })
-
             return render(request, "profile.html", {
                 "courses": courses,
                 "display_name": display_name,
@@ -784,6 +796,7 @@ def list_of_submissions(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        user_agent = get_user_agent(request)
         submissions = SubmissionManager().display_students_assignments_limited(current_user)
 
         if request.method == "POST":
@@ -811,10 +824,15 @@ def list_of_submissions(request):
                         "status": status,
                         "sentences": sentences
                         })
+        if user_agent.is_mobile:
+            return render(request, "m_my_assignments.html", {
+                "submissions": submissions
+                })
 
-        return render(request, "list_of_submissions.html", {
-            "submissions": submissions
-            })
+        else:
+            return render(request, "list_of_submissions.html", {
+                "submissions": submissions
+                })
 
 
 @staff_member_required
@@ -998,16 +1016,29 @@ def assignments(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        user_agent = get_user_agent(request)
+
         if request.method == "POST":
             item = request.POST["item"]
 
             return render(request, "assignments.html", {"item": item})
 
         else:
+
             uncomplated_assignments = CurriculumManager().display_uncompleted_assignments(current_user)
             complated_assignments = CurriculumManager().display_completed_assignments(current_user)
 
-            return render(request, "assignments.html", {"uncomplated_assignments": uncomplated_assignments, "complated_assignments": complated_assignments})
+            if user_agent.is_mobile:
+                return render(request, "m_my_to_do_list.html", {
+                    "uncomplated_assignments": uncomplated_assignments,
+                    "complated_assignments": complated_assignments
+                    })
+
+            else:
+                return render(request, "assignments.html", {
+                    "uncomplated_assignments": uncomplated_assignments,
+                    "complated_assignments": complated_assignments
+                    })
 
 
 @login_required
@@ -2947,8 +2978,13 @@ def ranking(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        user_agent = get_user_agent(request)
         rows = StreamManager().display_ranking()
-        print(rows)
+
+        if user_agent.is_mobile:
+            return render(request, "m_ranking.html", {
+                "rows": rows
+                })
 
         return render(request, "ranking.html", {
             "rows": rows
@@ -2962,11 +2998,17 @@ def statistics(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        user_agent = get_user_agent(request)
         stats = StreamManager().statistics(current_user)
 
-        return render(request, "statistics.html", {
-            "stats": stats
-            })
+        if user_agent.is_mobile:
+            return render(request, "m_my_stats.html", {
+                "stats": stats
+                })
+        else:
+            return render(request, "statistics.html", {
+                "stats": stats
+                })
 
 
 @login_required

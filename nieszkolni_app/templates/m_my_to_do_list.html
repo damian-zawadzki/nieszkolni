@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>MY TO-DO LIST</h1>
+
+<table class="m_table">
+
+	{% for uncomplated_assignment in uncomplated_assignments %}
+
+		<tr class="font">
+
+			<td class="m_td_sentences">{{ uncomplated_assignment.1 }}</td>
+			<td class="m_td_sentences">{{ uncomplated_assignment.7 }}</td>
+
+			<form action="{% url 'assignment' %}"  method="POST">
+				{% csrf_token %}
+					<td>
+					<input type="hidden" name="item" value="{{ uncomplated_assignment.0 }}">
+					<button type="submit" class="list_button button_main" name="go_to" value="assignment">More</button>
+					</td>
+			</form>
+
+		</tr>
+
+	{% endfor %}
+
+	{% for complated_assignment in complated_assignments %}
+
+		<tr class="font">
+
+			<td class="m_td_sentences">{{ complated_assignment.1 }}</td>
+			<td class="m_td_sentences">{{ complated_assignment.7 }}</td>
+
+			<form action="{% url 'assignment' %}"  method="POST">
+				{% csrf_token %}
+					<td>
+					<input type="hidden" name="item" value="{{ complated_assignment.0 }}">
+					<button type="submit" class="list_button button_main" name="go_to" value="assignment">More</button>
+					</td>
+			</form>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+{% endblock %}

@@ -765,13 +765,32 @@ h3 {
 }
 
 /*Mobile*/
-.m_menu {
+.m_navigation {
+  background-color: #f9f9f9;
   display: inline-block;
-  margin-bottom: 10px;
+  margin-bottom: 1em;
+  padding: 1em 0em 1em 0em;
+  width: 100%;
 }
 
+.m_menu {
+  display: inline-block;
+  float: right;
+}
+
+.m_side_menu {
+  float: left;
+  margin-left: 1em;
+}
 .m_navigation_item {
+  align-self: flex-start;
+  display: inline-flex;
+  padding: 0.5em;
+}
+
+.m_navigation_item_inside {
   display: block;
+  margin-right: 3em;
   padding: 10px;
 }
 
@@ -797,9 +816,85 @@ h3 {
   border-style: none;
   box-shadow: rgba(0, 0, 0, .2) 0 3px 5px -1px,rgba(0, 0, 0, .14) 0 6px 10px 0,rgba(0, 0, 0, .12) 0 1px 18px 0;
   cursor: default;
-  margin-bottom: 15px;
-  margin-left: 35px;
+  float: right;
+  margin-right: 2em;
   padding: 10px;
+}
+
+table.m_table {
+  border-collapse: separate;
+  border-bottom-color: rgba(255,255,255,1);
+  border-spacing: 0px;
+  font-size: 14px;
+  font-weight: 300;
+  height: 100px;
+  margin-left: 0%;
+  margin-right: 0%;
+  margin-bottom: 1%;
+  width: 100%;
+  table-layout: auto;
+}
+
+th.m_th {
+  border-bottom: 1pt solid;
+  border-bottom-color: #D3D3D3;
+  font-size: 18px;
+  font-weight: 1000;
+  margin-bottom: 20px;
+  padding: 20px 20px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+td.m_td {
+  border-bottom: 1pt solid;
+  border-bottom-color: #D3D3D3;
+  margin-bottom: 20px;
+  padding: 20px 20px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.m_td_sentences {
+  text-align: left;
+}
+
+.m_avatar {
+  display: block;
+  flex-direction: column;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.avatar_description_box {
+  display: block;
+  float: left;
+}
+
+.m_avatar_name {
+  margin-left: 1em;
+  margin-right: 1em;
+  margin-top: 2%;
+  white-space: normal;
+}
+
+.m_avatar_description {
+  margin-left: 1em;
+  margin-right: 1em;
+  white-space: normal;
+}
+
+.m_block {
+  display: inline-block;
+}
+
+.m_semester_display {
+  display: block;
+  margin-top: 5%;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
 }
 
 /*profile*/

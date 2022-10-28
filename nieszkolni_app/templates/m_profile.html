@@ -1,6 +1,130 @@
 {% extends 'base.html' %}
 {% block 'content' %}
 
-Menu
+<div class="m_avatar">
+
+	<div class="avatar_frame">
+		<img class="avatar_image" src="{{ avatar }}" width="150" height="150">
+	</div>
+
+	<div class="avatar_description_box">
+
+		<div class="m_avatar_name">
+			<h2>{{ display_name.upper }}</h2>
+		</div>
+
+		<div class="m_avatar_description">
+			<h3>{{ activity_points }}/{{ target }}</h3>
+		</div>
+
+	</div>
+
+</div>
+
+<div class="m_semester_display">
+
+{% for semester in semesters %}
+	
+	{% if semester == 'inactive' or semester == 'graduated' %}
+	{% elif semester == 'ongoing' %}
+
+
+	<div class="m_block">
+		<div>
+			<img class="avatar_image" src="https://docs.google.com/drawings/d/e/2PACX-1vRV8c5SLW8O9AZgK3PhDjKz1ja8jsb3rZC7eVNV4jlRmZSVUMLgCBQdxK0lWoSTcffEyt-R_m90PULq/pub?w=685&h=686" width="50" height="50">
+		</div>
+		<div class="inscription_below">{{ forloop.counter }}.</br>SEMESTER</br>({{ semester_duration }} MO)</div>
+	</div>
+
+	{% elif semester == 'upcoming' %}
+
+	<div class="m_block">
+		<div>
+			<img class="avatar_image" src="https://docs.google.com/drawings/d/e/2PACX-1vQPU82bIgaEybDHe_-2vc92GRSe7aRAF7VzB-SjRp4jMACuDevX6khz4CEP7qJz8MMfv3NjCIG-9RvD/pub?w=685&h=686" width="50" height="50">
+		</div>
+		<div class="inscription_below">{{ forloop.counter }}.</br>SEMESTER</br>({{ semester_duration }} MO)</div>
+	</div>
+
+	{% elif semester == 'passed' %}
+
+	<div class="m_block">
+		<div>
+			<img class="avatar_image" src="https://docs.google.com/drawings/d/e/2PACX-1vQNMMEU13OwUQ_EFRgtMNa4ctHo41y7cKMgM8lEDrAMAiss_zvcE0-xSUxf-nVb4wDaViuhhQXWC16_/pub?w=685&h=686" width="50" height="50">
+		</div>
+		<div class="inscription_below">{{ forloop.counter }}.</br>SEMESTER</br>({{ semester_duration }} MO)</div>
+	</div>
+
+	{% elif semester == 'failed' %}
+
+	<div class="m_block">
+		<div>
+			<img class="avatar_image" src="https://docs.google.com/drawings/d/e/2PACX-1vR5PPizo3e8qcPCTYoiYiBw2_4v_lqSf_1SXT8j9YfdwpkpSZl04copPjn5dSMT8CIPPzIGgxpTxFcd/pub?w=685&h=686" width="50" height="50">
+		</div>
+		<div class="inscription_below">{{ forloop.counter }}.</br>SEMESTER</br>({{ semester_duration }} MO)</div>
+	</div>
+
+	{% endif %}
+
+{% endfor %}
+
+{% if current_degree_status == 'not_granted' %}
+
+	<div class="m_block">
+		<div>
+			<img class="avatar_image" src="https://docs.google.com/drawings/d/e/2PACX-1vQPU82bIgaEybDHe_-2vc92GRSe7aRAF7VzB-SjRp4jMACuDevX6khz4CEP7qJz8MMfv3NjCIG-9RvD/pub?w=685&h=686" width="50" height="50">
+		</div>
+		<div class="inscription_below">THE END OF THE COURSE</br>{{ current_degree.upper }}</div>
+	</div>
+
+{% elif current_degree_status == 'granted' %}
+
+	<div class="m_block">
+		<div>
+			<img class="avatar_image" src="https://docs.google.com/drawings/d/e/2PACX-1vQNMMEU13OwUQ_EFRgtMNa4ctHo41y7cKMgM8lEDrAMAiss_zvcE0-xSUxf-nVb4wDaViuhhQXWC16_/pub?w=685&h=686" width="50" height="50">
+		</div>
+		<div class="inscription_below">THE END OF THE COURSE</br>{{ current_degree.upper }}</div>
+	</div>
+
+{% else %}
+
+	<div class="m_block">
+		<div>
+			<img class="avatar_image" src="https://docs.google.com/drawings/d/e/2PACX-1vQPU82bIgaEybDHe_-2vc92GRSe7aRAF7VzB-SjRp4jMACuDevX6khz4CEP7qJz8MMfv3NjCIG-9RvD/pub?w=685&h=686" width="50" height="50">
+		</div>
+		<div class="inscription_below">THE BEGINNING OF THE COURSE</br></div>
+	</div>
+
+{% endif %}
+
+</div>
+
+<table class="m_table">
+
+		<tr class="font">
+
+			<th class="m_td_sentences">Course</th>
+			<th></th>
+
+		</tr>
+
+	{% for course in courses %}
+
+		<tr class="font">
+
+			<td class="m_td_sentences">{{ course.2 }}</td>
+
+			<form action="{% url 'profile' %}"  method="POST">
+				{% csrf_token %}
+					<td>
+						<input type="hidden" name="roadmap_id_number" value="{{ course.0 }}">
+						<button type="submit" class="list_button button_main" name="action_on_profile" value="more">More</button>
+					</td>
+			</form>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
 
 {% endblock %}

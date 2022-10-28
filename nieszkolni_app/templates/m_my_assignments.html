@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>MY ASSIGNMENTS</h1>
+
+<table class="m_table">
+
+	{% for submission in submissions %}
+
+		<tr class="font">
+
+			<td>{{ submission.0 }}</td>
+			<td>{{ submission.1 }}</td>
+			<td>
+				<form action="{% url 'list_of_submissions' %}"  method="POST">
+					{% csrf_token %}
+					 <div class="flex-parent jc-center">
+					  		<input type="hidden" name="unique_id" value="{{ submission.4 }}">
+					  	<div class="list_button">
+							<button type="submit" class="button_main" name="submission_action" value="explore">Explore</button>
+						</div>
+					  </div>
+				</form>
+			</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+{% include 'footer.html' %}
+{% endblock %}

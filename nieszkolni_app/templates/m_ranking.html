@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>RANKING</h1>
+
+<table class="m_table">
+
+		<tr class="font">
+
+			<th>Position</th>
+			<th>Name</th>
+			<th>Activity points</th>
+
+		</tr>
+
+	{% for row in rows %}
+
+		<tr class="font">
+
+			<td>{{ row.0 }}</td>
+			<td>{{ row.1 }}</td>
+			<td>{{ row.2 }}</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+{% endblock %}

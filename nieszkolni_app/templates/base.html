@@ -16,9 +16,20 @@
   </head>
 
 <body>
-  <nav class="navigation">
+  <nav class="m_navigation">
 
     {% if user.is_authenticated %}
+    <div class="m_side_menu" id="main_links">
+      <li class="m_navigation_item">
+        <a class="m_navigation_link" href="{% url 'ranking'%}">RANKING</a>
+      </li>
+      <li class="m_navigation_item">
+        <a class="m_navigation_link" href="{% url 'profile'%}">MY PROFILE</a>
+      </li>
+      <li class="m_navigation_item">
+        <a class="m_navigation_link" href="{% url 'logout_user'%}">LOGOUT</a>
+      </li>
+    </div>
 
     <div class="m_menu">
       <div>
@@ -27,18 +38,36 @@
 
       <div style="display: none;" id="main_side_menu">
         <ul>
-            <li class="m_navigation_item">
-              <a class="m_navigation_link">{{ user.first_name.upper }} {{ user.last_name.upper }}</a>
-            </li>
-            <li class="m_navigation_item">
-              <a class="m_navigation_link" href="{% url 'ranking'%}">RANKING</a>
-            </li>
-            <li class="m_navigation_item">
-              <a class="m_navigation_link" href="{% url 'profile'%}">MY PROFILE</a>
-            </li>
-            <li class="m_navigation_item">
-              <a class="m_navigation_link" href="{% url 'logout_user'%}">LOGOUT</a>
-            </li>
+          <li class="m_navigation_item_inside">
+            <a class="side_navigation_link_2" href="{% url 'assignments'%}">MY TO-DO LIST</a>
+          </li>
+          <li class="m_navigation_item_inside">
+            <a class="side_navigation_link_2" href="{% url 'statistics'%}">MY STATS</a>
+          </li>
+          <li class="m_navigation_item_inside">
+            <a class="side_navigation_link_2" href="{% url 'vocabulary'%}">MY VOCABULARY</a>
+          </li>
+          <li class="m_navigation_item_inside">
+            <a class="side_navigation_link_2" href="{% url 'sentences'%}">MY SENTENCES</a>
+          </li>
+          <li class="m_navigation_item_inside">
+            <a class="side_navigation_link_2" href="{% url 'my_pronunciation'%}">MY PRONUNCIATION</a>
+          </li>
+          <li class="m_navigation_item_inside">
+            <a class="side_navigation_link_2" href="{% url 'memories'%}">MY MEMORIES</a>
+          </li>
+          <li class="m_navigation_item_inside">
+            <a class="side_navigation_link_2" href="{% url 'submit_assignment'%}">MY SUBMISSIONS</a>
+          </li>
+          <li class="m_navigation_item_inside">
+            <a class="side_navigation_link_2" href="{% url 'list_of_submissions'%}">MY ASSIGNMENTS</a>
+          </li>
+          <li class="m_navigation_item_inside">
+            <a class="side_navigation_link_2" href="{% url 'report_reading'%}">MY READING</a>
+          </li>
+          <li class="m_navigation_item_inside">
+            <a class="side_navigation_link_2" href="{% url 'options'%}">MY SETTINGS</a>
+          </li>
         </ul>
       </div>
     </div>
@@ -50,6 +79,7 @@
     </li>
 
     {% endif %}
+
   </nav>
 
   
@@ -169,17 +199,27 @@
 
 {% endif %}
 
+<div id="main_content">
+
   {% block 'content' %}
   {% endblock %}
+
+</div>
 
 <script type="text/javascript">
 
   function showHideHamburgerMenu() {
   var main_side_menu = document.getElementById("main_side_menu");
+  var main_links = document.getElementById("main_links")
+  var main_content = document.getElementById("main_content");;
   if (main_side_menu.style.display === "none") {
-    main_side_menu.style.display = "block"; 
+    main_side_menu.style.display = "block";
+    main_links.style.display = "none";
+    main_content.style.display = "none";
     } else {
-      main_side_menu.style.display = "none"; 
+      main_side_menu.style.display = "none";
+      main_links.style.display = "block"; 
+      main_content.style.display = "block";  
     }
   }
 
