@@ -116,7 +116,7 @@ class ClientsManager:
                 level,
                 daily_limit_of_new_cards
                 FROM nieszkolni_app_client
-                WHERE name == '{name}'
+                WHERE name = '{name}'
                 ''')
 
             client_details = cursor.fetchone()
