@@ -106,11 +106,11 @@ class StreamManager:
                 ''')
 
     def display_stream_range(self, start, end):
-        start_date = TimeMachine().date_to_number(start)
-        end_date = TimeMachine().date_to_number(end)
-
-        start_date = 8000
-        end_date = 9000
+        try:
+            start_date = TimeMachine().date_to_number(start)
+            end_date = TimeMachine().date_to_number(end)
+        except Exception as e:
+            print(e)
 
         with connection.cursor() as cursor:
             cursor.execute(f'''
