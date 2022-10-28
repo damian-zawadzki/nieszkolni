@@ -46,8 +46,8 @@ def home(request):
 
     return render(request, 'home.html', {})
 
-def custom_error_view(request, *args, **argv):
-    return render(request, '500.html', status=500)
+# def custom_error_view(request, *args, **argv):
+#     return render(request, '500.html', status=500)
 
 
 @login_required(login_url='login_user.html')
