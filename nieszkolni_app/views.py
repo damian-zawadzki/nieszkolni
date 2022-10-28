@@ -1843,13 +1843,13 @@ def stream(request):
                     "rows": rows
                     })
 
-            if request.POST["stream_action"] == "delete":
+            elif request.POST["stream_action"] == "delete":
                 unique_id = request.POST["unique_id"]
                 delete = StreamManager().delete_from_stream(unique_id)
 
                 return redirect("stream.html")
 
-            if request.POST["stream_action"] == "explore":
+            elif request.POST["stream_action"] == "explore":
                 unique_id = request.POST["unique_id"]
 
                 row = StreamManager().display_stream_entry(unique_id)
