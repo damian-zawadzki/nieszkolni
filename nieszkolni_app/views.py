@@ -321,7 +321,7 @@ def login_user(request):
         username = request.POST["username"]
         password = request.POST["password"]
         user = authenticate(request, username=username, password=password)
-        if user == not None:
+        if user != None:
             login(request, user)
             messages.success(request, ("You have successfully logged in."))
             return redirect("home")
