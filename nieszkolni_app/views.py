@@ -206,11 +206,6 @@ def view_answer(request):
                 interval = all_due_entries[0][4]
 
                 if request.POST["answer"] != "edit":
-                    try:
-                        engine.stop()
-                    except:
-                        pass
-
                     answer = request.POST["answer"]
                     VocabularyManager().update_card(card_id, answer, card_opening_time)
 
