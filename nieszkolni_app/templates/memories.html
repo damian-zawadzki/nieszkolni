@@ -1,24 +1,22 @@
 {% extends 'base.html' %}
 {% block 'content' %}
 
-<h1>Memories</h1>
+<h1>MEMORIES</h1>
 
-<div class="list_container">
-	<ul class="list">
+<table>
 
-		{% for memory in memories %}
+	{% for memory in memories %}
 
-			<li class="list_item">
+		<tr class="font">
 
-				<div class="list_content">{{ forloop.counter }}</div>
-				<div class="list_content_inside">{{ memory }}</div>
+			<td>{{ forloop.counter }}</td>
+			<td class="td_sentences">{{ memory }}</td>
 
-			</li>
+		</tr>
 
-		{% endfor %}
+	{% endfor %}
 
-	</ul>
-</div>
+</table>
 
 {% include 'footer.html' %}
 {% endblock %}

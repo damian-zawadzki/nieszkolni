@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>Options</h1>
+
+<table>
+
+		<tr class="font">
+
+			<th>Command</th>
+			<th>Value</th>
+			<th>Action</th>
+
+		</tr>
+
+	{% for option in options %}
+
+		<tr class="font">
+
+			<td>{{ option.2 }}</td>
+			<td>{{ option.3 }}</td>
+			<td>
+				<form action="{% url 'display_options' %}"  method="POST">
+					{% csrf_token %}
+					  <div class="flex-parent jc-center">
+					  		<input type="hidden" name="option_id" value="{{ option.5 }}">
+					    	<button type="submit" class="button_main" name="action_on_option" value="delete">Delete</button>
+					  </div>
+				</form>
+			</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+<form action="{% url 'display_options' %}"  method="POST">
+	{% csrf_token %}
+
+	  <div class="flex-parent jc-center">
+	      <button type="submit" class="button_main" name="action_on_option" value="go_to_add">Add</button>
+	  </div>
+
+</form>
+
+{% include 'footer.html' %}
+{% endblock %}

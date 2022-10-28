@@ -20,9 +20,11 @@ from nieszkolni_folder.wordcounter import Wordcounter
 from nieszkolni_folder.sentence_manager import SentenceManager
 from nieszkolni_folder.back_office_manager import BackOfficeManager
 from nieszkolni_folder.document_manager import DocumentManager
+from nieszkolni_folder.roadmap_manager import RoadmapManager
 import csv
 import re
 import json
+import pyttsx3
 
 from django_user_agents.utils import get_user_agent
 
@@ -73,6 +75,7 @@ def vocabulary(request):
 
             if request.method == "POST":
                 if request.POST["answer"] == "show":
+
                     return render(request, 'view_answer.html', {
                         "english": english,
                         "polish": polish,
@@ -184,40 +187,88 @@ def view_answer(request):
 
         # If a button is clicked
         if request.method == "POST":
-            deck = request.POST["deck"]
-
-            all_due_entries = VocabularyManager().display_due_entries(current_user, deck)
-
-            card_id = all_due_entries[0][0]
-            polish = all_due_entries[0][1]
-            english = all_due_entries[0][2]
-            old_due_today = len(VocabularyManager().display_old_due_entries(current_user, deck))
-            new_due_today = len(VocabularyManager().display_new_due_entries(current_user, deck))
-            problematic_due_today = len(VocabularyManager().display_problematic_due_entries(current_user, deck))
-            interval = all_due_entries[0][4]
-
-            if request.POST["answer"] != "edit":
-                answer = request.POST["answer"]
-                VocabularyManager().update_card(card_id, answer, card_opening_time)
+            if request.POST["answer"] != "play":
+                deck = request.POST["deck"]
 
                 all_due_entries = VocabularyManager().display_due_entries(current_user, deck)
 
-                # If there are no more cards to review
-                if len(all_due_entries) == 0:
-                    VocabularyManager().reset_line(current_user)
-                    return redirect('congratulations.html')
+                card_id = all_due_entries[0][0]
+                polish = all_due_entries[0][1]
+                english = all_due_entries[0][2]
+                old_due_today = len(VocabularyManager().display_old_due_entries(current_user, deck))
+                new_due_today = len(VocabularyManager().display_new_due_entries(current_user, deck))
+                problematic_due_today = len(VocabularyManager().display_problematic_due_entries(current_user, deck))
+                interval = all_due_entries[0][4]
 
+                if request.POST["answer"] != "edit":
+                    try:
+                        engine.stop()
+                    except:
+                        pass
+
+                    answer = request.POST["answer"]
+                    VocabularyManager().update_card(card_id, answer, card_opening_time)
+
+                    all_due_entries = VocabularyManager().display_due_entries(current_user, deck)
+
+                    # If there are no more cards to review
+                    if len(all_due_entries) == 0:
+                        VocabularyManager().reset_line(current_user)
+                        return redirect('congratulations.html')
+
+                    else:
+                        return redirect(f'{deck}.html')
                 else:
-                    return redirect(f'{deck}.html')
+                    return render(request, "edit_card.html", {
+                        "card_id": card_id,
+                        "polish": polish,
+                        "english": english
+                        })
             else:
-                return render(request, "edit_card.html", {
-                    "card_id": card_id,
-                    "polish": polish,
-                    "english": english
-                    })
+                try:
+                    engine = pyttsx3.init()
+                except:
+                    pass
+
+                try:
+                    engine.stop()
+                except:
+                    pass
+
+                deck = request.POST["deck"]
+
+                all_due_entries = VocabularyManager().display_due_entries(current_user, deck)
+
+                card_id = all_due_entries[0][0]
+                polish = all_due_entries[0][1]
+                english = all_due_entries[0][2]
+                old_due_today = len(VocabularyManager().display_old_due_entries(current_user, deck))
+                new_due_today = len(VocabularyManager().display_new_due_entries(current_user, deck))
+                problematic_due_today = len(VocabularyManager().display_problematic_due_entries(current_user, deck))
+                interval = all_due_entries[0][4]
+
+                english_1 = re.sub(r"\ssb\s", " somebody ", english)
+                english_2 = re.sub(r"\ssb$", " somebody", english_1)
+                english_3 = re.sub(r"\ssth\s", " something ", english_2)
+                english_4 = re.sub(r"\ssth$", " something", english_3)
+                engine.say(english_4)
+
+                try:
+                    engine.runAndWait()
+                    engine.stop()
+
+                except:
+                    pass
 
         # If no button is clicked
-        return render(request, 'view_answer.html', {"polish": polish, "english": english,  "old_due_today": old_due_today, "new_due_today": new_due_today, "problematic_due_today": problematic_due_today, "interval": interval})
+        return render(request, 'view_answer.html', {
+            "deck": deck,
+            "polish": polish,
+            "english": english, 
+            "old_due_today": old_due_today,
+            "new_due_today": new_due_today,
+            "problematic_due_today": problematic_due_today,
+            "interval": interval})
 
 
 @login_required
@@ -286,143 +337,150 @@ def logout_user(request):
 
 @staff_member_required
 def register_user(request):
-    if request.method == "POST":
-        internal_email_address = request.POST["internal_email_address"]
-        first_name = request.POST["first_name"]
-        last_name = request.POST["last_name"]
-        password = request.POST["password"]
-        username = first_name.lower() + last_name.lower()
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
 
-        user = authenticate(request, username=username, password=password)
-        if user is None:
-            user = User.objects.create_user(username, internal_email_address, password)
-            user.first_name = first_name
-            user.last_name = last_name
-            user.save()
+        if request.method == "POST":
+            internal_email_address = request.POST["internal_email_address"]
+            first_name_variable = request.POST["first_name"]
+            last_name_variable = request.POST["last_name"]
+            password = request.POST["password"]
+            system_username = first_name_variable.lower() + last_name_variable.lower()
+            username = first_name_variable + " " + last_name_variable
 
-            messages.success(request, ("The student has been added to the database."))
-            return redirect("home")
+            user = authenticate(request, username=system_username, password=password)
+            if user is None:
+                user = User.objects.create_user(system_username, internal_email_address, password)
+                user.first_name = first_name_variable
+                user.last_name = last_name_variable
 
-        else:
-            messages.success(request, ("The student already exists."))
+                is_client = ClientsManager().verify_client(username)
+                if is_client is False:
 
-    return render(request, "register_user.html", {})
+                    add = ClientsManager().add_client(
+                        username,
+                        internal_email_address
+                        )
+
+                    user.save()
+
+                    messages.success(request, ("The user has been added to the database."))
+                    return redirect("list_current_users")
+
+                else:
+                    messages.success(request, ("The student already exists."))
+
+            else:
+                messages.success(request, ("The user already exists."))
+
+        return render(request, "register_user.html", {})
 
 
 @staff_member_required
 def register_client(request):
-    coaches = ["Damian Zawadzki", "Marta Bańkowska", "Nadia Kukulska", "Piotr Gmitrzak"]
-    levels = ["basic", "communicative", "advanced"]
-    schools = ["Nieszkolni", "Secret Language Club"]
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
 
-    if request.method == "POST":
-        if request.POST["register"] == "client_and_user":
+        if request.method == "POST":
+            if request.POST["edit"] == "save":
 
-            first_name = request.POST["first_name"]
-            last_name = request.POST["last_name"]
-            name = first_name + " " + last_name
-            school = request.POST["school"]
-            password = request.POST["password"]
-            phone_number = request.POST["phone_number"]
-            contact_email_address = request.POST["contact_email_address"]
-            internal_email_address = request.POST["internal_email_address"]
-            meeting_duration = request.POST["meeting_duration"]
-            price = request.POST["price"]
-            acquisition_channel = request.POST["acquisition_channel"]
-            recommenders = request.POST["recommenders"]
-            coach = request.POST["coach"]
-            level = request.POST["level"]
-            test_user = request.POST["test_user"]
-            username = first_name.lower() + last_name.lower()
+                user_type = request.POST["user_type"]
+                name = request.POST["name"]
+                phone_number = request.POST["phone_number"]
+                contact_email_address = request.POST["contact_email_address"]
+                internal_email_address = request.POST["internal_email_address"]
+                meeting_duration = request.POST["meeting_duration"]
+                price = request.POST["price"]
+                acquisition_channel = request.POST["acquisition_channel"]
+                recommenders = request.POST["recommenders"]
+                reasons_for_resignation = request.POST["reasons_for_resignation"]
+                status = request.POST["status"]
+                coach = request.POST["coach"]
+                level = request.POST["level"]
+                daily_limit_of_new_cards = request.POST["daily_limit_of_new_cards"]
 
-            user = authenticate(request, username=username, password=password)
-            if user is None:
-                add = ClientsManager().add_client(
-                    test_user,
+
+                edit = ClientsManager().edit_client(
+                    user_type,
                     name,
                     phone_number,
                     contact_email_address,
-                    school,
                     internal_email_address,
                     meeting_duration,
                     price,
                     acquisition_channel,
                     recommenders,
+                    reasons_for_resignation,
+                    status,
                     coach,
-                    level
+                    level,
+                    daily_limit_of_new_cards
                     )
 
-                user = User.objects.create_user(username, internal_email_address, password)
-                user.first_name = first_name
-                user.last_name = last_name
-                user.save()
+        current_clients = ClientsManager().list_current_users()
 
-                messages.success(request, ("The student has been added to the database."))
+        return render(request, "list_current_users.html", {
+            "current_clients": current_clients
+            })
+
+
+@staff_member_required
+def list_current_users(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        current_clients = ClientsManager().list_current_users()
+
+        if request.method == "POST":
+            if request.POST["action_on_user"] == "more":
+                name = request.POST["name"]
+
+                client_details = ClientsManager().load_client(name)
+                user_type = client_details[0]
+                phone_number = client_details[2]
+                contact_email_address = client_details[3]
+                internal_email_address = client_details[5]
+                meeting_duration = client_details[6]
+                price = client_details[7]
+                acquisition_channel = client_details[8]
+                recommenders = client_details[9]
+                reasons_for_resignation = client_details[10]
+                status = client_details[11]
+                coach = client_details[12]
+                level = client_details[13]
+                daily_limit_of_new_cards = client_details[14]
+
                 return render(request, "register_client.html", {
-                    "coaches": coaches,
-                    "levels": levels,
-                    "schools": schools
+                    "name": name,
+                    "user_type": user_type,
+                    "phone_number": phone_number,
+                    "contact_email_address": contact_email_address,
+                    "internal_email_address": internal_email_address,
+                    "meeting_duration": meeting_duration,
+                    "price": price,
+                    "acquisition_channel": acquisition_channel,
+                    "recommenders": recommenders,
+                    "reasons_for_resignation": reasons_for_resignation,
+                    "status": status,
+                    "coach": coach,
+                    "level": level,
+                    "daily_limit_of_new_cards": daily_limit_of_new_cards
+                    })
+            else:
+
+                return render(request, "list_current_users.html", {
+                    "current_clients": current_clients
                     })
 
-            else:
-                messages.error(request, ("The student could not be added to the database."))
-
-            # else:
-            #     messages.success(request, ("The student already exists."))
-        elif request.POST["register"] == "client":
-            first_name = request.POST["first_name"]
-            last_name = request.POST["last_name"]
-            name = first_name + " " + last_name
-            school = request.POST["school"]
-            password = request.POST["password"]
-            phone_number = request.POST["phone_number"]
-            contact_email_address = request.POST["contact_email_address"]
-            internal_email_address = request.POST["internal_email_address"]
-            meeting_duration = request.POST["meeting_duration"]
-            price = request.POST["price"]
-            acquisition_channel = request.POST["acquisition_channel"]
-            recommenders = request.POST["recommenders"]
-            coach = request.POST["coach"]
-            level = request.POST["level"]
-            test_user = request.POST["test_user"]
-            username = first_name.lower() + last_name.lower()
-
-            is_client = ClientsManager().verify_client(name)
-            if is_client is False:
-
-                add = ClientsManager().add_client(
-                    test_user,
-                    name,
-                    phone_number,
-                    contact_email_address,
-                    school,
-                    internal_email_address,
-                    meeting_duration,
-                    price,
-                    acquisition_channel,
-                    recommenders,
-                    coach,
-                    level
-                    )
-
-                messages.success(request, ("The student has been added to the database."))
-                return render(request, "register_client.html", {
-                    "coaches": coaches,
-                    "levels": levels,
-                    "schools": schools
-                    })        
-
-            else:
-                messages.error(request, ("The student is already in the database."))
-
-        else:
-            pass
-
-    return render(request, "register_client.html", {
-        "coaches": coaches,
-        "levels": levels,
-        "schools": schools
-        })
+        return render(request, "list_current_users.html", {
+            "current_clients": current_clients
+            })
 
 
 @login_required
@@ -482,12 +540,83 @@ def profile(request):
         current_user = first_name + " " + last_name
 
         user_agent = get_user_agent(request)
+        profile = RoadmapManager().display_profile(current_user)
+        semesters = RoadmapManager().display_semesters(current_user)
+
+        if profile is None:
+            display_name = current_user
+            avatar = "https://docs.google.com/drawings/d/e/2PACX-1vQnrkWBZi2-ZrZ8fyKO_8qIBuOSrz19oeTq9XNnhCbDw6CAu8Rb8uBKYNcLBT0JLcZ8Dv_EWmZ93BBn/pub?w=685&h=686"
+            current_semester = "1"
+            current_degree = ""
+            early_admission = "no"
+        else:
+            display_name = profile[1]
+            avatar = profile[2]
+            current_semester = profile[4]
+            current_degree = profile[6]
+            early_admission = profile[7]
+
+        if current_degree == "associate":
+            semester_duration = 1
+        else:
+            semester_duration = 3
+
+        degrees = RoadmapManager().display_degrees(current_user)
+        current_degree_status = degrees.get(current_degree)
+
+        courses = RoadmapManager().display_roadmap(current_user, current_semester)
+
+        end_of_semester = BackOfficeManager().display_end_of_semester()
+
+        activity_points = StreamManager().display_activity(current_user)
+        target = StreamManager().display_activity_target(current_user)
 
         if user_agent.is_mobile:
             return render(request, "m_profile.html", {})
 
         else:
-            return render(request, "profile.html", {})
+            if request.method == "POST":
+                if request.POST["action_on_profile"] == "more":
+                    roadmap_id_number = request.POST["roadmap_id_number"]
+                    roadmap_details = RoadmapManager().display_roadmap_details(roadmap_id_number)
+                    course = roadmap_details[2]
+                    course_details = RoadmapManager().display_course(course)
+                    grades = RoadmapManager().display_grades(current_user, course)
+                    result = RoadmapManager().display_final_grade(current_user, course)
+                    threshold = RoadmapManager().display_course_threshold(course)
+
+                    if result >= threshold:
+                        status = "passed"
+                    elif result == -1:
+                        status = "ongoing"
+                    else:
+                        status = "failed"
+
+                    RoadmapManager().update_roadmap(roadmap_id_number, status)
+
+                    deadline = TimeMachine().number_to_system_date(roadmap_details[4])
+
+                    return render(request, "display_roadmap_details.html", {
+                        "roadmap_details": roadmap_details,
+                        "course_details": course_details,
+                        "deadline": deadline,
+                        "grades": grades,
+                        "status": status
+                        })
+
+            return render(request, "profile.html", {
+                "courses": courses,
+                "display_name": display_name,
+                "avatar": avatar,
+                "current_degree": current_degree,
+                "early_admission": early_admission,
+                "semesters": semesters,
+                "semester_duration": semester_duration,
+                "current_degree_status": current_degree_status,
+                "end_of_semester": end_of_semester,
+                "activity_points": activity_points,
+                "target": target
+                })
 
 
 @login_required
@@ -498,6 +627,14 @@ def submit_assignment(request):
         current_user = first_name + " " + last_name
 
         if request.method == "POST":
+            if request.POST["go_to"] == "removal":
+                item = request.POST["item"]
+                name = request.POST["client"]
+
+                CurriculumManager().remove_curriculum(item)
+
+                return redirect("display_curricula.html")
+
             if request.POST["go_to"] == "submission":
                 item = request.POST["item"]
                 current_user = request.POST["current_user"]
@@ -783,6 +920,8 @@ def add_curriculum(request):
                     entries = SentenceManager().display_planned_sentence_lists_per_student(name)
                 elif assignment_type == "reading":
                     entries = BackOfficeManager().display_library_position_numbers()
+                else:
+                    entries = ""
 
                 return render(request, "add_curriculum_2.html", {
                     "names": names,
@@ -931,9 +1070,214 @@ def display_curricula(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        assignments = CurriculumManager().display_all_assignments()
+        clients = ClientsManager().list_current_clients()
 
-        return render(request, "display_curricula.html", {"assignments": assignments})
+        if request.method == "POST":
+            if request.POST["action_on_curriculum"] == "filter":
+                name = request.POST["name"]
+                assignments = CurriculumManager().display_assignments_for_student(name)
+
+                return render(request, "display_curricula.html", {
+                    "clients": clients,
+                    "assignments": assignments
+                    })
+
+        return render(request, "display_curricula.html", {
+            "clients": clients
+            })
+
+
+@staff_member_required
+def display_modules(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        modules = CurriculumManager().display_modules()
+
+        if request.method == "POST":
+            if request.POST["action_on_module"] == "more":
+                component_id = request.POST["component_id"]
+
+                module = CurriculumManager().display_module(component_id)
+                print(module)
+
+                return render(request, "display_module.html", {
+                    "module": module
+                    })
+
+        return render(request, "display_modules.html", {
+            "modules": modules
+            })
+
+
+@staff_member_required
+def add_module(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        if request.method == "POST":
+            component_id_number = request.POST["component_id_number"]
+            component_type = request.POST["component_type"]
+            component_id = f"{component_type}_{component_id_number}"
+            title = request.POST["title"]
+            content = request.POST["content"]
+            resources = request.POST["resources"]
+            conditions = request.POST["conditions"]
+
+            CurriculumManager().add_module(
+                component_id,
+                component_type,
+                title,
+                content,
+                resources,
+                conditions
+                )
+
+            messages.success(request, ("You have added a module!"))
+            return render(request, "add_module.html", {})
+
+        return render(request, "add_module.html", {})
+
+
+@staff_member_required
+def display_matrices(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        matrices = CurriculumManager().display_matrices()
+
+        if request.method == "POST":
+            matrix = request.POST["matrix"]
+            modules = CurriculumManager().display_matrix(matrix)
+
+            return render(request, "display_matrices.html", {
+                "modules": modules,
+                "matrices": matrices
+                })
+
+        return render(request, "display_matrices.html", {
+            "matrices": matrices
+            })
+
+
+@staff_member_required
+def add_matrix(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        components = CurriculumManager().display_components()
+
+        if request.method == "POST":
+            component_id = request.POST["component_id"]
+            matrix = request.POST["matrix"]
+            limit_number = request.POST["limit_number"]
+
+            CurriculumManager().add_matrix(
+                component_id,
+                matrix,
+                limit_number
+                )
+
+            messages.success(request, ("You have updated the matrix!"))
+            return render(request, "add_matrix.html", {
+                "components": components
+                })
+
+        return render(request, "add_matrix.html", {
+            "components": components
+            })
+
+
+@staff_member_required
+def plan_matrix(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        matrices = CurriculumManager().display_matrices()
+        clients = ClientsManager().list_current_clients()
+
+        if request.method == "POST":
+            client = request.POST["client"]
+            matrix = request.POST["matrix"]
+            starting_date = request.POST["starting_date"]
+            starting_date_number = TimeMachine().date_to_number(starting_date)
+
+            modules = CurriculumManager().display_matrix(matrix)
+
+            i = 0
+            for module in modules:
+                component_id = module["component_id"]
+                limit_number = module["limit_number"]
+
+                entry = CurriculumManager().display_module(component_id)
+
+                component_type = entry[1]
+                title = entry[2]
+                content = entry[3]
+                resources = entry[4]
+                conditions = entry[5]
+
+                item = CurriculumManager().next_item() + i
+                deadline = starting_date_number + limit_number
+                deadline_date = TimeMachine().number_to_system_date(deadline)
+                component_type_raw = re.search(r"\w.+_", component_id).group()
+                component_type = re.sub("_", "", component_type_raw)
+                reference = 0
+
+                CurriculumManager().add_curriculum(
+                    item,
+                    deadline_date,
+                    client,
+                    component_id,
+                    component_type,
+                    component_type,
+                    title,
+                    content,
+                    matrix,
+                    resources,
+                    conditions,
+                    reference
+                    )
+
+                i += 1
+
+                x = (
+                    item,
+                    deadline_date,
+                    client,
+                    component_id,
+                    component_type,
+                    component_type,
+                    title,
+                    content,
+                    matrix,
+                    resources,
+                    conditions,
+                    reference
+                    )
+
+                print(x)
+
+            messages.success(request, ("You have planned a curriculum!"))
+            return render(request, "plan_matrix.html", {
+                "matrices": matrices,
+                "clients": clients
+                })
+
+        return render(request, "plan_matrix.html", {
+            "matrices": matrices,
+            "clients": clients
+            })
 
 
 @staff_member_required
@@ -1476,9 +1820,16 @@ def stream(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        rows = StreamManager().display_stream()
-
         if request.method == "POST":
+            if request.POST["stream_action"] == "filter":
+                start = request.POST["start"]
+                end = request.POST["end"]
+                rows = StreamManager().display_stream_range(start, end)
+
+                return render(request, "stream.html", {
+                    "rows": rows
+                    })
+
             if request.POST["stream_action"] == "delete":
                 unique_id = request.POST["unique_id"]
                 delete = StreamManager().delete_from_stream(unique_id)
@@ -1494,9 +1845,36 @@ def stream(request):
                     "row": row
                     })
 
-        return render(request, "stream.html", {
-            "rows": rows
-            })
+        return render(request, "stream.html", {})
+
+
+@staff_member_required
+def upload_stream(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        if request.method == "POST":
+            csv_file = request.FILES["csv_file"]
+
+            file = csv_file.read().decode("utf8")
+            entries = StringToCsv().convert(file)
+
+            for entry in entries:
+                StreamManager().import_old_stream(
+                    entry[0],
+                    entry[1],
+                    entry[2],
+                    entry[3],
+                    entry[4],
+                    entry[5],
+                    )
+
+            messages.success(request, ("The file has been uploaded!"))
+            return redirect("upload_stream.html")
+
+        return render(request, "upload_stream.html", {})
 
 
 @staff_member_required
@@ -1887,26 +2265,16 @@ def report_listening(request):
                     current_client,
                     title,
                     number_of_episodes,
-                    "reported"
+                    "not_in_stream"
                     )
 
                 return redirect("report_listening.html")
 
             else:
-                duration = BackOfficeManager().get_duration_from_repertoire(title)
-                final_duration = int(duration) * int(number_of_episodes)
-
-                BackOfficeManager().add_to_repertoire_line(
-                    current_user,
-                    title,
-                    number_of_episodes,
-                    "processed"
-                    )
-
                 StreamManager().add_to_stream(
                     current_client,
                     "PO",
-                    final_duration,
+                    f'{title} *{number_of_episodes}',
                     current_user
                     )
 
@@ -1967,34 +2335,48 @@ def repertoire_line(request):
             stamp = request.POST["stamp"]
             date = request.POST["date"]
             name = request.POST["name"]
-            title = request.POST["title"]
+            title_name = request.POST["title"]
             number_of_episodes = request.POST["number_of_episodes"]
             duration = request.POST["duration"]
             title_type = request.POST["title_type"]
-            final_duration = int(duration) * int(number_of_episodes)
+            status = request.POST["status"]
 
-            BackOfficeManager().add_to_repertoire(
-                title,
-                duration,
-                title_type
-                )
+            if status == "not_in_stream":
 
-            StreamManager().add_to_stream(
-                name,
-                "PO",
-                final_duration,
-                current_user
-                )
+                BackOfficeManager().add_to_repertoire(
+                    title_name,
+                    duration,
+                    title_type
+                    )
 
-            BackOfficeManager().mark_repertoire_line_as_processed(stamp)
+                StreamManager().add_to_stream(
+                    name,
+                    "PO",
+                    f'{title_name} *{number_of_episodes}',
+                    current_user
+                    )
 
-            return redirect("repertoire_line.html")
+                BackOfficeManager().mark_repertoire_line_as_processed(stamp)
 
+                return redirect("repertoire_line.html")
+
+            else:
+
+                BackOfficeManager().add_to_repertoire(
+                    title_name,
+                    duration,
+                    title_type
+                    )
+
+                BackOfficeManager().mark_repertoire_line_as_processed(stamp)
+
+                return redirect("repertoire_line.html")
         if title is None:
             messages.success(request, ("Everything's processed!"))
             return render(request, "repertoire_line.html", {})
 
         title_name = title[3]
+        number_of_episodes = title[4]
         check_if_in_repertoire = BackOfficeManager().check_if_in_repertoire(title_name)
 
         if check_if_in_repertoire is True:
@@ -2002,13 +2384,12 @@ def repertoire_line(request):
             name = title[2]
 
             BackOfficeManager().mark_repertoire_line_as_processed(stamp)
-            final_duration = BackOfficeManager().get_duration_from_repertoire(title_name)
 
             StreamManager().add_to_stream(
                 name,
                 "PO",
-                final_duration,
-                name
+                f'{title_name} *{number_of_episodes}',
+                current_user
                 )
 
             return redirect("repertoire_line.html")
@@ -2066,6 +2447,683 @@ def download_assignments(request):
             return redirect("download_assignments.html")
 
         return render(request, "download_assignments.html", {})
+
+@staff_member_required
+def add_course(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        if request.method == "POST":
+            if request.POST["action_on_course"] == "add":
+                course = request.POST["course"]
+                course_type = request.POST["course_type"]
+                course_description = request.POST["course_description"]
+                registration_description = request.POST["registration_description"]
+                assessment_description = request.POST["assessment_description"]
+                assessment_method = request.POST["assessment_method"]
+                link = request.POST["link"]
+                reference_system = request.POST["reference_system"]
+                threshold = request.POST["threshold"]
+
+                RoadmapManager().add_course(
+                    course,
+                    course_type,
+                    course_description,
+                    registration_description,
+                    assessment_description,
+                    assessment_method,
+                    link,
+                    reference_system,
+                    threshold
+                    )
+
+                courses = RoadmapManager().list_courses()
+                return render(request, "list_courses.html", {"courses": courses})
+
+            if request.POST["action_on_course"] == "update":
+                course = request.POST["course"]
+                course_type = request.POST["course_type"]
+                course_description = request.POST["course_description"]
+                registration_description = request.POST["registration_description"]
+                assessment_description = request.POST["assessment_description"]
+                assessment_method = request.POST["assessment_method"]
+                link = request.POST["link"]
+                reference_system = request.POST["reference_system"]
+                threshold = request.POST["threshold"]
+
+                RoadmapManager().update_course(
+                    course,
+                    course_type,
+                    course_description,
+                    registration_description,
+                    assessment_description,
+                    assessment_method,
+                    link,
+                    reference_system,
+                    threshold
+                    )
+
+                courses = RoadmapManager().list_courses()
+                return render(request, "list_courses.html", {"courses": courses})      
+
+        return render(request, "add_course.html", {})
+
+
+@staff_member_required
+def list_courses(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        if request.method == "POST":
+            if request.POST["action_on_course"] == "more":
+                course = request.POST["course"]
+                course = RoadmapManager().display_course(course)
+
+                return render(request, "display_course.html", {"course": course})
+
+            if request.POST["action_on_course"] == "edit":
+                course = request.POST["course"]
+                course = RoadmapManager().display_course(course)
+                print(course)
+
+                return render(request, "update_course.html", {"course": course})
+
+        courses = RoadmapManager().list_courses()
+
+        return render(request, "list_courses.html", {"courses": courses})
+
+
+@staff_member_required
+def display_course(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        if request.method == "POST":
+            if request.POST["action_on_course"] == "more":
+                course = request.POST["course"]
+                course = RoadmapManager().display_course(course)
+
+                return render(request, "display_course.html", {"course": course})
+
+
+@staff_member_required
+def add_roadmap(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        names = ClientsManager().list_current_clients()
+        courses = RoadmapManager().list_courses()
+
+        if request.method == "POST":
+            if request.POST["action_on_roadmap"] == "add":
+                client = request.POST["client"]
+                semester = request.POST["semester"]
+                course = request.POST["course"]
+                deadline = name = request.POST["deadline"]
+
+                RoadmapManager().add_roadmap(
+                    client,
+                    semester,
+                    course,
+                    deadline,
+                    current_user
+                    )
+
+                return render(request, "add_roadmap.html", {
+                    "names": names,
+                    "courses": courses
+                    })
+
+        return render(request, "add_roadmap.html", {
+            "names": names,
+            "courses": courses
+            })
+
+
+@login_required
+def display_roadmap_details(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        roadmap_details = RoadmapManager().roadmap_details(roadmap_id_number)
+        course = roadmap_details[2]
+        course_details = RoadmapManager().display_course(course)
+        grades = RoadmapManager().display_grades(current_user, course)
+
+        return render(request, "display_roadmap_details.html", {
+            "roadmap_details": roadmap_details,
+            "course_details": course_details
+            })
+
+
+@staff_member_required
+def add_profile(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        client_names = ClientsManager().list_current_clients()
+
+        if request.method == "POST":
+            if request.POST["action_on_profile"] == "add":
+                name = request.POST["client_name"]
+                display_name = request.POST["display_name"]
+                avatar = request.POST["avatar"]
+                current_english_level = request.POST["current_english_level"]
+                current_semester = request.POST["current_semester"]
+                current_specialization = request.POST["current_specialization"]
+                current_degree = request.POST["current_degree"]
+                early_admission = request.POST["early_admission"]
+                semester_1_status = request.POST["semester_1_status"]
+                semester_2_status = request.POST["semester_2_status"]
+                semester_3_status = request.POST["semester_3_status"]
+                semester_4_status = request.POST["semester_4_status"]
+                semester_5_status = request.POST["semester_5_status"]
+                semester_6_status = request.POST["semester_6_status"]
+                semester_7_status = request.POST["semester_7_status"]
+                semester_8_status = request.POST["semester_8_status"]
+                semester_9_status = request.POST["semester_9_status"]
+                semester_10_status = request.POST["semester_10_status"]
+                semester_11_status = request.POST["semester_11_status"]
+                semester_12_status = request.POST["semester_12_status"]
+                semester_13_status = request.POST["semester_13_status"]
+                semester_14_status = request.POST["semester_14_status"]
+                semester_15_status = request.POST["semester_15_status"]
+                semester_16_status = request.POST["semester_16_status"]
+                associates_degree_status = request.POST["associates_degree_status"]
+                bachelors_degree_status = request.POST["bachelors_degree_status"]
+                masters_degree_status = request.POST["masters_degree_status"]
+                doctorate_degree_status = request.POST["doctorate_degree_status"]
+                professors_title_status = request.POST["professors_title_status"]
+
+                RoadmapManager().add_profile(
+                    name,
+                    display_name,
+                    avatar,
+                    current_english_level,
+                    current_semester,
+                    current_specialization,
+                    current_degree,
+                    early_admission,
+                    semester_1_status,
+                    semester_2_status,
+                    semester_3_status,
+                    semester_4_status,
+                    semester_5_status,
+                    semester_6_status,
+                    semester_7_status,
+                    semester_8_status,
+                    semester_9_status,
+                    semester_10_status,
+                    semester_11_status,
+                    semester_12_status,
+                    semester_13_status,
+                    semester_14_status,
+                    semester_15_status,
+                    semester_16_status,
+                    associates_degree_status,
+                    bachelors_degree_status,
+                    masters_degree_status,
+                    doctorate_degree_status,
+                    professors_title_status
+                    )
+
+                return render(request, "add_profile.html", {
+                "client_names": client_names
+                })
+
+        return render(request, "add_profile.html", {
+            "client_names": client_names
+            })
+
+
+@staff_member_required
+def profiles(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        profiles = RoadmapManager().display_profiles()
+
+        if request.method == "POST":
+            if request.POST["action_on_profile"] == "more":
+                client_name = request.POST["client_name"]
+
+                profile = RoadmapManager().display_profile(client_name)
+
+                return render(request, "display_profile.html", {
+                    "profile": profile
+                    })
+
+            if request.POST["action_on_profile"] == "edit":
+                client_name = request.POST["client_name"]
+
+                profile = RoadmapManager().display_profile(client_name)
+
+                return render(request, "update_profile.html", {
+                    "profile": profile
+                    })
+
+            if request.POST["action_on_profile"] == "update":
+                client_name = request.POST["client_name"]
+                display_name = request.POST["display_name"]
+                avatar = request.POST["avatar"]
+                current_english_level = request.POST["current_english_level"]
+                current_semester = request.POST["current_semester"]
+                current_specialization = request.POST["current_specialization"]
+                current_degree = request.POST["current_degree"]
+                early_admission = request.POST["early_admission"]
+                semester_1_status = request.POST["semester_1_status"]
+                semester_2_status = request.POST["semester_2_status"]
+                semester_3_status = request.POST["semester_3_status"]
+                semester_4_status = request.POST["semester_4_status"]
+                semester_5_status = request.POST["semester_5_status"]
+                semester_6_status = request.POST["semester_6_status"]
+                semester_7_status = request.POST["semester_7_status"]
+                semester_8_status = request.POST["semester_8_status"]
+                semester_9_status = request.POST["semester_9_status"]
+                semester_10_status = request.POST["semester_10_status"]
+                semester_11_status = request.POST["semester_11_status"]
+                semester_12_status = request.POST["semester_12_status"]
+                semester_13_status = request.POST["semester_13_status"]
+                semester_14_status = request.POST["semester_14_status"]
+                semester_15_status = request.POST["semester_15_status"]
+                semester_16_status = request.POST["semester_16_status"]
+                associates_degree_status = request.POST["associates_degree_status"]
+                bachelors_degree_status = request.POST["bachelors_degree_status"]
+                masters_degree_status = request.POST["masters_degree_status"]
+                doctorate_degree_status = request.POST["doctorate_degree_status"]
+                professors_title_status = request.POST["professors_title_status"]
+
+                RoadmapManager().update_profile(
+                    client_name,
+                    display_name,
+                    avatar,
+                    current_english_level,
+                    current_semester,
+                    current_specialization,
+                    current_degree,
+                    early_admission,
+                    semester_1_status,
+                    semester_2_status,
+                    semester_3_status,
+                    semester_4_status,
+                    semester_5_status,
+                    semester_6_status,
+                    semester_7_status,
+                    semester_8_status,
+                    semester_9_status,
+                    semester_10_status,
+                    semester_11_status,
+                    semester_12_status,
+                    semester_13_status,
+                    semester_14_status,
+                    semester_15_status,
+                    semester_16_status,
+                    associates_degree_status,
+                    bachelors_degree_status,
+                    masters_degree_status,
+                    doctorate_degree_status,
+                    professors_title_status
+                    )
+
+                profiles = RoadmapManager().display_profiles()
+
+                return render(request, "profiles.html", {
+                    "profiles": profiles
+                    })
+
+        return render(request, "profiles.html", {
+            "profiles": profiles
+            })
+
+
+@staff_member_required
+def display_profile(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        profile = RoadmapManager().display_profile()
+
+        return render(request, "display_profile.html", {
+            "profile": profile
+            })
+
+
+@staff_member_required
+def update_profile(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        profile = RoadmapManager().display_profile()
+
+        return render(request, "update_profile.html", {
+            "profile": profile
+            })
+
+
+@staff_member_required
+def roadmaps(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        client_names = ClientsManager().list_current_clients()
+
+        if request.method == "POST":
+            if request.POST["action_on_roadmaps"] == "find":
+                client_name = request.POST["client_name"]
+                semester = request.POST["semester"]
+
+                courses = RoadmapManager().display_roadmap(client_name, semester)
+
+                return render(request, "roadmaps.html", {
+                    "client_names": client_names,
+                    "courses": courses
+                    })
+
+            if request.POST["action_on_roadmaps"] == "more":
+                roadmap_id_number = request.POST["roadmap_id_number"]
+                roadmap_details = RoadmapManager().display_roadmap_details(roadmap_id_number)
+                course = roadmap_details[2]
+                course_details = RoadmapManager().display_course(course)
+                grades = RoadmapManager().display_grades(current_user, course)
+
+                deadline = TimeMachine().number_to_system_date(roadmap_details[4])
+
+                return render(request, "display_roadmap_details.html", {
+                    "roadmap_details": roadmap_details,
+                    "course_details": course_details,
+                    "deadline": deadline,
+                    "grades": grades
+                    })
+
+        return render(request, "roadmaps.html", {
+            "client_names": client_names
+            })
+
+
+@staff_member_required
+def add_material(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        if request.method == "POST":
+            if request.POST["action_on_material"] == "add":
+                title = request.POST["title"]
+                content = request.POST["content"]
+
+                DocumentManager().add_material(title, content)
+                materials = DocumentManager().display_materials()
+
+                return render(request, "materials.html", {
+                    "materials": materials
+                    })
+
+        return render(request, "add_material.html", {})
+
+
+@login_required
+def materials(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        materials = DocumentManager().display_materials()
+
+        if request.method == "POST":
+            if request.POST["action_on_material"] == "more":
+                title = request.POST["title"]
+
+                material = DocumentManager().display_material(title)
+
+                return render(request, "display_material.html", {
+                    "material": material
+                    })
+
+        return render(request, "materials.html", {
+            "materials": materials
+            })
+
+
+@login_required
+def display_material(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        if request.method == "POST":
+            if request.POST["action_on_material"] == "delete":
+                title = request.POST["title"],
+
+                DocumentManager().delete_material(title)
+                materials = DocumentManager().display_materials()
+
+                return render(request, "materials.html", {
+                    "materials": materials
+                    })
+
+        return render(request, "display_material.html", {})
+
+
+@login_required
+def ranking(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        rows = StreamManager().display_ranking()
+        print(rows)
+
+        return render(request, "ranking.html", {
+            "rows": rows
+            })
+
+
+@login_required
+def statistics(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        stats = StreamManager().statistics(current_user)
+
+        return render(request, "statistics.html", {
+            "stats": stats
+            })
+
+
+@login_required
+def notifications(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        return render(request, "notifications.html", {
+            })
+
+
+@login_required
+def announcements(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        announcements = BackOfficeManager().display_announcements()\
+
+        if request.method == "POST":
+            if request.POST["action_on_announcement"] == "more":
+                notification_id = request.POST["notification_id"]
+
+                return redirect(f"display_announcement/{notification_id}")
+
+        return render(request, "announcements.html", {
+            "announcements": announcements
+            })
+
+
+@login_required
+def add_notification(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        clients = ClientsManager().list_current_users()
+
+        if request.method == "POST":
+            if request.POST["action_on_announcement"] == "publish":
+                sender = current_user
+                recipient = "all"
+                subject = request.POST["subject"]
+                content = request.POST["content"]
+                notification_type = request.POST["notification_type"]
+                status = "sent"
+
+                BackOfficeManager().add_notification(
+                    sender,
+                    recipient,
+                    subject,
+                    content,
+                    notification_type,
+                    status
+                    )
+
+                return render(request, "add_notification.html", {
+                    "clients": clients
+                    })
+
+        return render(request, "add_notification.html", {
+            "clients": clients
+            })
+
+
+@login_required
+def display_announcement(request, notification_id):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        notification_id = notification_id
+
+        announcement = BackOfficeManager().display_announcement(notification_id)
+        stamp = TimeMachine().number_to_system_date_time(announcement[1])
+
+        return render(request, "display_announcement.html", {
+            "announcement": announcement,
+            "stamp": stamp
+            })
+
+
+@staff_member_required
+def add_grade(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        current_client = CurrentClientsManager().current_client(current_user)
+        courses = RoadmapManager().display_current_courses(current_client)
+
+        if request.method == "POST":
+            student = current_client
+            course = request.POST["course"]
+            result = request.POST["result"]
+            grade_type = request.POST["grade_type"]
+            examiner = current_user
+
+            RoadmapManager().add_grade(
+                student,
+                course,
+                result,
+                grade_type,
+                examiner
+                )
+
+        return render(request, "add_grade.html", {
+            "courses": courses
+            })
+
+
+@staff_member_required
+def add_option(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        commands = KnowledgeManager().display_prompts("options")
+
+        if request.method == "POST":
+            command = request.POST["command"]
+            value = request.POST["value"]
+            author = current_user
+
+            BackOfficeManager().add_option(
+                command,
+                value,
+                author
+                )
+
+            return redirect("display_options")
+
+        return render(request, "add_option.html", {
+            "commands": commands
+            })
+
+
+@staff_member_required
+def display_options(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        options = BackOfficeManager().display_options()
+        
+
+        if request.method == "POST":
+            if request.POST["action_on_option"] == "go_to_add":
+
+                return redirect("add_option")
+
+            elif request.POST["action_on_option"] == "delete":
+                option_id = request.POST["option_id"]
+
+                BackOfficeManager().remove_option(option_id)
+
+                return redirect("display_options")
+
+        return render(request, "display_options.html", {
+            "options": options
+            })
+
 
 def footer(request):
     return render(request, "footer.html", {})

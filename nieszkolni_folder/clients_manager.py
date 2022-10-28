@@ -15,37 +15,49 @@ class ClientsManager:
 
     def add_client(
             self,
-            test_user,
             name,
-            phone_number,
-            contact_email_address,
-            school,
-            internal_email_address,
-            meeting_duration,
-            price,
-            acquisition_channel,
-            recommenders,
-            coach,
-            level
+            internal_email_address
             ):
 
-        entry = Client()
-        entry.test_user = test_user
-        entry.name = name
-        entry.phone_number = phone_number
-        entry.contact_email_address = contact_email_address
-        entry.school = school
-        entry.internal_email_address = internal_email_address
-        entry.meeting_duration = meeting_duration
-        entry.price = price
-        entry.acquisition_channel = acquisition_channel
-        entry.recommenders = recommenders
-        entry.status = "course_started"
-        entry.coach = coach
-        entry.level = level
-        entry.save()
-
-        return "The client has been added to the system."
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                INSERT INTO nieszkolni_app_client (
+                user_type,
+                name,
+                phone_number,
+                contact_email_address,
+                school,
+                internal_email_address,
+                meeting_duration,
+                price,
+                acquisition_channel,
+                recommenders,
+                reasons_for_resignation,
+                status,
+                coach,
+                level,
+                daily_limit_of_new_cards
+                )
+                VALUES (
+                'client',
+                '{name}',
+                987654321,
+                '-',
+                '-',
+                '{internal_email_address}',
+                55,
+                0,
+                '-',
+                '-',
+                '-',
+                'active',
+                '-',
+                '-',
+                33
+                )
+                ON CONFLICT (name)
+                DO NOTHING
+                ''')
 
     def verify_client(self, name):
         with connection.cursor() as cursor:
@@ -57,12 +69,94 @@ class ClientsManager:
             else:
                 return True
 
+    def list_current_users(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f"SELECT name FROM nieszkolni_app_client")
+            users = cursor.fetchall()
+
+            current_users = [user[0] for user in users]
+
+            return current_users
+
     def list_current_clients(self):
         with connection.cursor() as cursor:
-            cursor.execute(f"SELECT name FROM nieszkolni_app_client WHERE status = 'course_started'")
+            cursor.execute(f"SELECT name FROM nieszkolni_app_client WHERE status = 'active' AND user_type = 'client'")
             clients = cursor.fetchall()
 
             current_clients = [client[0] for client in clients]
 
             return current_clients
 
+    def list_current_staff(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f"SELECT name FROM nieszkolni_app_client WHERE status = 'active' AND user_type = 'staff'")
+            employees = cursor.fetchall()
+
+            current_employees = [employee[0] for employee in employees]
+
+            return current_employees
+
+    def load_client(self, name):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                user_type,
+                name,
+                phone_number,
+                contact_email_address,
+                school,
+                internal_email_address,
+                meeting_duration,
+                price,
+                acquisition_channel,
+                recommenders,
+                reasons_for_resignation,
+                status,
+                coach,
+                level,
+                daily_limit_of_new_cards
+                FROM nieszkolni_app_client
+                WHERE name == '{name}'
+                ''')
+
+            client_details = cursor.fetchone()
+
+            return client_details
+
+    def edit_client(
+            self,
+            user_type,
+            name,
+            phone_number,
+            contact_email_address,
+            internal_email_address,
+            meeting_duration,
+            price,
+            acquisition_channel,
+            recommenders,
+            reasons_for_resignation,
+            status,
+            coach,
+            level,
+            daily_limit_of_new_cards):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                UPDATE nieszkolni_app_client
+                SET
+                user_type = '{user_type}',
+                name = '{name}',
+                phone_number = {phone_number},
+                contact_email_address = '{contact_email_address}',
+                internal_email_address = '{internal_email_address}',
+                meeting_duration = {meeting_duration},
+                price = {price},
+                acquisition_channel = '{acquisition_channel}',
+                recommenders = '{recommenders}',
+                reasons_for_resignation = '{reasons_for_resignation}',
+                status = '{status}',
+                coach = '{coach}',
+                level = '{level}',
+                daily_limit_of_new_cards = {daily_limit_of_new_cards}
+                WHERE name == '{name}'
+                ''')

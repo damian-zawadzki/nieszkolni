@@ -2,6 +2,8 @@ import os
 import django
 from django.db import connection
 from nieszkolni_app.models import Curriculum
+from nieszkolni_app.models import Module
+from nieszkolni_app.models import Matrix
 from nieszkolni_app.models import Library
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
@@ -34,8 +36,12 @@ class CurriculumManager:
         conditions = Cleaner().clean_quotation_marks(conditions)
 
         with connection.cursor() as cursor:
-            deadline = TimeMachine().american_to_system_date(deadline)
-            deadline_number = TimeMachine().date_to_number(TimeMachine().american_to_system_date(deadline))
+            try:
+                deadline = TimeMachine().american_to_system_date(deadline)
+            except Exception as e:
+                print(e)
+
+            deadline_number = TimeMachine().date_to_number(deadline)
             default_status = 'uncompleted'
             cursor.execute(f'''
                 INSERT INTO nieszkolni_app_curriculum (
@@ -208,6 +214,30 @@ class CurriculumManager:
 
         return all_assignments
 
+    def display_assignments_for_student(self, name):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT item,
+                deadline_text,
+                deadline_number,
+                name,
+                component_id,
+                component_type,
+                assignment_type,
+                title,
+                content,
+                matrix,
+                resources,
+                status
+                FROM nieszkolni_app_curriculum
+                WHERE name = '{name}'
+                ''')
+
+            assignments = cursor.fetchall()
+            assignments.sort(key=lambda item: item[2])
+
+        return assignments
+
     def next_item(self):
         with connection.cursor() as cursor:
             cursor.execute(f'''
@@ -219,6 +249,13 @@ class CurriculumManager:
             next_item = last_item[0] + 1
 
             return next_item
+
+    def remove_curriculum(self, item):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                DELETE FROM nieszkolni_app_curriculum
+                WHERE item = {item}
+                ''')
 
     def check_position_in_library(self, item):
         with connection.cursor() as cursor:
@@ -251,3 +288,148 @@ class CurriculumManager:
             assignment_type = assignment_type[0]
 
             return assignment_type
+
+    def add_module(
+            self,
+            component_id,
+            component_type,
+            title,
+            content,
+            resources,
+            conditions
+            ):
+
+        title = Cleaner().clean_quotation_marks(title)
+        content = Cleaner().clean_quotation_marks(content)
+        resources = Cleaner().clean_quotation_marks(resources)
+        conditions = Cleaner().clean_quotation_marks(conditions)
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                INSERT INTO nieszkolni_app_module (
+                component_id,
+                component_type,
+                title,
+                content,
+                resources,
+                conditions
+                )
+                VALUES (
+                '{component_id}',
+                '{component_type}',
+                '{title}',
+                '{content}',
+                '{resources}',
+                '{conditions}'
+                )
+                ''')
+
+    def display_modules(self):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                component_id,
+                component_type,
+                title,
+                content,
+                resources,
+                conditions
+                FROM nieszkolni_app_module
+                ''')
+
+            modules = cursor.fetchall()
+
+            return modules
+
+    def display_module(self, component_id):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                component_id,
+                component_type,
+                title,
+                content,
+                resources,
+                conditions
+                FROM nieszkolni_app_module
+                WHERE component_id = '{component_id}'
+                ''')
+
+            module = cursor.fetchone()
+
+            return module
+
+    def display_components(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                component_id
+                FROM nieszkolni_app_module
+                ''')
+
+            components = cursor.fetchall()
+
+            return components
+
+    def add_matrix(
+            self,
+            component_id,
+            matrix,
+            limit_number
+            ):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                INSERT INTO nieszkolni_app_matrix (
+                component_id,
+                matrix,
+                limit_number
+                )
+                VALUES (
+                '{component_id}',
+                '{matrix}',
+                '{limit_number}'
+                )
+                ''')
+
+    def display_matrix(self, matrix):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                component_id,
+                matrix,
+                limit_number
+                FROM nieszkolni_app_matrix
+                WHERE matrix = '{matrix}'
+                ORDER BY limit_number ASC
+                ''')
+
+            rows = cursor.fetchall()
+
+            modules = []
+            for row in rows:
+                entry = dict()
+                entry.update({
+                    "component_id": row[0],
+                    "matrix": row[1],
+                    "limit_number": row[2]
+                    })
+                modules.append(entry)
+
+            return modules
+
+    def display_matrices(self):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT DISTINCT
+                matrix
+                FROM nieszkolni_app_matrix
+                ''')
+
+            matrices = cursor.fetchall()
+
+            return matrices

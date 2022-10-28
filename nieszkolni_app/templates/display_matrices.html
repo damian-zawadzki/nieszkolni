@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>MATRICES</h1>
+
+<form action="{% url 'display_matrices' %}" method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Matrix</label>
+
+        <select required class="input_content" name="matrix">
+
+            <option disabled selected value></option>
+
+            {% for matrix in matrices %}
+            	<option value="{{ matrix.0 }}">{{ matrix.0 }}</option>
+            {% endfor %}
+
+      </select>
+    </div>
+  </div>
+
+
+	<div class="flex-parent jc-center">
+		<button type="submit" class="button_main" name="action_on_matrix" value="filter">Filter</button>
+	</div>
+
+</form>
+
+<table>
+
+	{% for module in modules %}
+
+		<tr class="font">
+
+			<td>{{ module.component_id }}</td>
+			<td>{{ module.matrix }}</td>
+			<td>{{ module.limit_number }}</td>
+
+			<td>
+				<form action="{% url 'display_matrices' %}" method="POST">
+					{% csrf_token %}
+
+					<input type="hidden" name="item" value="{{ module.component_id }}">
+					<input type="hidden" name="item" value="{{ module.matrix }}">
+					<button type="submit" class="list_button button_main" name="action_on_matrix" value="assignment">More</button>
+
+				</form>
+			</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+{% include 'footer.html' %}
+{% endblock %}

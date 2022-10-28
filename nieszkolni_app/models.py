@@ -22,14 +22,14 @@ class Card(models.Model):
 
 class Client(models.Model):
     # Global settings
-    test_user = models.CharField(max_length=200)
+    user_type = models.CharField(max_length=200, default="client")
     name = models.CharField(max_length=200, default="", primary_key=True)
-    phone_number = models.IntegerField()
+    phone_number = models.IntegerField(default=987654321)
     contact_email_address = models.CharField(max_length=200, default="")
-    school = models.CharField(max_length=200, default="Nieszkolni")
+    school = models.CharField(max_length=200, default="-")
     internal_email_address = models.CharField(max_length=200, default="")
     meeting_duration = models.IntegerField(default=55)
-    price = models.IntegerField()
+    price = models.IntegerField(default=0)
     acquisition_channel = models.CharField(max_length=200, default="")
     recommenders = models.CharField(max_length=200, default="")
     reasons_for_resignation = models.CharField(max_length=200, default="")
@@ -84,6 +84,21 @@ class Curriculum(models.Model):
     completion_date = models.IntegerField(default=0)
     submitting_user = models.CharField(max_length=200, default="")
     reference = models.IntegerField(default=0)
+
+
+class Matrix(models.Model):
+    matrix = models.CharField(max_length=200, default="")
+    limit_number = models.IntegerField()
+    component_id = models.CharField(max_length=200, default="")
+
+
+class Module(models.Model):
+    component_id = models.CharField(max_length=200, default="")
+    component_type = models.CharField(max_length=200, default="")
+    title = models.CharField(max_length=200, default="")
+    content = models.TextField(default="")
+    resources = models.TextField(default="")
+    conditions = models.TextField(default="")
 
 
 class CurrentClient(models.Model):
@@ -231,3 +246,92 @@ class RepertoireLine(models.Model):
     title = models.CharField(max_length=200, default="")
     number_of_episodes = models.IntegerField()
     status = models.CharField(max_length=200, default="")
+
+
+class Profile(models.Model):
+    name = models.CharField(max_length=200, default="", primary_key=True)
+    display_name = models.CharField(max_length=200, default="")
+    avatar = models.URLField(max_length=200)
+    current_english_level = models.CharField(max_length=200, default="")
+    current_semester = models.IntegerField(default=1)
+    current_specialization = models.CharField(max_length=200, default="")
+    current_degree = models.CharField(max_length=200, default="")
+    early_admission = models.IntegerField(default=1)
+    semester_1_status = models.CharField(max_length=200, default="")
+    semester_2_status = models.CharField(max_length=200, default="")
+    semester_3_status = models.CharField(max_length=200, default="")
+    semester_4_status = models.CharField(max_length=200, default="")
+    semester_5_status = models.CharField(max_length=200, default="")
+    semester_6_status = models.CharField(max_length=200, default="")
+    semester_7_status = models.CharField(max_length=200, default="")
+    semester_8_status = models.CharField(max_length=200, default="")
+    semester_9_status = models.CharField(max_length=200, default="")
+    semester_10_status = models.CharField(max_length=200, default="")
+    semester_11_status = models.CharField(max_length=200, default="")
+    semester_12_status = models.CharField(max_length=200, default="")
+    semester_13_status = models.CharField(max_length=200, default="")
+    semester_14_status = models.CharField(max_length=200, default="")
+    semester_15_status = models.CharField(max_length=200, default="")
+    semester_16_status = models.CharField(max_length=200, default="")
+    associates_degree_status = models.CharField(max_length=200, default="")
+    bachelors_degree_status = models.CharField(max_length=200, default="")
+    masters_degree_status = models.CharField(max_length=200, default="")
+    doctorate_degree_status = models.CharField(max_length=200, default="")
+    professors_title_status = models.CharField(max_length=200, default="")
+
+
+class Roadmap(models.Model):
+    roadmap_id_number = models.AutoField(primary_key=True)
+    roadmap_matrix = models.CharField(max_length=200, default="")
+    semester = models.IntegerField(default=0)
+    course = models.CharField(max_length=200, default="")
+    name = models.CharField(max_length=200, default="")
+    deadline_number = models.IntegerField(default=0)
+    planning_user = models.CharField(max_length=200, default="")
+    status = models.CharField(max_length=200, default="")
+
+
+class Course(models.Model):
+    course = models.CharField(max_length=200, primary_key=True)
+    course_type = models.CharField(max_length=200, default="")
+    course_description = models.TextField(default="")
+    registration_description = models.TextField(default="")
+    assessment_description = models.TextField(default="")
+    assessment_method = models.CharField(max_length=200, default="")
+    link = models.TextField(default="")
+    reference_system = models.CharField(max_length=200, default="")
+    threshold = models.IntegerField(default=0)
+
+
+class Grade(models.Model):
+    stamp = models.IntegerField(default=0)
+    date_number = models.IntegerField(default=0)
+    student = models.CharField(max_length=200, default="")
+    course = models.CharField(max_length=200, default="")
+    result = models.IntegerField(default=0)
+    grade_type = models.CharField(max_length=200, default="")
+    examiner = models.CharField(max_length=200, default="")
+
+
+class Material(models.Model):
+    title = models.CharField(max_length=200, default="", primary_key=True)
+    content = models.TextField(default="")
+
+
+class Notification(models.Model):
+    notification_id = models.AutoField(primary_key=True)
+    stamp = models.IntegerField(default=0)
+    sender = models.CharField(max_length=200, default="")
+    recipient = models.CharField(max_length=200, default="")
+    subject = models.CharField(max_length=200, default="")
+    content = models.TextField(default="")
+    notification_type = models.CharField(max_length=200, default="")
+    status = models.CharField(max_length=200, default="")
+
+
+class Option(models.Model):
+    stamp = models.IntegerField(default=0)
+    date_number = models.IntegerField(default=0)
+    command = models.CharField(max_length=200, default="")
+    value = models.CharField(max_length=200, default="")
+    author = models.CharField(max_length=200, default="")

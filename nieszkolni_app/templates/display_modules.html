@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>MODULES</h1>
+
+<table>
+
+		<tr class="font">
+
+			<th>Component</th>
+			<th>Action</th>
+
+		</tr>
+
+	{% for module in modules %}
+
+		<tr class="font">
+
+			<td>{{ module.0 }}</td>
+			<td>
+				<form action="{% url 'display_modules' %}"  method="POST">
+					{% csrf_token %}
+					  <div class="flex-parent jc-center">
+					  		<input type="hidden" name="component_id" value="{{ module.0 }}">
+					    	<button type="submit" class="button_main" name="action_on_module" value="more">More</button>
+					  </div>
+				</form>
+			</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+{% include 'footer.html' %}
+{% endblock %}

@@ -378,6 +378,18 @@ body {
   text-decoration: none;  
 }
 
+.side_navigation_link_2 {
+  border-radius: 24px;
+  border-style: none;
+  color: #3c4043;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: .5px;
+  text-align: left;
+  text-decoration: none;  
+}
+
 h5 {
   color: #3c4043;
   font-family: "Google Sans", Roboto, Arial, sans-serif;
@@ -385,6 +397,15 @@ h5 {
   font-weight: 850;
   text-align: center;
 }
+
+h6 {
+  color: #3c4043;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 18px;
+  font-weight: 850;
+  text-align: left;
+}
+
 
 /*To-do-list*/
 .list_container {
@@ -561,6 +582,24 @@ h1 {
   text-align: center;
 }
 
+h2 {
+  color: #3c4043;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 35px;
+  font-weight: 750;
+  letter-spacing: .25px;
+  text-align: center;
+}
+
+h3 {
+  color: #4C5059;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 30px;
+  font-weight: 750;
+  letter-spacing: .25px;
+  text-align: center;
+}
+
 /*Session styles - Navigation */
 .session_navigation {
   background-color: #D95B72;
@@ -686,10 +725,12 @@ h1 {
 }
 
 .input_prefilled_paragraph {
-  height: 150px;
-  width: 100%;
-  padding: 35px;
-  text-align: justify;  
+  background-color: #f9f9f9;
+  height: 300px;
+  padding: 20px;
+  pointer-events:none;
+  text-align: justify;
+  width: 300px;
 }
 
 /*Tables*/
@@ -765,17 +806,30 @@ h1 {
 .avatar {
   display: flex;
   flex-direction: row;
-  margin-left: 25%;
-  margin-right: 25%;
+  margin-left: 15%;
+  margin-right: 15%;
 }
 
 .avatar_frame {
   margin-right: 5%;
 }
 
+.avatar_description_box {
+  display: block;
+  float: left;
+}
+
 .avatar_name {
+  float: left;
   margin-left: 5%;
   margin-top: 2%;
+  white-space: nowrap;
+}
+
+.avatar_description {
+  float: left;
+  margin-left: 5%;
+  white-space: nowrap;
 }
 
 .avatar_image {
@@ -786,7 +840,174 @@ h1 {
   box-shadow: 2px 2px 2px 2px #ECECEC;
 }
 
-.side_navigation_menu{
-  margin-left: 20%;
+.activity_target {
+  display: flex;
+  color: #3c4043;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 50px;
+  font-weight: 1000;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.side_navigation_menu {
+  margin-left: 10%;
   margin-top: 5%;
+}
+
+.profile_navigation_item {
+  display: flex;
+  list-style-type: none;
+  padding: 10px;
+  margin-left: 50px;
+}
+
+.semester_display {
+  margin-top: 5%;
+}
+
+.list_of_courses_item {
+  display: flex;
+  list-style-type: none;
+  padding: 10px;
+}
+
+.block {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  flex-flow: column wrap;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.inscription_below {
+  margin-top: 10px;
+  color: #3c4043;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 750;
+  width: fit-content;
+  max-width: 100px; 
+  text-align: center;
+}
+
+/*Profile content*/
+
+.profile_content_box {
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 85%;
+}
+
+/*Side menu of the profile*/
+.profile_link_list {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 25%;
+}
+
+/*Main content of the profile*/
+.profile_content_list {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex-grow: 2;
+  width: 65%;
+}
+
+.profile_item {
+  alignment-baseline:  middle;
+  appearance: none;
+  background-color: #fff;
+  border-radius: 24px;
+  border-style: none;
+  box-shadow: rgba(0, 0, 0, .2) 0 3px 5px -1px,rgba(0, 0, 0, .14) 0 6px 10px 0,rgba(0, 0, 0, .12) 0 1px 18px 0;
+  box-sizing: border-box;
+  color: #3c4043;
+  display: flex;
+  fill: currentcolor;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 75px;
+  letter-spacing: .25px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  max-width: 100%;
+  padding: 0px 10px 0px 10px;
+  position: relative;
+  text-decoration: none;
+  text-transform: none;
+  transition: box-shadow 280ms cubic-bezier(.4, 0, .2, 1), opacity 15ms linear 30ms, transform 270ms cubic-bezier(0, 0, .2, 1) 0ms;
+  touch-action: manipulation;
+  user-select: none;
+  width: 100%;
+  will-change: transform, opacity;
+  z-index: 0;
+  overflow:hidden; 
+  white-space:no-wrap; 
+  text-overflow:ellipsis;
+}
+
+.profile_item_red {
+  box-shadow: #FF5757 0 3px 5px -1px, #FF5757 0 6px 10px 0, #FF5757 0 1px 18px 0;
+}
+
+.profile_item_green {
+  box-shadow: #C9E265 0 3px 5px -1px, #C9E265 0 6px 10px 0, #C9E265 0 1px 18px 0;
+}
+
+.positive_message {
+  color: #DCF2E8;
+}
+
+table {
+  border-collapse: separate;
+  border-bottom-color: rgba(255,255,255,1);
+  border-spacing: 0px;
+  font-size: 14px;
+  font-weight: 300;
+  height: 100px;
+  margin-left: 25%;
+  margin-right: 25%;
+  margin-bottom: 1%;
+  width:50%;
+  table-layout: fixed;
+}
+
+th {
+  border-bottom: 1pt solid;
+  border-bottom-color: #D3D3D3;
+  font-size: 18px;
+  font-weight: 1000;
+  margin-bottom: 20px;
+  padding: 20px 20px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+td {
+  border-bottom: 1pt solid;
+  border-bottom-color: #D3D3D3;
+  margin-bottom: 20px;
+  padding: 20px 20px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.td_sentences {
+  text-align: left;
+}
+
+.font tr th {
+  color: #3c4043;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
 }

@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% include 'staff_menu.html' %}
+
+<h1>Add a roadmap</h1>
+
+<form action="{% url 'add_roadmap' %}"  method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Name</label>
+
+        <select required class="input_content" name="client">
+            <option selected disabled value></option>
+            {% for name in names %}
+            <option value="{{ name }}">{{ name }}</option>
+            {% endfor %}
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester</label>
+
+        <select required class="input_content" name="semester">
+            <option selected disabled value></option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="6">7</option>
+            <option value="6">8</option>
+            <option value="6">9</option>
+            <option value="6">10</option>
+            <option value="6">11</option>
+            <option value="6">12</option>
+            <option value="6">13</option>
+            <option value="6">14</option>
+            <option value="6">15</option>
+            <option value="6">16</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Course</label>
+
+        <select required class="input_content" name="course">
+            <option selected disabled value></option>
+            {% for course in courses %}
+            <option value="{{ course.0 }}">{{ course.0 }}</option>
+            {% endfor %}
+        </select>
+
+    </div>
+  </div>
+
+    <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Deadline</label>
+
+        <input type="date" class="input_content" name="deadline" >
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_roadmap" value="add">Add</button>
+  </div>
+
+</form>
+
+{% endblock %}

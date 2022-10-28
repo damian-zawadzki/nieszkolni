@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>MY STATS</h1>
+
+<!-- <div class="list_container">
+	<ul class="list">
+
+			<li class="list_item">
+				<div class="list_content">Speaking (in class)</div>
+				<div class="list_content_small">(minutes)</div>
+				<div class="list_content list_button">{{ stats.duration }}</div>
+			</li>
+
+			<li class="list_item">
+				<div class="list_content">Speaking</div>
+				<div class="list_content_small">(minutes)</div>
+				<div class="list_content list_button">{{ stats.ao }}</div>
+			</li>
+
+			<li class="list_item">
+				<div class="list_content">Watching and listening</div>
+				<div class="list_content_small">(minutes)</div>
+				<div class="list_content list_button">{{ stats.po }}</div>
+			</li>
+
+			<li class="list_item">
+				<div class="list_content">Reading</div>
+				<div class="list_content_small">(words)</div>
+				<div class="list_content list_button">{{ stats.pv }}</div>
+			</li>
+
+			<li class="list_item">
+				<div class="list_content">Writing</div>
+				<div class="list_content_small">(words)</div>
+				<div class="list_content list_button">{{ stats.av }}</div>
+			</li>
+
+			<li class="list_item">
+				<div class="list_content">Vocabulary</div>
+				<div class="list_content_small">(cards)</div>
+				<div class="list_content list_button">{{ stats.vocabulary }}</div>
+			</li>
+
+			<li class="list_item">
+				<div class="list_content">Sentences</div>
+				<div class="list_content_small">(cards)</div>
+				<div class="list_content list_button">{{ stats.sentences }}</div>
+			</li>
+
+	</ul>
+</div> -->
+
+<table>
+
+		<tr class="font">
+			<td>Speaking (in class)</td>
+			<td>{{ stats.duration }}</td>
+			<td>(minutes)</td>
+		</tr>
+
+		<tr class="font">
+			<td>Speaking</td>
+			<td>{{ stats.ao }}</td>
+			<td>(minutes)</td>
+		</tr>
+
+		<tr class="font">
+			<td>Watching and listening</td>
+			<td>{{ stats.po }}</td>
+			<td>(minutes)</td>
+		</tr>
+
+		<tr class="font">
+			<td>Reading</td>
+			<td>{{ stats.pv }}</td>
+			<td>(words)</td>
+		</tr>
+
+		<tr class="font">
+			<td>Writing</td>
+			<td>{{ stats.av }}</td>
+			<td>(words)</td>
+		</tr>
+
+		<tr class="font">
+			<td>Vocabulary</td>
+			<td>{{ stats.vocabulary }}</td>
+			<td>(cards)</td>
+		</tr>
+
+		<tr class="font">
+			<td>Sentences</td>
+			<td>{{ stats.sentences }}</td>
+			<td>(cards)</td>
+		</tr>
+</table>
+
+{% include 'footer.html' %}
+{% endblock %}

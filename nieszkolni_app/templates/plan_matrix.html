@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% include 'staff_menu.html' %}
+
+<h1>PLAN A MATRIX</h1>
+
+<form action="{% url 'plan_matrix' %}" method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Client</label>
+
+        <select required class="input_content" name="client">
+            <option disabled selected value></option>
+
+            {% for client in clients %}
+              <option value="{{ client }}">{{ client }}</option>
+            {% endfor %}
+
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Matrix</label>
+
+        <select required class="input_content" name="matrix">
+            <option disabled selected value></option>
+
+            {% for matrix in matrices %}
+              <option value="{{ matrix.0 }}">{{ matrix.0 }}</option>
+            {% endfor %}
+
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Starting date</label>
+
+        <input type="date" class="input_content" name="starting_date">
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_matrix" value="plan">Plan</button>
+  </div>
+
+</form>
+
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>Announcements</h1>
+
+<div class="list_container">
+	<ul class="list">
+		<form action="{% url 'announcements' %}" method="POST">
+			{% csrf_token %}
+
+			{% for announcement in announcements %}
+
+				<li class="list_item">
+					<div class="list_content">{{ announcement.4 }}</div>
+					<input type="hidden" name="notification_id" value="{{ announcement.0 }}">
+					<button type="submit" class="list_button button_main" name="action_on_announcement" value="more">More</button>
+				</li>
+
+			{% endfor %}
+
+		</form>
+	</ul>
+</div>
+
+{% include 'footer.html' %}
+{% endblock %}

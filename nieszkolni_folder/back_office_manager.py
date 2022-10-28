@@ -2,6 +2,11 @@ import os
 import django
 from django.db import connection
 from nieszkolni_app.models import Library
+from nieszkolni_app.models import LibraryLine
+from nieszkolni_app.models import Repertoire
+from nieszkolni_app.models import RepertoireLine
+from nieszkolni_app.models import Notification
+from nieszkolni_app.models import Option
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
 
@@ -280,9 +285,11 @@ class BackOfficeManager:
                 date,
                 name,
                 title,
-                number_of_episodes
+                number_of_episodes,
+                status
                 FROM nieszkolni_app_repertoireline
-                WHERE status = 'reported'
+                WHERE status = 'not_in_stream'
+                OR status = 'not_in_repertoire'
                 ''')
 
             titles = cursor.fetchall()
@@ -344,3 +351,152 @@ class BackOfficeManager:
             titles = cursor.fetchall()
 
             return titles
+
+    def add_notification(
+            self,
+            sender,
+            recipient,
+            subject,
+            content,
+            notification_type,
+            status
+            ):
+
+        subject = Cleaner().clean_quotation_marks(subject)
+        content = Cleaner().clean_quotation_marks(content)
+        stamp = TimeMachine().now_number()
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                INSERT INTO nieszkolni_app_notification (
+                stamp,
+                sender,
+                recipient,
+                subject,
+                content,
+                notification_type,
+                status
+                )
+                VALUES (
+                {stamp},
+                '{sender}',
+                '{recipient}',
+                '{subject}',
+                '{content}',
+                '{notification_type}',
+                '{status}'
+                )
+                ''')
+
+    def display_announcements(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                notification_id,
+                stamp,
+                sender,
+                recipient,
+                subject,
+                content,
+                notification_type,
+                status
+                FROM nieszkolni_app_notification
+                WHERE notification_type = 'visible_announcement'
+                OR notification_type = 'hidden_announcement'
+                ''')
+
+            announcements = cursor.fetchall()
+
+            return announcements
+
+    def display_announcement(self, notification_id):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                notification_id,
+                stamp,
+                sender,
+                recipient,
+                subject,
+                content,
+                notification_type,
+                status
+                FROM nieszkolni_app_notification
+                WHERE notification_id = '{notification_id}'
+                ''')
+
+            announcement = cursor.fetchone()
+
+            return announcement
+
+    def add_option(
+            self,
+            command,
+            value,
+            author
+            ):
+
+        stamp = TimeMachine().now_number()
+        today_number = TimeMachine().today_number()
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                INSERT INTO nieszkolni_app_option (
+                stamp,
+                date_number,
+                command,
+                value,
+                author
+                )
+                VALUES (
+                {stamp},
+                {today_number},
+                '{command}',
+                '{value}',
+                '{author}'
+                )
+                ''')
+
+    def display_options(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                stamp,
+                date_number,
+                command,
+                value,
+                author,
+                id
+                FROM nieszkolni_app_option
+                ''')
+
+            options = cursor.fetchall()
+
+            return options
+
+    def remove_option(self, option_id):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                DELETE FROM nieszkolni_app_option
+                WHERE id = {option_id}
+                ''')
+
+    def display_end_of_semester(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT value
+                FROM nieszkolni_app_option
+                WHERE command = 'end_of_semester'
+                ORDER BY stamp DESC
+                LIMIT 1
+                ''')
+
+            data = cursor.fetchone()
+
+            if data is None:
+                end_of_semester = "SOON!"
+            else:
+                end_of_semester = data[0]
+
+            return end_of_semester
+

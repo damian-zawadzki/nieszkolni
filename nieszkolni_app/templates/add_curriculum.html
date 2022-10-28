@@ -2,9 +2,9 @@
 {% block 'content' %}
 {% include 'staff_menu.html' %}
 
-<h1>Extend a curriculum</h1>
+<h1>EXTEND A CURRICULUM</h1>
 
-<form method="POST">
+<form action="{% url 'add_curriculum' %}" method="POST">
 	{% csrf_token %}
 
   <div class="flex-parent jc-center">

@@ -1,0 +1,320 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% include 'staff_menu.html' %}
+
+<h1>Profile</h1>
+
+<form action="{% url 'profiles' %}"  method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center">
+     <div class="input_container ">
+      <label class="input_label">Name</label>
+
+        <select required class="input_content input_prefilled" name="client_name">>
+            <option selected value="{{ profile.0 }}">{{ profile.0 }}</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Display name</label>
+        <input type="text" class="input_content input_prefilled" name="display_name" value="{{ profile.1 }}">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Avatar</label>
+        <input type="url" class="input_content input_prefilled" name="avatar" value="{{ profile.2 }}">
+    </div>
+  </div>
+
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Current English level</label>
+
+        <select required class="input_content input_prefilled" name="current_english_level">
+            <option selected value="{{ profile.3 }}">{{ profile.3 }}</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Current semester</label>
+        <input type="number" class="input_content input_prefilled" name="current_semester" value="{{ profile.4 }}">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Early admission</label>
+
+        <select required class="input_content input_prefilled" name="early_admission">
+            <option selected value="{{ profile.7 }}">{{ profile.7 }}</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Current specialization</label>
+        <input type="text" class="input_content input_prefilled" name="current_specialization" value="{{ profile.5 }}">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Current degree</label>
+
+        <select required class="input_content input_prefilled" name="current_degree">
+            <option selected value="{{ profile.6 }}">{{ profile.6 }}</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 1</label>
+
+        <select required class="input_content input_prefilled" name="semester_1_status">
+            <option selected value="{{ profile.8 }}">{{ profile.8 }}</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 2</label>
+
+        <select required class="input_content input_prefilled" name="semester_2_status">
+            <option selected value="{{ profile.9 }}">{{ profile.9 }}</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 3</label>
+
+        <select required class="input_content input_prefilled" name="semester_3_status">
+            <option selected value="{{ profile.10 }}">{{ profile.10 }}</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 4</label>
+
+        <select required class="input_content input_prefilled" name="semester_4_status">
+            <option selected value="{{ profile.11 }}">{{ profile.11 }}</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 5</label>
+
+        <select required class="input_content input_prefilled" name="semester_5_status">
+            <option selected value="{{ profile.12 }}">{{ profile.12 }}</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 6</label>
+
+        <select required class="input_content input_prefilled" name="semester_6_status">
+            <option selected value="{{ profile.13 }}">{{ profile.13 }}</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 7</label>
+
+        <select required class="input_content input_prefilled" name="semester_7_status">
+            <option selected value="{{ profile.14 }}">{{ profile.14 }}</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 8</label>
+
+        <select required class="input_content input_prefilled" name="semester_8_status">
+            <option selected value="{{ profile.15 }}">{{ profile.15 }}</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 9</label>
+
+        <select required class="input_content input_prefilled" name="semester_9_status">
+            <option selected value="{{ profile.16 }}">{{ profile.16 }}</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 10</label>
+
+        <select required class="input_content input_prefilled" name="semester_10_status">
+            <option selected value="{{ profile.17 }}">{{ profile.17 }}</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 11</label>
+
+        <select required class="input_content input_prefilled" name="semester_11_status">
+            <option selected value="{{ profile.18 }}">{{ profile.18 }}</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 12</label>
+
+        <select required class="input_content input_prefilled" name="semester_12_status">
+            <option selected value="{{ profile.19 }}">{{ profile.19 }}</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 13</label>
+
+        <select required class="input_content input_prefilled" name="semester_13_status">
+            <option selected value="{{ profile.20 }}">{{ profile.20 }}</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 14</label>
+
+        <select required class="input_content input_prefilled" name="semester_14_status">
+            <option selected value="{{ profile.21 }}">{{ profile.21 }}</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 15</label>
+
+        <select required class="input_content input_prefilled" name="semester_15_status">
+            <option selected value="{{ profile.22 }}">{{ profile.22 }}</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 16</label>
+
+        <select required class="input_content input_prefilled" name="semester_16_status">
+            <option selected value="{{ profile.23 }}">{{ profile.23 }}</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Associate's degree</label>
+
+        <select required class="input_content input_prefilled" name="associates_degree_status">
+            <option selected value="{{ profile.24 }}">{{ profile.24 }}</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Bachelor's degree</label>
+
+        <select required class="input_content input_prefilled" name="bachelors_degree_status">
+            <option selected value="{{ profile.25 }}">{{ profile.25 }}</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Master's degree</label>
+
+        <select required class="input_content input_prefilled" name="masters_degree_status">
+            <option selected value="{{ profile.26 }}">{{ profile.26 }}</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Doctorate's degree</label>
+
+        <select required class="input_content input_prefilled" name="doctorate_degree_status">
+            <option selected value="{{ profile.27 }}">{{ profile.27 }}</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Professor's title</label>
+
+        <select required class="input_content input_prefilled" name="professors_title_status">
+            <option selected value="{{ profile.28 }}">{{ profile.28 }}</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_profile" value="edit">Edit</button>
+  </div>
+
+</form>
+
+{% endblock %}

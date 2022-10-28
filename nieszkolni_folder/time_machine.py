@@ -131,3 +131,11 @@ class TimeMachine:
         date = datetime.strftime(end, today_pattern)
 
         return date
+
+    def number_to_system_date_time(self, date_time_number):
+        start = datetime.strptime("2000-01-01 00:00:00", now_pattern_colons)
+        difference = timedelta(seconds=date_time_number)
+        end = start + difference
+        date_time = datetime.strftime(end, now_pattern_colons)
+
+        return date_time

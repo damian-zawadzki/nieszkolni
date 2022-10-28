@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>Materials</h1>
+
+<div class="list_container">
+	<ul class="list">
+
+		{% for material in materials %}
+		<form action="{% url 'materials' %}" method="POST">
+			{% csrf_token %}
+			<li class="list_item">
+
+				<div class="list_content">{{ material.0 }}</div>
+				<input type="hidden" name="title" value="{{ material.0 }}">
+				<button type="submit" class="list_button button_main" name="action_on_material" value="more">More</button>
+
+			</li>
+		</form>
+
+		{% endfor %}
+
+	</ul>
+</div>
+
+{% include 'footer.html' %}
+{% endblock %}

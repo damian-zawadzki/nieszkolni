@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1></h1>
+
+	<div class="flex-parent jc-center">
+		<div class="assignment_card">
+	    	<div class="task_card_container">
+		    	
+		      	<div class="task_card_title">{{ course_details.0 }}</div>
+		      	<div class="task_card_details"><b>deadline:</b> {{ deadline }} <b>id:</b> {{ roadmap_details.0 }} <b>status:</b> {{ status }}</div>
+		      	<div><b>Description</b></div>
+		      	<div class="task_card_content">{{ course_details.2 }}</div>
+		      	<div><b>Registration</b></div>
+		      	<div class="task_card_content"><span>{{ course_details.3 }}</span></div>
+		      	<div><b>Addmission</b></div>
+		      	<div class="task_card_content"><span>{{ course_details.4 }}</span></div>
+		      	<div><b>Link</b></div>
+		      	<div class="task_card_content"><span>{{ course_details.6 }}</span></div>
+		      	<div><b>Threshold</b></div>
+		      	<div class="task_card_content"><span>{{ course_details.8 }}%</span></div>
+		      	<div><b>Results</b></div>
+
+		      	{% for grade in grades %}
+			      	<div class="task_card_details"><b>date:</b> {{ grade.0 }} <b>result:</b> {{ grade.1 }}% <b>type:</b> {{ grade.2 }}</div>
+		      	{% endfor %}
+
+	    	</div>
+	  	</div>
+	</div>
+
+{% endblock %}

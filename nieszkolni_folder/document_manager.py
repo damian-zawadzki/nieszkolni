@@ -4,6 +4,7 @@ import re
 from django.db import connection
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
+from nieszkolni_app.models import Material
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -94,3 +95,58 @@ class DocumentManager:
         file = document.save(f'nieszkolni_app/static/files/{item}.docx')
 
         return file
+
+    def add_material(self, title, content):
+        title = Cleaner().clean_quotation_marks(title)
+        content = Cleaner().clean_quotation_marks(content)
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                INSERT INTO nieszkolni_app_material (
+                title,
+                content
+                )
+                VALUES (
+                '{title}',
+                '{content}'
+                )
+                ON CONFLICT (title)
+                DO NOTHING
+                ''')
+
+    def display_materials(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                title
+                FROM nieszkolni_app_material
+                ''')
+
+            materials = cursor.fetchall()
+
+            return materials
+
+    def display_material(self, title):
+        title = Cleaner().clean_quotation_marks(title)
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                title,
+                content
+                FROM nieszkolni_app_material
+                WHERE title = '{title}'
+                ''')
+
+            material = cursor.fetchone()
+
+            return material
+
+    def delete_material(self, title):
+        title = Cleaner().clean_quotation_marks(title[0])
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                DELETE FROM nieszkolni_app_material
+                WHERE title = '{title}'
+                ''')

@@ -6,10 +6,16 @@
 	  <h5>STAFF MENU</h5>
 	</li>
 	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'list_current_users' %}">LIST OF USERS</a>
+	</li>
+	<li class="side_navigation_item">
 	  <a class="side_navigation_link" aria-current="page" href="{% url 'register_user'%}">USER REGISTRATION</a>
 	</li>
 	<li class="side_navigation_item">
-	  <a class="side_navigation_link" aria-current="page" href="{% url 'register_client'%}">CLIENT REGISTRATION</a>
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'add_profile'%}">PROFILE CREATION</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'profiles'%}">PROFILES</a>
 	</li>
 	<li class="side_navigation_item">
 	  <a class="side_navigation_link" aria-current="page" href="{% url 'display_curricula'%}">CURRICULA</a>
@@ -19,6 +25,33 @@
 	</li>
 	<li class="side_navigation_item">
 	  <a class="side_navigation_link" aria-current="page" href="{% url 'add_curriculum'%}">CURRICULUM EXTENSION</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'display_matrices'%}">MATRICES</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'add_matrix'%}">ADD A MATRIX</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'plan_matrix'%}">PLAN A MATRIX</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'display_modules'%}">MODULES</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'add_module'%}">ADD A MODULE</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'add_roadmap'%}">ROADMAP EXTENSION</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'roadmaps'%}">ROADMAPS</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'add_course'%}">COURSE EXTENSION</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'list_courses'%}">COURSES</a>
 	</li>
 	<li class="side_navigation_item">
 	  <a class="side_navigation_link" aria-current="page" href="{% url 'dictionary'%}">DICTIONARY</a>
@@ -66,6 +99,9 @@
 	  <a class="side_navigation_link" aria-current="page" href="{% url 'stream'%}">STREAM</a>
 	</li>
 	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'upload_stream'%}">UPLOAD STREAM</a>
+	</li>
+	<li class="side_navigation_item">
 	  <a class="side_navigation_link" aria-current="page" href="{% url 'list_of_assignments_to_grade'%}">GRADE ASSIGNMENTS</a>
 	</li>
 	<li class="side_navigation_item">
@@ -84,7 +120,22 @@
 	  <a class="side_navigation_link" aria-current="page" href="{% url 'repertoire_line' %}">REPERTOIRE LINE</a>
 	</li>
 	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'add_material' %}">ADD MATERIALS</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'materials' %}">MATERIALS</a>
+	</li>
+	<li class="side_navigation_item">
 	  <a class="side_navigation_link" aria-current="page" href="{% url 'download_assignments' %}">DOWNLOAD ASSIGNMENTS</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'announcements' %}">ANNOUNCEMENTS</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'add_notification' %}">SEND A NOTIFICATION</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'display_options' %}">OPTIONS</a>
 	</li>
 </ul>
 

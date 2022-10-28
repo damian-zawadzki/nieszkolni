@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% include 'staff_menu.html' %}
+
+<h1>Add a course</h1>
+
+<form action="{% url 'add_course' %}"  method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Course</label>
+            <input type="text" class="input_content" name="course" value="{{ course.0 }}">
+      </select>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Type</label>
+
+        <select required class="input_content" name="course_type">
+            <option selected value="{{ course.1 }}">{{ course.1 }}</option>
+            <option value="project">project</option>
+            <option value="online_project">online project</option>
+            <option value="statistics">statistics</option>
+            <option value="exam">oral exam</option>
+            <option value="test">online test</option>
+            <option value="presentation">presentation</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Description of the course</label>
+        <textarea type="text" class="input_content input_paragraph" name="course_description">{{ course.2 }}</textarea>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Registration</label>
+        <textarea type="text" class="input_content input_paragraph" name="registration_description">{{ course.3 }}</textarea>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Assessment</label>
+        <textarea type="text" class="input_content input_paragraph" name="assessment_description">{{ course.4 }}</textarea>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Assessment method</label>
+
+        <select required class="input_content" name="assessment_method">
+            <option selected value="{{ course.5 }}">{{ course.5 }}</option>
+            <option value="attendance">attendance</option>
+            <option value="oral_exam">oral exam</option>
+            <option value="online_test">online test</option>
+            <option value="presentation">presentation</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Link</label>
+        <input type="url" class="input_content" name="link" value="{{ course.6 }}">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Threshold</label>
+        <input type="number" class="input_content" min="0" max="100" name="threshold" value="{{ course.8|floatformat:'0' }}">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">System</label>
+
+        <select required class="input_content" name="reference_system">
+            <option selected value="{{ course.7 }}">{{ course.7 }}</option>
+            <option value="manual_assessment">manual assessment</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_course" value="add">Add</button>
+  </div>
+
+</form>
+
+{% endblock %}

@@ -1,0 +1,416 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% include 'staff_menu.html' %}
+
+<h1>Add a profile</h1>
+
+<form action="{% url 'add_profile' %}"  method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Name</label>
+
+        <select required class="input_content" name="client_name">
+            <option selected disabled value=""></option>
+            {% for client_name in client_names %}
+            <option value="{{ client_name }}">{{ client_name }}</option>
+            {% endfor %}
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Display name</label>
+        <input type="text" class="input_content" name="display_name">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Avatar</label>
+        <input type="url" class="input_content" name="avatar">
+    </div>
+  </div>
+
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Current English level</label>
+
+        <select required class="input_content" name="current_english_level">
+            <option selected disabled value=""></option>
+            <option value="basic">basic</option>
+            <option value="communicative">communicative</option>
+            <option value="advanced">advanced</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Current semester</label>
+        <input type="number" class="input_content" name="current_semester">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Early admission</label>
+
+        <select required class="input_content" name="early_admission">
+            <option selected value="no">No</option>
+            <option value="yes">Yes</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Current specialization</label>
+        <input type="text" class="input_content" name="current_specialization">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Current degree</label>
+
+        <select required class="input_content" name="current_degree">
+            <option selected disabled value=""></option>
+            <option value="associate">Associate</option>
+            <option value="bachelor">Bachelor</option>
+            <option value="master">Master</option>
+            <option value="doctorate">Doctorate</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 1</label>
+
+        <select required class="input_content" name="semester_1_status">
+            <option selected value="inactive">inactive</option>
+            <option value="upcoming">upcoming</option>
+            <option value="ongoing">ongoing</option>
+            <option value="passed">passed</option>
+            <option value="failed">failed</option>
+            <option value="graduated">graduated</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 2</label>
+
+        <select required class="input_content" name="semester_2_status">
+            <option selected value="inactive">inactive</option>
+            <option value="upcoming">upcoming</option>
+            <option value="ongoing">ongoing</option>
+            <option value="passed">passed</option>
+            <option value="failed">failed</option>
+            <option value="graduated">graduated</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 3</label>
+
+        <select required class="input_content" name="semester_3_status">
+            <option selected value="inactive">inactive</option>
+            <option value="upcoming">upcoming</option>
+            <option value="ongoing">ongoing</option>
+            <option value="passed">passed</option>
+            <option value="failed">failed</option>
+            <option value="graduated">graduated</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 4</label>
+
+        <select required class="input_content" name="semester_4_status">
+            <option selected value="inactive">inactive</option>
+            <option value="upcoming">upcoming</option>
+            <option value="ongoing">ongoing</option>
+            <option value="passed">passed</option>
+            <option value="failed">failed</option>
+            <option value="graduated">graduated</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 5</label>
+
+        <select required class="input_content" name="semester_5_status">
+            <option selected value="inactive">inactive</option>
+            <option value="upcoming">upcoming</option>
+            <option value="ongoing">ongoing</option>
+            <option value="passed">passed</option>
+            <option value="failed">failed</option>
+            <option value="graduated">graduated</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 6</label>
+
+        <select required class="input_content" name="semester_6_status">
+            <option selected value="inactive">inactive</option>
+            <option value="upcoming">upcoming</option>
+            <option value="ongoing">ongoing</option>
+            <option value="passed">passed</option>
+            <option value="failed">failed</option>
+            <option value="graduated">graduated</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 7</label>
+
+        <select required class="input_content" name="semester_7_status">
+            <option selected value="inactive">inactive</option>
+            <option value="upcoming">upcoming</option>
+            <option value="ongoing">ongoing</option>
+            <option value="passed">passed</option>
+            <option value="failed">failed</option>
+            <option value="graduated">graduated</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 8</label>
+
+        <select required class="input_content" name="semester_8_status">
+            <option selected value="inactive">inactive</option>
+            <option value="upcoming">upcoming</option>
+            <option value="ongoing">ongoing</option>
+            <option value="passed">passed</option>
+            <option value="failed">failed</option>
+            <option value="graduated">graduated</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 9</label>
+
+        <select required class="input_content" name="semester_9_status">
+            <option selected value="inactive">inactive</option>
+            <option value="upcoming">upcoming</option>
+            <option value="ongoing">ongoing</option>
+            <option value="passed">passed</option>
+            <option value="failed">failed</option>
+            <option value="graduated">graduated</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 10</label>
+
+        <select required class="input_content" name="semester_10_status">
+            <option selected value="inactive">inactive</option>
+            <option value="upcoming">upcoming</option>
+            <option value="ongoing">ongoing</option>
+            <option value="passed">passed</option>
+            <option value="failed">failed</option>
+            <option value="graduated">graduated</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 11</label>
+
+        <select required class="input_content" name="semester_11_status">
+            <option selected value="inactive">inactive</option>
+            <option value="upcoming">upcoming</option>
+            <option value="ongoing">ongoing</option>
+            <option value="passed">passed</option>
+            <option value="failed">failed</option>
+            <option value="graduated">graduated</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 12</label>
+
+        <select required class="input_content" name="semester_12_status">
+            <option selected value="inactive">inactive</option>
+            <option value="upcoming">upcoming</option>
+            <option value="ongoing">ongoing</option>
+            <option value="passed">passed</option>
+            <option value="failed">failed</option>
+            <option value="graduated">graduated</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 13</label>
+
+        <select required class="input_content" name="semester_13_status">
+            <option selected value="inactive">inactive</option>
+            <option value="upcoming">upcoming</option>
+            <option value="ongoing">ongoing</option>
+            <option value="passed">passed</option>
+            <option value="failed">failed</option>
+            <option value="graduated">graduated</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 14</label>
+
+        <select required class="input_content" name="semester_14_status">
+            <option selected value="inactive">inactive</option>
+            <option value="upcoming">upcoming</option>
+            <option value="ongoing">ongoing</option>
+            <option value="passed">passed</option>
+            <option value="failed">failed</option>
+            <option value="graduated">graduated</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 15</label>
+
+        <select required class="input_content" name="semester_15_status">
+            <option selected value="inactive">inactive</option>
+            <option value="upcoming">upcoming</option>
+            <option value="ongoing">ongoing</option>
+            <option value="passed">passed</option>
+            <option value="failed">failed</option>
+            <option value="graduated">graduated</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester 16</label>
+
+        <select required class="input_content" name="semester_16_status">
+            <option selected value="inactive">inactive</option>
+            <option value="upcoming">upcoming</option>
+            <option value="ongoing">ongoing</option>
+            <option value="passed">passed</option>
+            <option value="failed">failed</option>
+            <option value="graduated">graduated</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Associate's degree</label>
+
+        <select required class="input_content" name="associates_degree_status">
+            <option value="not_granted">not granted</option>
+            <option value="granted">granted</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Bachelor's degree</label>
+
+        <select required class="input_content" name="bachelors_degree_status">
+            <option value="not_granted">not granted</option>
+            <option value="granted">granted</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Master's degree</label>
+
+        <select required class="input_content" name="masters_degree_status">
+            <option value="not_granted">not granted</option>
+            <option value="granted">granted</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Doctorate's degree</label>
+
+        <select required class="input_content" name="doctorate_degree_status">
+            <option value="not_granted">not granted</option>
+            <option value="granted">granted</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Professor's title</label>
+
+        <select required class="input_content" name="professors_title_status">
+            <option value="not_granted">not granted</option>
+            <option value="granted">granted</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_profile" value="add">Add</button>
+  </div>
+
+</form>
+
+{% endblock %}

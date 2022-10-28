@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% include 'staff_menu.html' %}
+
+<h1>Find a roadmap</h1>
+
+<form action="{% url 'roadmaps' %}" method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Name</label>
+
+        <select required class="input_content" name="client_name">
+            <option selected disabled value></option>
+            {% for name in client_names %}
+            <option value="{{ name }}">{{ name }}</option>
+            {% endfor %}
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester</label>
+
+        <select required class="input_content" name="semester">
+            <option selected disabled value></option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="6">7</option>
+            <option value="6">8</option>
+            <option value="6">9</option>
+            <option value="6">10</option>
+            <option value="6">11</option>
+            <option value="6">12</option>
+            <option value="6">13</option>
+            <option value="6">14</option>
+            <option value="6">15</option>
+            <option value="6">16</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_roadmaps" value="find">Find</button>
+  </div>
+
+</form>
+
+<ul class="profile_content_list">
+
+  {% for course in courses %}
+    <form action="{% url 'roadmaps' %}"  method="POST">
+    {% csrf_token %}
+
+      <li class="profile_item">
+        <div class="list_content">{{ course.2 }}</div>
+        <input type="hidden" name="roadmap_id_number" value="{{ course.0 }}">
+        <button type="submit" class="list_button button_main" name="action_on_roadmaps" value="more">More</button>
+      </li>
+
+    </form>
+  {% endfor %}
+
+</ul>
+
+{% endblock %}

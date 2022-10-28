@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% include 'staff_menu.html' %}
+
+<h1>Add an option</h1>
+
+<form action="{% url 'add_option' %}"  method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Command</label>
+
+        <select required class="input_content" name="command">
+            <option selected value="{{ course.1 }}">{{ course.1 }}</option>
+
+            {% for command in commands %}
+              <option value="{{ command.0 }}">{{ command.0 }}</option>
+            {% endfor %}
+
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Value</label>
+        <input type="text" class="input_content" name="value">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_option" value="add">Add</button>
+  </div>
+
+</form>
+
+{% endblock %}

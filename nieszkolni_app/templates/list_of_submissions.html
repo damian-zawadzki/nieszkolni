@@ -1,34 +1,33 @@
 {% extends 'base.html' %}
 {% block 'content' %}
 
-<h1>My submissions</h1>
+<h1>MY ASSIGNMENTS</h1>
 
-<div class="list_container">
-	<ul class="list">
+<table>
 
-		{% for submission in submissions %}
-			
-			<form action="{% url 'list_of_submissions' %}" method="POST">
-				{% csrf_token %}
-				<li class="list_item">
+	{% for submission in submissions %}
 
-					<div class="list_content">{{ submission.0 }}</div>
-					<div class="list_content_inside">{{ submission.1 }}</div>
-					<div class="list_content_small">{{ submission.3 }}</div>
+		<tr class="font">
 
-					<input type="hidden" name="unique_id" value="{{ submission.4 }}">
+			<td>{{ submission.0 }}</td>
+			<td>{{ submission.1 }}</td>
+			<td>
+				<form action="{% url 'list_of_submissions' %}"  method="POST">
+					{% csrf_token %}
+					 <div class="flex-parent jc-center">
+					  		<input type="hidden" name="unique_id" value="{{ submission.4 }}">
+					  	<div class="list_button">
+							<button type="submit" class="button_main" name="submission_action" value="explore">Explore</button>
+						</div>
+					  </div>
+				</form>
+			</td>
 
-					<div class="list_button">
-						<button type="submit" class="button_main" name="submission_action" value="explore">Explore</button>
-					</div>
+		</tr>
 
-				</li>
-			</form>
+	{% endfor %}
 
-		{% endfor %}
-
-	</ul>
-</div>
+</table>
 
 {% include 'footer.html' %}
 {% endblock %}

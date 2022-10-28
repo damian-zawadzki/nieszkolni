@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1></h1>
+
+	<div class="flex-parent jc-center">
+		<div class="assignment_card">
+	    	<div class="task_card_container">
+		    	
+		      	<div class="task_card_title">{{ material.0 }}</div>
+		      	<div class="task_card_content"><p>{{ material.1|safe }}</p></div>
+    			
+    			{% if user.is_staff %}
+
+    			<form action="{% url 'display_material' %}" method="POST">
+  				{% csrf_token %}
+  					<input type="hidden" name="title" value="{{ material.0 }}">
+					<button type="submit" class="button_main" name="action_on_material" value="delete">Delete</button>
+				</form>
+
+    			{% endif %}
+
+
+	    	</div>
+	  	</div>
+	</div>
+
+{% endblock %}

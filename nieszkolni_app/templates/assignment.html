@@ -41,6 +41,7 @@
 
 				<div class="flex-parent jc-center">
 					<input type="hidden" name="item" value="{{ assignment.0 }}">
+					<input type="hidden" name="client" value="{{ assignment.2 }}">
 					<input type="hidden" name="current_user" value="{{ current_user }}">
 					<input type="hidden" name="assignment_type" value="{{ assignment.6 }}">
 					<input type="hidden" name="title" value="{{ assignment.7 }}">
@@ -58,6 +59,8 @@
 						<button type="submit" class="button_main" name="go_to" value="submission">Submit</button>
 
 					{% endif %}
+
+						<button type="submit" class="button_main" name="go_to" value="removal">Remove</button>
 
 				</div>
 

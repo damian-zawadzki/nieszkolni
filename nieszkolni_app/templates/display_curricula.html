@@ -1,31 +1,59 @@
 {% extends 'base.html' %}
 {% block 'content' %}
-<h1>Curricula</h1>
+<h1>CURRICULA</h1>
 
-<div class="list_container">
-	<ul class="list">
-		
-		{% for assignment in assignments %}
+<form action="{% url 'display_curricula' %}" method="POST">
+	{% csrf_token %}
 
-			<form action="{% url 'assignment' %}" method="POST">
-				{% csrf_token %}
-				<li class="list_item">
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Name</label>
 
-					<div class="list_content">{{ assignment.1 }}</div>
-					<div class="list_content_small">{{ assignment.0 }}</div>
-					<div class="list_content_inside">{{ assignment.3 }}</div>
-					<div class="list_content_inside" style="margin-left: auto;">{{ assignment.4 }}</div>
+        <select required class="input_content" name="name">
+
+            <option disabled selected value></option>
+
+            {% for client in clients %}
+            	<option value="{{ client }}">{{ client }}</option>
+            {% endfor %}
+
+      </select>
+    </div>
+  </div>
+
+
+	<div class="flex-parent jc-center">
+		<button type="submit" class="button_main" name="action_on_curriculum" value="filter">Filter</button>
+	</div>
+
+</form>
+
+<table>
+
+	{% for assignment in assignments %}
+
+		<tr class="font">
+
+			<td>{{ assignment.1 }}</td>
+			<td>{{ assignment.0 }}</td>
+			<td>{{ assignment.3 }}</td>
+			<td>{{ assignment.4 }}</td>
+
+			<td>
+				<form action="{% url 'assignment' %}" method="POST">
+					{% csrf_token %}
 
 					<input type="hidden" name="item" value="{{ assignment.0 }}">
 					<button type="submit" class="list_button button_main" name="go_to" value="assignment">More</button>
 
-				</li>
-			</form>
+				</form>
+			</td>
 
-		{% endfor %}
+		</tr>
 
-	</ul>
-</div>
+	{% endfor %}
+
+</table>
 
 {% include 'footer.html' %}
 {% endblock %}

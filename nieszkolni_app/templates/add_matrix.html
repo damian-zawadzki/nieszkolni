@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% include 'staff_menu.html' %}
+
+<h1>CREATE A MATRIX</h1>
+
+<form action="{% url 'add_matrix' %}" method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Component</label>
+
+        <select required class="input_content" name="component_id">
+            <option disabled selected value></option>
+
+            {% for component in components %}
+              <option value="{{ component.0 }}">{{ component.0 }}</option>
+            {% endfor %}
+
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Matrix</label>
+
+        <input type="text" class="input_content" name="matrix">
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Time limit</label>
+
+        <input type="number" class="input_content" name="limit_number">
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_matrix" value="add">Add</button>
+  </div>
+
+</form>
+
+{% endblock %}
