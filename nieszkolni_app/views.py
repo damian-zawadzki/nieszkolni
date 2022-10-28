@@ -562,7 +562,7 @@ def profile(request):
             early_admission = profile[7]
 
         if current_degree == "associate":
-            semester_duration = 1
+            semester_duration = 3
         else:
             semester_duration = 3
 

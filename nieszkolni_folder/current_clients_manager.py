@@ -17,12 +17,12 @@ class CurrentClientsManager:
         with connection.cursor() as cursor:
             cursor.execute(f"SELECT name FROM nieszkolni_app_currentclient WHERE coach = '{coach}'")
             current_client = cursor.fetchone()
-            
+
             if current_client is None:
                 current_client = ""
             else:
                 current_client = current_client[0]
-                
+
             return current_client
 
     def switch_current_client(self, coach, client):

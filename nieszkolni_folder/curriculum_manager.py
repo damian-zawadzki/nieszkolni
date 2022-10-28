@@ -134,7 +134,7 @@ class CurriculumManager:
                 status
                 FROM nieszkolni_app_curriculum
                 WHERE name = '{name}'
-                AND status == 'completed'
+                AND status = 'completed'
                 AND completion_date >= {display_limit}
                 ''')
 
