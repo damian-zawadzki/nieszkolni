@@ -144,7 +144,7 @@
 			  <h6>THIS SEMESTER ENDS ON {{ end_of_semester }}</h6>
 			</li>
 
-			{% if early_admission == 'yes' %}
+			{% if early_admission == 1 %}
 			<li class="list_of_courses_item ">
 			  <span style="color: #86A697; margin-bottom: 5px;">You're eligible for early admission. Find our more <a href="{% url 'display_announcement' notification_id=1 %}">here</a>!</span>
 			</li>

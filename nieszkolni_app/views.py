@@ -190,7 +190,7 @@ def view_answer(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        # If a button == clicked
+        # If a button is clicked
         if request.method == "POST":
             if request.POST["answer"] != "play":
                 deck = request.POST["deck"]
@@ -265,7 +265,7 @@ def view_answer(request):
                 except:
                     pass
 
-        # If no button == clicked
+        # If no button is clicked
         return render(request, 'view_answer.html', {
             "deck": deck,
             "polish": polish,
@@ -321,7 +321,7 @@ def login_user(request):
         username = request.POST["username"]
         password = request.POST["password"]
         user = authenticate(request, username=username, password=password)
-        if user != None:
+        if user is not None:
             login(request, user)
             messages.success(request, ("You have successfully logged in."))
             return redirect("home")
@@ -356,13 +356,13 @@ def register_user(request):
             username = first_name_variable + " " + last_name_variable
 
             user = authenticate(request, username=system_username, password=password)
-            if user == None:
+            if user is None:
                 user = User.objects.create_user(system_username, internal_email_address, password)
                 user.first_name = first_name_variable
                 user.last_name = last_name_variable
 
                 is_client = ClientsManager().verify_client(username)
-                if is_client == False:
+                if is_client is False:
 
                     add = ClientsManager().add_client(
                         username,
@@ -548,12 +548,12 @@ def profile(request):
         profile = RoadmapManager().display_profile(current_user)
         semesters = RoadmapManager().display_semesters(current_user)
 
-        if profile == None:
+        if profile is None:
             display_name = current_user
             avatar = "https://docs.google.com/drawings/d/e/2PACX-1vQnrkWBZi2-ZrZ8fyKO_8qIBuOSrz19oeTq9XNnhCbDw6CAu8Rb8uBKYNcLBT0JLcZ8Dv_EWmZ93BBn/pub?w=685&h=686"
             current_semester = "1"
             current_degree = ""
-            early_admission = "no"
+            early_admission = 0
         else:
             display_name = profile[1]
             avatar = profile[2]
@@ -1515,7 +1515,7 @@ def translate_wordbook(request):
         current_user = first_name + " " + last_name
 
         entries = KnowledgeManager().display_open_book("vocabulary")
-        if entries == None:
+        if entries is None:
             messages.success(request, ("You've translated all the wordbook entries!"))
             return render(request, "translate_wordbook.html", {"entries": entries})
         else:
@@ -1526,7 +1526,7 @@ def translate_wordbook(request):
 
                     entries = KnowledgeManager().display_open_book("vocabulary")
 
-                    if entries == None:
+                    if entries is None:
                         messages.success(request, ("You've translated all the wordbook entries!"))
                         return render(request, "translate_wordbook.html", {"entries": entries})
                     else:
@@ -1540,7 +1540,7 @@ def translate_wordbook(request):
                     translate_entry = KnowledgeManager().translate_book_entry(unique_id, polish)
                     entries = KnowledgeManager().display_open_book("vocabulary")
 
-                    if entries == None:
+                    if entries is None:
                         messages.success(request, ("You've translated all the wordbook entries!"))
                         return render(request, "translate_wordbook.html", {"entries": entries})
                     else:
@@ -1559,7 +1559,7 @@ def approve_wordbook(request):
         current_user = first_name + " " + last_name
 
         entries = KnowledgeManager().display_translated_book("vocabulary")
-        if entries == None:
+        if entries is None:
             messages.success(request, ("You've translated all the wordbook entries!"))
             return render(request, "approve_wordbook.html", {"entries": entries})
         else:
@@ -1570,7 +1570,7 @@ def approve_wordbook(request):
 
                     entries = KnowledgeManager().display_translated_book("vocabulary")
 
-                    if entries == None:
+                    if entries is None:
                         messages.success(request, ("You've covered all the wordbook entries!"))
                         return render(request, "approve_wordbook.html", {"entries": entries})
                     else:
@@ -1604,7 +1604,7 @@ def translate_sentencebook(request):
         current_user = first_name + " " + last_name
 
         entries = KnowledgeManager().display_open_book("sentences")
-        if entries == None:
+        if entries is None:
             messages.success(request, ("You've translated all the sentencebook entries!"))
             return render(request, "translate_sentencebook.html", {"entries": entries})
         else:
@@ -1615,7 +1615,7 @@ def translate_sentencebook(request):
 
                     entries = KnowledgeManager().display_open_book("sentences")
 
-                    if entries == None:
+                    if entries is None:
                         messages.success(request, ("You've translated all the sentencebook entries!"))
                         return render(request, "translate_sentencebook.html", {"entries": entries})
                     else:
@@ -1629,7 +1629,7 @@ def translate_sentencebook(request):
                     translate_entry = KnowledgeManager().translate_book_entry(unique_id, polish)
                     entries = KnowledgeManager().display_open_book("sentences")
 
-                    if entries == None:
+                    if entries is None:
                         messages.success(request, ("You've translated all the sentencebook entries!"))
                         return render(request, "translate_sentencebook.html", {"entries": entries})
                     else:
@@ -1648,7 +1648,7 @@ def approve_sentencebook(request):
         current_user = first_name + " " + last_name
 
         entries = KnowledgeManager().display_translated_book("sentences")
-        if entries == None:
+        if entries is None:
             messages.success(request, ("You've translated all the sentencebook entries!"))
             return render(request, "approve_sentencebook.html", {"entries": entries})
         else:
@@ -1659,7 +1659,7 @@ def approve_sentencebook(request):
 
                     entries = KnowledgeManager().display_translated_book("sentences")
 
-                    if entries == None:
+                    if entries is None:
                         messages.success(request, ("You've covered all the sentencebook entries!"))
                         return render(request, "approve_sentencebook.html", {"entries": entries})
                     else:
@@ -1672,7 +1672,7 @@ def approve_sentencebook(request):
                     approve_entry = KnowledgeManager().approve_book_entry(unique_id, current_user)
                     entries = KnowledgeManager().display_translated_book("sentences")
 
-                    if entries == None:
+                    if entries is None:
                         messages.success(request, ("You've translated all the sentencebook entries!"))
                         return render(request, "approve_sentencebook.html", {"entries": entries})
                     else:
@@ -1782,7 +1782,7 @@ def prompts(request):
 
                 check_if_in_prompts = KnowledgeManager().check_if_in_prompts(prompt, parent)
 
-                if check_if_in_prompts == False:
+                if check_if_in_prompts is False:
                     add_prompt = KnowledgeManager().add_prompt(
                         prompt,
                         parent,
@@ -2149,7 +2149,7 @@ def report_reading(request):
 
             check_if_in_library = BackOfficeManager().check_if_in_library(link)
 
-            if check_if_in_library == False:
+            if check_if_in_library is False:
 
                 BackOfficeManager().add_to_library_line(
                     current_user,
@@ -2214,7 +2214,7 @@ def library_line(request):
 
             return redirect("library_line.html")
 
-        if link == None:
+        if link is None:
             messages.success(request, ("Everything's processed!"))
 
             return render(request, "library_line.html", {})
@@ -2222,7 +2222,7 @@ def library_line(request):
         url = link[1]
         check_if_in_library = BackOfficeManager().check_if_in_library(url)
 
-        if check_if_in_library == True:
+        if check_if_in_library is True:
             name = link[0]
 
             wordcount = BackOfficeManager().get_wordcount_from_library(url)
@@ -2264,7 +2264,7 @@ def report_listening(request):
 
             check_if_in_repertoire = BackOfficeManager().check_if_in_repertoire(title)
 
-            if check_if_in_repertoire == False:
+            if check_if_in_repertoire is False:
 
                 BackOfficeManager().add_to_repertoire_line(
                     current_client,
@@ -2376,7 +2376,7 @@ def repertoire_line(request):
                 BackOfficeManager().mark_repertoire_line_as_processed(stamp)
 
                 return redirect("repertoire_line.html")
-        if title == None:
+        if title is None:
             messages.success(request, ("Everything's processed!"))
             return render(request, "repertoire_line.html", {})
 
@@ -2384,7 +2384,7 @@ def repertoire_line(request):
         number_of_episodes = title[4]
         check_if_in_repertoire = BackOfficeManager().check_if_in_repertoire(title_name)
 
-        if check_if_in_repertoire == True:
+        if check_if_in_repertoire is True:
             stamp = title[0]
             name = title[2]
 
