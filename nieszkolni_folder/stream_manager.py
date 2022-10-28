@@ -497,7 +497,7 @@ class StreamManager:
             data = cursor.fetchone()
 
             if data is None:
-                activity_stop = 0
+                activity_stop = "2022-01-01"
             else:
                 activity_stop = data[0]
 
