@@ -243,7 +243,7 @@ class KnowledgeManager:
                 WHERE id = {unique_id}
                 ''')
 
-    def approve_book_entry(self, unique_id):
+    def approve_book_entry(self, unique_id, user):
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 UPDATE nieszkolni_app_book
@@ -283,7 +283,9 @@ class KnowledgeManager:
                 WHERE status = 'translated'
                 AND deck = '{deck}'
                 ''')
+
             entries = cursor.fetchall()
+
             if len(entries) == 0:
                 return None
             else:

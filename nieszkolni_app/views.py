@@ -1619,12 +1619,10 @@ def approve_wordbook(request):
                 elif request.POST["wordbook_action"] == "approve":
                     unique_id = request.POST["unique_id"]
 
-                    approve_entry = KnowledgeManager().approve_book_entry(unique_id)
+                    approve_entry = KnowledgeManager().approve_book_entry(unique_id, current_user)
                     entries = KnowledgeManager().display_translated_book("vocabulary")
 
-                    print(entries)
-
-                    if len(entries) == 0:
+                    if entries is None:
                         messages.success(request, ("You've translated all the wordbook entries!"))
                         return render(request, "approve_wordbook.html", {"entries": entries})
                     else:
@@ -1708,7 +1706,7 @@ def approve_sentencebook(request):
                 elif request.POST["sentencebook_action"] == "approve":
                     unique_id = request.POST["unique_id"]
 
-                    approve_entry = KnowledgeManager().approve_book_entry(unique_id)
+                    approve_entry = KnowledgeManager().approve_book_entry(unique_id, current_user)
                     entries = KnowledgeManager().display_translated_book("sentences")
 
                     if entries is None:
