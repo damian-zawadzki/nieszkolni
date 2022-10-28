@@ -17,7 +17,6 @@ python-docx==0.8.11
 python-memcached==1.59
 pyttsx3==2.90
 pytz==2022.5
-pywin32==304
 PyYAML==6.0
 six==1.16.0
 sqlparse==0.4.2
