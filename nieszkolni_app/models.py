@@ -256,7 +256,7 @@ class Profile(models.Model):
     current_semester = models.IntegerField(default=1)
     current_specialization = models.CharField(max_length=200, default="")
     current_degree = models.CharField(max_length=200, default="")
-    early_admission = models.CharField(default="no")
+    early_admission = models.CharField(max_length=200, default="no")
     semester_1_status = models.CharField(max_length=200, default="")
     semester_2_status = models.CharField(max_length=200, default="")
     semester_3_status = models.CharField(max_length=200, default="")
