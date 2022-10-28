@@ -1,14 +1,27 @@
 {% extends 'base.html' %}
 {% block 'content' %}
 
-<div class="flex-parent jc-center">
-	<div class="task_card">
-    <div class="task_card_container">
-      <div class="task_card_title">{{ row.3 }}</div>
-      <div class="task_card_details"><b>Stamp:</b> {{ row.0 }} <b>User:</b> {{ row.6 }} <b>Status:</b> {{ row.7 }}</div>
-      <div class="task_card_content"><b>Command:</b> {{ row.4 }} <b>Value:</b> {{ row.5 }}</div>
+
+<form action="{% url 'stream' %}" method="POST">
+  {% csrf_token %}
+
+    <div class="flex-parent jc-center">
+    	<div class="task_card">
+        <div class="task_card_container">
+          <div class="task_card_title">{{ row.3 }}</div>
+          <div class="task_card_details"><b>Stamp:</b> {{ row.0 }} <b>User:</b> {{ row.6 }} <b>Status:</b> {{ row.7 }}</div>
+          <div class="task_card_content"><b>Command:</b> {{ row.4 }} <b>Value:</b> {{ row.5 }}</div>
+
+
+          <div class="flex-parent jc-center">
+            <input type="hidden" name="unique_id" value="{{ row.8 }}">
+            <button type="submit" class="button_main" name="stream_action" value="delete">Delete</button>
+          </div>
+
+        </div>
+      </div>
     </div>
-  </div>
-</div>
+
+</form>
 
 {% endblock %}

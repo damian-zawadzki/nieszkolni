@@ -140,7 +140,7 @@ class StreamManager:
     def display_stream_entry(self, unique_id):
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                SELECT stamp, date_number, date, name, command, value, stream_user, status
+                SELECT stamp, date_number, date, name, command, value, stream_user, status, id
                 FROM nieszkolni_app_stream
                 WHERE id = {unique_id}
                 ''')
