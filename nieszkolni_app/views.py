@@ -554,6 +554,14 @@ def profile(request):
             current_semester = "1"
             current_degree = ""
             early_admission = 0
+
+        if profile[2] == "":
+            display_name = profile[1]
+            avatar = "https://docs.google.com/drawings/d/e/2PACX-1vQnrkWBZi2-ZrZ8fyKO_8qIBuOSrz19oeTq9XNnhCbDw6CAu8Rb8uBKYNcLBT0JLcZ8Dv_EWmZ93BBn/pub?w=685&h=686"
+            current_semester = profile[4]
+            current_degree = profile[6]
+            early_admission = profile[7]
+
         else:
             display_name = profile[1]
             avatar = profile[2]
