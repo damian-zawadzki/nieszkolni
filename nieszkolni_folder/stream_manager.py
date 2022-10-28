@@ -106,11 +106,8 @@ class StreamManager:
                 ''')
 
     def display_stream_range(self, start, end):
-        try:
-            start_date = TimeMachine().date_to_number(start)
-            end_date = TimeMachine().date_to_number(end)
-        except Exception as e:
-            print(e)
+        start_date = TimeMachine().date_to_number(start)
+        end_date = TimeMachine().date_to_number(end)
 
         with connection.cursor() as cursor:
             cursor.execute(f'''
@@ -130,6 +127,7 @@ class StreamManager:
                 ''')
 
             rows = cursor.fetchall()
+            rows = [("a", "c", "e")]
 
             return rows
 
