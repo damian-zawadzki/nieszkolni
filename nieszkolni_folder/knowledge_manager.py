@@ -243,12 +243,11 @@ class KnowledgeManager:
                 WHERE id = {unique_id}
                 ''')
 
-    def approve_book_entry(self, unique_id, user):
+    def approve_book_entry(self, unique_id):
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 UPDATE nieszkolni_app_book
-                SET
-                status = 'approved'
+                SET status = 'approved'
                 WHERE id = {unique_id}
                 ''')
 
