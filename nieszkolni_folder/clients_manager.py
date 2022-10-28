@@ -158,5 +158,5 @@ class ClientsManager:
                 coach = '{coach}',
                 level = '{level}',
                 daily_limit_of_new_cards = {daily_limit_of_new_cards}
-                WHERE name == '{name}'
+                WHERE name = '{name}'
                 ''')
