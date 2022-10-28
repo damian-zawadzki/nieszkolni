@@ -123,7 +123,7 @@ class StreamManager:
                 id
                 FROM nieszkolni_app_stream
                 WHERE date_number >= {start_date}
-                AND date_number <= {start_date}
+                AND date_number <= {end_date}
                 ''')
 
             rows = cursor.fetchall()
