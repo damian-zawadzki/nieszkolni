@@ -867,9 +867,9 @@ td.m_td {
   text-align: center;
 }
 
-.avatar_description_box {
+.m_avatar_description_box {
   display: block;
-  float: left;
+  text-align: center;
 }
 
 .m_avatar_name {
