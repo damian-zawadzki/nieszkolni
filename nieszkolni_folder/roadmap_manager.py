@@ -516,7 +516,10 @@ class RoadmapManager:
 
             rows = cursor.fetchone()
 
-            semesters = list(rows)
+            if rows is None:
+                semesters = []
+            else:
+                semesters = list(rows)
 
             return semesters
 
