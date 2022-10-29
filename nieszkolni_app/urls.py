@@ -56,6 +56,7 @@ urlpatterns = [
     path('approve_wordbook.html', views.approve_wordbook, name="approve_wordbook"),
     path('translate_sentencebook.html', views.translate_sentencebook, name="translate_sentencebook"),
     path('approve_sentencebook.html', views.approve_sentencebook, name="approve_sentencebook"),
+    path('upload_anki.html', views.upload_anki, name="upload_anki"),
     path('edit_card.html', views.edit_card, name="edit_card"),
     path('catalogues.html', views.catalogues, name="catalogues"),
     path('catalogues_list_of_phrases.html', views.catalogues_list_of_phrases, name="catalogues_list_of_phrases"),

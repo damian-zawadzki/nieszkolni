@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
+from django.conf import settings as django_settings
 from nieszkolni_folder.vocabulary_manager import VocabularyManager
 from nieszkolni_folder.clients_manager import ClientsManager
 from nieszkolni_folder.time_machine import TimeMachine
@@ -24,9 +25,8 @@ from nieszkolni_folder.roadmap_manager import RoadmapManager
 import csv
 import re
 import json
-from io import BytesIO
+import os
 from gtts import gTTS
-from playsound import playsound
 
 from django_user_agents.utils import get_user_agent
 
@@ -244,11 +244,8 @@ def view_answer(request):
                 english_3 = re.sub(r"\ssth\s", " something ", english_2)
                 english_4 = re.sub(r"\ssth$", " something", english_3)
 
-                language = "en-us"
-                recording = BytesIO()
-                audio = gTTS(text=english_4, lang=language, slow=False)
-                audio..write_to_fp(recording)
-                playsound(f"./{english_4}.mp3")
+                tts = gTTS(english_4, lang="en", tld="com")  
+                tts.save('recording.mp3')
 
         # If no button is clicked
         return render(request, 'view_answer.html', {
@@ -1704,6 +1701,43 @@ def approve_sentencebook(request):
             entries = entries[0]
             return render(request, "approve_sentencebook.html", {"entries": entries})
 
+
+@staff_member_required
+def upload_anki(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        clients = ClientsManager().list_current_clients()
+
+        if request.method == "POST":
+            client = request.POST["client"]
+            deck = request.POST["deck"]
+            txt_file = request.FILES["txt_file"]
+            file = txt_file.read().decode("utf8")
+            rows = file.splitlines()
+
+            for row in rows:
+                entry = row.split("\t")
+                polish = entry[0]
+                english = entry[1]
+
+                VocabularyManager().add_entry(
+                    client,
+                    deck,
+                    english,
+                    polish,
+                    current_user)
+
+            messages.success(request, ("The file has been uploaded!"))
+            return render(request, "upload_anki.html", {
+                "clients": clients
+                })
+
+        return render(request, "upload_anki.html", {
+            "clients": clients
+            })
 
 @staff_member_required
 def upload_catalogues(request):

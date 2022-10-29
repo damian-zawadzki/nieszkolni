@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% include 'staff_menu.html' %}
+{% load static %}
+
+<h1>UPLOAD ANKI</h1>
+
+<form action="{% url 'upload_anki' %}" method="POST" enctype="multipart/form-data"> 
+{% csrf_token %}
+
+    <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Client</label>
+
+        <select required class="input_content" name="client">
+            <option disabled selected value></option>
+
+            {% for client in clients %}
+                <option value="{{ client }}">{{ client }}</option>
+            {% endfor %}
+
+        </select>
+
+     </div>
+    </div>
+
+    <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Deck</label>
+
+        <select required class="input_content" name="deck">
+            <option disabled selected value></option>
+
+            <option value="vocabulary">vocabulary</option>
+            <option value="sentences">sentences</option>
+
+        </select>
+
+     </div>
+    </div>
+
+    <div class="flex-parent jc-center">
+        <button type="button" class="button_main">
+            <label style="margin: 25px; font-weight: bold;">
+                    Browse
+                <input type="file" style="display: none; margin: 25px;" name="txt_file" required="True" class="input_content">
+            </label>
+        </button>
+        <label id="file_upload" style="display: none;" id="file_upload">
+            <span class="button_main">File</span>
+        </label>                    
+    </div>
+
+    <div class="flex-parent jc-center">                    
+         <button type="submit" class="button_main" name="action_on_anki" value="upload">Upload</button>
+    </div>
+
+</form>
+
+{% endblock %}
