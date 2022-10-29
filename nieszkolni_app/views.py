@@ -24,6 +24,7 @@ from nieszkolni_folder.roadmap_manager import RoadmapManager
 import csv
 import re
 import json
+from io import BytesIO
 from gtts import gTTS
 from playsound import playsound
 
@@ -244,8 +245,9 @@ def view_answer(request):
                 english_4 = re.sub(r"\ssth$", " something", english_3)
 
                 language = "en-us"
+                recording = BytesIO()
                 audio = gTTS(text=english_4, lang=language, slow=False)
-                audio.save(f"./{english_4}.mp3")
+                audio..write_to_fp(recording)
                 playsound(f"./{english_4}.mp3")
 
         # If no button is clicked
