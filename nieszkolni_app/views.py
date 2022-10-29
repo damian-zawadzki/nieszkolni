@@ -25,8 +25,8 @@ import csv
 import re
 import json
 import pyttsx3
-from gtts import gTTS
-from playsound import playsound
+# from gtts import gTTS
+# from playsound import playsound
 
 from django_user_agents.utils import get_user_agent
 
