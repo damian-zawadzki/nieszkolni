@@ -25,7 +25,6 @@ import csv
 import re
 import json
 import pyttsx3
-from espeak import espeak
 # from gtts import gTTS
 # from playsound import playsound
 
