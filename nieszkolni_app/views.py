@@ -25,6 +25,8 @@ import csv
 import re
 import json
 import pyttsx3
+from gtts import gTTS
+from playsound import playsound
 
 from django_user_agents.utils import get_user_agent
 
@@ -241,6 +243,11 @@ def view_answer(request):
                 english_2 = re.sub(r"\ssb$", " somebody", english_1)
                 english_3 = re.sub(r"\ssth\s", " something ", english_2)
                 english_4 = re.sub(r"\ssth$", " something", english_3)
+
+                # language = "en-us"
+                # audio = gTTS(text=english_4, lang=language, slow=False)
+                # audio.save("recording.mp3")
+                # playsound("recording.mp3")
 
                 engine = pyttsx3.init()
                 engine.say(english_4)
