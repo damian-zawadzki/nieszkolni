@@ -245,9 +245,8 @@ def view_answer(request):
 
                 language = "en-us"
                 audio = gTTS(text=english_4, lang=language, slow=False)
-                audio.save("recording.mp3")
-                playsound("recording.mp3")
-
+                audio.save("./recording.mp3")
+                playsound("./recording.mp3")
 
         # If no button is clicked
         return render(request, 'view_answer.html', {
