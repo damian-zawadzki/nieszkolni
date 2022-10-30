@@ -6,13 +6,13 @@
 	  <h5>STAFF MENU</h5>
 	</li>
 	<li class="side_navigation_item">
-	  <a class="side_navigation_link" aria-current="page" href="{% url 'list_current_users' %}">LIST OF USERS</a>
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'list_current_users' %}">USERS</a>
 	</li>
 	<li class="side_navigation_item">
-	  <a class="side_navigation_link" aria-current="page" href="{% url 'register_user'%}">USER REGISTRATION</a>
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'register_user'%}">REGISTER A USER</a>
 	</li>
 	<li class="side_navigation_item">
-	  <a class="side_navigation_link" aria-current="page" href="{% url 'add_profile'%}">PROFILE CREATION</a>
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'add_profile'%}">CREATE A PROFILE</a>
 	</li>
 	<li class="side_navigation_item">
 	  <a class="side_navigation_link" aria-current="page" href="{% url 'profiles'%}">PROFILES</a>
@@ -21,10 +21,7 @@
 	  <a class="side_navigation_link" aria-current="page" href="{% url 'display_curricula'%}">CURRICULA</a>
 	</li>
 	<li class="side_navigation_item">
-	  <a class="side_navigation_link" aria-current="page" href="{% url 'upload_curriculum'%}">CURRICULUM UPLOAD</a>
-	</li>
-	<li class="side_navigation_item">
-	  <a class="side_navigation_link" aria-current="page" href="{% url 'add_curriculum'%}">CURRICULUM EXTENSION</a>
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'upload_curriculum'%}">UPLOAD A CURRICULUM</a>
 	</li>
 	<li class="side_navigation_item">
 	  <a class="side_navigation_link" aria-current="page" href="{% url 'display_matrices'%}">MATRICES</a>
@@ -36,19 +33,22 @@
 	  <a class="side_navigation_link" aria-current="page" href="{% url 'plan_matrix'%}">PLAN A MATRIX</a>
 	</li>
 	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'add_curriculum'%}">PLAN A MODULE</a>
+	</li>
+	<li class="side_navigation_item">
 	  <a class="side_navigation_link" aria-current="page" href="{% url 'display_modules'%}">MODULES</a>
 	</li>
 	<li class="side_navigation_item">
 	  <a class="side_navigation_link" aria-current="page" href="{% url 'add_module'%}">ADD A MODULE</a>
 	</li>
 	<li class="side_navigation_item">
-	  <a class="side_navigation_link" aria-current="page" href="{% url 'add_roadmap'%}">ROADMAP EXTENSION</a>
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'add_roadmap'%}">ADD A ROADMAP</a>
 	</li>
 	<li class="side_navigation_item">
 	  <a class="side_navigation_link" aria-current="page" href="{% url 'roadmaps'%}">ROADMAPS</a>
 	</li>
 	<li class="side_navigation_item">
-	  <a class="side_navigation_link" aria-current="page" href="{% url 'add_course'%}">COURSE EXTENSION</a>
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'add_course'%}">ADD A COURSE</a>
 	</li>
 	<li class="side_navigation_item">
 	  <a class="side_navigation_link" aria-current="page" href="{% url 'list_courses'%}">COURSES</a>
@@ -57,37 +57,37 @@
 	  <a class="side_navigation_link" aria-current="page" href="{% url 'dictionary'%}">DICTIONARY</a>
 	</li>
 	<li class="side_navigation_item">
-	  <a class="side_navigation_link" aria-current="page" href="{% url 'upload_dictionary'%}">DICTIONARY UPLOAD</a>
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'upload_dictionary'%}">UPLOAD THE DICTIONARY</a>
 	</li>
 	<li class="side_navigation_item">
-	  <a class="side_navigation_link" aria-current="page" href="{% url 'translate_wordbook'%}">WORDBOOK TRANSLATION</a>
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'translate_wordbook'%}">TRANSLATE WORDBOOK ENTRIES</a>
 	</li>
 	<li class="side_navigation_item">
-	  <a class="side_navigation_link" aria-current="page" href="{% url 'approve_wordbook'%}">WORDBOOK APPROVAL</a>
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'approve_wordbook'%}">APPROVE WORDBOOK ENTRIES</a>
 	</li>
 	<li class="side_navigation_item">
-	  <a class="side_navigation_link" aria-current="page" href="{% url 'translate_sentencebook'%}">SENTENCEBOOK TRANSLATION</a>
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'translate_sentencebook'%}">TRANSLATE SENTENCEBOOK ENTRIES</a>
 	</li>
 	<li class="side_navigation_item">
-	  <a class="side_navigation_link" aria-current="page" href="{% url 'approve_sentencebook'%}">SENTENCEBOOK APPROVAL</a>
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'approve_sentencebook'%}">APPROVE SENTENCEBOOK ENTRIES</a>
 	</li>
 	<li class="side_navigation_item">
 	  <a class="side_navigation_link" aria-current="page" href="{% url 'upload_anki'%}">UPLOAD ANKI</a>
 	</li>
 	<li class="side_navigation_item">
-	  <a class="side_navigation_link" aria-current="page" href="{% url 'upload_catalogues'%}">CATALOGUE UPLOAD</a>
-	</li>
-	<li class="side_navigation_item">
 	  <a class="side_navigation_link" aria-current="page" href="{% url 'catalogues'%}">CATALOGUES</a>
 	</li>
 	<li class="side_navigation_item">
-	  <a class="side_navigation_link" aria-current="page" href="{% url 'upload_sentence_stock'%}">SENTENCE STOCK UPLOAD</a>
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'upload_catalogues'%}">UPLOAD A CATALOGUE</a>
+	</li>
+	<li class="side_navigation_item">
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'upload_sentence_stock'%}">UPLOAD THE SENTENCE STOCK</a>
 	</li>
 	<li class="side_navigation_item">
 	  <a class="side_navigation_link" aria-current="page" href="{% url 'sentence_stock'%}">SENTENCE STOCK</a>
 	</li>
 	<li class="side_navigation_item">
-	  <a class="side_navigation_link" aria-current="page" href="{% url 'upload_sets'%}">SETS UPLOAD</a>
+	  <a class="side_navigation_link" aria-current="page" href="{% url 'upload_sets'%}">UPLOAD SETS</a>
 	</li>
 	<li class="side_navigation_item">
 	  <a class="side_navigation_link" aria-current="page" href="{% url 'composer'%}">COMPOSER</a>
