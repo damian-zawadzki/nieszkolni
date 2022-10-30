@@ -13,9 +13,11 @@
 
         <select required class="input_content" name="component_type">
             <option disabled selected value></option>
-            <option value="sentences">lecture</option>
-            <option value="text">text</option>
-            <option value="podcast">podcast</option>
+
+            {% for component in components %}
+              <option value="{{ component.0 }}">{{ component.0 }}</option>
+            {% endfor %}
+
         </select>
 
     </div>

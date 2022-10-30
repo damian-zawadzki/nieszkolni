@@ -1145,6 +1145,8 @@ def add_module(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        components = KnowledgeManager().display_prompts("components")
+
         if request.method == "POST":
             component_id_number = request.POST["component_id_number"]
             component_type = request.POST["component_type"]
@@ -1164,9 +1166,13 @@ def add_module(request):
                 )
 
             messages.success(request, ("You have added a module!"))
-            return render(request, "add_module.html", {})
+            return render(request, "add_module.html", {
+                "components": components
+                })
 
-        return render(request, "add_module.html", {})
+        return render(request, "add_module.html", {
+            "components": components
+            })
 
 
 @staff_member_required
