@@ -296,7 +296,8 @@ class CurriculumManager:
             title,
             content,
             resources,
-            conditions
+            conditions,
+            reference
             ):
 
         title = Cleaner().clean_quotation_marks(title)
@@ -312,7 +313,8 @@ class CurriculumManager:
                 title,
                 content,
                 resources,
-                conditions
+                conditions,
+                reference
                 )
                 VALUES (
                 '{component_id}',
@@ -320,7 +322,8 @@ class CurriculumManager:
                 '{title}',
                 '{content}',
                 '{resources}',
-                '{conditions}'
+                '{conditions}',
+                {reference}
                 )
                 ''')
 
@@ -334,7 +337,8 @@ class CurriculumManager:
                 title,
                 content,
                 resources,
-                conditions
+                conditions,
+                reference
                 FROM nieszkolni_app_module
                 ''')
 
@@ -352,7 +356,8 @@ class CurriculumManager:
                 title,
                 content,
                 resources,
-                conditions
+                conditions,
+                reference
                 FROM nieszkolni_app_module
                 WHERE component_id = '{component_id}'
                 ''')

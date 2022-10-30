@@ -99,6 +99,7 @@ class Module(models.Model):
     content = models.TextField(default="")
     resources = models.TextField(default="")
     conditions = models.TextField(default="")
+    reference = models.IntegerField(default=0)
 
 
 class CurrentClient(models.Model):

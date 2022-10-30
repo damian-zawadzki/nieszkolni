@@ -922,45 +922,60 @@ def add_curriculum(request):
         current_user = first_name + " " + last_name
 
         names = ClientsManager().list_current_clients()
+        modules = CurriculumManager().display_modules()
+        module_status = 0
 
         if request.method == "POST":
-            if request.POST["curriculum_action"] == "choose_filters":
-                name = request.POST["name"]
+            if request.POST["curriculum_action"] == "choose_sentences":
+                name = request.POST["name"]        
                 names = [name]
-                assignment_type = request.POST["assignment_type"]
+                assignment_type = "sentences"
 
-                if assignment_type == "sentences":
-                    entries = SentenceManager().display_planned_sentence_lists_per_student(name)
-                elif assignment_type == "reading":
-                    entries = BackOfficeManager().display_library_position_numbers()
-                else:
-                    entries = ""
+                entries = SentenceManager().display_planned_sentence_lists_per_student(name)
 
                 return render(request, "add_curriculum_2.html", {
                     "names": names,
                     "assignment_type": assignment_type,
-                    "entries": entries
+                    "entries": entries,
+                    "modules": modules,
+                    "module_status": module_status
+                    })
+
+            elif request.POST["curriculum_action"] == "choose_other_modules":
+                name = request.POST["name"]
+                module = request.POST["module"]
+
+                module_status = 1
+                assignment_type_raw = re.search(r"\w.+_", module).group()
+                assignment_type = re.sub("_", "", assignment_type_raw)
+                names = [name]
+
+                entries = SentenceManager().display_planned_sentence_lists_per_student(name)
+                module = CurriculumManager().display_module(module)
+
+                return render(request, "add_curriculum_2.html", {
+                    "names": names,
+                    "assignment_type": assignment_type,
+                    "entries": entries,
+                    "modules": modules,
+                    "module": module,
+                    "module_status": module_status
                     })
 
             else:
                 item = CurriculumManager().next_item()
                 deadline = request.POST["deadline"]
                 name = request.POST["name"]
-                component_id = "custom_task_9999"
-                component_type = "custom_task"
                 assignment_type = request.POST["assignment_type"]
                 title = request.POST["title"]
                 content = request.POST["content"]
                 matrix = "custom matrix"
                 reference = request.POST["reference"]
-
-                if assignment_type == "reading":
-                    position = BackOfficeManager().find_position_in_library(reference)
-                    resources = position[3]
-                else:
-                    resources = request.POST["resources"]
-
+                resources = request.POST["resources"]
                 conditions = request.POST["conditions"]
+
+                component_type = assignment_type
+                component_id = f"{component_type}_{reference}"
 
                 CurriculumManager().add_curriculum(
                     item,
@@ -983,11 +998,15 @@ def add_curriculum(request):
 
                 messages.success(request, ("Curriculum extended!"))
                 return render(request, "add_curriculum.html", {
-                    "names": names
+                    "names": names,
+                    "modules": modules,
+                    "module_status": module_status
                     })
 
         return render(request, "add_curriculum.html", {
-            "names": names
+            "names": names,
+            "modules": modules,
+            "module_status": module_status
             })
 
 
@@ -1162,7 +1181,8 @@ def add_module(request):
                 title,
                 content,
                 resources,
-                conditions
+                conditions,
+                reference
                 )
 
             messages.success(request, ("You have added a module!"))
