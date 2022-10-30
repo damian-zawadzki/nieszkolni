@@ -13,7 +13,13 @@
 			<input type="text" name="prompt" class="input_content">
 
 			<label class="input_label">Parent</label>
-			<input type="text" name="parent" class="input_content">
+			<select required class="input_content" name="parent">
+	            <option disabled selected value></option>
+	            <option value="stream">stream</option>
+	            <option value="memories">memories</option>
+	            <option value="memories">options</option>
+	            <option value="components">components</option>
+        	</select>
 
 			<label class="input_label">Patern</label>
 			<input type="text" name="pattern" class="input_content">
