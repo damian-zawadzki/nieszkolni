@@ -75,7 +75,7 @@ def vocabulary(request):
             card_id = all_due_entries[0][0]
             polish = all_due_entries[0][1]
             english = all_due_entries[0][2]
-            interval = all_due_entries[0][4]
+            interval = all_due_entries[0][3]
             old_due_today = len(VocabularyManager().display_old_due_entries(current_user, deck))
             new_due_today = len(VocabularyManager().display_new_due_entries(current_user, deck))
             problematic_due_today = len(VocabularyManager().display_problematic_due_entries(current_user, deck))
@@ -142,7 +142,7 @@ def sentences(request):
             card_id = all_due_entries[0][0]
             polish = all_due_entries[0][1]
             english = all_due_entries[0][2]
-            interval = all_due_entries[0][4]
+            interval = all_due_entries[0][3]
             old_due_today = len(VocabularyManager().display_old_due_entries(current_user, deck))
             new_due_today = len(VocabularyManager().display_new_due_entries(current_user, deck))
             problematic_due_today = len(VocabularyManager().display_problematic_due_entries(current_user, deck))
@@ -205,7 +205,7 @@ def view_answer(request):
                 old_due_today = len(VocabularyManager().display_old_due_entries(current_user, deck))
                 new_due_today = len(VocabularyManager().display_new_due_entries(current_user, deck))
                 problematic_due_today = len(VocabularyManager().display_problematic_due_entries(current_user, deck))
-                interval = all_due_entries[0][4]
+                interval = all_due_entries[0][3]
 
                 if request.POST["answer"] != "edit":
                     answer = request.POST["answer"]
@@ -237,7 +237,7 @@ def view_answer(request):
                 old_due_today = len(VocabularyManager().display_old_due_entries(current_user, deck))
                 new_due_today = len(VocabularyManager().display_new_due_entries(current_user, deck))
                 problematic_due_today = len(VocabularyManager().display_problematic_due_entries(current_user, deck))
-                interval = all_due_entries[0][4]
+                interval = all_due_entries[0][3]
 
                 english_1 = re.sub(r"\ssb\s", " somebody ", english)
                 english_2 = re.sub(r"\ssb$", " somebody", english_1)
@@ -3204,7 +3204,6 @@ def display_options(request):
         current_user = first_name + " " + last_name
 
         options = BackOfficeManager().display_options()
-        
 
         if request.method == "POST":
             if request.POST["action_on_option"] == "go_to_add":

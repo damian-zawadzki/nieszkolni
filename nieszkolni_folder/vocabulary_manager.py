@@ -43,65 +43,130 @@ class VocabularyManager:
             entry.card_opening_times = ""
             entry.card_closing_times = ""
             entry.card_revision_days = ""
-            entry.line = 0
+            entry.line = 1
             entry.coach = coach
             entry.save()
 
     def display_all_entries(self, client, deck):
-        all_entries = []
-        
-        for card in Card.objects.raw(f"SELECT * FROM nieszkolni_app_card WHERE client = '{client}' AND deck = '{deck}'"):
-            all_entries.append((card.english, card.polish))
-        
-        print(all_entries)
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                card_id,
+                english,
+                polish,
+                interval
+                FROM nieszkolni_app_card
+                WHERE client = '{client}'
+                AND deck = '{deck}'
+                ''')
 
-        return all_entries
+            entries = cursor.fetchall()
+
+            return entries
 
     def display_due_entries(self, client, deck):
-        today = TimeMachine().today()
-        today_number = TimeMachine().date_to_number(today)
+        old_entries = self.display_old_due_entries(client, deck)
+        new_entries = self.display_new_due_entries(client, deck)
+        problematic_entries = self.display_problematic_due_entries(client, deck)
 
-        all_entries = []
+        entries_raw = problematic_entries + old_entries + new_entries
+        entries = sorted(entries_raw, key=lambda tup: tup[4], reverse=False)
 
-        for card in Card.objects.raw(f"SELECT * FROM nieszkolni_app_card WHERE due_date <= {today_number} AND client = '{client}' AND deck = '{deck}' ORDER BY line"):
-            all_entries.append((card.card_id, card.polish, card.english, card.client, card.interval))
-
-        return all_entries
+        return entries
 
     def display_old_due_entries(self, client, deck):
-        today = TimeMachine().today()
-        today_number = TimeMachine().date_to_number(today)
+        today_number = TimeMachine().today_number()
 
-        all_entries = []
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                card_id,
+                polish,
+                english,
+                interval,
+                line
+                FROM nieszkolni_app_card
+                WHERE client = '{client}'
+                AND deck = '{deck}'
+                AND due_date <= {today_number}
+                AND number_of_reviews != 0
+                AND interval != 0
+                ''')
 
-        for card in Card.objects.raw(f"SELECT * FROM nieszkolni_app_card WHERE due_date <= {today_number} AND number_of_reviews != 0 AND interval != 0 AND client = '{client}' AND deck = '{deck}'"):
-            all_entries.append((card.card_id, card.polish, card.english))
+            entries = cursor.fetchall()
 
-        return all_entries
+            return entries
+
+    def display_new_entries_done_today(self, client, deck):
+        today_number = TimeMachine().today_number()
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT COUNT (DISTINCT card_id)
+                FROM nieszkolni_app_card
+                WHERE card_revision_days LIKE ';{today_number}%'
+                AND client = '{client}'
+                AND deck = '{deck}'
+                AND number_of_reviews > 0
+                ''')
+
+            data = cursor.fetchone()
+            result = data[0]
+
+            return result
 
     def display_new_due_entries(self, client, deck):
-        today = TimeMachine().today()
-        today_number = TimeMachine().date_to_number(today)
+        today_number = TimeMachine().today_number()
 
-        all_entries = []
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                card_id,
+                polish,
+                english,
+                interval,
+                line
+                FROM nieszkolni_app_card
+                WHERE client = '{client}'
+                AND deck = '{deck}'
+                AND due_date <= {today_number}
+                AND number_of_reviews = 0
+                ''')
 
-        for card in Card.objects.raw(f"SELECT * FROM nieszkolni_app_card WHERE due_date <= {today_number} AND number_of_reviews = 0 AND client = '{client}' AND deck = '{deck}'"):
-            all_entries.append((card.card_id, card.polish, card.english))
+            entries = cursor.fetchall()
 
-        daily_limit_of_new_cards = self.current_daily_limit_of_new_cards(client)
+            daily_limit_of_new_cards = self.current_daily_limit_of_new_cards(client)
+            new_cards_done_today = self.display_new_entries_done_today(client, deck)
+            actual_daily_limit_of_new_cards = daily_limit_of_new_cards - new_cards_done_today
 
-        return all_entries[0:daily_limit_of_new_cards]
+            if actual_daily_limit_of_new_cards > 0:
+                return entries[0:actual_daily_limit_of_new_cards]
+            else:
+                return []
 
     def display_problematic_due_entries(self, client, deck):
-        today = TimeMachine().today()
-        today_number = TimeMachine().date_to_number(today)
+        today_number = TimeMachine().today_number()
 
-        all_entries = []
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                card_id,
+                polish,
+                english,
+                interval,
+                line
+                FROM nieszkolni_app_card
+                WHERE client = '{client}'
+                AND deck = '{deck}'
+                AND due_date <= {today_number}
+                AND number_of_reviews != 0
+                AND interval = 0
+                ORDER BY line ASC 
+                ''')
 
-        for card in Card.objects.raw(f"SELECT * FROM nieszkolni_app_card WHERE due_date <= {today_number} AND interval = 0 AND number_of_reviews != 0 AND client = '{client}' AND deck = '{deck}'"):
-            all_entries.append((card.card_id, card.polish, card.english))
+            entries = cursor.fetchall()
 
-        return all_entries
+            return entries
 
     def update_card(self, card_id, answer, card_opening_time):
         entry = Card.objects.get(card_id=card_id)
