@@ -581,7 +581,7 @@ def profile(request):
 
                 if assessment_method == "statistics":
                     assessment_system = course_details[7]
-                    statistics = StreamManager().statistics(current_user)
+                    statistics = StreamManager().advanced_statistics(current_user)
                     result = statistics[assessment_system]
                 else:
                     result = RoadmapManager().display_final_grade(current_user, course)

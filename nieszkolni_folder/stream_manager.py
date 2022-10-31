@@ -465,6 +465,98 @@ class StreamManager:
 
             return stats
 
+    def count_po(self, name, title_type):
+        client = name
+        today_number = TimeMachine().today_number()
+
+        # Repertoire
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                title,
+                duration
+                FROM nieszkolni_app_repertoire
+                WHERE title_type = '{title_type}'
+                ''')
+
+            repertoire_rows = cursor.fetchall()
+
+            repertoire_dict = dict()
+            for row in repertoire_rows:
+                title = row[0]
+                duration = row[1]
+                repertoire_dict.update({title: duration})
+
+        # PO
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                stamp,
+                date_number,
+                date,
+                name,
+                command,
+                value,
+                stream_user,
+                status
+                FROM nieszkolni_app_stream
+                WHERE name = '{client}'
+                AND command = 'PO'
+                ''')
+
+            po_rows = cursor.fetchall()
+
+            po_list = []
+            for row in po_rows:
+                title = re.sub(r"\s\*\d{1,}", "", row[5])
+                print(row[5])
+
+                try:
+                    number_of_episodes = int(re.sub("\s\*","",re.search("\s\*\d{1,}", row[5]).group()))
+                except Exception as e:
+                    number_of_episodes = 0
+
+                if repertoire_dict.get(title) is None:
+                    episode_duration = 0
+                else:
+                    episode_duration = repertoire_dict.get(title)
+
+                duration = number_of_episodes * episode_duration
+
+                entry = (title, number_of_episodes, episode_duration, duration)
+                po_list.append(entry)
+
+            total_po = 0
+            for entry in po_list:
+                po = entry[3]
+                total_po += po
+
+            return total_po
+
+    def advanced_statistics(self, name):
+        client = name
+        today_number = TimeMachine().today_number()
+
+        # Series and movies
+        series = self.count_po(client, "tv_series")
+        movies = self.count_po(client, "movie")
+
+        series_and_movies = series + movies
+
+        # Podcasts and audiobooks
+        podcasts = self.count_po(client, "podcast")
+        audiobooks = self.count_po(client, "audiobook")
+
+        podcasts_and_audiobooks = podcasts + audiobooks
+
+        stats = {
+            "series_and_movies": series_and_movies,
+            "podcasts_and_audiobooks": podcasts_and_audiobooks,
+            }
+
+        return stats
+
+
     def display_activity_start(self):
         with connection.cursor() as cursor:
             cursor.execute(f'''
