@@ -2535,12 +2535,16 @@ def download_assignments(request):
 
         return render(request, "download_assignments.html", {})
 
+
 @staff_member_required
 def add_course(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
+
+        course_types = KnowledgeManager().display_prompts("course_type")
+        assessment_methods = KnowledgeManager().display_prompts("assessment_method")
 
         if request.method == "POST":
             if request.POST["action_on_course"] == "add":
@@ -2567,7 +2571,11 @@ def add_course(request):
                     )
 
                 courses = RoadmapManager().list_courses()
-                return render(request, "list_courses.html", {"courses": courses})
+                return render(request, "list_courses.html", {
+                    "courses": courses,
+                    "course_types": course_types,
+                    "assessment_methods": assessment_methods
+                    })
 
             if request.POST["action_on_course"] == "update":
                 course = request.POST["course"]
@@ -2593,9 +2601,16 @@ def add_course(request):
                     )
 
                 courses = RoadmapManager().list_courses()
-                return render(request, "list_courses.html", {"courses": courses})      
+                return render(request, "list_courses.html", {
+                    "courses": courses,
+                    "course_types": course_types,
+                    "assessment_methods": assessment_methods
+                    })      
 
-        return render(request, "add_course.html", {})
+        return render(request, "add_course.html", {
+            "course_types": course_types,
+            "assessment_methods": assessment_methods
+            })
 
 
 @staff_member_required

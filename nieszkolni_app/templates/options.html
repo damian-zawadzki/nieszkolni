@@ -14,7 +14,7 @@
 				  {% csrf_token %}
 				  <div class="flex-parent jc-center">
 				    <div class="input_container">
-				      <input type="number" class="input_content_solo" name="new_daily_limit_of_new_cards" placeholder={{ current_daily_limit_of_new_cards }}>
+				      <input type="number" class="input_content_solo" name="new_daily_limit_of_new_cards" value="{{ current_daily_limit_of_new_cards }}">
 				    </div>
 				  </div>
 				  <div class="flex-parent jc-center">
