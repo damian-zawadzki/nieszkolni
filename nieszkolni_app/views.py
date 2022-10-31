@@ -567,52 +567,75 @@ def profile(request):
 
         if request.method == "POST":
             if request.POST["action_on_profile"] == "more":
-                try:
-                    roadmap_id_number = request.POST["roadmap_id_number"]
+                # try:
+                roadmap_id_number = request.POST["roadmap_id_number"]
 
-                    roadmap_details = RoadmapManager().display_roadmap_details(roadmap_id_number)
-                    course = roadmap_details[2]
-                    course_details = RoadmapManager().display_course(course)
-                    grades = RoadmapManager().display_grades(current_user, course)
-                    threshold = RoadmapManager().display_course_threshold(course)
-                    assessment_method = course_details[5]
-                    deadline_number = roadmap_details[4]
-                    today_number = TimeMachine().today_number()
+                roadmap_details = RoadmapManager().display_roadmap_details(roadmap_id_number)
+                course = roadmap_details[2]
+                course_details = RoadmapManager().display_course(course)
+                grades = RoadmapManager().display_grades(current_user, course)
+                threshold = RoadmapManager().display_course_threshold(course)
+                assessment_method = course_details[5]
+                assessment_system = course_details[7]
+                deadline_number = roadmap_details[4]
+                today_number = TimeMachine().today_number()
 
-                    if assessment_method == "statistics":
-                        assessment_system = course_details[7]
-                        statistics = StreamManager().advanced_statistics(current_user)
-                        result = statistics[assessment_system]
-                    else:
-                        result = RoadmapManager().display_final_grade(current_user, course)
+                if assessment_method == "statistics":
+                    statistics = StreamManager().advanced_statistics(current_user)
+                    result = statistics[assessment_system]
 
-                    if result >= threshold:
+                elif assessment_method == "assignment":
+                    if assessment_system == "item":
+                        item = roadmap_details[7]
+                        result = CurriculumManager().display_assignment_status(item)
+
+                else:
+                    result = RoadmapManager().display_final_grade(current_user, course)
+
+                # Status: passed/ongoing/failed
+                if assessment_method == "assignment":
+
+                    if result == "completed":
                         status = "passed"
-                    elif result == -1:
-                        status = "ongoing"
-                    elif assessment_method == "statistics":
+
+                    else:
                         if deadline_number > today_number:
                             status = "ongoing"
                         else:
                             status = "failed"
+
+                elif result >= threshold:
+                    status = "passed"
+
+                elif result == -1:
+                    status = "ongoing"
+
+                elif assessment_method == "statistics":
+
+                    if deadline_number > today_number:
+                        status = "ongoing"
+
                     else:
                         status = "failed"
 
-                    RoadmapManager().update_roadmap(roadmap_id_number, status)
+                else:
+                    status = "failed"
 
-                    deadline = TimeMachine().number_to_system_date(roadmap_details[4])
+                RoadmapManager().update_roadmap(roadmap_id_number, status)
 
-                    return render(request, "display_roadmap_details.html", {
-                        "roadmap_details": roadmap_details,
-                        "course_details": course_details,
-                        "deadline": deadline,
-                        "grades": grades,
-                        "status": status,
-                        "assessment_method": assessment_method,
-                        "result": result
-                        })
-                except Exception as e:
-                    return redirect("profile.html")
+                deadline = TimeMachine().number_to_system_date(roadmap_details[4])
+
+                return render(request, "display_roadmap_details.html", {
+                    "roadmap_details": roadmap_details,
+                    "course_details": course_details,
+                    "deadline": deadline,
+                    "grades": grades,
+                    "status": status,
+                    "assessment_method": assessment_method,
+                    "result": result
+                    })
+                # except Exception as e:
+                #     return redirect("profile.html")
         
         if user_agent.is_mobile:
             return render(request, "m_profile.html", {
@@ -994,7 +1017,8 @@ def add_curriculum(request):
                 conditions = request.POST["conditions"]
 
                 component_type = assignment_type
-                component_id = f"{component_type}_{reference}"
+                component_id = re.sub(r"Translate\s", "", title)
+                component_id = f"{component_type}_{component_id}"
 
                 CurriculumManager().add_curriculum(
                     item,
@@ -2146,19 +2170,23 @@ def composed_sentences(request):
         if request.method == "POST":
             if request.POST["search"] == "sentences":
                 name = request.POST["name"]
+                search_type = request.POST["search"]
                 entries = SentenceManager().display_planned_sentences_per_student(name)
 
                 return render(request, "composed_sentences.html", {
                     "current_clients": current_clients,
                     "entries": entries,
+                    "search_type": search_type
                     })
             else:
+                search_type = request.POST["search"]
                 name = request.POST["name"]
                 entries = SentenceManager().display_planned_sentence_lists_per_student(name)
 
                 return render(request, "composed_sentences.html", {
                     "current_clients": current_clients,
-                    "entries": entries
+                    "entries": entries,
+                    "search_type": search_type
                     })
 
 
@@ -2570,6 +2598,7 @@ def add_course(request):
                 link = request.POST["link"]
                 reference_system = request.POST["reference_system"]
                 threshold = request.POST["threshold"]
+                component_id = request.POST["component_id"]
 
                 RoadmapManager().add_course(
                     course,
@@ -2580,7 +2609,8 @@ def add_course(request):
                     assessment_method,
                     link,
                     reference_system,
-                    threshold
+                    threshold,
+                    component_id
                     )
 
                 courses = RoadmapManager().list_courses()
@@ -2601,6 +2631,7 @@ def add_course(request):
                 link = request.POST["link"]
                 reference_system = request.POST["reference_system"]
                 threshold = request.POST["threshold"]
+                component_id = request.POST["component_id"]
 
                 RoadmapManager().update_course(
                     course,
@@ -2611,7 +2642,8 @@ def add_course(request):
                     assessment_method,
                     link,
                     reference_system,
-                    threshold
+                    threshold,
+                    component_id
                     )
 
                 courses = RoadmapManager().list_courses()
@@ -2702,14 +2734,16 @@ def add_roadmap(request):
                 client = request.POST["client"]
                 semester = request.POST["semester"]
                 course = request.POST["course"]
-                deadline = name = request.POST["deadline"]
+                deadline = request.POST["deadline"]
+                item = request.POST["item"]
 
                 RoadmapManager().add_roadmap(
                     client,
                     semester,
                     course,
                     deadline,
-                    current_user
+                    current_user,
+                    item
                     )
 
                 return render(request, "add_roadmap.html", {

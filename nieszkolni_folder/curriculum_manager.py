@@ -162,9 +162,21 @@ class CurriculumManager:
                 WHERE item = {item}
                 ''')
 
-            assignment = cursor.fetchall()
+            assignment = cursor.fetchone()
 
-        return assignment[0]
+        return assignment
+
+    def display_assignment_status(self, item):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT status
+                FROM nieszkolni_app_curriculum
+                WHERE item = {item}
+                ''')
+
+            assignment_status = cursor.fetchone()
+
+        return assignment_status[0]
 
     def change_status_to_completed(self, item, submitting_user):
         now_number = TimeMachine().now_number()

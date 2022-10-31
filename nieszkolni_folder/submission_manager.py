@@ -52,10 +52,12 @@ class SubmissionManager:
                 minor_errors,
                 major_errors,
                 reviewing_user,
+                revision_date,
                 conditions,
                 comment,
                 grade
-                ) VALUES (
+                )
+                VALUES (
                 {stamp},
                 {date_number},
                 '{date}',
@@ -72,11 +74,11 @@ class SubmissionManager:
                 0,
                 0,
                 '',
+                0,
                 '',
                 '',
                 ''
-                ) ON CONFLICT
-                DO NOTHING
+                )
                 ''')
 
     def display_students_assignments_limited(self, name):

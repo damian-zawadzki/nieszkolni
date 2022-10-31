@@ -67,7 +67,7 @@
         <select class="input_content" name="title">
           <option disabled selected value></option>
            {% for entry in entries %}
-          <option value="Translate {{ entry }}">Translate {{ entry }}</option>
+          <option value="Translate {{ entry.0 }}">Translate {{ entry.0 }}</option>
           {% endfor %}
         </select>
 

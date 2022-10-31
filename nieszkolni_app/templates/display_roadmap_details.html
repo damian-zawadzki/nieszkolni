@@ -15,16 +15,29 @@
 		      	<div class="task_card_content"><span>{{ course_details.3 }}</span></div>
 		      	<div><b>Addmission</b></div>
 		      	<div class="task_card_content"><span>{{ course_details.4 }}</span></div>
-		      	<div><b>Link</b></div>
-		      	<div class="task_card_content"><span>{{ course_details.6 }}</span></div>
-		      	<div><b>Threshold</b></div>
-		      	<div class="task_card_content"><span>{{ course_details.8 }}</span></div>
-		      	<div><b>Results</b></div>
+
+		      	{% if course_details.6 == '' %}
+		      	{% else %}		      	
+			      	<div><b>Link</b></div>
+			      	<div class="task_card_content"><span>{{ course_details.6 }}</span></div>
+				{% endif %}
+
+		      	{% if course_details.8 == -1 %}
+		      	{% else %}
+			      	<div><b>Threshold</b></div>
+			      	<div class="task_card_content"><span>{{ course_details.8 }}</span></div>
+			    {% endif %}
+
+		      	<div><b>Result(s)</b></div>
 
 
 		      	{% if assessment_method == 'statistics' %}
 
-				      	<div class="task_card_content">{{ result }}/<span>{{ course_details.8 }}</span></div>
+				    <div class="task_card_content">{{ result }}/{{ course_details.8 }}</div>
+
+				{% elif assessment_method == 'assignment' %}
+
+					<div class="task_card_content">{{ result }}</span></div>
 
 		      	{% else %}
 

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block 'content' %}
 
-<h1>Composer</h1>
+<h1>COMPOSED SENTENCES</h1>
 
 <form method="POST">
   {% csrf_token %}
@@ -38,28 +38,61 @@
 
 </form>
 
-<div class="table_container">
-  <li class="table_header table_row">
-    <div id="header_1">Status</div>
-    <div id="header_2">List number</div>
-    <div id="header_3">Sentence number</div>
-    <div id="header_4">Sentence id</div>
-    <div id="header_5">Name</div>
-    <div id="header_6">English</div>
-    <div id="header_7">Polish</div>
-  </li>
-{% for entry in entries %}
-  <li class="table_row">
-    <div id="column_1">{{ entry.0 }}</div>
-    <div id="column_2">{{ entry.1 }}</div>
-    <div id="column_3">{{ entry.2 }}</div>
-    <div id="column_4">{{ entry.3 }}</div>
-    <div id="column_5">{{ entry.4 }}</div>
-    <div id="column_6">{{ entry.5 }}</div>
-    <div id="column_7">{{ entry.6 }}</div>
-  </li>
-{% endfor %}
-</div>
+{% if search_type == 'sentences' %}
+
+  <table>
+
+      <tr class="font">
+
+        <th>Status</th>
+        <th>List number</th>
+        <th>Sentence number</th>
+        <th>Sentence id</th>
+        <th>English</th>
+        <th>Polish</th>
+
+      </tr>
+
+    {% for entry in entries %}
+
+      <tr class="font">
+
+        <td>{{ entry.0 }}</td>
+        <td>{{ entry.1 }}</td>
+        <td>{{ entry.2 }}</td>
+        <td>{{ entry.3 }}</td>
+        <td class="td_sentences">{{ entry.5 }}</td>
+        <td class="td_sentences">{{ entry.6 }}</td>
+
+      </tr>
+
+    {% endfor %}
+
+  </table>
+
+  {% else %}
+
+  <table>
+
+      <tr class="font">
+
+        <th>List number</th>
+
+      </tr>
+
+    {% for entry in entries %}
+
+      <tr class="font">
+
+        <td>{{ entry.0 }}</td>
+
+      </tr>
+
+    {% endfor %}
+
+  </table>
+
+{% endif %}
 
 {% include 'footer.html' %}
 {% endblock %}

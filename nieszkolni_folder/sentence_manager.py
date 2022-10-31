@@ -221,9 +221,8 @@ class SentenceManager:
                 ''')
 
             entries = cursor.fetchall()
-            list_numbers = [entry[0] for entry in entries]
 
-            return list_numbers
+            return entries
 
     def display_sentence_list(self, list_number):
         with connection.cursor() as cursor:
@@ -310,3 +309,16 @@ class SentenceManager:
             entries = cursor.fetchall()
 
             return entries
+
+    def display_list_status(self, list_number):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                status
+                FROM nieszkolni_app_composer
+                WHERE list_number = {list_number}
+                ''')
+
+            status = cursor.fetchone()
+
+            return status

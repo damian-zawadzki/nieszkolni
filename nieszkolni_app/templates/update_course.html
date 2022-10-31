@@ -77,7 +77,7 @@
   <div class="flex-parent jc-center">
      <div class="input_container">
       <label class="input_label">Threshold</label>
-        <input type="number" class="input_content" min="0" name="threshold" value="{{ course.8|floatformat:'0' }}">
+        <input required type="number" class="input_content" min="-1" name="threshold" value="{{ course.8|floatformat:'0' }}">
     </div>
   </div>
 
@@ -94,6 +94,13 @@
 
         </select>
 
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Component ID</label>
+        <input type="text" class="input_content" name="component_id" value="{{ course.9 }}">
     </div>
   </div>
 

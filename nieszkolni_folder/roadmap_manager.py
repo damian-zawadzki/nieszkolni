@@ -27,7 +27,8 @@ class RoadmapManager:
             assessment_method,
             link,
             reference_system,
-            threshold
+            threshold,
+            component_id
             ):
 
         course_description = Cleaner().clean_quotation_marks(course_description)
@@ -45,7 +46,8 @@ class RoadmapManager:
                 assessment_method,
                 link,
                 reference_system,
-                threshold
+                threshold,
+                component_id
                 )
                 VALUES (
                 '{course}',
@@ -56,7 +58,8 @@ class RoadmapManager:
                 '{assessment_method}',
                 '{link}',
                 '{reference_system}',
-                {threshold}
+                {threshold},
+                '{component_id}'
                 )
                 ON CONFLICT (course)
                 DO NOTHING
@@ -72,7 +75,8 @@ class RoadmapManager:
             assessment_method,
             link,
             reference_system,
-            threshold
+            threshold,
+            component_id
             ):
 
         course_description = Cleaner().clean_quotation_marks(course_description)
@@ -91,7 +95,8 @@ class RoadmapManager:
                 assessment_method = '{assessment_method}',
                 link = '{link}',
                 reference_system = '{reference_system}',
-                threshold = {threshold}
+                threshold = {threshold},
+                component_id = '{component_id}'
                 WHERE course = '{course}'
                 ''')
 
@@ -108,7 +113,8 @@ class RoadmapManager:
                 assessment_method,
                 link,
                 reference_system,
-                threshold
+                threshold,
+                component_id
                 FROM nieszkolni_app_course
                 ''')
 
@@ -129,7 +135,8 @@ class RoadmapManager:
                 assessment_method,
                 link,
                 reference_system,
-                threshold
+                threshold,
+                component_id
                 FROM nieszkolni_app_course
                 WHERE course = '{course}'
                 ''')
@@ -161,7 +168,15 @@ class RoadmapManager:
 
             return threshold
 
-    def add_roadmap(self, name, semester, course, deadline, planning_user):
+    def add_roadmap(
+            self,
+            name,
+            semester,
+            course,
+            deadline,
+            planning_user,
+            item
+            ):
         deadline_number = TimeMachine().date_to_number(TimeMachine().american_to_system_date(deadline))
 
         with connection.cursor() as cursor:
@@ -173,7 +188,8 @@ class RoadmapManager:
                 name,
                 deadline_number,
                 planning_user,
-                status
+                status,
+                item
                 )
                 VALUES (
                 'custom',
@@ -182,7 +198,8 @@ class RoadmapManager:
                 '{name}',
                 {deadline_number},
                 '{planning_user}',
-                'open'
+                'open',
+                {item}
                 )
                 ''')
 
@@ -198,7 +215,8 @@ class RoadmapManager:
                 name,
                 deadline_number,
                 planning_user,
-                status
+                status,
+                item
                 FROM nieszkolni_app_roadmap
                 WHERE name = '{name}'
                 AND semester = {semester}
@@ -227,7 +245,8 @@ class RoadmapManager:
                 name,
                 deadline_number,
                 planning_user,
-                status
+                status,
+                item
                 FROM nieszkolni_app_roadmap
                 WHERE roadmap_id_number = {roadmap_id_number}
                 ''')

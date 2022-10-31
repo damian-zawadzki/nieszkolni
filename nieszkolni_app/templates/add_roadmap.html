@@ -2,7 +2,7 @@
 {% block 'content' %}
 {% include 'staff_menu.html' %}
 
-<h1>Add a roadmap</h1>
+<h1>CREATE A ROADMAP</h1>
 
 <form action="{% url 'add_roadmap' %}"  method="POST">
 	{% csrf_token %}
@@ -62,12 +62,17 @@
     </div>
   </div>
 
-    <div class="flex-parent jc-center">
-     <div class="input_container">
+  <div class="flex-parent jc-center">
+    <div class="input_container">
       <label class="input_label">Deadline</label>
+      <input required type="date" class="input_content" name="deadline" >
+    </div>
+  </div>
 
-        <input type="date" class="input_content" name="deadline" >
-
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Item</label>
+      <input required type="number" class="input_content" name="item" >
     </div>
   </div>
 

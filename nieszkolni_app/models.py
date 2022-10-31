@@ -60,7 +60,7 @@ class Submission(models.Model):
     minor_errors = models.IntegerField(default=0)
     major_errors = models.IntegerField(default=0)
     reviewing_user = models.CharField(max_length=200, default="")
-    revision_date = models.IntegerField()
+    revision_date = models.IntegerField(default=0)
     conditions = models.TextField(default="")
     comment = models.TextField(default="")
     grade = models.CharField(max_length=200, default="")
@@ -290,6 +290,7 @@ class Roadmap(models.Model):
     deadline_number = models.IntegerField(default=0)
     planning_user = models.CharField(max_length=200, default="")
     status = models.CharField(max_length=200, default="")
+    item = models.IntegerField(default=0)
 
 
 class Course(models.Model):
@@ -302,6 +303,7 @@ class Course(models.Model):
     link = models.TextField(default="")
     reference_system = models.CharField(max_length=200, default="")
     threshold = models.IntegerField(default=0)
+    component_id = models.CharField(max_length=200, default="")
 
 
 class Grade(models.Model):
