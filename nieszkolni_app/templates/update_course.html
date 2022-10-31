@@ -2,7 +2,7 @@
 {% block 'content' %}
 {% include 'staff_menu.html' %}
 
-<h1>Add a course</h1>
+<h1>UPDATE A COURSE</h1>
 
 <form action="{% url 'add_course' %}"  method="POST">
 	{% csrf_token %}
@@ -21,12 +21,11 @@
 
         <select required class="input_content" name="course_type">
             <option selected value="{{ course.1 }}">{{ course.1 }}</option>
-            <option value="project">project</option>
-            <option value="online_project">online project</option>
-            <option value="statistics">statistics</option>
-            <option value="exam">oral exam</option>
-            <option value="test">online test</option>
-            <option value="presentation">presentation</option>
+
+            {% for course_type in course_types %}
+            <option value="{{ course_type.0 }}">{{ course_type.0 }}</option>
+            {% endfor %}
+
         </select>
 
     </div>
@@ -59,15 +58,15 @@
 
         <select required class="input_content" name="assessment_method">
             <option selected value="{{ course.5 }}">{{ course.5 }}</option>
-            <option value="attendance">attendance</option>
-            <option value="oral_exam">oral exam</option>
-            <option value="online_test">online test</option>
-            <option value="presentation">presentation</option>
+
+            {% for assessment_method in assessment_methods %}
+            <option value="{{ assessment_method.0 }}">{{ assessment_method.0 }}</option>
+            {% endfor %}
+
         </select>
 
     </div>
   </div>
-
   <div class="flex-parent jc-center">
      <div class="input_container">
       <label class="input_label">Link</label>
@@ -78,7 +77,7 @@
   <div class="flex-parent jc-center">
      <div class="input_container">
       <label class="input_label">Threshold</label>
-        <input type="number" class="input_content" min="0" max="100" name="threshold" value="{{ course.8|floatformat:'0' }}">
+        <input type="number" class="input_content" min="0" name="threshold" value="{{ course.8|floatformat:'0' }}">
     </div>
   </div>
 
@@ -88,7 +87,11 @@
 
         <select required class="input_content" name="reference_system">
             <option selected value="{{ course.7 }}">{{ course.7 }}</option>
-            <option value="manual_assessment">manual assessment</option>
+
+            {% for assessment_system in assessment_systems %}
+            <option value="{{ assessment_system.0 }}">{{ assessment_system.0 }}</option>
+            {% endfor %}
+
         </select>
 
     </div>

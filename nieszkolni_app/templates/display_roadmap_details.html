@@ -18,12 +18,22 @@
 		      	<div><b>Link</b></div>
 		      	<div class="task_card_content"><span>{{ course_details.6 }}</span></div>
 		      	<div><b>Threshold</b></div>
-		      	<div class="task_card_content"><span>{{ course_details.8 }}%</span></div>
+		      	<div class="task_card_content"><span>{{ course_details.8 }}</span></div>
 		      	<div><b>Results</b></div>
 
-		      	{% for grade in grades %}
-			      	<div class="task_card_details"><b>date:</b> {{ grade.0 }} <b>result:</b> {{ grade.1 }}% <b>type:</b> {{ grade.2 }}</div>
-		      	{% endfor %}
+
+		      	{% if assessment_method == 'statistics' %}
+
+				      	<div class="task_card_content">{{ result }}/<span>{{ course_details.8 }}</span></div>
+
+		      	{% else %}
+
+			      	{% for grade in grades %}
+			      	
+				      	<div class="task_card_content"><b>date:</b> {{ grade.0 }} <b>result:</b> {{ grade.1 }}% <b>type:</b> {{ grade.2 }}</div>
+
+			      	{% endfor %}
+			    {% endif %}
 
 	    	</div>
 	  	</div>

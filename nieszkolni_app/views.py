@@ -569,17 +569,32 @@ def profile(request):
         if request.method == "POST":
             if request.POST["action_on_profile"] == "more":
                 roadmap_id_number = request.POST["roadmap_id_number"]
+
                 roadmap_details = RoadmapManager().display_roadmap_details(roadmap_id_number)
                 course = roadmap_details[2]
                 course_details = RoadmapManager().display_course(course)
                 grades = RoadmapManager().display_grades(current_user, course)
-                result = RoadmapManager().display_final_grade(current_user, course)
                 threshold = RoadmapManager().display_course_threshold(course)
+                assessment_method = course_details[5]
+                deadline_number = roadmap_details[4]
+                today_number = TimeMachine().today_number()
+
+                if assessment_method == "statistics":
+                    assessment_system = course_details[7]
+                    statistics = StreamManager().statistics(current_user)
+                    result = statistics[assessment_system]
+                else:
+                    result = RoadmapManager().display_final_grade(current_user, course)
 
                 if result >= threshold:
                     status = "passed"
                 elif result == -1:
                     status = "ongoing"
+                elif assessment_method == "statistics":
+                    if deadline_number > today_number:
+                        status = "ongoing"
+                    else:
+                        status = "failed"
                 else:
                     status = "failed"
 
@@ -592,7 +607,9 @@ def profile(request):
                     "course_details": course_details,
                     "deadline": deadline,
                     "grades": grades,
-                    "status": status
+                    "status": status,
+                    "assessment_method": assessment_method,
+                    "result": result
                     })
         
         if user_agent.is_mobile:
@@ -2624,6 +2641,10 @@ def list_courses(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        course_types = KnowledgeManager().display_prompts("course_type")
+        assessment_methods = KnowledgeManager().display_prompts("assessment_method")
+        assessment_systems = KnowledgeManager().display_prompts("assessment_system")
+
         if request.method == "POST":
             if request.POST["action_on_course"] == "more":
                 course = request.POST["course"]
@@ -2636,7 +2657,12 @@ def list_courses(request):
                 course = RoadmapManager().display_course(course)
                 print(course)
 
-                return render(request, "update_course.html", {"course": course})
+                return render(request, "update_course.html", {
+                    "course": course,
+                    "course_types": course_types,
+                    "assessment_methods": assessment_methods,
+                    "assessment_systems": assessment_systems
+                    })
 
         courses = RoadmapManager().list_courses()
 
@@ -2705,10 +2731,19 @@ def display_roadmap_details(request):
         course = roadmap_details[2]
         course_details = RoadmapManager().display_course(course)
         grades = RoadmapManager().display_grades(current_user, course)
+        assessment_method = course_details[5]
+        result = 0
+
+        if assessment_method == "statistics":
+            assessment_system = course_details[7]
+            statistics = StreamManager().statistics(current_user)
+            result = statistics[assessment_system]
 
         return render(request, "display_roadmap_details.html", {
             "roadmap_details": roadmap_details,
-            "course_details": course_details
+            "course_details": course_details,
+            "assessment_method": assessment_method,
+            "result": result
             })
 
 

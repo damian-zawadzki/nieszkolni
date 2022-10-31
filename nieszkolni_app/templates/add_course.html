@@ -2,7 +2,7 @@
 {% block 'content' %}
 {% include 'staff_menu.html' %}
 
-<h1>Add a course</h1>
+<h1>ADD A COURSE</h1>
 
 <form action="{% url 'add_course' %}"  method="POST">
 	{% csrf_token %}
@@ -78,7 +78,7 @@
   <div class="flex-parent jc-center">
      <div class="input_container">
       <label class="input_label">Threshold</label>
-        <input type="number" class="input_content" min="0" max="100" name="threshold" value="{{ course.8|floatformat:'0' }}">
+        <input type="number" class="input_content" min="0" name="threshold" value="{{ course.8|floatformat:'0' }}">
     </div>
   </div>
 

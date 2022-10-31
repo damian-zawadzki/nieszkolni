@@ -2,7 +2,7 @@
 {% block 'content' %}
 {% include 'staff_menu.html' %}
 
-<h1>Course</h1>
+<h1>COURSE</h1>
 
 <form action="{% url 'list_courses' %}"  method="POST">
 	{% csrf_token %}
@@ -74,7 +74,7 @@
   <div class="flex-parent jc-center">
      <div class="input_container">
       <label class="input_label">System</label>
-            <input type="number" class="input_content input_prefilled" name="reference_system" value="{{ course.7 }}">
+            <input type="text" class="input_content input_prefilled" name="reference_system" value="{{ course.7 }}">
       </select>
     </div>
   </div>
