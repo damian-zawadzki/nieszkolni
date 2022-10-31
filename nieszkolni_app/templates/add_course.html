@@ -23,7 +23,7 @@
             <option selected value="{{ course.1 }}">{{ course.1 }}</option>
 
             {% for course_type in course_types %}
-            <option value="{{ course_type }}">{{ course_type }}</option>
+            <option value="{{ course_type.0 }}">{{ course_type.0 }}</option>
             {% endfor %}
 
         </select>
@@ -60,7 +60,7 @@
             <option selected value="{{ course.5 }}">{{ course.5 }}</option>
 
             {% for assessment_method in assessment_methods %}
-            <option value="{{ assessment_method }}">{{ assessment_method }}</option>
+            <option value="{{ assessment_method.0 }}">{{ assessment_method.0 }}</option>
             {% endfor %}
 
         </select>
@@ -90,7 +90,7 @@
             <option selected value="{{ course.7 }}">{{ course.7 }}</option>
 
             {% for assessment_system in assessment_systems %}
-            <option value="{{ assessment_system }}">{{ assessment_system }}</option>
+            <option value="{{ assessment_system.0 }}">{{ assessment_system.0 }}</option>
             {% endfor %}
 
         </select>
