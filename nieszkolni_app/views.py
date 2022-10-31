@@ -479,7 +479,6 @@ def options(request, template_name="404.html"):
 
         if request.method == "POST":
             current_daily_limit_of_new_cards = request.POST["new_daily_limit_of_new_cards"]
-            print(current_daily_limit_of_new_cards)
             change_the_limit = VocabularyManager().update_current_daily_limit_of_new_cards(current_user, current_daily_limit_of_new_cards)
 
             return render(request, "options.html", {"current_daily_limit_of_new_cards": current_daily_limit_of_new_cards})
@@ -568,49 +567,52 @@ def profile(request):
 
         if request.method == "POST":
             if request.POST["action_on_profile"] == "more":
-                roadmap_id_number = request.POST["roadmap_id_number"]
+                try:
+                    roadmap_id_number = request.POST["roadmap_id_number"]
 
-                roadmap_details = RoadmapManager().display_roadmap_details(roadmap_id_number)
-                course = roadmap_details[2]
-                course_details = RoadmapManager().display_course(course)
-                grades = RoadmapManager().display_grades(current_user, course)
-                threshold = RoadmapManager().display_course_threshold(course)
-                assessment_method = course_details[5]
-                deadline_number = roadmap_details[4]
-                today_number = TimeMachine().today_number()
+                    roadmap_details = RoadmapManager().display_roadmap_details(roadmap_id_number)
+                    course = roadmap_details[2]
+                    course_details = RoadmapManager().display_course(course)
+                    grades = RoadmapManager().display_grades(current_user, course)
+                    threshold = RoadmapManager().display_course_threshold(course)
+                    assessment_method = course_details[5]
+                    deadline_number = roadmap_details[4]
+                    today_number = TimeMachine().today_number()
 
-                if assessment_method == "statistics":
-                    assessment_system = course_details[7]
-                    statistics = StreamManager().advanced_statistics(current_user)
-                    result = statistics[assessment_system]
-                else:
-                    result = RoadmapManager().display_final_grade(current_user, course)
+                    if assessment_method == "statistics":
+                        assessment_system = course_details[7]
+                        statistics = StreamManager().advanced_statistics(current_user)
+                        result = statistics[assessment_system]
+                    else:
+                        result = RoadmapManager().display_final_grade(current_user, course)
 
-                if result >= threshold:
-                    status = "passed"
-                elif result == -1:
-                    status = "ongoing"
-                elif assessment_method == "statistics":
-                    if deadline_number > today_number:
+                    if result >= threshold:
+                        status = "passed"
+                    elif result == -1:
                         status = "ongoing"
+                    elif assessment_method == "statistics":
+                        if deadline_number > today_number:
+                            status = "ongoing"
+                        else:
+                            status = "failed"
                     else:
                         status = "failed"
-                else:
-                    status = "failed"
 
-                RoadmapManager().update_roadmap(roadmap_id_number, status)
+                    RoadmapManager().update_roadmap(roadmap_id_number, status)
 
-                deadline = TimeMachine().number_to_system_date(roadmap_details[4])
+                    deadline = TimeMachine().number_to_system_date(roadmap_details[4])
 
-                return render(request, "display_roadmap_details.html", {
-                    "roadmap_details": roadmap_details,
-                    "course_details": course_details,
-                    "deadline": deadline,
-                    "grades": grades,
-                    "status": status,
-                    "assessment_method": assessment_method,
-                    "result": result
-                    })
+                    return render(request, "display_roadmap_details.html", {
+                        "roadmap_details": roadmap_details,
+                        "course_details": course_details,
+                        "deadline": deadline,
+                        "grades": grades,
+                        "status": status,
+                        "assessment_method": assessment_method,
+                        "result": result
+                        })
+                except Exception as e:
+                    return redirect("profile.html")
         
         if user_agent.is_mobile:
             return render(request, "m_profile.html", {
@@ -1118,7 +1120,6 @@ def my_pronunciation(request):
         current_user = first_name + " " + last_name
 
         entries = KnowledgeManager().display_pronunciation(current_user)
-        print(entries)
 
         return render(request, "my_pronunciation.html", {
             "entries": entries
@@ -1163,7 +1164,6 @@ def display_modules(request):
                 component_id = request.POST["component_id"]
 
                 module = CurriculumManager().display_module(component_id)
-                print(module)
 
                 return render(request, "display_module.html", {
                     "module": module
@@ -1335,8 +1335,6 @@ def plan_matrix(request):
                     reference
                     )
 
-                print(x)
-
             messages.success(request, ("You have planned a curriculum!"))
             return render(request, "plan_matrix.html", {
                 "matrices": matrices,
@@ -1453,7 +1451,6 @@ def session_mode(request):
 
             elif request.POST["add_knowledge"] == "add_sentencebook":
                 entry = request.POST["sentencebook_entry"]
-                print(entry)
 
                 add_to_wordbook = KnowledgeManager().add_to_book(current_client, entry, current_user, "sentences")
 
@@ -2546,8 +2543,6 @@ def download_assignments(request):
                     grade
                     )
 
-                print(file)
-
             return redirect("download_assignments.html")
 
         return render(request, "download_assignments.html", {})
@@ -2641,6 +2636,7 @@ def list_courses(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        courses = RoadmapManager().list_courses()
         course_types = KnowledgeManager().display_prompts("course_type")
         assessment_methods = KnowledgeManager().display_prompts("assessment_method")
         assessment_systems = KnowledgeManager().display_prompts("assessment_system")
@@ -2655,7 +2651,6 @@ def list_courses(request):
             if request.POST["action_on_course"] == "edit":
                 course = request.POST["course"]
                 course = RoadmapManager().display_course(course)
-                print(course)
 
                 return render(request, "update_course.html", {
                     "course": course,
@@ -2664,7 +2659,15 @@ def list_courses(request):
                     "assessment_systems": assessment_systems
                     })
 
-        courses = RoadmapManager().list_courses()
+            if request.POST["action_on_course"] == "delete":
+                course = request.POST["course"]     
+                RoadmapManager().delete_course(course)
+                RoadmapManager().delete_roadmap_based_on_course(course)
+                courses = RoadmapManager().list_courses()
+
+                return render(request, "list_courses.html", {
+                    "courses": courses
+                    })
 
         return render(request, "list_courses.html", {"courses": courses})
 

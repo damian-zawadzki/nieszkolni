@@ -423,7 +423,6 @@ class StreamManager:
             po_list = []
             for row in po_rows:
                 title = re.sub(r"\s\*\d{1,}", "", row[5])
-                print(row[5])
 
                 try:
                     number_of_episodes = int(re.sub("\s\*","",re.search("\s\*\d{1,}", row[5]).group()))
@@ -509,7 +508,6 @@ class StreamManager:
             po_list = []
             for row in po_rows:
                 title = re.sub(r"\s\*\d{1,}", "", row[5])
-                print(row[5])
 
                 try:
                     number_of_episodes = int(re.sub("\s\*","",re.search("\s\*\d{1,}", row[5]).group()))

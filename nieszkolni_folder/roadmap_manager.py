@@ -138,6 +138,14 @@ class RoadmapManager:
 
             return course
 
+    def delete_course(self, course):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                DELETE FROM nieszkolni_app_course
+                WHERE course = '{course}'
+                ''')
+
     def display_course_threshold(self, course):
 
         with connection.cursor() as cursor:
@@ -200,6 +208,14 @@ class RoadmapManager:
             courses = cursor.fetchall()
 
             return courses
+
+    def delete_roadmap_based_on_course(self, course):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                DELETE FROM nieszkolni_app_roadmap
+                WHERE course = '{course}'
+                ''')
 
     def display_roadmap_details(self, roadmap_id_number):
         with connection.cursor() as cursor:
