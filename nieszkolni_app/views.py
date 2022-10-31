@@ -2545,6 +2545,7 @@ def add_course(request):
 
         course_types = KnowledgeManager().display_prompts("course_type")
         assessment_methods = KnowledgeManager().display_prompts("assessment_method")
+        assessment_systems = KnowledgeManager().display_prompts("assessment_system")
 
         if request.method == "POST":
             if request.POST["action_on_course"] == "add":
@@ -2574,7 +2575,8 @@ def add_course(request):
                 return render(request, "list_courses.html", {
                     "courses": courses,
                     "course_types": course_types,
-                    "assessment_methods": assessment_methods
+                    "assessment_methods": assessment_methods,
+                    "assessment_systems": assessment_systems
                     })
 
             if request.POST["action_on_course"] == "update":
@@ -2604,12 +2606,14 @@ def add_course(request):
                 return render(request, "list_courses.html", {
                     "courses": courses,
                     "course_types": course_types,
-                    "assessment_methods": assessment_methods
+                    "assessment_methods": assessment_methods,
+                    "assessment_systems": assessment_systems
                     })      
 
         return render(request, "add_course.html", {
             "course_types": course_types,
-            "assessment_methods": assessment_methods
+            "assessment_methods": assessment_methods,
+            "assessment_systems": assessment_systems
             })
 
 

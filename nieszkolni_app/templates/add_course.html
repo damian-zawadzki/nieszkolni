@@ -88,7 +88,11 @@
 
         <select required class="input_content" name="reference_system">
             <option selected value="{{ course.7 }}">{{ course.7 }}</option>
-            <option value="manual_assessment">manual assessment</option>
+
+            {% for assessment_system in assessment_systems %}
+            <option value="{{ assessment_system }}">{{ assessment_system }}</option>
+            {% endfor %}
+
         </select>
 
     </div>
