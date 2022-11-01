@@ -74,6 +74,7 @@ urlpatterns = [
     path('add_course.html', views.add_course, name="add_course"),
     path('list_courses.html', views.list_courses, name="list_courses"),
     path('add_roadmap.html', views.add_roadmap, name="add_roadmap"),
+    path('update_roadmap.html', views.update_roadmap, name="update_roadmap"),
     path('display_roadmap_details.html', views.display_roadmap_details, name="display_roadmap_details"),
     path('add_profile.html', views.add_profile, name="add_profile"),
     path('profiles.html', views.profiles, name="profiles"),

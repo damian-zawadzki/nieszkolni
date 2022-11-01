@@ -71,8 +71,31 @@
 
   <div class="flex-parent jc-center">
     <div class="input_container">
+      <label class="input_label">Status</label>
+        <select required class="input_content" name="status">
+            <option selected value="ongoing">ongoing</option>
+            <option value="ongoing">ongoing</option>
+            <option value="passed">passed</option>
+            <option value="failed">failed</option>
+        </select>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Status type</label>
+        <select required class="input_content" name="status_type">
+            <option selected value="automatic">automatic</option>
+            <option value="manual">manual</option>
+            <option value="automatic">automatic</option>
+        </select>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+    <div class="input_container">
       <label class="input_label">Item</label>
-      <input required type="number" class="input_content" name="item" >
+      <input required type="number" class="input_content" name="item" value=-1>
     </div>
   </div>
 

@@ -54,21 +54,36 @@
 
 </form>
 
-<ul class="profile_content_list">
+<table>
+
+    <tr class="font">
+
+      <th>Course</th>
+      <th></th>
+
+    </tr>
 
   {% for course in courses %}
-    <form action="{% url 'roadmaps' %}"  method="POST">
-    {% csrf_token %}
 
-      <li class="profile_item">
-        <div class="list_content">{{ course.2 }}</div>
-        <input type="hidden" name="roadmap_id_number" value="{{ course.0 }}">
-        <button type="submit" class="list_button button_main" name="action_on_roadmaps" value="more">More</button>
-      </li>
+    <tr class="font">
 
-    </form>
+      <td>{{ course.2 }}</td>
+      <td>
+        <form action="{% url 'roadmaps' %}"  method="POST">
+          {% csrf_token %}
+            <div class="flex-parent jc-center">
+              <input type="hidden" name="roadmap_id_number" value="{{ course.0 }}">
+              <button type="submit" class="list_button button_main" name="action_on_roadmaps" value="edit">Edit</button>
+              <button type="submit" class="list_button button_main" name="action_on_roadmaps" value="remove">Remove</button>
+              <button type="submit" class="list_button button_main" name="action_on_roadmaps" value="more">More</button>
+            </div>
+        </form>
+      </td>
+
+    </tr>
+
   {% endfor %}
 
-</ul>
+</table>
 
 {% endblock %}

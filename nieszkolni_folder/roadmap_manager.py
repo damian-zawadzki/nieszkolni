@@ -175,7 +175,8 @@ class RoadmapManager:
             course,
             deadline,
             planning_user,
-            item
+            item,
+            status_type
             ):
         deadline_number = TimeMachine().date_to_number(TimeMachine().american_to_system_date(deadline))
 
@@ -189,7 +190,8 @@ class RoadmapManager:
                 deadline_number,
                 planning_user,
                 status,
-                item
+                item,
+                status_type
                 )
                 VALUES (
                 'custom',
@@ -198,9 +200,41 @@ class RoadmapManager:
                 '{name}',
                 {deadline_number},
                 '{planning_user}',
-                'open',
-                {item}
+                'ongoing',
+                {item},
+                '{status_type}'
                 )
+                ''')
+
+    def update_roadmap_details(
+            self,
+            name,
+            semester,
+            course,
+            deadline,
+            planning_user,
+            item,
+            status,
+            status_type,
+            roadmap_id_number
+            ):
+
+        deadline_number = TimeMachine().date_to_number(TimeMachine().american_to_system_date(deadline))
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                UPDATE nieszkolni_app_roadmap
+                SET
+                roadmap_matrix = 'custom',
+                semester = {semester},
+                course = '{course}',
+                name = '{name}',
+                deadline_number = {deadline_number},
+                planning_user = '{planning_user}',
+                status = '{status}',
+                status_type = '{status_type}',
+                item = {item}
+                WHERE roadmap_id_number = {roadmap_id_number}
                 ''')
 
     def display_roadmap(self, name, semester):
@@ -215,8 +249,7 @@ class RoadmapManager:
                 name,
                 deadline_number,
                 planning_user,
-                status,
-                item
+                status
                 FROM nieszkolni_app_roadmap
                 WHERE name = '{name}'
                 AND semester = {semester}
@@ -246,7 +279,9 @@ class RoadmapManager:
                 deadline_number,
                 planning_user,
                 status,
-                item
+                item,
+                semester,
+                status_type
                 FROM nieszkolni_app_roadmap
                 WHERE roadmap_id_number = {roadmap_id_number}
                 ''')
@@ -301,6 +336,13 @@ class RoadmapManager:
             cursor.execute(f'''
                 UPDATE nieszkolni_app_roadmap
                 SET status = '{status}'
+                WHERE roadmap_id_number = {roadmap_id_number}
+                ''')
+
+    def remove_roadmap(self, roadmap_id_number):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                DELETE FROM nieszkolni_app_roadmap
                 WHERE roadmap_id_number = {roadmap_id_number}
                 ''')
 
@@ -649,7 +691,7 @@ class RoadmapManager:
 
             return grades
 
-    def display_final_grade(
+    def display_last_final_grade(
             self,
             student,
             course
@@ -674,5 +716,81 @@ class RoadmapManager:
                 result = -1
             else:
                 result = data[1]
+
+            return result
+
+    def display_average_final_grade(
+            self,
+            student,
+            course
+            ):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT AVG (result)
+                FROM nieszkolni_app_grade
+                WHERE student = '{student}'
+                AND course = '{course}'
+                AND grade_type = 'final'
+                ''')
+
+            data = cursor.fetchone()
+
+            if data is None:
+                result = -1
+            else:
+                result = data[0]
+
+            return result
+
+    def display_last_midterm_grade(
+            self,
+            student,
+            course
+            ):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                stamp,
+                result
+                FROM nieszkolni_app_grade
+                WHERE student = '{student}'
+                AND course = '{course}'
+                AND grade_type = 'midterm'
+                ORDER BY stamp DESC
+                LIMIT 1
+                ''')
+
+            data = cursor.fetchone()
+
+            if data is None:
+                result = -1
+            else:
+                result = data[1]
+
+            return result
+
+    def display_average_midterm_grade(
+            self,
+            student,
+            course
+            ):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT AVG(result)
+                FROM nieszkolni_app_grade
+                WHERE student = '{student}'
+                AND course = '{course}'
+                AND grade_type = 'midterm'
+                ''')
+
+            data = cursor.fetchone()
+
+            if data is None:
+                result = -1
+            else:
+                result = data[0]
 
             return result

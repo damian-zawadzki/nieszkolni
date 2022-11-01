@@ -291,6 +291,7 @@ class Roadmap(models.Model):
     planning_user = models.CharField(max_length=200, default="")
     status = models.CharField(max_length=200, default="")
     item = models.IntegerField(default=0)
+    status_type = models.CharField(max_length=200, default="")
 
 
 class Course(models.Model):

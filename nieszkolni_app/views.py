@@ -577,6 +577,7 @@ def profile(request):
                 threshold = RoadmapManager().display_course_threshold(course)
                 assessment_method = course_details[5]
                 assessment_system = course_details[7]
+                status_type = roadmap_details[9]
                 deadline_number = roadmap_details[4]
                 today_number = TimeMachine().today_number()
 
@@ -586,40 +587,54 @@ def profile(request):
 
                 elif assessment_method == "assignment":
                     if assessment_system == "item":
+
                         item = roadmap_details[7]
-                        result = CurriculumManager().display_assignment_status(item)
+                        if item == 0:
+                            result = "uncompleted"
+                        else:
+                            result = CurriculumManager().display_assignment_status(item)
 
                 else:
-                    result = RoadmapManager().display_final_grade(current_user, course)
+                    if assessment_system == "last_final":
+                        result = RoadmapManager().display_last_final_grade(current_user, course)
+                    elif assessment_system == "average_final":
+                        result = RoadmapManager().display_average_final_grade(current_user, course)
+                    elif assessment_system == "last_mid_term":
+                        result = RoadmapManager().display_last_midterm_grade(current_user, course)
+                    else:
+                        result = RoadmapManager().display_average_midterm_grade(current_user, course)
 
                 # Status: passed/ongoing/failed
-                if assessment_method == "assignment":
+                if status_type == "manual":
+                    status = roadmap_details[6]
+                else:
+                    if assessment_method == "assignment":
 
-                    if result == "completed":
+                        if result == "completed":
+                            status = "passed"
+
+                        else:
+                            if deadline_number > today_number:
+                                status = "ongoing"
+                            else:
+                                status = "failed"
+
+                    elif result >= threshold:
                         status = "passed"
 
-                    else:
+                    elif result == -1:
+                        status = "ongoing"
+
+                    elif assessment_method == "statistics" or assessment_system == "average_midterm" or assessment_system == "average_final":
+
                         if deadline_number > today_number:
                             status = "ongoing"
+
                         else:
                             status = "failed"
 
-                elif result >= threshold:
-                    status = "passed"
-
-                elif result == -1:
-                    status = "ongoing"
-
-                elif assessment_method == "statistics":
-
-                    if deadline_number > today_number:
-                        status = "ongoing"
-
                     else:
                         status = "failed"
-
-                else:
-                    status = "failed"
 
                 RoadmapManager().update_roadmap(roadmap_id_number, status)
 
@@ -632,6 +647,7 @@ def profile(request):
                     "grades": grades,
                     "status": status,
                     "assessment_method": assessment_method,
+                    "assessment_system": assessment_system,
                     "result": result
                     })
                 # except Exception as e:
@@ -2736,6 +2752,7 @@ def add_roadmap(request):
                 course = request.POST["course"]
                 deadline = request.POST["deadline"]
                 item = request.POST["item"]
+                status_type = request.POST["status_type"]
 
                 RoadmapManager().add_roadmap(
                     client,
@@ -2743,18 +2760,50 @@ def add_roadmap(request):
                     course,
                     deadline,
                     current_user,
-                    item
+                    item,
+                    status_type
                     )
 
-                return render(request, "add_roadmap.html", {
-                    "names": names,
-                    "courses": courses
-                    })
+                return redirect("roadmaps.html")
 
         return render(request, "add_roadmap.html", {
             "names": names,
             "courses": courses
             })
+
+
+@staff_member_required
+def update_roadmap(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        if request.method == "POST":
+            if request.POST["action_on_roadmap"] == "update":
+                client = request.POST["client"]
+                semester = request.POST["semester"]
+                course = request.POST["course"]
+                deadline = request.POST["deadline"]
+                item = request.POST["item"]
+                status = request.POST["status"]
+                status_type = request.POST["status_type"]
+                roadmap_id_number = request.POST["roadmap_id_number"]
+                
+
+                RoadmapManager().update_roadmap_details(
+                    client,
+                    semester,
+                    course,
+                    deadline,
+                    current_user,
+                    item,
+                    status,
+                    status_type,
+                    roadmap_id_number
+                    )
+
+                return redirect("roadmaps.html")
 
 
 @login_required
@@ -3017,7 +3066,30 @@ def roadmaps(request):
                     "courses": courses
                     })
 
-            if request.POST["action_on_roadmaps"] == "more":
+            elif request.POST["action_on_roadmaps"] == "edit":
+                roadmap_id_number = request.POST["roadmap_id_number"]
+                roadmap_details = RoadmapManager().display_roadmap_details(roadmap_id_number)
+                deadline_date = TimeMachine().number_to_system_date(roadmap_details[4])
+                names = ClientsManager().list_current_clients()
+                courses = RoadmapManager().list_courses()
+
+                return render(request, "update_roadmap.html", {
+                    "names": names,
+                    "courses": courses,
+                    "roadmap_details": roadmap_details,
+                    "deadline_date": deadline_date
+                    })
+
+            elif request.POST["action_on_roadmaps"] == "remove":
+                roadmap_id_number = request.POST["roadmap_id_number"]
+
+                RoadmapManager().remove_roadmap(roadmap_id_number)
+
+                return render(request, "roadmaps.html", {
+                    "client_names": client_names
+                    })
+
+            elif request.POST["action_on_roadmaps"] == "more":
                 roadmap_id_number = request.POST["roadmap_id_number"]
                 roadmap_details = RoadmapManager().display_roadmap_details(roadmap_id_number)
                 course = roadmap_details[2]
@@ -3025,12 +3097,80 @@ def roadmaps(request):
                 grades = RoadmapManager().display_grades(current_user, course)
 
                 deadline = TimeMachine().number_to_system_date(roadmap_details[4])
+                threshold = RoadmapManager().display_course_threshold(course)
+                assessment_method = course_details[5]
+                assessment_system = course_details[7]
+                status_type = roadmap_details[9]
+                deadline_number = roadmap_details[4]
+                today_number = TimeMachine().today_number()
+
+                if assessment_method == "statistics":
+                    statistics = StreamManager().advanced_statistics(current_user)
+                    result = statistics[assessment_system]
+
+                elif assessment_method == "assignment":
+                    if assessment_system == "item":
+
+                        item = roadmap_details[7]
+                        if item == 0:
+                            result = "uncompleted"
+                        else:
+                            result = CurriculumManager().display_assignment_status(item)
+
+                else:
+                    if assessment_system == "last_final":
+                        result = RoadmapManager().display_last_final_grade(current_user, course)
+                    elif assessment_system == "average_final":
+                        result = RoadmapManager().display_average_final_grade(current_user, course)
+                    elif assessment_system == "last_mid_term":
+                        result = RoadmapManager().display_last_midterm_grade(current_user, course)
+                    else:
+                        result = RoadmapManager().display_average_midterm_grade(current_user, course)
+
+                # Status: passed/ongoing/failed
+                if status_type == "manual":
+                    status = roadmap_details[6]
+                else:
+                    if assessment_method == "assignment":
+
+                        if result == "completed":
+                            status = "passed"
+
+                        else:
+                            if deadline_number > today_number:
+                                status = "ongoing"
+                            else:
+                                status = "failed"
+
+                    elif result >= threshold:
+                        status = "passed"
+
+                    elif result == -1:
+                        status = "ongoing"
+
+                    elif assessment_method == "statistics" or assessment_system == "average_midterm" or assessment_system == "average_final":
+
+                        if deadline_number > today_number:
+                            status = "ongoing"
+
+                        else:
+                            status = "failed"
+
+                    else:
+                        status = "failed"
+
+                RoadmapManager().update_roadmap(roadmap_id_number, status)
+                deadline = TimeMachine().number_to_system_date(roadmap_details[4])
 
                 return render(request, "display_roadmap_details.html", {
                     "roadmap_details": roadmap_details,
                     "course_details": course_details,
                     "deadline": deadline,
-                    "grades": grades
+                    "grades": grades,
+                    "status": status,
+                    "assessment_method": assessment_method,
+                    "assessment_system": assessment_system,
+                    "result": result
                     })
 
         return render(request, "roadmaps.html", {

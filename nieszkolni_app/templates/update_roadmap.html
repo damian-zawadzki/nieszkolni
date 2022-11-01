@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% include 'staff_menu.html' %}
+
+<h1>UPDATE THE ROADMAP</h1>
+
+<form action="{% url 'update_roadmap' %}"  method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Name</label>
+
+        <select required class="input_content" name="client">
+            <option selected value="{{ roadmap_details.3 }}">{{ roadmap_details.3 }}</option>
+            {% for name in names %}
+            <option value="{{ name }}">{{ name }}</option>
+            {% endfor %}
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Semester</label>
+
+        <select required class="input_content" name="semester">
+            <option selected value="{{ roadmap_details.8 }}">{{ roadmap_details.8 }}</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="6">7</option>
+            <option value="6">8</option>
+            <option value="6">9</option>
+            <option value="6">10</option>
+            <option value="6">11</option>
+            <option value="6">12</option>
+            <option value="6">13</option>
+            <option value="6">14</option>
+            <option value="6">15</option>
+            <option value="6">16</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Course</label>
+
+        <select required class="input_content" name="course">
+            <option selected value="{{ roadmap_details.2 }}">{{ roadmap_details.2 }}</option>
+            {% for course in courses %}
+            <option value="{{ course.0 }}">{{ course.0 }}</option>
+            {% endfor %}
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Deadline</label>
+      <input required type="date" class="input_content" name="deadline" value="{{ deadline_date }}">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Item</label>
+      <input required type="number" class="input_content" name="item" value="{{ roadmap_details.7 }}">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Status</label>
+        <select required class="input_content" name="status">
+            <option selected value="{{ roadmap_details.6 }}">{{ roadmap_details.6 }}</option>
+            <option value="ongoing">ongoing</option>
+            <option value="passed">passed</option>
+            <option value="failed">failed</option>
+        </select>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Status type</label>
+        <select required class="input_content" name="status_type">
+            <option selected value="{{ roadmap_details.9 }}">{{ roadmap_details.9 }}</option>
+            <option value="manual">manual</option>
+            <option value="automatic">automatic</option>
+        </select>
+    </div>
+  </div>
+
+
+  <div class="flex-parent jc-center">
+      <input type="hidden" name="roadmap_id_number" value="{{ roadmap_details.0 }}">
+      <button type="submit" class="button_main" name="action_on_roadmap" value="update">Update</button>
+  </div>
+
+</form>
+
+{% endblock %}
