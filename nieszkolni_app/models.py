@@ -295,7 +295,8 @@ class Roadmap(models.Model):
 
 
 class Course(models.Model):
-    course = models.CharField(max_length=200, primary_key=True)
+    course_id = models.IntegerField(default=0, primary_key=True)
+    course = models.CharField(max_length=200)
     course_type = models.CharField(max_length=200, default="")
     course_description = models.TextField(default="")
     registration_description = models.TextField(default="")

@@ -76,7 +76,8 @@ class RoadmapManager:
             link,
             reference_system,
             threshold,
-            component_id
+            component_id,
+            course_id
             ):
 
         course_description = Cleaner().clean_quotation_marks(course_description)
@@ -97,7 +98,7 @@ class RoadmapManager:
                 reference_system = '{reference_system}',
                 threshold = {threshold},
                 component_id = '{component_id}'
-                WHERE course = '{course}'
+                WHERE id = '{course_id}'
                 ''')
 
     def list_courses(self):
@@ -136,7 +137,8 @@ class RoadmapManager:
                 link,
                 reference_system,
                 threshold,
-                component_id
+                component_id,
+                id
                 FROM nieszkolni_app_course
                 WHERE course = '{course}'
                 ''')

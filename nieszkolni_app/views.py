@@ -2674,6 +2674,7 @@ def add_course(request):
                 reference_system = request.POST["reference_system"]
                 threshold = request.POST["threshold"]
                 component_id = request.POST["component_id"]
+                course_id = request.POST["course_id"]
 
                 RoadmapManager().update_course(
                     course,
@@ -2685,7 +2686,8 @@ def add_course(request):
                     link,
                     reference_system,
                     threshold,
-                    component_id
+                    component_id,
+                    course_id
                     )
 
                 courses = RoadmapManager().list_courses()
@@ -2724,9 +2726,11 @@ def list_courses(request):
 
             if request.POST["action_on_course"] == "edit":
                 course = request.POST["course"]
+                course_id = request.POST["course_id"]
                 course = RoadmapManager().display_course(course)
 
                 return render(request, "update_course.html", {
+                    "course_id": course_id,
                     "course": course,
                     "course_types": course_types,
                     "assessment_methods": assessment_methods,
