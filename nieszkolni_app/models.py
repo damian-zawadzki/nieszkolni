@@ -308,7 +308,6 @@ class Course(models.Model):
     course_id = models.IntegerField(default=0, primary_key=True)
 
 
-
 class Grade(models.Model):
     stamp = models.IntegerField(default=0)
     date_number = models.IntegerField(default=0)
