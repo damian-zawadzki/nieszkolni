@@ -44,14 +44,22 @@ def welcome(request):
         total_phrases = VocabularyManager().total_cards(current_user)
         new_phrases = VocabularyManager().new_cards(current_user, "vocabulary")
 
-        return render(request, 'welcome.html', {"total_phrases": total_phrases, "new_phrases": new_phrases})
+        return render(request, 'campus.html', {})
 
     if request.method == "POST":
-        if request.POST["action_on_welcome"] == "enter":
-
-            return render(request, 'login_user.html', {})
+        return render(request, 'login_user.html', {})
 
     return render(request, 'welcome.html', {})
+
+
+@login_required
+def campus(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        return render(request, 'campus.html', {})
 
 
 @login_required(login_url='login_user.html')
@@ -309,10 +317,13 @@ def login_user(request):
         if user is not None:
             login(request, user)
             messages.success(request, ("You have successfully logged in."))
-            return redirect("welcome")
+            return redirect("campus")
+
         else:
             messages.error(request, ("Wrong password or username. Try again."))
             return redirect("login_user")
+
+        return render(request, "campus.html", {})
 
     else:
         return render(request, "login_user.html", {})
@@ -322,7 +333,7 @@ def login_user(request):
 def logout_user(request):
     logout(request)
     messages.success(request, ("Come back soon!"))
-    return redirect("home")
+    return render(request, "welcome.html", {})
 
 
 @staff_member_required

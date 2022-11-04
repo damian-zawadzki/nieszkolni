@@ -1183,6 +1183,7 @@ td {
 }
 
 .main_title {
+  color: #F9F7F5;
   font-size: 75px;
   font-weight: 1000;
   font-family: "Google Sans", Roboto, Arial, sans-serif;
@@ -1191,6 +1192,7 @@ td {
 }
 
 .main_subtitle {
+  color: #F9F7F5;
   font-size: 50px;
   font-weight: 1000;
   font-family: "Google Sans", Roboto, Arial, sans-serif;
@@ -1203,7 +1205,7 @@ td {
   height: 100%;
   margin-bottom: 25px;
   object-fit: cover;
-  opacity: 0.4;
+  opacity: 1;
   position: fixed;
   width: 100%;
   z-index: -1;

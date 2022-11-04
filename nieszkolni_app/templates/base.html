@@ -16,9 +16,9 @@
   </head>
 
 <body>
-  <nav class="m_navigation">
 
     {% if user.is_authenticated %}
+    <nav class="m_navigation">
     <div class="m_side_menu" id="main_links">
       <li class="m_navigation_item">
         <a class="m_navigation_link" href="{% url 'ranking'%}">RANKING</a>
@@ -71,12 +71,17 @@
         </ul>
       </div>
     </div>
+    </nav>
 
     {% else %}
 
-    <li class="m_navigation_item">
-      <a class="m_navigation_link" href="{% url 'login_user'%}">LOGIN</a>
-    </li>
+  <nav class="m_navigation">
+    <div class="m_side_menu" id="main_links">
+      <li class="m_navigation_item">
+        <a class="m_navigation_link" href="{% url 'login_user'%}">LOGIN</a>
+      </li>
+    </div>
+  </nav>
 
     {% endif %}
 
@@ -122,11 +127,12 @@
 
 
 <body>
+
     {% if user.is_staff %}
 
   <nav class="navigation flex-parent jc-center">
     <li class="navigation_item">
-      <a class="navigation_link" aria-current="page" href="{% url 'welcome'%}">NEWS</a>
+      <a class="navigation_link" aria-current="page" href="{% url 'welcome'%}">CAMPUS</a>
     </li>
     </li>
     <li class="navigation_item">
@@ -154,7 +160,7 @@
 
   <nav class="navigation flex-parent jc-center">
     <li class="navigation_item">
-      <a class="navigation_link" aria-current="page" href="{% url 'welcome'%}">NEWS</a>
+      <a class="navigation_link" aria-current="page" href="{% url 'campus'%}">CAMPUS</a>
     </li>
     <li class="navigation_item">
       <a class="navigation_link" href="{% url 'ranking'%}">RANKING</a>
@@ -174,6 +180,13 @@
   </nav>
 
     {% else %}
+
+  <nav class="navigation flex-parent jc-center">
+    <li class="navigation_item">
+      <a class="m_navigation_link" href="{% url 'login_user'%}">LOGIN</a>
+    </li>
+  </nav>
+
     {% endif %}
 
 

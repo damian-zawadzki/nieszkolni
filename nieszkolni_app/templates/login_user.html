@@ -3,8 +3,9 @@
 
 <h1>Log in</h1>
 
-<form method="POST">
+<form action="{% url 'login_user' %}"   method="POST">
   {% csrf_token %}
+
   <div class="flex-parent jc-center"> 
     <div class="input_container">
       <label for="exampleInputEmail1" class="input_label">Login</label>
@@ -20,5 +21,7 @@
   <div class="flex-parent jc-center">
   <button type="submit" class="button_main">Log in</button>
   </div>
+
 </form>
+
 {% endblock %}
