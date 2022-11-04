@@ -295,7 +295,6 @@ class Roadmap(models.Model):
 
 
 class Course(models.Model):
-    course_id = models.IntegerField(default=0, primary_key=True)
     course = models.CharField(max_length=200)
     course_type = models.CharField(max_length=200, default="")
     course_description = models.TextField(default="")
@@ -306,6 +305,8 @@ class Course(models.Model):
     reference_system = models.CharField(max_length=200, default="")
     threshold = models.IntegerField(default=0)
     component_id = models.CharField(max_length=200, default="")
+    course_id = models.IntegerField(default=0, primary_key=True)
+
 
 
 class Grade(models.Model):
