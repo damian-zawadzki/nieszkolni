@@ -71,6 +71,15 @@
           {% endfor %}
         </select>
 
+      {% elif assignment_type == 'quiz' %}
+
+        <select class="input_content" name="title">
+          <option disabled selected value></option>
+           {% for entry in entries %}
+          <option value="Take {{ entry.0 }}">Take {{ entry.0 }}</option>
+          {% endfor %}
+        </select>
+
       {% elif module_status == 1 %}
 
         <input required type="text" class="input_content" name="title" value="{{ module.2 }}">

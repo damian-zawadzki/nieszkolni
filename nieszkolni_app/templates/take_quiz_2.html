@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+
+
+<div class="flex-parent jc-center">
+  <form action="{% url 'take_quiz' quiz_question_id=quiz_question_id item=item %}" method="POST">
+  {% csrf_token %}
+
+    <div class="phrase_card">
+        <div class="phrase_card_container">
+        <p class="phrase_card_answer"><span class="section">{{ quiz.7 }}</span></p>
+        <h5 class="phrase_card_question" style="margin-bottom: 25px">{{ quiz.6 }}</h5>
+
+          <input type="hidden" name="quiz_question_id" value="{{ quiz_question_id }}">
+          <input type="hidden" name="item" value="{{ item }}">
+          <input type="hidden" name="quiz_id" value="{{ quiz_id }}">
+
+
+          {% if quiz.8 != '' %}
+            <button type="submit" class="button_answer" id="a" name="answer" value="{{ quiz.8 }}" disabled>{{ quiz.8 }}</button>
+          {% endif %}
+
+          {% if quiz.9 != '' %}
+            <button type="submit" class="button_answer" id="b" name="answer" value="{{ quiz.9 }}" disabled>{{ quiz.9 }}</button>
+          {% endif %}
+
+          {% if quiz.10 != '' %}
+            <button type="submit" class="button_answer" id="c" name="answer" value="{{ quiz.10 }}" disabled>{{ quiz.10 }}</button>
+          {% endif %}
+
+          {% if quiz.11 != '' %}
+            <button type="submit" class="button_answer" id="d" name="answer" value="{{ quiz.11 }}" disabled>{{ quiz.11 }}</button>
+          {% endif %}
+
+          {% if question_type == 'typing' %}
+
+            <div class="flex-parent jc-center">
+              <input type="text" class="input_content input_prefilled" id="e" name="answer" value="{{ answer }}">
+            </div>
+            <div class="flex-parent jc-center">  
+              <input type="text" class="input_content_correct input_prefilled" id="f" name="answer" value="{{ correct_answer }}" style="display: none;">
+            </div>
+            <div class="flex-parent jc-center">
+              <button type="submit" class="button_main" name="answer" value="ok">OK</button>
+            </div>
+
+          {% else %}
+
+            <div>
+              <button type="submit" class="button_main" name="answer" value="ok">OK</button>
+            </div>
+
+          {% endif %}
+
+
+
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script type="text/javascript">
+      const a = document.querySelector("#a");
+      const b = document.querySelector("#b");
+      const c = document.querySelector("#c");
+      const d = document.querySelector("#d");
+      var answer = "{{ answer }}";
+      var correct_answer = "{{ correct_answer }}";
+      if (answer == correct_answer) {
+        if (answer == a.value) {
+          a.className = "button_answer old_counter correct";
+        } else if (answer == b.value) {
+          b.className = "button_answer old_counter correct";
+        } else if (answer == c.value) {
+          c.className = "button_answer old_counter correct";
+        } else if (answer == d.value) {
+          d.className = "button_answer old_counter correct";
+        };
+      } else {
+        if (answer == a.value) {
+          a.className = "button_answer problematic_counter";
+        } else if (answer == b.value) {
+          b.className = "button_answer problematic_counter";
+        } else if (answer == c.value) {
+          c.className = "button_answer problematic_counter";
+        } else if (answer == d.value) {
+          d.className = "button_answer problematic_counter";
+        };
+          if (correct_answer == a.value) {
+          a.className = "button_answer correct";
+        } else if (correct_answer == b.value) {
+          b.className = "button_answer correct";
+        } else if (correct_answer == c.value) {
+          c.className = "button_answer correct";
+        } else if (correct_answer == d.value) {
+          d.className = "button_answer correct";
+        };
+      };
+
+</script>
+<script type="text/javascript">
+      const e = document.querySelector("#e");
+      const f = document.querySelector("#f");
+      var answer = "{{ answer }}";
+      var correct_answer = "{{ correct_answer }}";
+      if (answer == correct_answer) {
+        e.className = "input_content input_prefilled input_prefilled_correct";
+      } else {
+        e.className = "input_content input_prefilled input_prefilled_incorrect";
+        f.style.display = "block";
+      }
+</script>
+
+<script type="text/javascript">
+      var button = document.querySelector("#a, #b, #c, #d, #e");
+
+      button.onchange = (event) => {
+         event.preventDefault();
+         button.disabled = true;
+       }
+
+</script>
+
+{% endblock %}

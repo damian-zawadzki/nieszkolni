@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% include 'staff_menu.html' %}
+
+<h1>ADD A COLLECTION</h1>
+
+<form action="{% url 'add_collection' %}"  method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Collection</label>
+
+        <select required class="input_content" id="collection_id" name="collection_id">
+            <option disabled selected value></option>
+            <option value="{{ next_collection_id }}">New collection</option>
+
+            {% for collection_id in collection_ids %}
+               <option value="{{ collection_id.0 }}">{{ collection_id.1 }}</option>
+            {% endfor %}
+            
+        </select>
+
+    </div>
+  </div>
+
+<div class="flex-parent jc-center" id="collection_name_box" style="display: none;">
+   <div class="input_container">
+      <label class="input_label">Collection name</label>
+      <input type="text" class="input_content" id="collection_name" name="collection_name">
+   </div>
+</div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Question</label>
+
+        <select required class="input_content" name="question_id">
+            <option disabled selected value></option>
+
+            {% for question in questions %}
+               <option value="{{ question.8 }}">{{ question.1 }}</option>
+            {% endfor %}
+
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_collection" value="update">Update</button>
+  </div>
+
+</form>
+
+<script type="text/javascript">
+      const collection_name = document.querySelector("#collection_name");
+      const collection_name_box = document.querySelector("#collection_name_box");
+      const collection_id = document.querySelector("#collection_id"); 
+      var next_collection_value = "{{ next_collection_id }}";
+      collection_id.onchange = (event) => {
+         event.preventDefault();
+         if (collection_id.value == next_collection_value) {
+            collection_name_box.style.display = "block";
+         } else {
+            collection_name_box.style.display = "none";
+            collection_name.className = "input_content input_prefilled";
+            collection_name.value = collection_id.selectedOptions[0].text;
+         };
+      };
+</script>
+
+{% endblock %}

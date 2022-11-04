@@ -339,3 +339,40 @@ class Option(models.Model):
     command = models.CharField(max_length=200, default="")
     value = models.CharField(max_length=200, default="")
     author = models.CharField(max_length=200, default="")
+
+
+class Question(models.Model):
+    question_id = models.IntegerField(default=0, primary_key=True)
+    description = models.CharField(max_length=200, default="")
+    question = models.CharField(max_length=200, default="")
+    answer_a = models.CharField(max_length=200, default="")
+    answer_b = models.CharField(max_length=200, default="")
+    answer_c = models.CharField(max_length=200, default="")
+    answer_d = models.CharField(max_length=200, default="")
+    correct_answer = models.CharField(max_length=200, default="")
+    question_type = models.CharField(max_length=200, default="")
+
+
+class Quiz(models.Model):
+    quiz_id = models.IntegerField(default=0)
+    question_id = models.IntegerField(default=0)
+    client = models.CharField(max_length=200, default="")
+    answer = models.CharField(max_length=200, default="")
+    result = models.CharField(max_length=200, default="")
+    date_number = models.IntegerField(default=0)
+    status = models.CharField(max_length=200, default="")
+    quiz_question_id = models.IntegerField(default=0)
+    collection_name = models.CharField(max_length=200, default="")
+    collection_id = models.IntegerField(default=0)
+
+
+class Assessment(models.Model):
+    quiz_id = models.IntegerField(default=0, primary_key=True)
+    client = models.CharField(max_length=200, default="")
+    status = models.CharField(max_length=200, default="")
+
+
+class Collection(models.Model):
+    collection_name = models.CharField(max_length=200, default="")
+    collection_id = models.IntegerField(default=0)
+    question_id = models.IntegerField(default=0)

@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% include 'staff_menu.html' %}
+
+<h1>ADD A QUESTION</h1>
+
+<form action="{% url 'add_question' %}"  method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Question type</label>
+
+        <select required class="input_content" name="question_type">
+            <option disabled selected value></option>
+
+            <option value="quiz">quiz</option>
+            <option value="typing">typing</option>
+            <option value="correcting">correcting</option>
+
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Description</label>
+
+        <select required class="input_content" name="description">
+            <option disabled selected value></option>
+
+            <option value="Answer the question below.">Answer the question below</option>
+            <option value="Answer the question below.">Type in the correct answer</option>
+            <option value="Answer the question below.">Correct the sentence below</option>
+
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Question</label>
+        <textarea type="text" class="input_content input_paragraph" name="question"></textarea>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Answer A</label>
+        <textarea type="text" class="input_content input_paragraph" name="answer_a"></textarea>
+    </div>
+  </div>>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Answer B</label>
+        <textarea type="text" class="input_content input_paragraph" name="answer_b"></textarea>
+    </div>
+  </div>>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Answer C</label>
+        <textarea type="text" class="input_content input_paragraph" name="answer_c"></textarea>
+    </div>
+  </div>>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Answer D</label>
+        <textarea type="text" class="input_content input_paragraph" name="answer_d"></textarea>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Correct answer</label>
+        <textarea type="text" class="input_content input_paragraph" name="correct_answer"></textarea>
+    </div>
+  </div>>
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_question" value="add">Add</button>
+  </div>
+
+</form>
+
+{% endblock %}

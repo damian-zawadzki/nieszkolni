@@ -35,6 +35,9 @@ class CurriculumManager:
         content = Cleaner().clean_quotation_marks(content)
         conditions = Cleaner().clean_quotation_marks(conditions)
 
+        if reference == "":
+            reference = 0
+
         with connection.cursor() as cursor:
             try:
                 deadline = TimeMachine().american_to_system_date(deadline)
@@ -62,7 +65,8 @@ class CurriculumManager:
                 submitting_user,
                 conditions,
                 reference
-                ) VALUES (
+                )
+                VALUES (
                 '{item}',
                 '{deadline}',
                 '{deadline_number}',
@@ -80,7 +84,8 @@ class CurriculumManager:
                 '',
                 '{conditions}',
                 {reference}
-                ) ON CONFLICT (item)
+                )
+                ON CONFLICT (item)
                 DO NOTHING
                 ''')
 

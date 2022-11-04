@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% include 'staff_menu.html' %}
+
+<h1>PLAN A QUIZ</h1>
+
+<form action="{% url 'add_question_to_quiz' client=client quiz_id=quiz_id %}"  method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Client</label>
+        <input type="text" class="input_content input_prefilled" name="client" value="{{ client }}">
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Quiz</label>
+
+        <select required class="input_content" id="quiz_id" name="quiz_id">
+            <option selected value="{{ quiz_id }}">{{ quiz_id }}</option>
+
+            {% for quiz_id in quiz_ids %}
+
+               <option value="{{ quiz_id.0 }}">{{ quiz_id.0 }}</option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Collection</label>
+
+        <select required class="input_content" id="collection_id" name="collection_id">
+            <option disabled selected value></option>
+
+            {% for collection_id in collection_ids %}
+               <option value="{{ collection_id.0 }}">{{ collection_id.1 }}</option>
+            {% endfor %}
+            
+        </select>
+
+    </div>
+  </div>
+
+   <input id="collection_name" type="hidden" name="collection_name">
+   <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_quiz" value="plan">Plan</button>
+   </div>
+
+</form>
+
+<script type="text/javascript">
+      const collection_id = document.querySelector("#collection_id");
+      const collection_name = document.querySelector("#collection_name");
+      collection_id.onchange = (event) => {
+         event.preventDefault();
+         collection_name.value = collection_id.selectedOptions[0].text;
+      };
+</script>
+
+{% endblock %}

@@ -54,6 +54,10 @@
 
 						<button type="submit" class="button_main" name="go_to" value="marking_as_read">Mark as read</button>
 
+					{% elif assignment.6 == 'quiz' %}
+
+						<button type="submit" class="button_main" name="go_to" value="take_quiz">Take the quiz</button>
+
 					{% else %}
 
 						<button type="submit" class="button_main" name="go_to" value="submission">Submit</button>

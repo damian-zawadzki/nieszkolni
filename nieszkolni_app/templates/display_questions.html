@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>QUESTIONS</h1>
+
+<table>
+
+	{% for question in questions %}
+
+		<tr class="font">
+
+			<td>{{ question.8 }}</td>
+			<td class="td_sentences">{{ question.1 }}</td>
+			<td>
+				<form action="{% url 'display_questions' %}"  method="POST">
+					{% csrf_token %}
+					  <div class="flex-parent jc-center">
+					  		<input type="hidden" name="question_id" value="{{ question.8 }}">
+					    	<button type="submit" class="button_main" name="action_on_question" value="more">More</button>
+					  </div>
+				</form>
+			</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+{% include 'footer.html' %}
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>COLLECTIONS</h1>
+
+<form action="{% url 'display_collection' %}" method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Collection</label>
+
+        <select required class="input_content" id="collection_id" name="collection_id">
+            <option disabled selected value></option>
+
+            {% for collection_id in collection_ids %}
+               <option value="{{ collection_id.0 }}">{{ collection_id.1 }}</option>
+            {% endfor %}
+            
+        </select>
+
+    </div>
+  </div>
+
+	<div class="flex-parent jc-center">
+		<button type="submit" class="button_main" name="action_on_collection" value="search">Search</button>
+	</div>
+
+</form>
+
+<table>
+
+	{% for question in questions %}
+
+		<tr class="font">
+
+			<td class="td_sentences">{{ question.1 }}</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+{% include 'footer.html' %}
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% include 'staff_menu.html' %}
+
+<h1>UPDATE THE QUESTION</h1>
+
+<form action="{% url 'display_questions' %}"  method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Question type</label>
+
+        <select required class="input_content" name="question_type">
+            <option selected value="{{ question.7 }}">{{ question.7 }}</option>
+
+            <option value="quiz">quiz</option>
+            <option value="typing">typing</option>
+            <option value="correcting">correcting</option>
+
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Description</label>
+
+        <select required class="input_content" name="description">
+            <option selected value="{{ question.0 }}">{{ question.0 }}</option>
+
+            <option value="Answer the question below.">Answer the question below.</option>
+            <option value="Answer the question below.">Type in the correct answer.</option>
+            <option value="Answer the question below.">Correct the sentence below.</option>
+
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Question</label>
+        <textarea type="text" class="input_content input_paragraph" name="question">{{ question.1 }}</textarea>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Answer A</label>
+        <textarea type="text" class="input_content input_paragraph" name="answer_a">{{ question.2 }}</textarea>
+    </div>
+  </div>>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Answer B</label>
+        <textarea type="text" class="input_content input_paragraph" name="answer_b">{{ question.3 }}</textarea>
+    </div>
+  </div>>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Answer C</label>
+        <textarea type="text" class="input_content input_paragraph" name="answer_c">{{ question.4 }}</textarea>
+    </div>
+  </div>>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Answer D</label>
+        <textarea type="text" class="input_content input_paragraph" name="answer_d">{{ question.5 }}</textarea>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Correct answer</label>
+        <textarea type="text" class="input_content input_paragraph" name="correct_answer">{{ question.6 }}</textarea>
+    </div>
+  </div>>
+
+  <div class="flex-parent jc-center">
+      <input type="hidden" name="question_id" value="{{ question.8 }}">
+      <button type="submit" class="button_main" name="action_on_question" value="update">Update</button>
+  </div>
+
+</form>
+
+{% endblock %}

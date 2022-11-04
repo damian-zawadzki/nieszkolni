@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>YOUR RESULT</h1>
+
+<div class="flex-parent jc-center">
+  <form action="{% url 'take_quiz' quiz_question_id=quiz_question_id item=item %}" method="POST">
+  {% csrf_token %}
+
+    <h2>{{ result }}%</h2>
+
+    <div>
+      <button type="submit" class="button_main" name="answer" value="leave">OK</button>
+    </div>
+
+  </form>
+</div>
+
+{% endblock %}

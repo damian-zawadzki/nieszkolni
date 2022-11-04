@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+{% if number_of_questions == 0 %}
+{% else %}
+  <div class="flex-parent jc-center">
+    <form action="{% url 'take_quiz' quiz_question_id=quiz_question_id item=item %}" method="POST">
+    {% csrf_token %}
+
+      <div class="phrase_card">
+          <div class="phrase_card_container">
+          <p class="phrase_card_answer"><span class="section">{{ quiz.7 }}</span></p>
+          <h5 class="phrase_card_question" style="margin-bottom: 25px">{{ quiz.6 }}</h5>
+
+            <input type="hidden" name="question_id" value="{{ quiz.1 }}">
+            <input type="hidden" name="correct_answer" value="{{ quiz.12 }}">
+
+          {% if quiz.8 != '' %}
+            <button type="submit" class="button_main" id="a" name="answer" value="{{ quiz.8 }}">{{ quiz.8 }}</button>
+          {% endif %}
+
+          {% if quiz.9 != '' %}
+            <button type="submit" class="button_main" id="b" name="answer" value="{{ quiz.9 }}">{{ quiz.9 }}</button>
+          {% endif %}
+
+          {% if quiz.10 != '' %}
+            <button type="submit" class="button_main" id="c" name="answer" value="{{ quiz.10 }}">{{ quiz.10 }}</button>
+          {% endif %}
+
+          {% if quiz.11 != '' %}
+            <button type="submit" class="button_main" id="d" name="answer" value="{{ quiz.11 }}">{{ quiz.11 }}</button>
+          {% endif %}
+
+          {% if question_type == 'typing' %}
+            <div class="flex-parent jc-center">
+              <input type="text" class="input_content" name="answer">
+            </div>
+            <div class="flex-parent jc-center">
+              <button type="submit" class="button_main" id="e" name="action_on_quiz_taking" value="submit">Submit</button>
+            </div>
+          {% endif %}
+
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+{% endif %}
+
+<script type="text/javascript">
+      var button = document.querySelectorAll("#a, #b, #c, #d, #e");
+
+      button.onchange = (event) => {
+         event.preventDefault();
+         button.disabled = true;
+       }
+
+</script>
+
+
+{% endblock %}
