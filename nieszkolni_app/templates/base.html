@@ -119,13 +119,15 @@
     <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
   </head>
 
+
+
 <body>
+    {% if user.is_staff %}
+
   <nav class="navigation flex-parent jc-center">
     <li class="navigation_item">
-      <a class="navigation_link" aria-current="page" href="{% url 'home'%}">HOME</a>
+      <a class="navigation_link" aria-current="page" href="{% url 'welcome'%}">NEWS</a>
     </li>
-
-    {% if user.is_staff %}
     </li>
     <li class="navigation_item">
       <a class="navigation_link" href="{% url 'ranking'%}">RANKING</a>
@@ -146,9 +148,14 @@
     <li class="navigation_item">
       <a class="navigation_link navigation_user">{{ user.first_name.upper }} {{ user.last_name.upper }}</a>
     </li>
-
+  </nav>
 
     {% elif user.is_authenticated %}
+
+  <nav class="navigation flex-parent jc-center">
+    <li class="navigation_item">
+      <a class="navigation_link" aria-current="page" href="{% url 'welcome'%}">NEWS</a>
+    </li>
     <li class="navigation_item">
       <a class="navigation_link" href="{% url 'ranking'%}">RANKING</a>
     </li>
@@ -164,16 +171,11 @@
     <li class="navigation_item">
       <a class="navigation_link navigation_user">{{ user.first_name.upper }} {{ user.last_name.upper }}</a>
     </li>
+  </nav>
 
     {% else %}
-
-    <li class="navigation_item">
-      <a class="navigation_link" href="{% url 'login_user'%}">LOGIN</a>
-    </li>
-
-
     {% endif %}
-  </nav>
+
 
 
   <div class="container">

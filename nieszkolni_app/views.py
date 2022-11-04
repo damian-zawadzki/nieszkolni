@@ -35,7 +35,7 @@ from django.template import RequestContext
 card_opening_time = 0
 
 
-def home(request):
+def welcome(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
@@ -44,12 +44,14 @@ def home(request):
         total_phrases = VocabularyManager().total_cards(current_user)
         new_phrases = VocabularyManager().new_cards(current_user, "vocabulary")
 
-        return render(request, 'home.html', {"total_phrases": total_phrases, "new_phrases": new_phrases})
+        return render(request, 'welcome.html', {"total_phrases": total_phrases, "new_phrases": new_phrases})
 
-    return render(request, 'home.html', {})
+    if request.method == "POST":
+        if request.POST["action_on_welcome"] == "enter":
 
-# def custom_error_view(request, *args, **argv):
-#     return render(request, '500.html', status=500)
+            return render(request, 'login_user.html', {})
+
+    return render(request, 'welcome.html', {})
 
 
 @login_required(login_url='login_user.html')
@@ -303,10 +305,11 @@ def login_user(request):
         username = request.POST["username"]
         password = request.POST["password"]
         user = authenticate(request, username=username, password=password)
+
         if user is not None:
             login(request, user)
             messages.success(request, ("You have successfully logged in."))
-            return redirect("home")
+            return redirect("welcome")
         else:
             messages.error(request, ("Wrong password or username. Try again."))
             return redirect("login_user")

@@ -1,12 +1,9 @@
 from django.contrib import admin
 from django.urls import path, include
-# from django.conf.urls import (handler400, handler403, handler404, handler500)
 from . import views
 
-# handler500 = 'nieszkolni_app.views.custom_error_view'
-
 urlpatterns = [
-    path('', views.home, name="home"),
+    path('', views.welcome, name="welcome"),
     path('vocabulary.html', views.vocabulary, name="vocabulary"),
     path('sentences.html', views.sentences, name="sentences"),
     path('view_answer.html', views.view_answer, name="view_answer"),

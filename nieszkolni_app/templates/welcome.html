@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<img src="https://images.unsplash.com/photo-1583373834259-46cc92173cb7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80" alt="campus" class="cover_photo">
+
+<div class="main_title flex-parent jc-center">ZAWADZKY</div>
+<div class="main_subtitle flex-parent jc-center">COLLEGE</div>
+
+<form action="{% url 'welcome' %}"  method="POST">
+	{% csrf_token %}
+
+	<div class="flex-parent jc-center">
+		<button type="submit" class="button_main_page button_main" name="action_on_welcome" value="enter">ACCESS</button>
+	</div>
+
+</form>
+
+{% endblock %}
