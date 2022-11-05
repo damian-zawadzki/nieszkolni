@@ -1,1 +1,1 @@
-web: gunicorn zawadzky-college:nieszkolni_app
+web: gunicorn nieszkolni_folder.wsgi
