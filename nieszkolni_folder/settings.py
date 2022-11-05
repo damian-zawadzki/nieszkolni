@@ -4,12 +4,7 @@ import django_heroku
 import dj_database_url
 from decouple import config
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-zm)m79i&zj-=dqjj3xswp_9y+__@mel(c@73ye73i+%a#pnggq'
@@ -19,7 +14,6 @@ DEBUG = True
 # DEBUG_PROPAGATE_EXCEPTIONS = True
 
 ALLOWED_HOSTS = ["192.168.8.101"]
-# ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -76,10 +70,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'nieszkolni_folder.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -89,7 +79,6 @@ DATABASES = {
 
 
 # Password validation
-# https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {

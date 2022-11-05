@@ -1,1 +1,1 @@
-web: gunicorn nieszkolni_folder.wsg
+web: gunicorn zawadzky-college.wsg
