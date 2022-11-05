@@ -1,1 +1,1 @@
-web: gunicorn nieszkolni_app.wsg
+web: gunicorn nieszkolni_app:nieszkolni_app (1)
