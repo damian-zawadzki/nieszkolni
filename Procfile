@@ -1,1 +1,1 @@
-web: gunicorn nieszkolni_app:nieszkolni_app (1)
+web: gunicorn zawadzky-college:nieszkolni_app
