@@ -1,1 +1,1 @@
-web: gunicorn nieszkolni_folder.wsgi
+web: gunicorn nieszkolni_folder.wsg
