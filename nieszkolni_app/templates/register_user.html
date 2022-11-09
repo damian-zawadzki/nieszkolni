@@ -5,33 +5,33 @@
 
 <form method="POST">
 	{% csrf_token %}
-  <div class="flex-parent jc-center"> 
-    <div class="input_container">
-      <label class="input_label">Internal email address</label>
-      <input type="email" class="input_content" name="internal_email_address">
-    </div>
-  </div>
+
   <div class="flex-parent jc-center"> 
      <div class="input_container">
       <label class="input_label">First name</label>
       <input type="text" class="input_content" name="first_name">
     </div>
   </div>
+
   <div class="flex-parent jc-center">
      <div class="input_container">
       <label class="input_label">Last name</label>
       <input type="text" class="input_content" name="last_name">
     </div>
   </div>
+
   <div class="flex-parent jc-center">
     <div class="input_container">
       <label class="input_label">Password</label>
       <input type="password" class="input_content" name="password">
     </div>
   </div>
+
   <div class="flex-parent jc-center">
-  <button type="submit" class="button_main">Register</button>
+    <input type="hidden" class="input_content" name="internal_email_address" value="-">
+    <button type="submit" class="button_main">Register</button>
   </div>
+
 </form>
 
 {% endblock %}
