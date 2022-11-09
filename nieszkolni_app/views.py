@@ -44,7 +44,7 @@ def welcome(request):
         total_phrases = VocabularyManager().total_cards(current_user)
         new_phrases = VocabularyManager().new_cards(current_user, "vocabulary")
 
-        return render(request, 'campus.html', {})
+        return redirect("campus")
 
     if request.method == "POST":
         return render(request, 'login_user.html', {})
@@ -59,7 +59,11 @@ def campus(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        return render(request, 'campus.html', {})
+        announcements = BackOfficeManager().display_latest_announcements()
+
+        return render(request, 'campus.html', {
+            "announcements": announcements
+            })
 
 
 @login_required(login_url='login_user.html')
@@ -542,6 +546,8 @@ def profile(request):
         user_agent = get_user_agent(request)
         profile = RoadmapManager().display_profile(current_user)
         semesters = RoadmapManager().display_semesters(current_user)
+        tags = BackOfficeManager().display_tags()
+        stories = StreamManager().display_stories(current_user)
 
         if profile is None:
             display_name = current_user
@@ -666,7 +672,16 @@ def profile(request):
                     })
                 # except Exception as e:
                 #     return redirect("profile.html")
-        
+
+            elif request.POST["action_on_profile"] == "start_story":
+                story = request.POST["story_number"]
+
+                return redirect(
+                    "display_spin",
+                    client=current_user,
+                    story=story
+                    )
+
         if user_agent.is_mobile:
             return render(request, "m_profile.html", {
                 "courses": courses,
@@ -679,7 +694,10 @@ def profile(request):
                 "current_degree_status": current_degree_status,
                 "end_of_semester": end_of_semester,
                 "activity_points": activity_points,
-                "target": target
+                "target": target,
+                "tags": tags,
+                "stories": stories,
+                "first_name": first_name
                 })
 
         else:
@@ -694,7 +712,10 @@ def profile(request):
                 "current_degree_status": current_degree_status,
                 "end_of_semester": end_of_semester,
                 "activity_points": activity_points,
-                "target": target
+                "target": target,
+                "tags": tags,
+                "stories": stories,
+                "first_name": first_name
                 })
 
 
@@ -712,7 +733,7 @@ def submit_assignment(request):
 
                 CurriculumManager().remove_curriculum(item)
 
-                return redirect("display_curricula.html")
+                return redirect("display_curricula")
 
             if request.POST["go_to"] == "submission":
                 item = request.POST["item"]
@@ -744,7 +765,7 @@ def submit_assignment(request):
                     current_user
                     )
 
-                return redirect("assignments.html")
+                return redirect("assignments")
 
             elif request.POST["go_to"] == "take_quiz":
                 item = request.POST["item"]
@@ -3298,6 +3319,7 @@ def ranking(request):
 
         user_agent = get_user_agent(request)
         rows = StreamManager().display_ranking()
+        tags = BackOfficeManager().display_tags()
 
         if user_agent.is_mobile:
             return render(request, "m_ranking.html", {
@@ -3305,7 +3327,8 @@ def ranking(request):
                 })
 
         return render(request, "ranking.html", {
-            "rows": rows
+            "rows": rows,
+            "tags": tags
             })
 
 
@@ -3347,7 +3370,7 @@ def announcements(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        announcements = BackOfficeManager().display_announcements()\
+        announcements = BackOfficeManager().display_announcements()
 
         if request.method == "POST":
             if request.POST["action_on_announcement"] == "more":
@@ -3402,8 +3425,6 @@ def display_announcement(request, notification_id):
         first_name = request.user.first_name
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
-
-        notification_id = notification_id
 
         announcement = BackOfficeManager().display_announcement(notification_id)
         stamp = TimeMachine().number_to_system_date_time(announcement[1])
@@ -3867,6 +3888,32 @@ def take_quiz(request, quiz_question_id, item):
             "quiz": quiz,
             "number_of_questions": number_of_questions,
             "question_type": question_type
+            })
+
+
+@staff_member_required
+def add_spin(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        next_story_number = RoadmapManager().display_next_story_number()
+        story_numbers = RoadmapManager().display_story_numbers()
+
+        return render(request, "add_spin.html", {})
+
+
+@login_required
+def display_spin(request, client, story):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        return render(request, "display_spin.html", {
+            "client": client,
+            "story": story
             })
 
 

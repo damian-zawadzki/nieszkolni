@@ -1,5 +1,23 @@
 {% extends 'base.html' %}
 {% block 'content' %}
+{% load static %} 
+
+{% if stories.0 is not None %}
+
+	<form action="{% url 'profile' %}"  method="POST">
+	{% csrf_token %}
+
+		<h2>{{ first_name|title }}</h2>
+		<h3>Start a new exciting journey!</h3>
+		  <div class="flex-parent jc-center">
+		  		<input type="hidden" name="story_number" value="{{ stories.0 }}">
+		    	<button type="submit" class="button_main" name="action_on_profile" value="start_story">Start</button>
+		  </div>
+
+	</form>
+
+{% else %}
+
 
 <div class="avatar">
 
@@ -10,11 +28,17 @@
 	<div class="avatar_description_box">
 
 		<div class="avatar_name">
-			<h2>{{ display_name.upper }}</h2>
+			<div class="info">
+				<h2>{{ display_name.upper }}</h2>
+				<a class="" href="{% url 'display_announcement' tags.degrees_tag %}"><img src="{% static '/images/information.png' %}" width="10" height="10"></a>
+			</div>
 		</div>
 
 		<div class="avatar_description">
-			<h3>{{ activity_points }}/{{ target }}</h3>
+			<div class="info">
+				<h3>{{ activity_points }}/{{ target }}</h3>
+				<a class="" href="{% url 'display_announcement' tags.activity_target_tag %}"><img src="{% static '/images/information.png' %}" width="10" height="10"></a>
+			</div>
 		</div>
 
 	</div>
@@ -144,9 +168,9 @@
 			  <h6>THIS SEMESTER ENDS ON {{ end_of_semester }}</h6>
 			</li>
 
-			{% if early_admission == 1 %}
+			{% if early_admission == 'yes' %}
 			<li class="list_of_courses_item ">
-			  <span style="color: #86A697; margin-bottom: 5px;">You're eligible for early admission. Find our more <a href="{% url 'display_announcement' notification_id=1 %}">here</a>!</span>
+			  <span style="color: #86A697; margin-bottom: 5px;">You're eligible for early admission. Find our more <a href="{% url 'display_announcement' tags.early_admission_tag %}">here</a>!</span>
 			</li>
 			{% else %}
 			{% endif %}
@@ -188,4 +212,5 @@
 		
 </div>
 
+{% endif %}
 {% endblock %}

@@ -13,7 +13,7 @@
 
         <select required class="input_content" name="recipient">
             <option selected disabled value></option>
-            <option value="visible_announcement">all</option>
+            <option value="all">all</option>
 
             {% for client in clients %}
             <option value="{{ client }}">{{ client }}</option>
@@ -44,8 +44,9 @@
 
         <select required class="input_content" name="notification_type">
             <option selected disabled value></option>
-            <option value="visible_announcement">visible</option>
-            <option value="hidden_announcement">hidden</option>
+            <option value="visible_announcement">visible announcement</option>
+            <option value="hidden_announcement">hidden announcement</option>
+            <option value="comment">comment</option>
         </select>
 
     </div>

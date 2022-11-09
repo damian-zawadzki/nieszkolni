@@ -739,3 +739,37 @@ class StreamManager:
                 ranking.append(item)
 
             return ranking
+
+    def display_planned_stories(self, client):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT value
+                FROM nieszkolni_app_stream
+                WHERE command = 'Planned story'
+                AND name = '{client}'
+                ''')
+
+            rows = cursor.fetchall()
+            stories = [int(row[0]) for row in rows]
+
+            return stories
+
+    def display_stories(self, client):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT value
+                FROM nieszkolni_app_stream
+                WHERE command = 'Covered story'
+                AND name = '{client}'
+                ''')
+
+            rows = cursor.fetchall()
+            covered_stories = [int(row[0]) for row in rows]
+            planned_stories = self.display_planned_stories(client)
+
+            stories = planned_stories.copy()
+            for story in covered_stories:
+                if story in stories:
+                    stories.remove(story)
+
+            return stories

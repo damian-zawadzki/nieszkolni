@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %} 
+
+<div class="flex-parent jc-center">
+  <form action="{% url 'display_spin' client=client story=story %}" method="POST">
+  {% csrf_token %}
+
+  <div class="phrase_card">
+    <div class="phrase_card_container">
+      <h5 class="phrase_card_question">{{ polish }}</h5>
+      <p class="phrase_card_answer"><span class="section">{{ english }}</span></p>
+      <input type="hidden" name="deck" value="{{ deck }}">
+
+      <button type="submit" class="button_main" value="incorrect" name="answer">Incorrect</button>
+      <button type="submit" class="button_main" value="hard" name="answer">Hard</button>
+      <button type="submit" class="button_main" value="easy" name="answer">Easy</button>
+
+    </div>
+  </div>
+
+  </form>
+</div>
+
+
+{% endblock %}

@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
 {% block 'content' %}
+{% load static %} 
 
-<h1>RANKING</h1>
+<div class="flex-parent jc-center">
+	<h1>RANKING</h1>
+	<a class="" href="{% url 'display_announcement' tags.ranking_tag %}"><img src="{% static '/images/information.png' %}" width="10" height="10"></a>
+</div>
 
 <table>
 

@@ -5,6 +5,7 @@ from nieszkolni_app.models import Roadmap
 from nieszkolni_app.models import Course
 from nieszkolni_app.models import Grade
 from nieszkolni_app.models import Profile
+from nieszkolni_app.models import Spin
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
 
@@ -796,3 +797,45 @@ class RoadmapManager:
                 result = data[0]
 
             return result
+
+    def display_next_story_number(self):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT story
+                FROM nieszkolni_app_spin
+                ORDER BY story DESC
+                LIMIT 1
+                ''')
+
+            data = cursor.fetchone()
+
+            return data[0] +1 or 1
+
+    def display_story_numbers(self):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT DISTINCT story
+                FROM nieszkolni_app_spin
+                ORDER BY story ASC
+                ''')
+
+            rows = cursor.fetchone()
+
+            story_numbers = [row[0] for row in rows]
+
+            return story_numbers
+
+    def display_views(self, story):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT view_number
+                FROM nieszkolni_app_spin
+                WHERE story = '{story}'
+                ''')
+
+            view_numbers = cursor.fetchall()
+
+            return view_numbers

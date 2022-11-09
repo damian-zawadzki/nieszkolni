@@ -377,3 +377,23 @@ class Collection(models.Model):
     collection_name = models.CharField(max_length=200, default="")
     collection_id = models.IntegerField(default=0)
     question_id = models.IntegerField(default=0)
+
+
+class Spin(models.Model):
+    view_number = models.IntegerField(default=0, primary_key=True)
+    message = models.TextField(default="")
+    option_a_text = models.CharField(max_length=200, default="")
+    option_b_text = models.CharField(max_length=200, default="")
+    option_c_text = models.CharField(max_length=200, default="")
+    option_d_text = models.CharField(max_length=200, default="")
+    option_a_view = models.IntegerField(default=0)
+    option_b_view = models.IntegerField(default=0)
+    option_c_view = models.IntegerField(default=0)
+    option_d_view = models.IntegerField(default=0)
+    option_key = models.CharField(max_length=200, default="")
+    option_a_value = models.CharField(max_length=200, default="")
+    option_b_value = models.CharField(max_length=200, default="")
+    option_c_value = models.CharField(max_length=200, default="")
+    option_d_value = models.CharField(max_length=200, default="")
+    view_type = models.CharField(max_length=200, default="")
+    story = models.IntegerField(default=0)

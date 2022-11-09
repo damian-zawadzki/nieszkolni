@@ -89,6 +89,7 @@ urlpatterns = [
     path('announcements.html', views.announcements, name="announcements"),
     path('add_notification.html', views.add_notification, name="add_notification"),
     path('display_announcement/<int:notification_id>', views.display_announcement, name="display_announcement"),
+    path('display_announcement/', views.display_announcement, name="display_announcement"),
     path('add_grade', views.add_grade, name="add_grade"),
     path('add_option', views.add_option, name="add_option"),
     path('display_options', views.display_options, name="display_options"),
@@ -101,4 +102,7 @@ urlpatterns = [
     path('add_question_to_quiz/<str:client>/<int:quiz_id>', views.add_question_to_quiz, name="add_question_to_quiz"),
     path('display_quizzes', views.display_quizzes, name="display_quizzes"),
     path('take_quiz/<int:quiz_question_id>/<int:item>', views.take_quiz, name="take_quiz"),
+    path('add_spin.html', views.add_spin, name="add_spin"),
+    path('display_spin/<str:client>/<int:story>', views.display_spin, name="display_spin"),
+    path('display_spin/<str:client>/<int:view_number>', views.display_spin, name="display_spin"),
        ]

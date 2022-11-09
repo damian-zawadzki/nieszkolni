@@ -409,6 +409,31 @@ class BackOfficeManager:
 
             return announcements
 
+    def display_latest_announcements(self):
+        now_number = TimeMachine().today_number()
+        Seven_days_ago_stamp = now_number - 604800
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                notification_id,
+                stamp,
+                sender,
+                recipient,
+                subject,
+                content,
+                notification_type,
+                status
+                FROM nieszkolni_app_notification
+                WHERE notification_type = 'visible_announcement'
+                AND stamp >= {Seven_days_ago_stamp}
+                ORDER BY stamp DESC
+                ''')
+
+            announcements = cursor.fetchall()
+
+            return announcements
+
     def display_announcement(self, notification_id):
         with connection.cursor() as cursor:
             cursor.execute(f'''
@@ -500,3 +525,19 @@ class BackOfficeManager:
 
             return end_of_semester
 
+    def display_tags(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT command, value
+                FROM nieszkolni_app_option
+                WHERE command LIKE '%_tag'
+                ''')
+
+            items = cursor.fetchall()
+
+            tags = dict()
+            for item in items:
+                tag = {item[0]: item[1]}
+                tags.update(tag)
+
+            return tags

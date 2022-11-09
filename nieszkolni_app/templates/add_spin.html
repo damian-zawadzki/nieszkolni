@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% include 'staff_menu.html' %}
+
+<h1>CREATE A STORY</h1>
+
+<form action="{% url 'add_spin'%}"  method="POST">
+	{% csrf_token %}
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Story</label>
+         <input type="number" class="input_content" name="story">
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Message</label>
+         <textarea type="text" class="input_content input_paragraph" name="message"></textarea>
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Option A: text</label>
+         <input type="text" class="input_content" name="option_a_text">
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Option B: text</label>
+         <input type="text" class="input_content" name="option_a_text">
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Option C: text</label>
+         <input type="text" class="input_content" name="option_a_text">
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Option D: text</label>
+         <input type="text" class="input_content" name="option_a_text">
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Option A: view</label>
+         <input type="number" class="input_content" name="option_a_view">
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Option B: view</label>
+         <input type="number" class="input_content" name="option_b_view">
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Option C: view</label>
+         <input type="number" class="input_content" name="option_c_view">
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Option D: view</label>
+         <input type="number" class="input_content" name="option_d_view">
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Key</label>
+         <input type="name" class="input_content" name="option_key">
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Option A: value</label>
+         <input type="name" class="input_content" name="option_a_value">
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Option B: value</label>
+         <input type="name" class="input_content" name="option_b_value">
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Option C: value</label>
+         <input type="name" class="input_content" name="option_c_value">
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Option D: value</label>
+         <input type="name" class="input_content" name="option_d_value">
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Type</label>
+         <select required class="input_content" name="view_type">
+            
+            <option selected value="next_view">next view</option>
+            <option value="last_view">last_view</option>
+
+        </select>
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_spin" value="create">Create</button>
+   </div>
+
+</form>
+
+<script type="text/javascript">
+      const collection_id = document.querySelector("#collection_id");
+      const collection_name = document.querySelector("#collection_name");
+      collection_id.onchange = (event) => {
+         event.preventDefault();
+         collection_name.value = collection_id.selectedOptions[0].text;
+      };
+</script>
+
+{% endblock %}
