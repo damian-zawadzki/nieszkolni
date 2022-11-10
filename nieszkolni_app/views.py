@@ -3898,22 +3898,175 @@ def add_spin(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        next_story_number = RoadmapManager().display_next_story_number()
-        story_numbers = RoadmapManager().display_story_numbers()
+        next_story = RoadmapManager().display_next_story_number()
+        stories = RoadmapManager().display_story_numbers()
 
-        return render(request, "add_spin.html", {})
+        if request.method == "POST":
+            if request.POST["action_on_spin"] == "create":
+                message = request.POST["message"]
+                option_a_text = request.POST["option_a_text"]
+                option_b_text = request.POST["option_b_text"]
+                option_c_text = request.POST["option_c_text"]
+                option_d_text = request.POST["option_d_text"]
+                option_a_view = request.POST["option_a_view"]
+                option_b_view = request.POST["option_b_view"]
+                option_c_view = request.POST["option_c_view"]
+                option_d_view = request.POST["option_d_view"]
+                option_key = request.POST["option_key"]
+                option_a_value = request.POST["option_a_value"]
+                option_b_value = request.POST["option_b_value"]
+                option_c_value = request.POST["option_c_value"]
+                option_d_value = request.POST["option_d_value"]
+                view_type = request.POST["view_type"]
+                story = request.POST["story"]
+
+                scene = RoadmapManager().display_next_scene_number(story)
+
+                RoadmapManager().add_spin(
+                    scene,
+                    message,
+                    option_a_text,
+                    option_b_text,
+                    option_c_text,
+                    option_d_text,
+                    option_a_view,
+                    option_b_view,
+                    option_c_view,
+                    option_d_view,
+                    option_key,
+                    option_a_value,
+                    option_b_value,
+                    option_c_value,
+                    option_d_value,
+                    view_type,
+                    story
+                    )
+
+                return redirect("add_spin")
+
+        return render(request, "add_spin.html", {
+            "next_story": next_story,
+            "stories": stories
+            })
 
 
-@login_required
-def display_spin(request, client, story):
+@staff_member_required
+def update_spin(request, scene):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        item = RoadmapManager().display_scene(scene)
+
+        if request.method == "POST":
+            if request.POST["action_on_spin"] == "update":
+                scene = request.POST["scene"]
+                message = request.POST["message"]
+                option_a_text = request.POST["option_a_text"]
+                option_b_text = request.POST["option_b_text"]
+                option_c_text = request.POST["option_c_text"]
+                option_d_text = request.POST["option_d_text"]
+                option_a_view = request.POST["option_a_view"]
+                option_b_view = request.POST["option_b_view"]
+                option_c_view = request.POST["option_c_view"]
+                option_d_view = request.POST["option_d_view"]
+                option_key = request.POST["option_key"]
+                option_a_value = request.POST["option_a_value"]
+                option_b_value = request.POST["option_b_value"]
+                option_c_value = request.POST["option_c_value"]
+                option_d_value = request.POST["option_d_value"]
+                view_type = request.POST["view_type"]
+                story = request.POST["story"]
+
+                RoadmapManager().update_spin(
+                    scene,
+                    message,
+                    option_a_text,
+                    option_b_text,
+                    option_c_text,
+                    option_d_text,
+                    option_a_view,
+                    option_b_view,
+                    option_c_view,
+                    option_d_view,
+                    option_key,
+                    option_a_value,
+                    option_b_value,
+                    option_c_value,
+                    option_d_value,
+                    view_type,
+                    story
+                    )
+
+                return redirect("display_story")
+
+        return render(request, "update_spin.html", {
+            "item": item,
+            "scene": scene
+            })
+
+
+@login_required
+def display_spin(request, client, story, scene=1):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        item = RoadmapManager().display_next_scene(story, scene)
+        message = item[0].replace("<<first_name>>", first_name.capitalize())
+        message = message.replace("<<last_name>>", last_name.capitalize())
+
+        if request.method == "POST":
+            view_type = request.POST["view_type"]
+            data = request.POST["response"]
+
+            rows = data.split(", ")
+            response = tuple(rows)
+            scene = data[0]
+
+            if view_type == "last_view":
+                messages.success(request, ("Congratulations!"))
+                return redirect("profile")
+            else:
+                return redirect("display_spin", client=client, story=story, scene=scene)
+
         return render(request, "display_spin.html", {
             "client": client,
-            "story": story
+            "story": story,
+            "item": item,
+            "message": message
+            })
+
+
+@staff_member_required
+def display_story(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        stories = RoadmapManager().display_story_numbers()
+
+        if request.method == "POST":
+            if request.POST["action_on_story"] == "filter":
+                story = request.POST["story"]
+
+                items = RoadmapManager().display_story(story)
+
+                return render(request, "display_story.html", {
+                    "stories": stories,
+                    "items": items
+                    })
+
+            elif request.POST["action_on_story"] == "explore":
+                scene = request.POST["scene"]
+
+                return redirect("update_spin", scene=scene)
+
+        return render(request, "display_story.html", {
+            "stories": stories
             })
 
 

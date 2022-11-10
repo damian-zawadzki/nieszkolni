@@ -103,6 +103,8 @@ urlpatterns = [
     path('display_quizzes', views.display_quizzes, name="display_quizzes"),
     path('take_quiz/<int:quiz_question_id>/<int:item>', views.take_quiz, name="take_quiz"),
     path('add_spin.html', views.add_spin, name="add_spin"),
+    path('update_spin/<int:scene>', views.update_spin, name="update_spin"),
     path('display_spin/<str:client>/<int:story>', views.display_spin, name="display_spin"),
-    path('display_spin/<str:client>/<int:view_number>', views.display_spin, name="display_spin"),
+    path('display_spin/<str:client>/<int:story>/<int:scene>', views.display_spin, name="display_spin"),
+    path('display_story.html', views.display_story, name="display_story"),
        ]

@@ -810,7 +810,12 @@ class RoadmapManager:
 
             data = cursor.fetchone()
 
-            return data[0] +1 or 1
+            if data is None:
+                next_story_number = 1
+            else:
+                next_story_number = data[0] + 1
+
+            return next_story_number
 
     def display_story_numbers(self):
 
@@ -821,21 +826,243 @@ class RoadmapManager:
                 ORDER BY story ASC
                 ''')
 
-            rows = cursor.fetchone()
+            rows = cursor.fetchall()
 
-            story_numbers = [row[0] for row in rows]
+            if rows is None:
+                story_numbers = []
+            else:
+                story_numbers = [row[0] for row in rows]
 
             return story_numbers
 
-    def display_views(self, story):
+    def display_scene_numbers(self, story):
 
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                SELECT view_number
+                SELECT scene
                 FROM nieszkolni_app_spin
                 WHERE story = '{story}'
                 ''')
 
-            view_numbers = cursor.fetchall()
+            scene_numbers = cursor.fetchall()
 
-            return view_numbers
+            return scene_numbers
+
+    def display_next_scene_number(self, story):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT scene
+                FROM nieszkolni_app_spin
+                ORDER BY scene DESC
+                LIMIT 1
+                ''')
+
+            data = cursor.fetchone()
+
+            if data is None:
+                next_scene_number = 1
+            else:
+                next_scene_number = data[0] + 1
+
+            return next_scene_number
+
+    def add_spin(
+            self,
+            scene,
+            message,
+            option_a_text,
+            option_b_text,
+            option_c_text,
+            option_d_text,
+            option_a_view,
+            option_b_view,
+            option_c_view,
+            option_d_view,
+            option_key,
+            option_a_value,
+            option_b_value,
+            option_c_value,
+            option_d_value,
+            view_type,
+            story
+            ):
+
+        message = Cleaner().clean_quotation_marks(message)
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                INSERT INTO nieszkolni_app_spin (
+                scene,
+                message,
+                option_a_text,
+                option_b_text,
+                option_c_text,
+                option_d_text,
+                option_a_view,
+                option_b_view,
+                option_c_view,
+                option_d_view,
+                option_key,
+                option_a_value,
+                option_b_value,
+                option_c_value,
+                option_d_value,
+                view_type,
+                story
+                )
+                VALUES (
+                '{scene}',
+                '{message}',
+                '{option_a_text}',
+                '{option_b_text}',
+                '{option_c_text}',
+                '{option_d_text}',
+                '{option_a_view}',
+                '{option_b_view}',
+                '{option_c_view}',
+                '{option_d_view}',
+                '{option_key}',
+                '{option_a_value}',
+                '{option_b_value}',
+                '{option_c_value}',
+                '{option_d_value}',
+                '{view_type}',
+                '{story}'
+                )
+                ON CONFLICT (scene)
+                DO NOTHING
+                ''')
+
+    def display_story(self, story):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                scene,
+                message,
+                option_a_text,
+                option_b_text,
+                option_c_text,
+                option_d_text,
+                option_a_view,
+                option_b_view,
+                option_c_view,
+                option_d_view,
+                option_key,
+                option_a_value,
+                option_b_value,
+                option_c_value,
+                option_d_value,
+                view_type,
+                story
+                FROM nieszkolni_app_spin
+                WHERE story = '{story}'
+                ''')
+
+            items = cursor.fetchall()
+
+            return items
+
+    def display_next_scene(self, story, scene):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                message,
+                option_a_text,
+                option_b_text,
+                option_c_text,
+                option_d_text,
+                option_a_view,
+                option_b_view,
+                option_c_view,
+                option_d_view,
+                option_key,
+                option_a_value,
+                option_b_value,
+                option_c_value,
+                option_d_value,
+                view_type,
+                story
+                FROM nieszkolni_app_spin
+                WHERE story = '{story}'
+                AND scene = '{scene}'
+                ''')
+
+            item = cursor.fetchone()
+
+            return item
+
+    def display_scene(self, scene):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                message,
+                option_a_text,
+                option_b_text,
+                option_c_text,
+                option_d_text,
+                option_a_view,
+                option_b_view,
+                option_c_view,
+                option_d_view,
+                option_key,
+                option_a_value,
+                option_b_value,
+                option_c_value,
+                option_d_value,
+                view_type,
+                story
+                FROM nieszkolni_app_spin
+                WHERE scene = '{scene}'
+                ''')
+
+            item = cursor.fetchone()
+
+            return item
+
+    def update_spin(
+            self,
+            scene,
+            message,
+            option_a_text,
+            option_b_text,
+            option_c_text,
+            option_d_text,
+            option_a_view,
+            option_b_view,
+            option_c_view,
+            option_d_view,
+            option_key,
+            option_a_value,
+            option_b_value,
+            option_c_value,
+            option_d_value,
+            view_type,
+            story
+            ):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                UPDATE nieszkolni_app_spin
+                SET
+                message = '{message}',
+                option_a_text = '{option_a_text}',
+                option_b_text = '{option_b_text}',
+                option_c_text = '{option_c_text}',
+                option_d_text = '{option_d_text}',
+                option_a_view = '{option_a_view}',
+                option_b_view = '{option_b_view}',
+                option_c_view = '{option_c_view}',
+                option_d_view = '{option_d_view}',
+                option_key = '{option_key}',
+                option_a_value = '{option_a_value}',
+                option_b_value = '{option_b_value}',
+                option_c_value = '{option_c_value}',
+                option_d_value = '{option_d_value}',
+                view_type = '{view_type}',
+                story = '{story}'
+                WHERE scene = '{scene}'
+                ''')

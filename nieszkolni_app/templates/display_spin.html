@@ -8,13 +8,15 @@
 
   <div class="phrase_card">
     <div class="phrase_card_container">
-      <h5 class="phrase_card_question">{{ polish }}</h5>
-      <p class="phrase_card_answer"><span class="section">{{ english }}</span></p>
-      <input type="hidden" name="deck" value="{{ deck }}">
+      <p class="phrase_card_answer"><span class="section">{{ message|safe }}</span></p>
 
-      <button type="submit" class="button_main" value="incorrect" name="answer">Incorrect</button>
-      <button type="submit" class="button_main" value="hard" name="answer">Hard</button>
-      <button type="submit" class="button_main" value="easy" name="answer">Easy</button>
+      <input type="hidden" name="option_key" value="{{ item.9 }}">
+      <input type="hidden" name="view_type" value="{{ item.14 }}">
+
+      <button type="submit" id="a" class="button_main" value="{{ item.5 }}, {{ item.10 }}" name="response">{{ item.1 }}</button>
+      <button type="submit" id="b" class="button_main" value="{{ item.6 }}, {{ item.11 }}" name="response">{{ item.2 }}</button>
+      <button type="submit" id="c" class="button_main" value="{{ item.7 }}, {{ item.12 }}" name="response">{{ item.3 }}</button>
+      <button type="submit" id="d" class="button_main" value="{{ item.8 }}, {{ item.13 }}" name="response">{{ item.4 }}</button>
 
     </div>
   </div>
@@ -22,5 +24,29 @@
   </form>
 </div>
 
+<script type="text/javascript">
+  const a = document.querySelector("#a");
+  const b = document.querySelector("#b");
+  const c = document.querySelector("#c");
+  const d = document.querySelector("#d");
+
+  if (a.textContent == "") {
+    a.style.display = "none";
+  };
+
+  if (b.textContent == "") {
+    b.style.display = "none";
+  };
+
+  if (c.textContent == "") {
+    c.style.display = "none";
+  };
+
+  if (d.textContent == "") {
+    d.style.display = "none";
+  };
+
+
+</script>
 
 {% endblock %}

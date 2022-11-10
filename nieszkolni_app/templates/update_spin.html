@@ -2,120 +2,120 @@
 {% block 'content' %}
 {% include 'staff_menu.html' %}
 
-<h1>CREATE A STORY</h1>
+<h1>UPDATE A STORY</h1>
 
-<form action="{% url 'add_spin'%}"  method="POST">
+<form action="{% url 'update_spin' scene=scene %}"  method="POST">
 	{% csrf_token %}
 
    <div class="flex-parent jc-center">
       <div class="input_container">
+         <label class="input_label">Scene</label>
+         <input type="text" class="input_content input_prefilled" name="scene" value="{{ scene }}">
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
          <label class="input_label">Story</label>
-         <select required class="input_content" name="story">
-            <option selected value="{{ next_story }}">New story</option>
-
-            {% for story in stories %}
-            <option value="{{ story }}">{{ story }}</option>
-            {% endfor %}
-
-         </select>
+         <input type="text" class="input_content" name="story" value="{{ item.15 }}">
       </div>
    </div>
 
    <div class="flex-parent jc-center">
       <div class="input_container">
          <label class="input_label">Message</label>
-         <textarea type="text" class="input_content input_paragraph" name="message"></textarea>
+         <textarea type="text" class="input_content input_paragraph" name="message">{{ item.0 }}</textarea>
       </div>
    </div>
 
    <div class="flex-parent jc-center">
       <div class="input_container">
          <label class="input_label">Option A: text</label>
-         <input type="text" class="input_content" name="option_a_text">
+         <input type="text" class="input_content" name="option_a_text" value="{{ item.1 }}">
       </div>
    </div>
 
    <div class="flex-parent jc-center">
       <div class="input_container">
          <label class="input_label">Option B: text</label>
-         <input type="text" class="input_content" name="option_b_text">
+         <input type="text" class="input_content" name="option_b_text" value="{{ item.2 }}">
       </div>
    </div>
 
    <div class="flex-parent jc-center">
       <div class="input_container">
          <label class="input_label">Option C: text</label>
-         <input type="text" class="input_content" name="option_c_text">
+         <input type="text" class="input_content" name="option_c_text" value="{{ item.3 }}">
       </div>
    </div>
 
    <div class="flex-parent jc-center">
       <div class="input_container">
          <label class="input_label">Option D: text</label>
-         <input type="text" class="input_content" name="option_d_text">
+         <input type="text" class="input_content" name="option_d_text" value="{{ item.4 }}">
       </div>
    </div>
 
    <div class="flex-parent jc-center">
       <div class="input_container">
          <label class="input_label">Option A: view</label>
-         <input type="number" class="input_content" name="option_a_view">
+         <input type="number" class="input_content" name="option_a_view" value="{{ item.5 }}">
       </div>
    </div>
 
    <div class="flex-parent jc-center">
       <div class="input_container">
          <label class="input_label">Option B: view</label>
-         <input type="number" class="input_content" name="option_b_view">
+         <input type="number" class="input_content" name="option_b_view" value="{{ item.6 }}">
       </div>
    </div>
 
    <div class="flex-parent jc-center">
       <div class="input_container">
          <label class="input_label">Option C: view</label>
-         <input type="number" class="input_content" name="option_c_view">
+         <input type="number" class="input_content" name="option_c_view" value="{{ item.7 }}">
       </div>
    </div>
 
    <div class="flex-parent jc-center">
       <div class="input_container">
          <label class="input_label">Option D: view</label>
-         <input type="number" class="input_content" name="option_d_view">
+         <input type="number" class="input_content" name="option_d_view" value="{{ item.8 }}">
       </div>
    </div>
 
    <div class="flex-parent jc-center">
       <div class="input_container">
          <label class="input_label">Key</label>
-         <input type="name" class="input_content" name="option_key">
+         <input type="name" class="input_content" name="option_key" value="{{ item.9 }}">
       </div>
    </div>
 
    <div class="flex-parent jc-center">
       <div class="input_container">
          <label class="input_label">Option A: value</label>
-         <input type="name" class="input_content" name="option_a_value">
+         <input type="name" class="input_content" name="option_a_value" value="{{ item.10 }}">
       </div>
    </div>
 
    <div class="flex-parent jc-center">
       <div class="input_container">
          <label class="input_label">Option B: value</label>
-         <input type="name" class="input_content" name="option_b_value">
+         <input type="name" class="input_content" name="option_b_value" value="{{ item.11 }}">
       </div>
    </div>
 
    <div class="flex-parent jc-center">
       <div class="input_container">
          <label class="input_label">Option C: value</label>
-         <input type="name" class="input_content" name="option_c_value">
+         <input type="name" class="input_content" name="option_c_value" value="{{ item.12 }}">
       </div>
    </div>
 
    <div class="flex-parent jc-center">
       <div class="input_container">
          <label class="input_label">Option D: value</label>
-         <input type="name" class="input_content" name="option_d_value">
+         <input type="name" class="input_content" name="option_d_value" value="{{ item.13 }}">
       </div>
    </div>
 
@@ -124,7 +124,8 @@
          <label class="input_label">Type</label>
          <select required class="input_content" name="view_type">
             
-            <option selected value="next_view">next view</option>
+            <option selected value="{{ item.14 }}">{{ item.14 }}</option>
+            <option value="next_view">next view</option>
             <option value="last_view">last_view</option>
 
         </select>
@@ -132,18 +133,9 @@
    </div>
 
    <div class="flex-parent jc-center">
-      <button type="submit" class="button_main" name="action_on_spin" value="create">Create</button>
+      <button type="submit" class="button_main" name="action_on_spin" value="update">Update</button>
    </div>
 
 </form>
-
-<script type="text/javascript">
-      const collection_id = document.querySelector("#collection_id");
-      const collection_name = document.querySelector("#collection_name");
-      collection_id.onchange = (event) => {
-         event.preventDefault();
-         collection_name.value = collection_id.selectedOptions[0].text;
-      };
-</script>
 
 {% endblock %}

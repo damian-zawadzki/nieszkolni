@@ -1,1 +1,1 @@
-web: gunicorn nieszkolni_folder.wsgi
+web: gunicorn --workers=3 nieszkolni_folder.wsgi --timeout 200

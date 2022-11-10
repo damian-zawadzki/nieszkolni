@@ -380,7 +380,7 @@ class Collection(models.Model):
 
 
 class Spin(models.Model):
-    view_number = models.IntegerField(default=0, primary_key=True)
+    scene = models.IntegerField(default=0, primary_key=True)
     message = models.TextField(default="")
     option_a_text = models.CharField(max_length=200, default="")
     option_b_text = models.CharField(max_length=200, default="")
