@@ -30,7 +30,8 @@ class RoadmapManager:
             link,
             reference_system,
             threshold,
-            component_id
+            component_id,
+            course_id
             ):
 
         course_description = Cleaner().clean_quotation_marks(course_description)
@@ -61,7 +62,8 @@ class RoadmapManager:
                 '{link}',
                 '{reference_system}',
                 {threshold},
-                '{component_id}'
+                '{component_id}',
+                '{course_id}'
                 )
                 ''')
 
@@ -76,13 +78,14 @@ class RoadmapManager:
             link,
             reference_system,
             threshold,
-            component_id,
-            course_id
+            component_id
             ):
 
         course_description = Cleaner().clean_quotation_marks(course_description)
         registration_description = Cleaner().clean_quotation_marks(registration_description)
         assessment_description = Cleaner().clean_quotation_marks(assessment_description)
+
+        course_id = self.next_course_id()
 
         with connection.cursor() as cursor:
             cursor.execute(f'''
@@ -100,6 +103,24 @@ class RoadmapManager:
                 component_id = '{component_id}'
                 WHERE course_id = '{course_id}'
                 ''')
+
+    def display_next_course_id(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT DISTINCT course_id
+                FROM nieszkolni_app_course
+                ORDER BY course_id DESC
+                LIMIT 1
+                ''')
+
+            course_id = cursor.fetchone()
+
+            if course_id is None:
+                next_course_id = 1
+            else:
+                next_course_id = course_id[0] + 1
+
+            return next_course_id
 
     def list_courses(self):
 
