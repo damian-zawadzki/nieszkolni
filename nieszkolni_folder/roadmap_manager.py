@@ -50,7 +50,8 @@ class RoadmapManager:
                 link,
                 reference_system,
                 threshold,
-                component_id
+                component_id,
+                course_id
                 )
                 VALUES (
                 '{course}',
