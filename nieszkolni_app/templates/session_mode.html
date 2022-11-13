@@ -190,7 +190,7 @@
             show(element_id);
           }
         } else {
-          if (title.innerHTML === element_id.charAt(0).toUpperCase() + element_id.slice(1)) {
+          if (title.innerHTML === element_id.toUpperCase()) {
               hide(element_id);
               hideExtraInput();
           } else {
@@ -235,7 +235,7 @@
         var button = document.getElementById("submit_button");
         extra_input.style.display = "none"
         file.style.display = "block";
-        title.innerHTML = element_id.charAt(0).toUpperCase() + element_id.slice(1);
+        title.innerHTML = element_id.toUpperCase();
         button.setAttribute("value", "add_" + element_id);
         custom_options.style.display = "flex";
     }

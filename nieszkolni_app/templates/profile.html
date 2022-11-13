@@ -1,23 +1,6 @@
 {% extends 'base.html' %}
 {% block 'content' %}
-{% load static %} 
-
-{% if stories.0 is not None %}
-
-	<form action="{% url 'profile' %}"  method="POST">
-	{% csrf_token %}
-
-		<h2>{{ first_name|title }}</h2>
-		<h3>Start a new exciting journey!</h3>
-		  <div class="flex-parent jc-center">
-		  		<input type="hidden" name="story_number" value="{{ stories.0 }}">
-		    	<button type="submit" class="button_main" name="action_on_profile" value="start_story">Start</button>
-		  </div>
-
-	</form>
-
-{% else %}
-
+{% load static %}
 
 <div class="avatar">
 
@@ -212,5 +195,4 @@
 		
 </div>
 
-{% endif %}
 {% endblock %}

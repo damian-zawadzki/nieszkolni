@@ -397,3 +397,17 @@ class Spin(models.Model):
     option_d_value = models.CharField(max_length=200, default="")
     view_type = models.CharField(max_length=200, default="")
     story = models.IntegerField(default=0)
+
+
+class Program(models.Model):
+    program_name = models.CharField(max_length=200, default="")
+    description = models.TextField(default="")
+    courses = models.CharField(max_length=200, default="")
+    degree = models.CharField(max_length=200, default="")
+    image = models.CharField(max_length=200, default="")
+
+
+class Store(models.Model):
+    watchword = models.IntegerField(default=0)
+    cue = models.CharField(max_length=200, default="")
+    response = models.CharField(max_length=200, default="")

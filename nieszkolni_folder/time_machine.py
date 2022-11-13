@@ -139,3 +139,49 @@ class TimeMachine:
         date_time = datetime.strftime(end, now_pattern_colons)
 
         return date_time
+
+    def last_sunday(self):
+        today = datetime.today()
+        weekday = datetime.today().weekday()
+        pattern = weekday + 1
+        difference = timedelta(days=pattern)
+        last_sunday_raw = today - difference
+        last_sunday = datetime.strftime(last_sunday_raw, today_pattern)
+
+        return last_sunday
+
+    def this_sunday(self):
+        today = datetime.today()
+        weekday = datetime.today().weekday()
+        pattern = 7 - weekday - 1
+        difference = timedelta(days=pattern)
+        this_sunday_raw = today + difference
+        this_sunday = datetime.strftime(this_sunday_raw, today_pattern)
+
+        return this_sunday
+
+    def next_sunday(self):
+        today = datetime.today()
+        weekday = datetime.today().weekday()
+        pattern = 14 - weekday - 1
+        difference = timedelta(days=pattern)
+        next_sunday_raw = today + difference
+        next_sunday = datetime.strftime(next_sunday_raw, today_pattern)
+
+        return next_sunday
+
+    def academic_week_start(self):
+        weekday = datetime.today().isoweekday()
+
+        if weekday >= 5:
+            academic_week_start = self.this_sunday()
+        else:
+            academic_week_start = self.last_sunday()
+
+        return academic_week_start
+
+    def academic_week_start_number(self):
+        date = self.academic_week_start()
+        date_number = self.date_to_number(date)
+
+        return date_number

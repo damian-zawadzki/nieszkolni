@@ -1,0 +1,20 @@
+{% extends 'no_navigation.html' %}
+{% block 'content' %}
+{% load static %} 
+	
+	<img src="https://images.unsplash.com/photo-1534702795526-bab4dfcad657?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" alt="academic" class="cover_photo_2">
+
+	<form action="{% url 'profile_introduction' %}"  method="POST">
+	{% csrf_token %}
+
+		<div class="main_title flex-parent jc-center">{{ first_name|title }}</div>
+		<div class="main_subtitle_2 flex-parent jc-center">Your academic career is about to start!</div>
+
+		  <div class="flex-parent jc-center">
+		  		<input type="hidden" name="story_number" value="{{ stories.0 }}">
+		    	<button type="submit" class="button_main button_main_page" name="action_on_profile" value="start_story">Start</button>
+		  </div>
+
+	</form>
+
+{% endblock %}

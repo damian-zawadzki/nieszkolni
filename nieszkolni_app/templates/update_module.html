@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% include 'staff_menu.html' %}
+
+<h1>UPDATE THE MODULE</h1>
+
+<form action="{% url 'update_module' component_id=module.0 %}" method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Component ID</label>
+      <input type="text" class="input_content input_prefilled" name="component_id" value="{{ module.0 }}">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Component type</label>
+      <input type="text" class="input_content input_prefilled" name="component_type" value="{{ module.1 }}">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Title</label>
+        <input required type="text" class="input_content" name="title" value="{{ module.2 }}">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Content</label>
+      <textarea required type="text" class="input_content input_paragraph" name="content">{{ module.3 }}</textarea>
+    </div>
+  </div>
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Resources</label>
+      <textarea required type="text" class="input_content input_paragraph" name="resources">{{ module.4 }}</textarea>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Conditions</label>
+      <textarea required type="text" class="input_content input_paragraph" name="conditions">{{ module.5 }}</textarea>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Reference</label>
+        <input required type="text" class="input_content" name="reference" value="{{ module.6 }}">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_curriculum" value="update">Update</button>
+  </div>
+
+</form>
+
+{% endblock %}

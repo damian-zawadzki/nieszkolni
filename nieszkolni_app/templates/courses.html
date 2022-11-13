@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>COURSES</h1>
+
+<table>
+
+		<tr>
+			<th class="td_sentences">Course</th>
+		</tr>
+
+	{% for course in courses %}
+
+		<tr class="font">
+
+			<td class="td_sentences"><a href="{% url 'course' course_id=course.10 %}">{{ course.0 }}</a></td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+{% include 'footer.html' %}
+{% endblock %}

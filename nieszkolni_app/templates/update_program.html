@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% include 'staff_menu.html' %}
+
+<h1>UPDATE THE PROGRAM</h1>
+
+<form action="{% url 'update_program' program_id=program_id %}"  method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Program</label>
+        <input type="text" class="input_content" id="collection_name" name="program_name" value="{{ program.0 }}">
+    </div>
+  </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Degree</label>
+         <select required class="input_content" name="degree">
+            <option selected value="{{ program.1 }}">{{ program.1 }}</option>
+
+
+            <option value="Junior (JR.)">Junior (JR.)</option>
+            <option value="Senior (SR.)">Senior (SR.)</option>
+            <option value="Associate of Arts (AA)">Associate of Arts (AA)</option>
+            <option value="Associate of Science (AS)">Associate of Science (AS)</option>
+            <option value="Bachelor of Arts (BA)">Bachelor of Arts (BA)</option>
+            <option value="Bachelor of Science (BS)">Bachelor of Science (BS)</option>
+            <option value="Master of Arts (MA)">Master of Arts (MA)</option>
+            <option value="Master of Science (MS)">Master of Science (MS)</option>
+            <option value="Doctor of Arts (DA)">Doctor of Arts (DA)</option>
+            <option value="Doctor of Science (DS)">Doctor of Science (DS)</option>
+
+         </select>
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Description</label>
+         <textarea type="text" class="input_content input_paragraph" name="description">{{ program.2 }}</textarea>
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Courses</label>
+         <textarea type="text" class="input_content input_paragraph" name="courses">{{ program.3 }}</textarea>
+      </div>
+   </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Image</label>
+        <input type="url" class="input_content" id="collection_name" name="image" value="{{ program.4 }}">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_program" value="update">Update</button>
+  </div>
+
+</form>
+
+
+{% endblock %}

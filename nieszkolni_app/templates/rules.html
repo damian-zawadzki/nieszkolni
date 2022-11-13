@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>RULES</h1>
+
+<table>
+
+	{% for rule in rules %}
+
+		<tr class="font">
+
+			<td><a href="{% url 'display_announcement' notification_id=rule.0 %}">{{ rule.1 }}</a></td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+{% include 'footer.html' %}
+{% endblock %}

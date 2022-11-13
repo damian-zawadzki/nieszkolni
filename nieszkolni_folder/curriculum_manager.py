@@ -183,6 +183,26 @@ class CurriculumManager:
 
         return assignment_status[0]
 
+    def display_assignment_status_by_component_id(self, component_id):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT status
+                FROM nieszkolni_app_curriculum
+                WHERE component_id LIKE '{component_id}%'
+                ''')
+
+            rows = cursor.fetchall()
+            print(rows)
+
+            items = [row[0] for row in rows]
+
+            if items.count("completed") == len(items):
+                status = "completed"
+            else:
+                status = "uncompleted"
+
+            return status
+
     def change_status_to_completed(self, item, submitting_user):
         now_number = TimeMachine().now_number()
         today_number = TimeMachine().today_number()
@@ -263,7 +283,11 @@ class CurriculumManager:
                 ''')
 
             last_item = cursor.fetchone()
-            next_item = last_item[0] + 1
+
+            if last_item[0] is None:
+                next_item = 1000000
+            else:
+                next_item = last_item[0] + 1
 
             return next_item
 
@@ -342,6 +366,30 @@ class CurriculumManager:
                 '{conditions}',
                 {reference}
                 )
+                ''')
+
+    def update_module(
+            self,
+            component_id,
+            component_type,
+            title,
+            content,
+            resources,
+            conditions,
+            reference
+            ):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                UPDATE nieszkolni_app_module
+                SET
+                component_type = '{component_type}',
+                title = '{title}',
+                content = '{content}',
+                resources = '{resources}',
+                conditions = '{conditions}',
+                reference = '{reference}'
+                WHERE component_id = '{component_id}'
                 ''')
 
     def display_modules(self):

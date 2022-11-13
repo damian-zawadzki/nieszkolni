@@ -1,26 +1,31 @@
-{% extends 'base.html' %}
+{% extends 'no_navigation.html' %}
 {% block 'content' %}
 {% load static %} 
+
+<div class="invisible_navigation"></div>
 
 <div class="flex-parent jc-center">
   <form action="{% url 'display_spin' client=client story=story %}" method="POST">
   {% csrf_token %}
 
-  <div class="phrase_card">
-    <div class="phrase_card_container">
-      <p class="phrase_card_answer"><span class="section">{{ message|safe }}</span></p>
+    <div class="phrase_card">
+      <div class="phrase_card_container">
+        <div class="phrase_card_answer">
+          {{ message|safe }}
+        </div>
+      </div>
+    </div>
 
+    <div class="flex-parent jc-center button_card">
       <input type="hidden" name="option_key" value="{{ item.9 }}">
       <input type="hidden" name="view_type" value="{{ item.14 }}">
+      <input type="hidden" name="watchword" value="{{ watchword }}">
 
       <button type="submit" id="a" class="button_main" value="{{ item.5 }}, {{ item.10 }}" name="response">{{ item.1 }}</button>
       <button type="submit" id="b" class="button_main" value="{{ item.6 }}, {{ item.11 }}" name="response">{{ item.2 }}</button>
       <button type="submit" id="c" class="button_main" value="{{ item.7 }}, {{ item.12 }}" name="response">{{ item.3 }}</button>
       <button type="submit" id="d" class="button_main" value="{{ item.8 }}, {{ item.13 }}" name="response">{{ item.4 }}</button>
-
     </div>
-  </div>
-
   </form>
 </div>
 

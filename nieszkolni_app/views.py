@@ -27,6 +27,7 @@ import re
 import json
 import os
 from gtts import gTTS
+import random
 
 from django_user_agents.utils import get_user_agent
 
@@ -549,6 +550,10 @@ def profile(request):
         tags = BackOfficeManager().display_tags()
         stories = StreamManager().display_stories(current_user)
 
+        if stories:
+
+            return redirect("profile_introduction")
+
         if profile is None:
             display_name = current_user
             avatar = "https://docs.google.com/drawings/d/e/2PACX-1vQnrkWBZi2-ZrZ8fyKO_8qIBuOSrz19oeTq9XNnhCbDw6CAu8Rb8uBKYNcLBT0JLcZ8Dv_EWmZ93BBn/pub?w=685&h=686"
@@ -613,6 +618,10 @@ def profile(request):
                             result = "uncompleted"
                         else:
                             result = CurriculumManager().display_assignment_status(item)
+                    elif assessment_system == "component_ids":
+                        component_id = course_details[9]
+                        print(component_id)
+                        result = CurriculumManager().display_assignment_status_by_component_id(component_id)
 
                 else:
                     if assessment_system == "last_final":
@@ -670,17 +679,6 @@ def profile(request):
                     "assessment_system": assessment_system,
                     "result": result
                     })
-                # except Exception as e:
-                #     return redirect("profile.html")
-
-            elif request.POST["action_on_profile"] == "start_story":
-                story = request.POST["story_number"]
-
-                return redirect(
-                    "display_spin",
-                    client=current_user,
-                    story=story
-                    )
 
         if user_agent.is_mobile:
             return render(request, "m_profile.html", {
@@ -696,8 +694,6 @@ def profile(request):
                 "activity_points": activity_points,
                 "target": target,
                 "tags": tags,
-                "stories": stories,
-                "first_name": first_name
                 })
 
         else:
@@ -714,9 +710,32 @@ def profile(request):
                 "activity_points": activity_points,
                 "target": target,
                 "tags": tags,
-                "stories": stories,
-                "first_name": first_name
                 })
+
+
+@login_required
+def profile_introduction(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        stories = StreamManager().display_stories(current_user)
+
+        if request.method == "POST":
+            if request.POST["action_on_profile"] == "start_story":
+                story = request.POST["story_number"]
+
+                return redirect(
+                    "display_spin",
+                    client=current_user,
+                    story=story
+                    )
+
+        return render(request, "profile_introduction.html", {
+            "stories": stories,
+            "first_name": first_name
+            })
 
 
 @login_required
@@ -1041,7 +1060,7 @@ def add_curriculum(request, client=""):
                     "module_status": module_status
                     })
 
-            if request.POST["curriculum_action"] == "choose_quiz":
+            elif request.POST["curriculum_action"] == "choose_quiz":
                 name = request.POST["name"]        
                 names = [name]
                 assignment_type = "quiz"
@@ -1059,15 +1078,15 @@ def add_curriculum(request, client=""):
 
             elif request.POST["curriculum_action"] == "choose_other_modules":
                 name = request.POST["name"]
-                module = request.POST["module"]
+                component_id = request.POST["component_id"]
 
                 module_status = 1
-                assignment_type_raw = re.search(r"\w.+_", module).group()
+                assignment_type_raw = re.search(r"\w.+_", component_id).group()
                 assignment_type = re.sub("_", "", assignment_type_raw)
                 names = [name]
 
                 entries = SentenceManager().display_planned_sentence_lists_per_student(name)
-                module = CurriculumManager().display_module(module)
+                module = CurriculumManager().display_module(component_id)
 
                 return render(request, "add_curriculum_2.html", {
                     "client": name,
@@ -1076,7 +1095,8 @@ def add_curriculum(request, client=""):
                     "entries": entries,
                     "modules": modules,
                     "module": module,
-                    "module_status": module_status
+                    "module_status": module_status,
+                    "component_id": component_id
                     })
 
             else:
@@ -1090,10 +1110,13 @@ def add_curriculum(request, client=""):
                 reference = request.POST["reference"]
                 resources = request.POST["resources"]
                 conditions = request.POST["conditions"]
+                component_id = request.POST["component_id"]
 
                 component_type = assignment_type
-                component_id = re.sub(r"Translate\s|Take\s", "", title)
-                component_id = f"{component_type}_{component_id}"
+
+                if component_type == "sentences" or component_type == "quiz":
+                    component_id = re.sub(r"Translate\s|Take\s", "", title)
+                    component_id = f"{component_type}_{component_id}"
 
                 CurriculumManager().add_curriculum(
                     item,
@@ -1270,6 +1293,11 @@ def display_modules(request):
                     "module": module
                     })
 
+            elif request.POST["action_on_module"] == "update":
+                component_id = request.POST["component_id"]
+
+                return redirect("update_module", component_id=component_id)
+
         return render(request, "display_modules.html", {
             "modules": modules
             })
@@ -1293,6 +1321,8 @@ def add_module(request):
             resources = request.POST["resources"]
             conditions = request.POST["conditions"]
 
+            reference = 0
+
             CurriculumManager().add_module(
                 component_id,
                 component_type,
@@ -1314,6 +1344,42 @@ def add_module(request):
 
 
 @staff_member_required
+def update_module(request, component_id):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        module = CurriculumManager().display_module(component_id)
+
+        if request.method == "POST":
+            component_id = request.POST["component_id"]
+            component_type = request.POST["component_type"]
+            title = request.POST["title"]
+            content = request.POST["content"]
+            resources = request.POST["resources"]
+            conditions = request.POST["conditions"]
+            reference = request.POST["reference"]
+
+            CurriculumManager().update_module(
+                component_id,
+                component_type,
+                title,
+                content,
+                resources,
+                conditions,
+                reference
+                )
+
+            messages.success(request, ("Module updated!"))
+            return redirect("display_modules")
+
+        return render(request, "update_module.html", {
+            "module": module
+            })
+
+
+@staff_member_required
 def display_matrices(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
@@ -1323,13 +1389,19 @@ def display_matrices(request):
         matrices = CurriculumManager().display_matrices()
 
         if request.method == "POST":
-            matrix = request.POST["matrix"]
-            modules = CurriculumManager().display_matrix(matrix)
+            if request.POST["action_on_matrix"] == "filter":
+                matrix = request.POST["matrix"]
+                modules = CurriculumManager().display_matrix(matrix)
 
-            return render(request, "display_matrices.html", {
-                "modules": modules,
-                "matrices": matrices
-                })
+                return render(request, "display_matrices.html", {
+                    "modules": modules,
+                    "matrices": matrices
+                    })
+
+            elif request.POST["action_on_matrix"] == "more":
+                component_id = request.POST["component_id"]
+
+                return redirect("update_module", component_id=component_id)
 
         return render(request, "display_matrices.html", {
             "matrices": matrices
@@ -1421,21 +1493,6 @@ def plan_matrix(request):
 
                 i += 1
 
-                x = (
-                    item,
-                    deadline_date,
-                    client,
-                    component_id,
-                    component_type,
-                    component_type,
-                    title,
-                    content,
-                    matrix,
-                    resources,
-                    conditions,
-                    reference
-                    )
-
             messages.success(request, ("You have planned a curriculum!"))
             return render(request, "plan_matrix.html", {
                 "matrices": matrices,
@@ -1470,7 +1527,7 @@ def switch_clients(request):
             switch = CurrentClientsManager().switch_current_client(current_user, client)
 
             messages.success(request, (f"You've picked {client}!"))
-            return redirect("switch_clients.html")
+            return redirect("agenda")
 
         current_client = CurrentClientsManager().current_client(current_user)
         clients = ClientsManager().list_current_clients()
@@ -4008,7 +4065,7 @@ def update_spin(request, scene):
 
 
 @login_required
-def display_spin(request, client, story, scene=1):
+def display_spin(request, client, story, scene=1, watchword=0):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
@@ -4017,26 +4074,116 @@ def display_spin(request, client, story, scene=1):
         item = RoadmapManager().display_next_scene(story, scene)
         message = item[0].replace("<<first_name>>", first_name.capitalize())
         message = message.replace("<<last_name>>", last_name.capitalize())
+        print(watchword)
+
+        if watchword == 0:
+            watchword = random.randint(1000000000000, 9999999999999)
 
         if request.method == "POST":
             view_type = request.POST["view_type"]
             data = request.POST["response"]
+            cue = request.POST["option_key"]
+            watchword = request.POST["watchword"]
 
             rows = data.split(", ")
             response = tuple(rows)
-            scene = data[0]
+            scene = response[0]
+            response = response[1]
+
+            if cue:
+                BackOfficeManager().add_to_store(
+                    watchword,
+                    cue,
+                    response
+                    )
 
             if view_type == "last_view":
+
+                items = BackOfficeManager().display_from_store(watchword)
+                course_ids_list = items["courses"]
+                course_ids = tuple(course_ids_list)
+                courses = RoadmapManager().display_courses_by_ids(course_ids)
+
+                semester = items["semester"][0]
+                deadline_roadmap = BackOfficeManager().display_end_of_semester()
+                starting_date_number = TimeMachine().academic_week_start_number()
+
+                for course in courses:
+                    RoadmapManager().add_roadmap(
+                        current_user,
+                        semester,
+                        course[0],
+                        deadline_roadmap,
+                        "spin",
+                        -1,
+                        "automatic"
+                        )
+
+                    modules = CurriculumManager().display_matrix(course[0])
+
+                    i = 0
+                    for module in modules:
+                        component_id = module["component_id"]
+                        limit_number = module["limit_number"]
+
+                        entry = CurriculumManager().display_module(component_id)
+
+                        component_type = entry[1]
+                        title = entry[2]
+                        content = entry[3]
+                        resources = entry[4]
+                        conditions = entry[5]
+
+                        item = CurriculumManager().next_item() + i
+                        deadline = starting_date_number + limit_number
+                        deadline_date = TimeMachine().number_to_system_date(deadline)
+                        component_type_raw = re.search(r"\w.+_", component_id).group()
+                        component_type = re.sub("_", "", component_type_raw)
+                        reference = 0
+
+                        CurriculumManager().add_curriculum(
+                            item,
+                            deadline_date,
+                            client,
+                            component_id,
+                            component_type,
+                            component_type,
+                            title,
+                            content,
+                            course[0],
+                            resources,
+                            conditions,
+                            reference
+                            )
+
+                        i += 1
+
+                BackOfficeManager().reset_store(watchword)
+                StreamManager().add_to_stream(
+                    current_user,
+                    "Covered story",
+                    story,
+                    current_user
+                    )
+
                 messages.success(request, ("Congratulations!"))
                 return redirect("profile")
+
             else:
-                return redirect("display_spin", client=client, story=story, scene=scene)
+                return redirect(
+                    "display_spin",
+                    client=client,
+                    story=story,
+                    scene=scene,
+                    watchword=watchword
+                    )
 
         return render(request, "display_spin.html", {
             "client": client,
             "story": story,
             "item": item,
-            "message": message
+            "message": message,
+            "watchword": watchword
             })
 
 
@@ -4067,6 +4214,159 @@ def display_story(request):
 
         return render(request, "display_story.html", {
             "stories": stories
+            })
+
+
+@login_required
+def rules(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        rules = BackOfficeManager().display_rules()
+
+        return render(request, "rules.html", {
+            "rules": rules
+            })
+
+
+@staff_member_required
+def add_program(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        if request.method == "POST":
+            if request.POST["action_on_program"] == "add":
+                program_name = request.POST["program_name"]
+                degree = request.POST["degree"]
+                description = request.POST["description"]
+                courses = request.POST["courses"]
+                image = request.POST["image"]
+
+                RoadmapManager().add_program(
+                    program_name,
+                    degree,
+                    description,
+                    courses,
+                    image
+                    )
+
+                messages.success(request, ("Program added!"))
+                return redirect("programs")
+
+        return render(request, "add_program.html", {})
+
+
+@staff_member_required
+def update_program(request, program_id):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        program = RoadmapManager().display_program(program_id)
+
+        if request.method == "POST":
+            if request.POST["action_on_program"] == "update":
+                program_name = request.POST["program_name"]
+                degree = request.POST["degree"]
+                description = request.POST["description"]
+                courses = request.POST["courses"]
+                image = request.POST["image"]
+
+                RoadmapManager().update_program(
+                    program_name,
+                    degree,
+                    description,
+                    courses,
+                    image,
+                    program_id
+                    )
+
+                messages.success(request, ("Program updated!"))
+                return redirect("programs")
+
+        return render(request, "update_program.html", {
+            "program": program,
+            "program_id": program_id
+            })
+
+
+@login_required
+def programs(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        programs = RoadmapManager().display_programs()
+
+        return render(request, "programs.html", {
+            "programs": programs
+            })
+
+
+@login_required
+def program(request, program_id):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        program = RoadmapManager().display_program(program_id)
+
+        try:
+            course_ids = tuple(program[3].split(", "))
+
+            if len(course_ids) == 1:
+                course_ids = f"({course_ids[0]})"
+
+            courses = RoadmapManager().display_courses_by_ids(course_ids)
+
+        except Exception as e:
+            courses = []
+
+        if request.method == "POST":
+            if request.POST["action_on_program"] == "go_to_update":
+                program_id = request.POST["program_id"]
+
+                return redirect("update_program", program_id=program_id)
+
+        return render(request, "program.html", {
+            "program": program,
+            "program_id": program_id,
+            "courses": courses
+            })
+
+
+@login_required
+def courses(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        courses = RoadmapManager().display_courses()
+
+        return render(request, "courses.html", {
+            "courses": courses
+            })
+
+
+@login_required
+def course(request, course_id):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        course = RoadmapManager().display_course_by_id(course_id)
+
+        return render(request, "course.html", {
+            "course": course
             })
 
 

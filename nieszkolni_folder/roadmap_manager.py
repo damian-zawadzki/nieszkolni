@@ -3,6 +3,7 @@ import django
 from django.db import connection
 from nieszkolni_app.models import Roadmap
 from nieszkolni_app.models import Course
+from nieszkolni_app.models import Program
 from nieszkolni_app.models import Grade
 from nieszkolni_app.models import Profile
 from nieszkolni_app.models import Spin
@@ -62,8 +63,6 @@ class RoadmapManager:
                 {threshold},
                 '{component_id}'
                 )
-                ON CONFLICT (course)
-                DO NOTHING
                 ''')
 
     def update_course(
@@ -148,6 +147,68 @@ class RoadmapManager:
 
             return course
 
+    def display_course_by_id(self, course_id):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                course,
+                course_type,
+                course_description,
+                registration_description,
+                assessment_description,
+                assessment_method,
+                link,
+                reference_system,
+                threshold,
+                component_id,
+                course_id
+                FROM nieszkolni_app_course
+                WHERE course_id = '{course_id}'
+                ''')
+
+            course = cursor.fetchone()
+
+            return course
+
+    def display_courses(self):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                course,
+                course_type,
+                course_description,
+                registration_description,
+                assessment_description,
+                assessment_method,
+                link,
+                reference_system,
+                threshold,
+                component_id,
+                course_id
+                FROM nieszkolni_app_course
+                ''')
+
+            courses = cursor.fetchall()
+
+            return courses
+
+    def display_courses_by_ids(self, course_ids):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                course,
+                course_id
+                FROM nieszkolni_app_course
+                WHERE course_id IN {course_ids}
+                ''')
+
+            courses = cursor.fetchall()
+
+            return courses
+
     def delete_course(self, course):
 
         with connection.cursor() as cursor:
@@ -155,6 +216,8 @@ class RoadmapManager:
                 DELETE FROM nieszkolni_app_course
                 WHERE course = '{course}'
                 ''')
+
+
 
     def display_course_threshold(self, course):
 
@@ -181,6 +244,7 @@ class RoadmapManager:
             item,
             status_type
             ):
+
         deadline_number = TimeMachine().date_to_number(TimeMachine().american_to_system_date(deadline))
 
         with connection.cursor() as cursor:
@@ -1066,3 +1130,89 @@ class RoadmapManager:
                 story = '{story}'
                 WHERE scene = '{scene}'
                 ''')
+
+    def add_program(
+            self,
+            program_name,
+            degree,
+            description,
+            courses,
+            image
+            ):
+
+        description = Cleaner().clean_quotation_marks(description)
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                INSERT INTO nieszkolni_app_program (
+                program_name,
+                degree,
+                description,
+                courses,
+                image
+                )
+                VALUES (
+                '{program_name}',
+                '{degree}',
+                '{description}',
+                '{courses}',
+                '{image}'
+                )
+                ''')
+
+    def update_program(
+            self,
+            program_name,
+            degree,
+            description,
+            courses,
+            image,
+            program_id
+            ):
+
+        description = Cleaner().clean_quotation_marks(description)
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                UPDATE nieszkolni_app_program
+                SET
+                program_name = '{program_name}',
+                degree = '{degree}',
+                description = '{description}',
+                courses = '{courses}',
+                image = '{image}'
+                WHERE id = '{program_id}'
+                ''')
+
+    def display_programs(self):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                id,
+                program_name,
+                degree
+                FROM nieszkolni_app_program
+                ''')
+
+            programs = cursor.fetchall()
+
+            return programs
+
+    def display_program(self, program_id):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                program_name,
+                degree,
+                description,
+                courses,
+                image
+                FROM nieszkolni_app_program
+                WHERE id = '{program_id}'
+                ''')
+
+            program = cursor.fetchone()
+
+            return program

@@ -1,0 +1,41 @@
+{% extends 'no_navigation.html' %}
+{% block 'content' %}
+
+<div class="program_box flex-parent jc-center">
+	<div class="program_container">
+    	<div class="task_card_container">
+   			
+			<div class="program_photo_container">
+				<img src="{{ program.4 }}" alt="" class="program_photo">
+				<div class="program_name">{{ program.0 }}</div>
+
+			</div>
+
+			<div class="program_photo_container">
+	      		<div class="program_degree">{{ program.1 }}</div>
+	      		<div class="program_description">{{ program.2 }}</div>
+	      		<hr class="line"></div>
+      			{% for course in courses %}
+      				<a class="program_link" href="{% url 'course' course_id=course.1 %}">{{ course.0 }}</a></br>
+      			{% endfor %}
+	      	</div>
+
+			{% if user.is_staff %}
+				<form action="{% url 'program' program_id=program_id %}"  method="POST">
+					{% csrf_token %}
+
+					<input type="hidden" name="program_id" value="{{ program_id }}">
+					<div class="flex-parent jc-center">
+					  <button type="submit" class="button_main" name="action_on_program" value="go_to_update">Update</button>
+					</div>
+
+				</form>
+			{% endif %}
+
+    	</div>
+  	</div>
+</div>
+
+
+
+{% endblock %}

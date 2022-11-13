@@ -7,6 +7,7 @@ from nieszkolni_app.models import Repertoire
 from nieszkolni_app.models import RepertoireLine
 from nieszkolni_app.models import Notification
 from nieszkolni_app.models import Option
+from nieszkolni_app.models import Store
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
 
@@ -434,6 +435,21 @@ class BackOfficeManager:
 
             return announcements
 
+    def display_rules(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                notification_id,
+                subject
+                FROM nieszkolni_app_notification
+                WHERE notification_type = 'rule'
+                ORDER BY stamp DESC
+                ''')
+
+            rules = cursor.fetchall()
+
+            return rules
+
     def display_announcement(self, notification_id):
         with connection.cursor() as cursor:
             cursor.execute(f'''
@@ -541,3 +557,50 @@ class BackOfficeManager:
                 tags.update(tag)
 
             return tags
+
+    def add_to_store(
+            self,
+            watchword,
+            cue,
+            response
+            ):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                INSERT INTO nieszkolni_app_store (
+                watchword,
+                cue,
+                response
+                )
+                VALUES (
+                '{watchword}',
+                '{cue}',
+                '{response}'
+                )
+                ''')
+
+    def display_from_store(self, watchword):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT cue, response
+                FROM nieszkolni_app_store
+                WHERE watchword = '{watchword}'
+                ''')
+
+            rows = cursor.fetchall()
+
+            items = {row[0]: [] for row in rows}
+
+            for row in rows:
+                cue = row[0]
+                responses = items[cue]
+                responses.append(row[1])
+
+            return items
+
+    def reset_store(self, watchword):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                DELETE FROM nieszkolni_app_store
+                WHERE watchword = '{watchword}'
+                ''')
