@@ -13,9 +13,11 @@
 
 			<div class="program_photo_container">
 	      		<div class="course_degree">{{ course.1 }}</div>
-	      		<div class="course_description"><b>Description</b></br>{{ course.2 }}</div>
+	      		<div class="course_description"><b>Description</b></br>{{ course.2|safe }}</div>
 	      		<div class="course_description"><b>Assessment</b></br>{{ course.4 }}</div>
-	 			<div class="course_description"><b>Threshold</b></br>{{ course.8 }}</div>
+	      		{% if course.5 == 'grade' or course.5 == 'statistics' %}
+	 				<div class="course_description"><b>Threshold</b></br>{{ course.8 }}</div>
+	 			{% endif %}
 	      	</div>
 
     	</div>

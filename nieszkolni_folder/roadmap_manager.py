@@ -80,7 +80,8 @@ class RoadmapManager:
             link,
             reference_system,
             threshold,
-            component_id
+            component_id,
+            course_id
             ):
 
         course_description = Cleaner().clean_quotation_marks(course_description)
@@ -100,7 +101,8 @@ class RoadmapManager:
                 link = '{link}',
                 reference_system = '{reference_system}',
                 threshold = {threshold},
-                component_id = '{component_id}'
+                component_id = '{component_id}',
+                course_id = '{course_id}'
                 WHERE course_id = '{course_id}'
                 ''')
 
