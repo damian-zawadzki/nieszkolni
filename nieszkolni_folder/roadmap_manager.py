@@ -38,6 +38,8 @@ class RoadmapManager:
         registration_description = Cleaner().clean_quotation_marks(registration_description)
         assessment_description = Cleaner().clean_quotation_marks(assessment_description)
 
+        course_id = self.next_course_id()
+
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 INSERT INTO nieszkolni_app_course (
@@ -85,8 +87,6 @@ class RoadmapManager:
         course_description = Cleaner().clean_quotation_marks(course_description)
         registration_description = Cleaner().clean_quotation_marks(registration_description)
         assessment_description = Cleaner().clean_quotation_marks(assessment_description)
-
-        course_id = self.next_course_id()
 
         with connection.cursor() as cursor:
             cursor.execute(f'''
