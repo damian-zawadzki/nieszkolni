@@ -35,6 +35,8 @@ class DocumentManager:
             grade
             ):
 
+        today = TimeMachine().today()
+
         document = Document()
 
         # Label
@@ -92,7 +94,7 @@ class DocumentManager:
         font.name = "Times New Roman"
         font.size = Pt(12)
 
-        file = document.save(f'{item}.docx')
+        file = document.save(f'[A] {today}, {title} -- {name} .docx')
 
         return file
 
