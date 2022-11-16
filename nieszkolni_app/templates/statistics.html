@@ -36,16 +36,35 @@
 		</tr>
 
 		<tr class="font">
-			<td>Vocabulary</td>
+			<td>Learned vocabulary</td>
 			<td>{{ stats.vocabulary }}</td>
 			<td>(cards)</td>
 		</tr>
 
 		<tr class="font">
-			<td>Sentences</td>
+			<td>Learned sentences</td>
 			<td>{{ stats.sentences }}</td>
 			<td>(cards)</td>
 		</tr>
+
+		<tr class="font">
+			<td>New vocabulary</td>
+			<td>{{ stats.new_vocabulary }}</td>
+			<td>(cards)</td>
+		</tr>
+
+		<tr class="font">
+			<td>New sentences</td>
+			<td>{{ stats.new_sentences }}</td>
+			<td>(cards)</td>
+		</tr>
+
+		<tr class="font">
+			<td>Days you studied sentences and vocabulary this week</td>
+			<td>{{ stats.study_days_this_week }}</td>
+			<td>(days)</td>
+		</tr>
+
 </table>
 
 {% include 'footer.html' %}

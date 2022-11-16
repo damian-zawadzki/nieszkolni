@@ -1212,6 +1212,21 @@ td {
   font-family: "Google Sans", Roboto, Arial, sans-serif;
 }
 
+.input_content_table {
+  border-radius: 24px;
+  border-style: none;
+  box-shadow: rgba(0, 0, 0, .2) 0 3px 5px -1px,rgba(0, 0, 0, .14) 0 6px 10px 0,rgba(0, 0, 0, .12) 0 1px 18px 0;
+  clear: left;
+  color: #3c4043;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  height: 40px;
+  letter-spacing: .5px;
+  text-align: center;
+  width: 10vw;
+}
+
 .main_title {
   color: #F9F7F5;
   font-size: 75px;
@@ -1402,6 +1417,11 @@ hr.line {
   display: inline-flex;
 }
 
+.info_small {
+  position: relative;
+  top: -5;
+}
+
 /*Spins*/
 .table_card {
   display: block;
@@ -1420,4 +1440,48 @@ hr.line {
 
 .invisible_navigation {
   margin-top: 10vw;
+}
+
+/*Square menu*/
+.square_menu {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+
+  list-style-type: none;
+  list-style: none;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  width: 50%;
+  margin: auto;
+}
+
+.square_menu_item {
+  flex-grow:0;
+  text-decoration: none;
+  padding: 10% 10%;
+  background: lightgrey;
+  width: 2%;
+/*  height: 2%;*/
+  text-align: center;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.05);
+  -webkit-transition: all 0.1s ease-in;
+  -ms-transition: all 0.1s ease-in;
+  -moz-transition: all 0.1s ease-in;
+  -o-transition: all 0.1s ease-in;
+  transition: all 0.1s ease-in;
+}
+
+.square_menu_link {
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 1000;
+  letter-spacing: .5px;
+
+  width:2vw;
+  height: 2vw;
+
+  inline-size: 50%;
+  text-align: center;
 }

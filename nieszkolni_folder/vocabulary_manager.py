@@ -2,6 +2,7 @@ import os
 import django
 from django.db import connection
 from nieszkolni_app.models import Card
+from nieszkolni_app.models import Client
 from nieszkolni_folder.time_machine import TimeMachine
 
 
@@ -135,7 +136,13 @@ class VocabularyManager:
 
             entries = cursor.fetchall()
 
-            daily_limit_of_new_cards = self.current_daily_limit_of_new_cards(client)
+            info = Client.objects.get(name=client)
+
+            if deck == "vocabulary":
+                daily_limit_of_new_cards = info.daily_limit_of_new_vocabulary
+            elif deck == "sentences":
+                daily_limit_of_new_cards = info.daily_limit_of_new_sentences
+
             new_cards_done_today = self.display_new_entries_done_today(client, deck)
             actual_daily_limit_of_new_cards = daily_limit_of_new_cards - new_cards_done_today
 
@@ -177,6 +184,15 @@ class VocabularyManager:
         now = TimeMachine().now_colons()
         now_number = TimeMachine().date_time_to_number(now)
 
+        deck = entry.deck
+        client = entry.client
+        info = Client.objects.get(name=client)
+
+        if deck == "vocabulary":
+            maximal_interval = info.maximal_interval_vocabulary
+        elif deck == "sentences":
+            maximal_interval = info.maximal_interval_sentences
+
         if answer == "incorrect":
             rate = 0.0
 
@@ -196,7 +212,12 @@ class VocabularyManager:
 
         entry.line = line
         interval = round((entry.interval + 1) * rate)
-        entry.interval = interval
+
+        if maximal_interval < interval:
+            entry.interval = maximal_interval
+        else:
+            entry.interval = interval
+
         entry.due_date = today_number + interval
         entry.number_of_reviews = entry.number_of_reviews + 1
 
@@ -249,30 +270,6 @@ class VocabularyManager:
         new_cards = len(new_cards)
 
         return new_cards
-
-    def current_daily_limit_of_new_cards(self, client):
-        with connection.cursor() as cursor:
-            cursor.execute(f"SELECT daily_limit_of_new_cards FROM nieszkolni_app_client WHERE name = '{client}'")
-            current_daily_limit_of_new_cards = cursor.fetchone()
-
-        if current_daily_limit_of_new_cards is None:
-            current_daily_limit_of_new_cards = 25
-        else:
-            current_daily_limit_of_new_cards = current_daily_limit_of_new_cards[0]
-
-        return current_daily_limit_of_new_cards
-
-    def update_current_daily_limit_of_new_cards(self, client, limit):
-        with connection.cursor() as cursor:
-            cursor.execute(f"SELECT daily_limit_of_new_cards FROM nieszkolni_app_client WHERE name = '{client}'")
-            current_daily_limit_of_new_cards = cursor.fetchone()
-
-            if current_daily_limit_of_new_cards is None:
-                cursor.execute(f"INSERT INTO nieszkolni_app_client (daily_limit_of_new_cards, name) VALUES({limit}, '{client}')")
-            else:
-                cursor.execute(f"UPDATE nieszkolni_app_client SET daily_limit_of_new_cards = {limit} WHERE name = '{client}'")
-
-        return "done"
 
     def edit_card(self, card_id, polish, english):
         with connection.cursor() as cursor:

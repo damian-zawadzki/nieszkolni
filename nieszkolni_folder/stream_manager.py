@@ -5,6 +5,7 @@ from nieszkolni_app.models import Stream
 from nieszkolni_app.models import Repertoire
 from nieszkolni_app.models import RepertoireLine
 from nieszkolni_app.models import Card
+from nieszkolni_app.models import Client
 from nieszkolni_app.models import Option
 from nieszkolni_app.models import Profile
 from nieszkolni_folder.time_machine import TimeMachine
@@ -267,17 +268,50 @@ class StreamManager:
             else:
                 return True
 
-    def total_cards(self, deck):
+    def new_cards(self, client, deck):
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 SELECT COUNT (english)
                 FROM nieszkolni_app_card
-                WHERE deck = '{deck}'
+                WHERE client = '{client}'
+                AND deck = '{deck}'
+                AND number_of_reviews = 0
+                ''')
+
+            new_cards = cursor.fetchone()
+
+            return new_cards[0]
+
+    def total_cards(self, client, deck):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT COUNT (english)
+                FROM nieszkolni_app_card
+                WHERE client = '{client}'
+                AND deck = '{deck}'
+                AND number_of_reviews != 0
                 ''')
 
             total_cards = cursor.fetchone()
 
             return total_cards[0]
+
+    def studied_days(self, client, start, end):
+        start = TimeMachine().date_to_number(start)
+        end = TimeMachine().date_to_number(end)
+
+        rows = Card.objects.filter(client=client)
+
+        result = set()
+        for row in rows:
+            items = row.card_revision_days.split(";")
+            for item in items:
+                if item != "":
+                    item = int(item)
+                    if item > start and item <= end:
+                        result.add(item)
+
+        return len(result)
 
     def statistics(self, name):
         client = name
@@ -448,9 +482,16 @@ class StreamManager:
                 po = entry[3]
                 total_po += po
 
-            # Total cards
-            vocabulary = self.total_cards("vocabulary")
-            sentences = self.total_cards("sentences")
+            # Cards
+            vocabulary = self.total_cards(name, "vocabulary")
+            sentences = self.total_cards(name, "sentences")
+            new_vocabulary = self.new_cards(name, "vocabulary")
+            new_sentences = self.new_cards(name, "sentences")
+
+            last_sunday = TimeMachine().last_sunday()
+            this_sunday = TimeMachine().this_sunday()
+
+            study_days_this_week = self.studied_days(name, last_sunday, this_sunday)
 
             stats = {
                 "pv": total_PV,
@@ -459,7 +500,10 @@ class StreamManager:
                 "duration": total_duration,
                 "po": total_po,
                 "vocabulary": vocabulary,
-                "sentences": sentences
+                "sentences": sentences,
+                "new_vocabulary": new_vocabulary,
+                "new_sentences": new_sentences,
+                "study_days_this_week": study_days_this_week
             }
 
             return stats
@@ -553,7 +597,6 @@ class StreamManager:
             }
 
         return stats
-
 
     def display_activity_start(self):
         with connection.cursor() as cursor:

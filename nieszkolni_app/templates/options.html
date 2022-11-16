@@ -1,36 +1,69 @@
 {% extends 'base.html' %}
 {% block 'content' %}
 
-	{% if user.is_authenticated %}
 
-		<h1>MY SETTINGS</h1>
+<h1>MY SETTINGS</h1>
 
-		<div class="flex-parent jc-center">
-		  <div class="phrase_card">
-		    <div class="phrase_card_container">
-		      <h5 class="phrase_card_question">Daily Limit of New Cards</h5>
-		      
-				<form method="POST">
-				  {% csrf_token %}
-				  <div class="flex-parent jc-center">
-				    <div class="input_container">
-				      <input type="number" class="input_content_solo" name="new_daily_limit_of_new_cards" value="{{ current_daily_limit_of_new_cards }}">
-				    </div>
-				  </div>
-				  <div class="flex-parent jc-center">
-				  <button type="submit" class="button_main">Change</button>
-				  </div>
-				</form>
+<table>
+	<tr>
+		<th></th>
+		<th></th>
+		<th></th>
 
+	</tr>
 
-		    </div>
-		  </div>
-		</div>
+	<tr>
+		<form action="{% url 'options' %}" method="POST">
+			{% csrf_token %}
+			<td>Vocabulary: daily limit of new cards</td>
+			<td>
+				<input type="number" class="input_content_table" name="daily_limit_of_new_vocabulary" value="{{ daily_limit_of_new_vocabulary }}">
+			</td>
+			<td>
+				<button type="submit" class="button_main" name="action_on_client_option" value="change_vocabulary_limit">Change</button>
+			</td>
+		</form>
+	</tr>
 
-	{% else %}
+	<tr>
+		<form action="{% url 'options' %}" method="POST">
+			{% csrf_token %}
+			<td>Sentences: daily limit of new cards</td>
+			<td>
+				<input type="number" class="input_content_table" name="daily_limit_of_new_sentences" value="{{ daily_limit_of_new_sentences }}">
+			</td>
+			<td>
+				<button type="submit" class="button_main" name="action_on_client_option" value="change_sentences_limit">Change</button>
+			</td>
+		</form>
+	</tr>
 
-		<h1>Options</h1>
+	<tr>
+		<form action="{% url 'options' %}" method="POST">
+			{% csrf_token %}
+			<td>Vocabulary: maximal interval</td>
+			<td>
+				<input type="number" class="input_content_table" name="maximal_interval_vocabulary" value="{{ maximal_interval_vocabulary }}">
+			</td>
+			<td>
+				<button type="submit" class="button_main" name="action_on_client_option" value="change_vocabulary_interval">Change</button>
+			</td>
+		</form>
+	</tr>
 
-	{% endif %}
+	<tr>
+		<form action="{% url 'options' %}" method="POST">
+			{% csrf_token %}
+			<td>Sentences: maximal interval</td>
+			<td>
+				<input type="number" class="input_content_table" name="maximal_interval_sentences" value="{{ maximal_interval_sentences }}">
+			</td>
+			<td>
+				<button type="submit" class="button_main" name="action_on_client_option" value="change_sentences_interval">Change</button>
+			</td>
+		</form>
+	</tr>
+
+</table>
 
 {% endblock %}

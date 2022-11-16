@@ -92,7 +92,7 @@ class DocumentManager:
         font.name = "Times New Roman"
         font.size = Pt(12)
 
-        file = document.save(f'nieszkolni_app/static/files/{item}.docx')
+        file = document.save(f'{item}.docx')
 
         return file
 

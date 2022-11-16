@@ -39,7 +39,10 @@ class Client(models.Model):
     level = models.CharField(max_length=200, default="")
 
     # Private settings
-    daily_limit_of_new_cards = models.IntegerField(default=25, null=True)
+    daily_limit_of_new_vocabulary = models.IntegerField(default=25, null=True)
+    maximal_interval_vocabulary = models.IntegerField(default=90, null=True)
+    daily_limit_of_new_sentences = models.IntegerField(default=25, null=True)
+    maximal_interval_sentences = models.IntegerField(default=90, null=True)
 
 
 class Submission(models.Model):

@@ -29,6 +29,8 @@ import os
 from gtts import gTTS
 import random
 
+from nieszkolni_app.models import *
+
 from django_user_agents.utils import get_user_agent
 
 from django.template import RequestContext
@@ -496,15 +498,51 @@ def options(request, template_name="404.html"):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        client = Client.objects.get(name=current_user)
+        daily_limit_of_new__vocabulary = client.daily_limit_of_new_vocabulary
+        daily_limit_of_new_sentences = client.daily_limit_of_new_sentences
+        maximal_interval_vocabulary = client.maximal_interval_vocabulary
+        maximal_interval_sentences = client.maximal_interval_sentences
+
         if request.method == "POST":
-            current_daily_limit_of_new_cards = request.POST["new_daily_limit_of_new_cards"]
-            change_the_limit = VocabularyManager().update_current_daily_limit_of_new_cards(current_user, current_daily_limit_of_new_cards)
+            if request.POST["action_on_client_option"] == "change_vocabulary_limit":
+                new_limit = request.POST["daily_limit_of_new_vocabulary"]
 
-            return render(request, "options.html", {"current_daily_limit_of_new_cards": current_daily_limit_of_new_cards})
+                client.daily_limit_of_new_vocabulary = new_limit
+                client.save()
 
-        current_daily_limit_of_new_cards = VocabularyManager().current_daily_limit_of_new_cards(current_user)
+                return redirect("options")
 
-        return render(request, "options.html", {"current_daily_limit_of_new_cards": current_daily_limit_of_new_cards})
+            elif request.POST["action_on_client_option"] == "change_sentences_limit":
+                new_limit = request.POST["daily_limit_of_new_sentences"]
+
+                client.daily_limit_of_new_sentences = new_limit
+                client.save()
+
+                return redirect("options")
+
+            elif request.POST["action_on_client_option"] == "change_vocabulary_interval":
+                new_limit = request.POST["maximal_interval_vocabulary"]
+
+                client.maximal_interval_vocabulary = new_limit
+                client.save()
+
+                return redirect("options")
+
+            elif request.POST["action_on_client_option"] == "change_sentences_interval":
+                new_limit = request.POST["maximal_interval_sentences"]
+
+                client.maximal_interval_sentences = new_limit
+                client.save()
+
+                return redirect("options")
+
+        return render(request, "options.html", {
+            "daily_limit_of_new_vocabulary": daily_limit_of_new__vocabulary,
+            "daily_limit_of_new_sentences": daily_limit_of_new_sentences,
+            "maximal_interval_vocabulary": maximal_interval_vocabulary,
+            "maximal_interval_sentences": maximal_interval_sentences
+            })
 
 
 @staff_member_required
@@ -899,6 +937,7 @@ def list_of_submissions(request):
 
         user_agent = get_user_agent(request)
         submissions = SubmissionManager().display_students_assignments_limited(current_user)
+        tags = BackOfficeManager().display_tags()
 
         if request.method == "POST":
             unique_id = request.POST["unique_id"]
@@ -909,7 +948,8 @@ def list_of_submissions(request):
             if assignment_type != "sentences":
 
                 return render(request, "submission_entry.html", {
-                        "submission": submission
+                        "submission": submission,
+                        "tags": tags
                         })
 
             else:
@@ -925,6 +965,7 @@ def list_of_submissions(request):
                         "status": status,
                         "sentences": sentences
                         })
+
         if user_agent.is_mobile:
             return render(request, "m_my_assignments.html", {
                 "submissions": submissions
