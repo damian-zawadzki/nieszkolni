@@ -8,8 +8,11 @@ from nieszkolni_app.models import RepertoireLine
 from nieszkolni_app.models import Notification
 from nieszkolni_app.models import Option
 from nieszkolni_app.models import Store
+from nieszkolni_app.models import Ticket
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
+
+import re
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
@@ -603,4 +606,280 @@ class BackOfficeManager:
             cursor.execute(f'''
                 DELETE FROM nieszkolni_app_store
                 WHERE watchword = '{watchword}'
+                ''')
+
+    def add_ticket(
+            self,
+            client,
+            ticket_type,
+            subject,
+            description,
+            assigned_user,
+            responsible_user,
+            status,
+            sentiment,
+            reporting_user
+            ):
+
+        subject = Cleaner().clean_quotation_marks(subject)
+        description = Cleaner().clean_quotation_marks(description)
+
+        stamp = TimeMachine().now_number()
+        opening_date = TimeMachine().today_number()
+        closing_date = 0
+        response = ''
+        comment = ''
+        closing_stamp = 0
+        response_time = 0
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                INSERT INTO nieszkolni_app_ticket (
+                stamp,
+                opening_date,
+                closing_date,
+                client,
+                ticket_type,
+                subject,
+                description,
+                reporting_user,
+                assigned_user,
+                responsible_user,
+                status,
+                sentiment,
+                response,
+                comment,
+                closing_stamp,
+                response_time
+                )
+                VALUES (
+                '{stamp}',
+                '{opening_date}',
+                '{closing_date}',
+                '{client}',
+                '{ticket_type}',
+                '{subject}',
+                '{description}',
+                '{reporting_user}',
+                '{assigned_user}',
+                '{responsible_user}',
+                '{status}',
+                '{sentiment}',
+                '{response}',
+                '{comment}',
+                '{closing_stamp}',
+                '{response_time}'
+                )
+                ''')
+
+    def display_open_tickets(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                stamp,
+                opening_date,
+                closing_date,
+                client,
+                ticket_type,
+                subject,
+                description,
+                reporting_user,
+                assigned_user,
+                responsible_user,
+                status,
+                sentiment,
+                response,
+                id,
+                comment,
+                closing_stamp,
+                response_time
+                FROM nieszkolni_app_ticket
+                WHERE status != 'closed'
+                ''')
+
+            rows = cursor.fetchall()
+
+            tickets = []
+            if rows is not None:
+                for row in rows:
+                    ticket = {
+                        "stamp": row[0],
+                        "opening_date": TimeMachine().number_to_system_date(row[1]),
+                        "closing_date": TimeMachine().number_to_system_date(row[2]),
+                        "client": row[3],
+                        "ticket_type": row[4],
+                        "subject": row[5],
+                        "description": row[6],
+                        "reporting_user": row[7],
+                        "assigned_user": row[8],
+                        "responsible_user": row[9],
+                        "status": row[10],
+                        "sentiment": row[11],
+                        "response": row[12],
+                        "ticket_id": row[13],
+                        "comment": row[14],
+                        "closing_stamp": row[15],
+                        "response_time": re.search(r"\d{1,2}", str(row[16])).group()
+                        }
+
+                    tickets.append(ticket)
+
+            return tickets
+
+    def display_closed_tickets(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                stamp,
+                opening_date,
+                closing_date,
+                client,
+                ticket_type,
+                subject,
+                description,
+                reporting_user,
+                assigned_user,
+                responsible_user,
+                status,
+                sentiment,
+                response,
+                id,
+                comment,
+                closing_stamp,
+                response_time
+                FROM nieszkolni_app_ticket
+                WHERE status = 'closed'
+                ''')
+
+            rows = cursor.fetchall()
+
+            tickets = []
+            if rows is not None:
+                for row in rows:
+                    ticket = {
+                        "stamp": row[0],
+                        "opening_date": TimeMachine().number_to_system_date(row[1]),
+                        "closing_date": TimeMachine().number_to_system_date(row[2]),
+                        "client": row[3],
+                        "ticket_type": row[4],
+                        "subject": row[5],
+                        "description": row[6],
+                        "reporting_user": row[7],
+                        "assigned_user": row[8],
+                        "responsible_user": row[9],
+                        "status": row[10],
+                        "sentiment": row[11],
+                        "response": row[12],
+                        "ticket_id": row[13],
+                        "comment": row[14],
+                        "closing_stamp": row[15],
+                        "response_time": re.search(r"\d{1,2}", str(row[16])).group()
+                        }
+
+                    tickets.append(ticket)
+
+            return tickets
+
+    def display_ticket(self, ticket_id):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                stamp,
+                opening_date,
+                closing_date,
+                client,
+                ticket_type,
+                subject,
+                description,
+                reporting_user,
+                assigned_user,
+                responsible_user,
+                status,
+                sentiment,
+                response,
+                id,
+                comment,
+                closing_stamp,
+                response_time
+                FROM nieszkolni_app_ticket
+                WHERE id = '{ticket_id}'
+                ''')
+
+            row = cursor.fetchone()
+
+            if row is not None:
+                ticket = {
+                    "stamp": row[0],
+                    "opening_date": TimeMachine().number_to_system_date(row[1]),
+                    "closing_date": TimeMachine().number_to_system_date(row[2]),
+                    "client": row[3],
+                    "ticket_type": row[4],
+                    "subject": row[5],
+                    "description": row[6],
+                    "reporting_user": row[7],
+                    "assigned_user": row[8],
+                    "responsible_user": row[9],
+                    "status": row[10],
+                    "sentiment": row[11],
+                    "response": row[12],
+                    "ticket_id": row[13],
+                    "comment": row[14],
+                    "closing_stamp": row[15],
+                    "response_time": re.search(r"\d{1,2}", str(row[16])).group()
+                    }
+
+            return ticket
+
+    def assign_user_to_ticket(self, ticket_id, assigned_user):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                UPDATE nieszkolni_app_ticket
+                SET assigned_user = '{assigned_user}'
+                WHERE id = '{ticket_id}'
+                ''')
+
+    def change_ticket_status(self, ticket_id, status):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                UPDATE nieszkolni_app_ticket
+                SET status = '{status}'
+                WHERE id = '{ticket_id}'
+                ''')
+
+    def add_response_to_ticket(self, ticket_id, response):
+        response = Cleaner().clean_quotation_marks(response)
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                UPDATE nieszkolni_app_ticket
+                SET response = '{response}'
+                WHERE id = '{ticket_id}'
+                ''')
+
+    def close_ticket(self, ticket_id):
+        ticket = self.display_ticket(ticket_id)
+        opening_stamp = ticket["stamp"]
+
+        closing_date = TimeMachine().today_number()
+        closing_stamp = TimeMachine().now_number()
+        response_time = (closing_stamp - opening_stamp)/3600
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                UPDATE nieszkolni_app_ticket
+                SET
+                closing_date = '{closing_date}',
+                closing_stamp = '{closing_stamp}',
+                response_time = '{response_time}'
+                WHERE id = '{ticket_id}'
+                ''')
+
+    def comment_on_ticket(self, ticket_id, comment):
+        comment = Cleaner().clean_quotation_marks(comment)
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                UPDATE nieszkolni_app_ticket
+                SET comment = '{comment}'
+                WHERE id = '{ticket_id}'
                 ''')

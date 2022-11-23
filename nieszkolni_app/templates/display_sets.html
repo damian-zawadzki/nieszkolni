@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>SETS</h1>
+
+<table>
+	<tr>
+		<th class="short_column"></th>
+		<th></th>
+
+	</tr>
+
+	{% for item in items %}
+
+		<tr>
+			<td class="short_column">{{ item.0 }}</td>
+			<td><a href="{% url 'display_set' set_id=item.0 %}">{{ item.1 }}</a></td>
+		</tr>
+
+	{% endfor %}
+	
+</table>
+
+{% include 'footer.html' %}
+{% endblock %}

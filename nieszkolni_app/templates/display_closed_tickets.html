@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>CLOSED TICKETS</h1>
+
+<table>
+	<tr>
+		<th>Date</th>
+		<th>Client</th>
+		<th>Subject</th>
+		<th>Asignee</th>
+		<th>Response time (h)</th>
+	</tr>
+
+	{% for ticket in tickets %}
+	
+		<tr class="tr_clickable" onclick="jump({{ ticket.ticket_id }})">
+			<a id="{{ ticket.ticket_id }}" href="{% url 'display_ticket' ticket_id=ticket.ticket_id %}"></a>
+			<td>{{ ticket.opening_date }}</td>
+			<td>{{ ticket.client }}</td>
+			<td>{{ ticket.subject }}</td>
+			<td>{{ ticket.assigned_user }}</td>
+			<td>{{ ticket.response_time }}</td>
+		</tr>
+
+	{% endfor %}
+	
+</table>
+
+<script type="text/javascript">
+	function jump(ticket_id) {
+		var link = document.getElementById(ticket_id)
+		link.click()
+	}
+</script>
+
+{% include 'footer.html' %}
+{% endblock %}

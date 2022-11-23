@@ -4,28 +4,28 @@
 {% if entry == None %}
 {% else %}
 
-  <h1>Grade sentences</h1>
+  <h1>GRADE SENTENCES</h1>
 
     <div class="flex-parent jc-center">
       <div class="phrase_card">
         <div class="phrase_card_container">
           <h5 class="phrase_card_question">{{ entry.0 }}</h5>
-          <p><span class="phrase_card_description">{{ entry.1 }}</span></p>
-          <p><span class="section">{{ entry.2 }}</span></p>
+          <p><span class="phrase_card_description"><b>Correct: </b>{{ entry.1 }}</span></p>
+          <p><span class="section"><b>Translation: </b> {{ entry.2 }}</span></p>
           
-        <form method="POST">
-          {% csrf_token %}
+          <form method="POST">
+            {% csrf_token %}
 
-          <input type="hidden" class="input_content_solo" name="sentence_number" value="{{ entry.3 }}">
+            <input type="hidden" class="input_content_solo" name="sentence_number" value="{{ entry.3 }}">
 
-          <div class="flex-parent jc-center">
+            <div class="flex-parent jc-center">
 
-            <button type="submit" class="button_main" name="result" value="correct">Correct</button>
-            <button type="submit" class="button_main" name="result" value="incorrect">Incorrect</button>
+              <button type="submit" class="button_main" name="result" value="correct">Correct</button>
+              <button type="submit" class="button_main" name="result" value="incorrect">Incorrect</button>
 
-          </div>
+            </div>
 
-        </form>
+          </form>
 
 
         </div>

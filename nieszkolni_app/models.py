@@ -67,6 +67,7 @@ class Submission(models.Model):
     conditions = models.TextField(default="")
     comment = models.TextField(default="")
     grade = models.CharField(max_length=200, default="")
+    content_file = models.FileField(upload_to="static/files" ,null=True)
 
 
 class Curriculum(models.Model):
@@ -87,6 +88,11 @@ class Curriculum(models.Model):
     completion_date = models.IntegerField(default=0)
     submitting_user = models.CharField(max_length=200, default="")
     reference = models.IntegerField(default=0)
+
+
+class Prefix(models.Model):
+    matrix = models.CharField(max_length=200, default="")
+    id_prefix = models.IntegerField(default=0)
 
 
 class Matrix(models.Model):
@@ -208,17 +214,20 @@ class Composer(models.Model):
     polish = models.TextField(default="")
     english = models.TextField(default="")
     glossary = models.TextField(default="")
-    submission_stamp = models.IntegerField()
-    submission_date = models.IntegerField()
+    submission_stamp = models.IntegerField(default=0)
+    submission_date = models.IntegerField(default=0)
     status = models.CharField(max_length=200, default="")
     translation = models.TextField(default="")
     result = models.CharField(max_length=200, default="")
     reviewing_user = models.CharField(max_length=200, default="")
+    set_id = models.IntegerField(default=0)
+    item = models.IntegerField(default=0)
 
 
 class Set(models.Model):
     set_name = models.CharField(max_length=200, default="")
-    sentence_id = models.IntegerField()
+    set_id = models.IntegerField(default=0)
+    sentence_ids = models.CharField(max_length=200, default="")
 
 
 class Library(models.Model):
@@ -414,3 +423,22 @@ class Store(models.Model):
     watchword = models.IntegerField(default=0)
     cue = models.CharField(max_length=200, default="")
     response = models.CharField(max_length=200, default="")
+
+
+class Ticket(models.Model):
+    stamp = models.IntegerField(default=0)
+    opening_date = models.IntegerField(default=0)
+    closing_date = models.IntegerField(default=0)
+    client = models.CharField(max_length=200, default="")
+    ticket_type = models.CharField(max_length=200, default="")
+    subject = models.CharField(max_length=200, default="")
+    description = models.TextField(default="")
+    reporting_user = models.CharField(max_length=200, default="")
+    assigned_user = models.CharField(max_length=200, default="")
+    responsible_user = models.CharField(max_length=200, default="")
+    status = models.CharField(max_length=200, default="")
+    sentiment = models.IntegerField(default=0)
+    response = models.TextField(default="")
+    comment = models.TextField(default="")
+    closing_stamp = models.IntegerField(default=0)
+    response_time = models.IntegerField(default=0)

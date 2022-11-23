@@ -8,6 +8,8 @@ from nieszkolni_app.models import Library
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
 
+import re
+
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
 
@@ -503,3 +505,82 @@ class CurriculumManager:
             matrices = cursor.fetchall()
 
             return matrices
+
+    def add_id_prefix(self, matrix, next_id_prefix):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                INSERT INTO nieszkolni_app_prefix (
+                matrix,
+                id_prefix
+                )
+                VALUES (
+                '{matrix}',
+                '{next_id_prefix}'
+                )
+                ''')
+
+    def next_id_prefix(self):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT id_prefix
+                FROM nieszkolni_app_prefix
+                ORDER BY id_prefix DESC
+                LIMIT 1
+                ''')
+
+            id_prefix = cursor.fetchone()
+
+            if id_prefix is None:
+                next_id_prefix = 100
+            else:
+                next_id_prefix = int(id_prefix[0]) + 1
+
+            return next_id_prefix
+
+    def display_prefixes(self):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT matrix, id_prefix
+                FROM nieszkolni_app_prefix
+                ORDER BY id_prefix ASC
+                ''')
+
+            prefixes = cursor.fetchall()
+
+            return prefixes
+
+    def remove_module_from_matrix(self, matrix, component_id):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                DELETE FROM nieszkolni_app_matrix
+                WHERE matrix = '{matrix}'
+                AND component_id = '{component_id}'
+                ''')
+
+    def next_id_suffix(self, component, id_prefix):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT component_id
+                FROM nieszkolni_app_module
+                WHERE (component_id LIKE '{component}_{id_prefix}%')
+                ORDER BY component_id DESC
+                LIMIT 1
+                ''')
+
+            id_suffix = cursor.fetchone()
+            print(id_suffix)
+
+            if id_suffix is None:
+                next_id_suffix = "01"
+            else:
+                data_raw = id_suffix[0]
+                data = re.sub(f"{component}_{id_prefix}", "", data_raw)
+                data = int(data)
+                data = data + 1
+                next_id_suffix = f"{data:02d}"
+
+            return next_id_suffix

@@ -49,6 +49,18 @@
 				</form>
 			</td>
 
+			<td>
+				<form action="{% url 'display_matrices' %}" method="POST">
+					{% csrf_token %}
+
+					<input type="hidden" name="component_id" value="{{ module.component_id }}">
+					<input type="hidden" name="matrix" value="{{ module.matrix }}">
+					<button type="submit" class="list_button button_main" name="action_on_matrix" value="remove">Remove</button>
+
+				</form>
+			</td>
+
+
 		</tr>
 
 	{% endfor %}

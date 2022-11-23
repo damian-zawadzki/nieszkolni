@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>{{ set_details.1.upper }}: {{ set_details.0 }}</h1>
+
+<table>
+
+	{% for sentence in sentences %}
+
+		<tr>
+			<td>{{ sentence.0 }}</td>
+			<td class="td_sentences">{{ sentence.1 }}</td>
+		</tr>
+
+	{% endfor %}
+	
+</table>
+
+{% include 'footer.html' %}
+{% endblock %}

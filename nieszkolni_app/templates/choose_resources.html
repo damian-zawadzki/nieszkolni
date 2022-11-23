@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>CREATE A MODULE</h1>
+
+<form action="{% url 'choose_resources' component=component id_prefix=id_prefix reference=reference %}" method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Resources</label>
+      <textarea required type="text" class="input_content input_paragraph" name="resources"></textarea>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_module" value="next">Next</button>
+  </div>
+
+</form>
+
+{% endblock %}

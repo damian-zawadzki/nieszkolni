@@ -1,28 +1,29 @@
 {% extends 'base.html' %}
 {% block 'content' %}
 
-<h1>Sentence stock</h1>
+<h1>SENTENCE STOCK</h1>
 
-<div class="list_container">
-	<ul class="list">
+<table class="table_wide">
+	<tr>
+		<th class="short_column"></th>
+		<th></th>
+		<th></th>
+		<th></th>
 
-		{% for sentence in sentences %}
+	</tr>
 
-			<form action="{% url 'sentence_stock' %}" method="POST">
-				{% csrf_token %}
-				<li class="list_item">
+	{% for sentence in sentences %}
 
-					<div class="list_content">{{ sentence.0 }}</div>
-					<div class="list_content_inside">{{ sentence.1 }}</div>
-					<div class="list_content_small">{{ sentence.2 }}</div>
+		<tr>
+			<td class="short_column">{{ sentence.0 }}</td>
+			<td class="td_sentences">{{ sentence.1 }}</td>
+			<td class="td_sentences">{{ sentence.2 }}</td>
+			<td class="td_sentences">{{ sentence.3 }}</td>
+		</tr>
 
-				</li>
-			</form>
-
-		{% endfor %}
-
-	</ul>
-</div>
+	{% endfor %}
+	
+</table>
 
 {% include 'footer.html' %}
 {% endblock %}

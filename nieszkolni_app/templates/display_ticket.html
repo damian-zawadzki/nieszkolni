@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<div class="flex-parent jc-center">
+  <div class="assignment_card">
+      <div class="task_card_container">
+          
+          <button type="button" class="chip" value="{{ ticket.status }}" id="status_button"></button>
+          <div class="task_card_title">{{ ticket.client }}: {{ ticket.subject }}</div>
+          <div class="task_card_details"><b>Assignee:</b> {{ ticket.assigned_user }} <b>Submitted on:</b> {{ ticket.opening_date }} <b>Status:</b> {{ ticket.status }}</div>
+          <div><b>Description</b></div>
+          <div class="task_card_content">{{ ticket.description }}</div>
+
+          <div id="response">
+            <div><b>Response</b></div>
+            <div class="task_card_content">{{ ticket.response }}</div>
+          </div>
+
+          <form action="{% url 'display_ticket' ticket_id=ticket.ticket_id %}"  method="POST" id="assign_form" style="display: none;">
+            {% csrf_token %}
+
+            <div><b>Assignee</b></div>
+            <select required class="input_content_left" name="assigned_user">
+                <option disabled selected value></option>
+
+                {% for person in staff %}
+                    <option value="{{ person.get_full_name }}">{{ person.get_full_name }}</option>
+                {% endfor %}
+
+            </select>
+
+            <button type="submit" class="button_main_no_margin" name="action_on_ticket" value="assign">Assign</button>
+
+          </form>
+
+          <form action="{% url 'display_ticket' ticket_id=ticket.ticket_id %}"  method="POST" id="in_progress_form" style="display: none;">
+            {% csrf_token %}
+
+            <button type="submit" class="button_main_no_margin" name="action_on_ticket" value="solve">Solve</button>
+            <button type="button" class="button_main_no_margin" id="reassign_button" onclick="showAssign()">Reassign</button>
+            
+          </form>
+
+          <form action="{% url 'display_ticket' ticket_id=ticket.ticket_id %}"  method="POST" id="reopen_form" style="display: none;">
+            {% csrf_token %}
+
+            <button type="submit" class="button_main_no_margin" name="action_on_ticket" value="reopen">Reopen</button>
+
+          </form>
+
+      </div>
+    </div>
+</div>
+
+<div class="flex-parent jc-center" id="assign_form_2" style="display: none;">
+  <div class="assignment_card">
+      <div class="task_card_container">
+      <div class="task_card_title">Assign</div>
+      <div class="task_card_details"></div>
+          <form action="{% url 'display_ticket' ticket_id=ticket.ticket_id %}"  method="POST">
+            {% csrf_token %}
+
+            <select required class="input_content_left" name="assigned_user">
+                <option disabled selected value></option>
+
+                {% for person in staff %}
+                    <option value="{{ person.get_full_name }}">{{ person.get_full_name }}</option>
+                {% endfor %}
+
+            </select>
+            <button type="submit" class="button_main_no_margin" name="action_on_ticket" value="assign">Assign</button>
+
+          </form>
+      </div>
+    </div>
+</div>
+
+<div class="flex-parent jc-center" id="close_form" style="display: none;">
+  <div class="assignment_card">
+      <div class="task_card_container">
+      <div class="task_card_title">Response</div>
+      <div class="task_card_details"></div>
+          <form action="{% url 'display_ticket' ticket_id=ticket.ticket_id %}"  method="POST">
+            {% csrf_token %}
+
+            <textarea type="text" class="input_content input_paragraph_assignment" name="response" placeholder="Your response..."></textarea>
+            <button type="submit" class="button_main_no_margin" name="action_on_ticket" value="close">Close</button>
+
+          </form>
+      </div>
+    </div>
+</div>
+
+<div class="flex-parent jc-center">
+  <div class="assignment_card">
+      <div class="task_card_container">
+        <div class="task_card_title">Comment</div>
+        <div class="task_card_details"></div>
+          <form action="{% url 'display_ticket' ticket_id=ticket.ticket_id %}"  method="POST">
+            {% csrf_token %}
+
+            <textarea type="text" class="input_content input_paragraph_assignment" id="comment_text" name="comment">{{ ticket.comment }}</textarea>
+            <button type="submit" class="button_main_no_margin" id="comment_button" name="action_on_ticket" value="comment">Comment</button>
+
+          </form>
+      </div>
+    </div>
+</div>
+
+<a href="#assign_form_2" id="to_assign_form_2">
+
+<script type="text/javascript">
+  var button = document.getElementById('status_button');
+  var assign_form = document.getElementById('assign_form');
+  var in_progress_form = document.getElementById('in_progress_form');
+  var close_form = document.getElementById('close_form');
+  var reopen_form = document.getElementById('reopen_form');
+  var response = document.getElementById('response');
+  var comment_text = document.getElementById('comment_text');
+  var comment_button = document.getElementById('comment_button');
+  
+  if (button.value == 'new') {
+    button.textContent = 'New';
+    button.style.background = '#FFE2DE';
+    assign_form.style.display = 'block';
+    in_progress_form.style.display = 'none';
+    close_form.style.display = 'none';
+    reopen_form.style.display = 'none';
+    response.style.display = 'none';
+    comment_button.style.display = 'block';
+  } else if (button.value == 'assigned') {
+    button.textContent = 'Assigned';
+    button.style.background = '#FFF7C4';
+    assign_form.style.display = 'none';
+    in_progress_form.style.display = 'block';
+    close_form.style.display = 'none';
+    reopen_form.style.display = 'none';
+    response.style.display = 'none';
+    comment_button.style.display = 'block';
+  } else if (button.value == 'in_progress') {
+    button.textContent = 'In progress';
+    button.style.background = '#F1FFC4';
+    assign_form.style.display = 'none';
+    in_progress_form.style.display = 'none';
+    close_form.style.display = 'flex';
+    reopen_form.style.display = 'none';
+    response.style.display = 'none';
+    comment_button.style.display = 'block';
+  } else if (button.value == 'closed') {
+    button.textContent = 'Closed';
+    button.style.background = '#F9F9F9';
+    assign_form.style.display = 'none';
+    in_progress_form.style.display = 'none';
+    close_form.style.display = 'none';
+    reopen_form.style.display = 'block';
+    response.style.display = 'block';
+    comment_button.style.display = 'none';
+    comment_text.classList.add('input_paragraph_assignment_prefilled');
+  };
+
+  function showAssign() {
+    var form = document.getElementById('assign_form_2');
+    var link = document.getElementById('to_assign_form_2');
+
+    if (form.style.display == 'none') {
+      form.style.display = 'flex';
+      link.click();
+    } else {
+      form.style.display = 'none';
+    };
+  }
+
+</script>
+
+
+{% endblock %}

@@ -5,12 +5,14 @@
 
 <form action="{% url 'submit_assignment' %}" method="POST">
   {% csrf_token %}
+
   <div class="flex-parent jc-center"> 
     <div class="input_container">
       <label class="input_label">Item</label>
       <input type="number" class="input_content" name="item" required>
     </div>
   </div>
+  
   <div class="flex-parent jc-center"> 
      <div class="input_container">
       <label class="input_label">Name</label>

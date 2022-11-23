@@ -66,9 +66,18 @@
   <input type="hidden" name="title" value="{{ title }}">
 
   <div class="flex-parent jc-center">
-    <button type="submit" class="button_main" name="go_to" value="translated_sentences">Submit</button>
+    <button type="submit" class="button_main" id="final_button" name="go_to" value="translated_sentences">Submit</button>
   </div>
 
 </form>
+
+<script type="text/javascript">
+      var button = document.getElementById("final_button");
+
+      button.onchange = (event) => {
+         event.preventDefault();
+         button.disabled = true;
+       }
+</script>
 
 {% endblock %}

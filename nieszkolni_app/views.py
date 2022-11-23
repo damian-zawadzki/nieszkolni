@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.conf import settings as django_settings
+from django.core.files.base import ContentFile, File
 from nieszkolni_folder.vocabulary_manager import VocabularyManager
 from nieszkolni_folder.clients_manager import ClientsManager
 from nieszkolni_folder.time_machine import TimeMachine
@@ -22,6 +23,7 @@ from nieszkolni_folder.sentence_manager import SentenceManager
 from nieszkolni_folder.back_office_manager import BackOfficeManager
 from nieszkolni_folder.document_manager import DocumentManager
 from nieszkolni_folder.roadmap_manager import RoadmapManager
+from nieszkolni_folder.download_manager import DownloadManager
 import csv
 import re
 import json
@@ -556,6 +558,15 @@ def staff(request):
 
 
 @staff_member_required
+def old_staff(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        return render(request, "old_staff.html", {})
+
+@staff_member_required
 def staff_menu(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
@@ -837,7 +848,7 @@ def submit_assignment(request):
                 current_user = request.POST["current_user"]
                 assignment_type = request.POST["assignment_type"]
                 title = request.POST["title"]
-                list_number = title.replace("Translate ", "")
+                list_number = SentenceManager().find_list_number_by_item(item)
                 sentences = SentenceManager().display_sentence_list(list_number)
 
                 return render(request, "translate_sentences.html", {
@@ -956,8 +967,9 @@ def list_of_submissions(request):
                 date = submission[0]
                 title = submission[1]
                 status = submission[9]
-                sentence_number = title.replace("Translate ", "")
-                sentences = SentenceManager().display_graded_list(sentence_number)
+                item = submission[11]
+                list_number = SentenceManager().find_list_number_by_item(item)
+                sentences = SentenceManager().display_graded_list(list_number)
 
                 return render(request, "submission_entry_sentences.html", {
                         "title": title,
@@ -1086,22 +1098,7 @@ def add_curriculum(request, client=""):
         module_status = 0
 
         if request.method == "POST":
-            if request.POST["curriculum_action"] == "choose_sentences":
-                name = request.POST["name"]        
-                names = [name]
-                assignment_type = "sentences"
-
-                entries = SentenceManager().display_planned_sentence_lists_per_student(name)
-
-                return render(request, "add_curriculum_2.html", {
-                    "names": names,
-                    "assignment_type": assignment_type,
-                    "entries": entries,
-                    "modules": modules,
-                    "module_status": module_status
-                    })
-
-            elif request.POST["curriculum_action"] == "choose_quiz":
+            if request.POST["curriculum_action"] == "choose_quiz":
                 name = request.POST["name"]        
                 names = [name]
                 assignment_type = "quiz"
@@ -1175,8 +1172,15 @@ def add_curriculum(request, client=""):
                     )
 
                 if assignment_type == "sentences":
-                    list_number = title.replace("Translate ", "")
-                    SentenceManager().mark_sentence_list_as_planned(list_number)
+                    set_details = SentenceManager().display_set(reference)
+                    set_id = set_details[0]
+                    sentence_ids = set_details[2]
+                    SentenceManager().compose_sentence_lists(
+                        name,
+                        item,
+                        set_id,
+                        sentence_ids,
+                        )
 
                 messages.success(request, ("Curriculum extended!"))
                 return render(request, "add_curriculum.html", {
@@ -1345,7 +1349,7 @@ def display_modules(request):
 
 
 @staff_member_required
-def add_module(request):
+def choose_component(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
@@ -1354,19 +1358,133 @@ def add_module(request):
         components = KnowledgeManager().display_prompts("components")
 
         if request.method == "POST":
-            component_id_number = request.POST["component_id_number"]
-            component_type = request.POST["component_type"]
-            component_id = f"{component_type}_{component_id_number}"
+            component = request.POST["component"]
+
+            return redirect("choose_id_prefix", component=component)
+
+        return render(request, "choose_component.html", {
+            "components": components
+            })
+
+
+@staff_member_required
+def choose_id_prefix(request, component):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        prefixes = CurriculumManager().display_prefixes()
+
+        if request.method == "POST":
+            id_prefix = request.POST["id_prefix"]
+
+            return redirect(
+                "choose_reference",
+                component=component,
+                id_prefix=id_prefix
+                )
+
+        return render(request, "choose_id_prefix.html", {
+            "component": component,
+            "prefixes": prefixes
+            })
+
+
+@staff_member_required
+def choose_reference(request, component, id_prefix):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        if component == "reading":
+            references = BackOfficeManager().display_library()
+        elif component == "sentences":
+            references = SentenceManager().display_sets()
+
+        if request.method == "POST":
+            reference = request.POST["reference"]
+
+            if component == "reading":
+
+                data = BackOfficeManager().find_position_in_library(reference)
+                resources = data[3]
+
+                return redirect(
+                    "add_module",
+                    component=component,
+                    id_prefix=id_prefix,
+                    reference=reference,
+                    resources=resources
+                    )
+
+            elif component == "sentences":
+
+                resources = "-"
+
+                return redirect(
+                    "add_module",
+                    component=component,
+                    id_prefix=id_prefix,
+                    reference=reference,
+                    resources=resources
+                    )
+
+        return render(request, "choose_reference.html", {
+            "component": component,
+            "id_prefix": id_prefix,
+            "references": references
+            })
+
+
+@staff_member_required
+def choose_resources(request, component, id_prefix, reference):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        if request.method == "POST":
+            resources = request.POST["resources"]
+
+            return redirect(
+                "add_module",
+                component=component,
+                id_prefix=id_prefix,
+                reference=reference,
+                resources=resources
+                )
+
+        return render(request, "choose_resources.html", {
+            "component": component,
+            "id_prefix": id_prefix,
+            "reference": reference
+            })
+
+
+@staff_member_required
+def add_module(request, component, id_prefix, reference, resources):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        next_id_suffix = CurriculumManager().next_id_suffix(component, id_prefix)
+
+        if request.method == "POST":
+            id_prefix = request.POST["id_prefix"]
+            id_suffix = request.POST["id_suffix"]
             title = request.POST["title"]
             content = request.POST["content"]
-            resources = request.POST["resources"]
             conditions = request.POST["conditions"]
 
-            reference = 0
+            id_suffix = int(id_suffix)
+            component_id = f"{component}_{id_prefix}{id_suffix:02d}"
 
             CurriculumManager().add_module(
                 component_id,
-                component_type,
+                component,
                 title,
                 content,
                 resources,
@@ -1375,12 +1493,14 @@ def add_module(request):
                 )
 
             messages.success(request, ("You have added a module!"))
-            return render(request, "add_module.html", {
-                "components": components
-                })
+            return redirect("display_modules")
 
         return render(request, "add_module.html", {
-            "components": components
+            "component": component,
+            "id_prefix": id_prefix,
+            "reference": reference,
+            "resources": resources,
+            "next_id_suffix": next_id_suffix
             })
 
 
@@ -1394,26 +1514,27 @@ def update_module(request, component_id):
         module = CurriculumManager().display_module(component_id)
 
         if request.method == "POST":
-            component_id = request.POST["component_id"]
-            component_type = request.POST["component_type"]
-            title = request.POST["title"]
-            content = request.POST["content"]
-            resources = request.POST["resources"]
-            conditions = request.POST["conditions"]
-            reference = request.POST["reference"]
+            if request.POST["action_on_curriculum"] == "update":
+                component_id = request.POST["component_id"]
+                component_type = request.POST["component_type"]
+                title = request.POST["title"]
+                content = request.POST["content"]
+                resources = request.POST["resources"]
+                conditions = request.POST["conditions"]
+                reference = request.POST["reference"]
 
-            CurriculumManager().update_module(
-                component_id,
-                component_type,
-                title,
-                content,
-                resources,
-                conditions,
-                reference
-                )
+                CurriculumManager().update_module(
+                    component_id,
+                    component_type,
+                    title,
+                    content,
+                    resources,
+                    conditions,
+                    reference
+                    )
 
-            messages.success(request, ("Module updated!"))
-            return redirect("display_modules")
+                messages.success(request, ("Module updated!"))
+                return redirect("display_modules")
 
         return render(request, "update_module.html", {
             "module": module
@@ -1444,6 +1565,16 @@ def display_matrices(request):
 
                 return redirect("update_module", component_id=component_id)
 
+            elif request.POST["action_on_matrix"] == "remove":
+                component_id = request.POST["component_id"]
+                matrix = request.POST["matrix"]
+
+                print(matrix)
+
+                CurriculumManager().remove_module_from_matrix(matrix, component_id)
+
+                return redirect("display_matrices")
+
         return render(request, "display_matrices.html", {
             "matrices": matrices
             })
@@ -1457,11 +1588,15 @@ def add_matrix(request):
         current_user = first_name + " " + last_name
 
         components = CurriculumManager().display_components()
+        prefixes = CurriculumManager().display_prefixes()
 
         if request.method == "POST":
             component_id = request.POST["component_id"]
             matrix = request.POST["matrix"]
-            limit_number = request.POST["limit_number"]
+            week = request.POST["week"]
+            day = request.POST["day"]
+
+            limit_number = int(week) * int(day)
 
             CurriculumManager().add_matrix(
                 component_id,
@@ -1470,12 +1605,11 @@ def add_matrix(request):
                 )
 
             messages.success(request, ("You have updated the matrix!"))
-            return render(request, "add_matrix.html", {
-                "components": components
-                })
+            return redirect("add_matrix")
 
         return render(request, "add_matrix.html", {
-            "components": components
+            "components": components,
+            "prefixes": prefixes
             })
 
 
@@ -1543,6 +1677,46 @@ def plan_matrix(request):
         return render(request, "plan_matrix.html", {
             "matrices": matrices,
             "clients": clients
+            })
+
+
+@staff_member_required
+def add_id_prefix(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        next_id_prefix = CurriculumManager().next_id_prefix()
+
+        if request.method == "POST":
+            if request.POST["action_on_id_prefix"] == "add":
+                matrix = request.POST["matrix"]
+                next_id_prefix = request.POST["next_id_prefix"]
+
+                CurriculumManager().add_id_prefix(
+                    matrix,
+                    next_id_prefix
+                    )
+
+                return redirect("display_prefixes")
+
+        return render(request, "add_id_prefix.html", {
+            "next_id_prefix": next_id_prefix
+            })
+
+
+@staff_member_required
+def display_prefixes(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        prefixes = CurriculumManager().display_prefixes()
+
+        return render(request, "display_prefixes.html", {
+            "prefixes": prefixes
             })
 
 
@@ -2279,28 +2453,127 @@ def sentence_stock(request):
 
 
 @staff_member_required
-def upload_sets(request):
+def add_to_sentence_stock(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        next_sentence_id = SentenceManager().display_next_sentence_id()
+
         if request.method == "POST":
-            csv_file = request.FILES["csv_file"]
+            if request.POST["action_on_sentence_stock"] == "add":
+                sentence_id = request.POST["sentence_id"]
+                polish = request.POST["polish"]
+                english = request.POST["english"]
+                glossary = request.POST["glossary"]
 
-            file = csv_file.read().decode("utf8")
-            entries = StringToCsv().convert(file)
-
-            for entry in entries:
-                upload_sentence_stock = SentenceManager().upload_sets(
-                    entry[0],
-                    entry[1]
+                SentenceManager().upload_sentence_stock(
+                    sentence_id,
+                    polish,
+                    english,
+                    glossary
                     )
 
-            messages.success(request, ("The file has been uploaded!"))
-            return redirect("upload_sets.html")
+                messages.success(request, ("Sentence added!"))
+                return redirect("add_to_sentence_stock")
 
-        return render(request, "upload_sets.html", {})
+        return render(request, "add_to_sentence_stock.html", {
+            "next_sentence_id": next_sentence_id
+            })
+
+
+@staff_member_required
+def compose_set(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        sentences = SentenceManager().display_sentence_stock()
+        next_set_id = SentenceManager().display_next_set_id()
+
+        if request.method == "POST":
+            if request.POST["action_on_set"] == "compose":
+                set_id = request.POST["set_id"]
+                set_name = request.POST["set_name"]
+                sentence_1 = request.POST["sentence_1"]
+                sentence_2 = request.POST["sentence_2"]
+                sentence_3 = request.POST["sentence_3"]
+                sentence_4 = request.POST["sentence_4"]
+                sentence_5 = request.POST["sentence_5"]
+                sentence_6 = request.POST["sentence_6"]
+                sentence_7 = request.POST["sentence_7"]
+                sentence_8 = request.POST["sentence_8"]
+                sentence_9 = request.POST["sentence_9"]
+                sentence_10 = request.POST["sentence_10"]
+
+                sentence_ids_list = []
+                sentence_ids_list.append(sentence_1)
+                sentence_ids_list.append(sentence_2)
+                sentence_ids_list.append(sentence_3)
+                sentence_ids_list.append(sentence_4)
+                sentence_ids_list.append(sentence_5)
+                sentence_ids_list.append(sentence_6)
+                sentence_ids_list.append(sentence_7)
+                sentence_ids_list.append(sentence_8)
+                sentence_ids_list.append(sentence_9)
+                sentence_ids_list.append(sentence_10)
+
+                sentence_ids = ",".join(sentence_ids_list)
+
+                SentenceManager().add_set(
+                    set_id,
+                    set_name,
+                    sentence_ids
+                    )
+
+                messages.success(request, ("Set created!"))
+                return redirect("compose_set")
+
+        return render(request, "compose_set.html", {
+            "sentences": sentences,
+            "next_set_id": next_set_id
+            })
+
+
+@staff_member_required
+def display_sets(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        items = SentenceManager().display_sets()
+
+        if request.method == "POST":
+            if request.POST["action_on_set"] == "compose":
+
+                return redirect("display_sets")
+
+        return render(request, "display_sets.html", {
+            "items": items
+            })
+
+
+@staff_member_required
+def display_set(request, set_id):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        set_details = SentenceManager().display_set(set_id)
+        sentence_ids = set_details[2]
+        sentences = SentenceManager().display_sentences_by_id(sentence_ids)
+
+        print(sentences)
+
+        return render(request, "display_set.html", {
+            "set_id": set_id,
+            "set_details": set_details,
+            "sentences": sentences
+            })
 
 
 @staff_member_required
@@ -2746,7 +3019,9 @@ def download_assignments(request):
                     grade
                     )
 
-            return redirect("download_assignments.html")
+                DownloadManager().create_document()
+
+                return HttpResponse(opened_file, content_type='text/plain')
 
         return render(request, "download_assignments.html", {})
 
@@ -4408,6 +4683,133 @@ def course(request, course_id):
 
         return render(request, "course.html", {
             "course": course
+            })
+
+
+@login_required
+def add_ticket(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        clients = ClientsManager().list_current_users()
+        staff = User.objects.filter(is_staff=True)
+
+        if request.method == "POST":
+            if request.POST["action_on_ticket"] == "submit":
+                client = request.POST["client"]
+                ticket_type = request.POST["ticket_type"]
+                subject = request.POST["subject"]
+                description = request.POST["description"]
+                assigned_user = request.POST["assigned_user"]
+                responsible_user = request.POST["responsible_user"]
+                sentiment = request.POST["sentiment"]
+
+                if assigned_user == "-":
+                    status = "new"
+                else:
+                    status = "assigned"
+
+                BackOfficeManager().add_ticket(
+                    client,
+                    ticket_type,
+                    subject,
+                    description,
+                    assigned_user,
+                    responsible_user,
+                    status,
+                    sentiment,
+                    current_user
+                    )
+
+                return redirect("display_tickets")
+
+        return render(request, "add_ticket.html", {
+            "clients": clients,
+            "staff": staff
+            })
+
+
+@staff_member_required
+def display_open_tickets(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        tickets = BackOfficeManager().display_open_tickets()
+
+        return render(request, "display_open_tickets.html", {
+            "tickets": tickets
+            })
+
+
+@staff_member_required
+def display_closed_tickets(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        tickets = BackOfficeManager().display_closed_tickets()
+
+        return render(request, "display_closed_tickets.html", {
+            "tickets": tickets
+            })
+
+
+@staff_member_required
+def display_ticket(request, ticket_id):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        ticket = BackOfficeManager().display_ticket(ticket_id)
+        staff = User.objects.filter(is_staff=True)
+
+        if request.method == "POST":
+            if request.POST["action_on_ticket"] == "assign":
+                assigned_user = request.POST["assigned_user"]
+
+                BackOfficeManager().assign_user_to_ticket(ticket_id, assigned_user)
+                BackOfficeManager().change_ticket_status(ticket_id, "assigned")
+
+                return redirect("display_ticket", ticket_id=ticket_id)
+
+            elif request.POST["action_on_ticket"] == "solve":
+
+                BackOfficeManager().change_ticket_status(ticket_id, "in_progress")
+
+                return redirect("display_ticket", ticket_id=ticket_id)
+
+            elif request.POST["action_on_ticket"] == "close":
+                response = request.POST["response"]
+
+                BackOfficeManager().add_response_to_ticket(ticket_id, response)
+                BackOfficeManager().close_ticket(ticket_id)
+                BackOfficeManager().change_ticket_status(ticket_id, "closed")
+
+                return redirect("display_closed_tickets")
+
+            elif request.POST["action_on_ticket"] == "reopen":
+
+                BackOfficeManager().assign_user_to_ticket(ticket_id, "-")
+                BackOfficeManager().change_ticket_status(ticket_id, "new")
+
+                return redirect("display_ticket", ticket_id=ticket_id)
+
+            elif request.POST["action_on_ticket"] == "comment":
+                comment = request.POST["comment"]
+
+                BackOfficeManager().comment_on_ticket(ticket_id, comment)
+
+                return redirect("display_ticket", ticket_id=ticket_id)
+
+        return render(request, "display_ticket.html", {
+            "ticket": ticket,
+            "staff": staff
             })
 
 

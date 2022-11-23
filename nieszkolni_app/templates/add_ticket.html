@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>SUBMIT A TICKET</h1>
+
+<form action="{% url 'add_ticket' %}"  method="POST">
+	{% csrf_token %}
+
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+        <label class="input_label">Client</label>
+
+            <select required class="input_content" name="client">
+                <option disabled selected value></option>
+
+                {% for client in clients %}
+                    <option value="{{ client }}">{{ client }}</option>
+                {% endfor %}
+
+            </select>
+
+        </div>
+    </div>
+
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+        <label class="input_label">Type</label>
+
+            <select required class="input_content" name="ticket_type">
+                <option disabled selected value></option>
+
+                    <option value="complaint">complaint</option>
+
+            </select>
+
+        </div>
+    </div>
+
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+            <label class="input_label">Subject</label>
+            <input type="text" class="input_content" name="subject">
+        </div>
+    </div>
+
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+            <label class="input_label">Description</label>
+            <textarea type="text" class="input_content input_paragraph" name="description"></textarea>
+        </div>
+    </div>
+
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+        <label class="input_label">Assigned employee to solve the ticket</label>
+
+            <select required class="input_content" name="assigned_user">
+                <option disabled selected value></option>
+                <option value="-">-</option>
+
+                {% for person in staff %}
+                    <option value="{{ person.get_full_name }}">{{ person.get_full_name }}</option>
+                {% endfor %}
+
+            </select>
+
+        </div>
+    </div>
+
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+        <label class="input_label">Employee at fault</label>
+
+            <select required class="input_content" name="responsible_user">
+                <option disabled selected value></option>
+                <option value="nobody">nobody</option>
+
+                {% for person in staff %}
+                    <option value="{{ person.get_full_name }}">{{ person.get_full_name }}</option>
+                {% endfor %}
+
+            </select>
+
+        </div>
+    </div>
+
+    </div>
+
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+        <label class="input_label">Sentiment</label>
+
+            <select required class="input_content" name="sentiment">
+                <option disabled selected value></option>
+
+                    <option value="very_negative">Very negative</option>
+                    <option value="negative">Negative</option>
+                    <option value="neutral">Neutral</option>
+                    <option value="positive">Positive</option>
+                    <option value="very_positive">Very positive</option>
+
+            </select>
+
+        </div>
+    </div>
+
+    <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_ticket" value="submit">Submit</button>
+    </div>
+
+</form>
+
+{% endblock %}

@@ -2,10 +2,26 @@
 {% block 'content' %}
 {% include 'staff_menu.html' %}
 
-<h1>CREATE A MATRIX</h1>
+<h1>ADD A MODULE TO A MATRIX</h1>
 
 <form action="{% url 'add_matrix' %}" method="POST">
 	{% csrf_token %}
+
+  <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">Matrix</label>
+
+        <select required class="input_content" name="matrix">
+            <option disabled selected value></option>
+
+            {% for prefix in prefixes %}
+              <option value="{{ prefix.0 }}">{{ prefix.0 }}</option>
+            {% endfor %}
+
+        </select>
+
+    </div>
+  </div>
 
   <div class="flex-parent jc-center">
     <div class="input_container">
@@ -25,18 +41,29 @@
 
   <div class="flex-parent jc-center">
      <div class="input_container">
-      <label class="input_label">Matrix</label>
+      <label class="input_label">Week of the semester</label>
 
-        <input type="text" class="input_content" name="matrix">
+        <input type="number" class="input_content" name="week">
 
     </div>
   </div>
 
   <div class="flex-parent jc-center">
-     <div class="input_container">
-      <label class="input_label">Time limit</label>
+    <div class="input_container">
+      <label class="input_label">Day of the week</label>
 
-        <input type="number" class="input_content" name="limit_number">
+        <select required class="input_content" name="day">
+            <option disabled selected value></option>
+
+              <option value="1">Monday</option>
+              <option value="2">Tuesday</option>
+              <option value="3">Wednesday</option>
+              <option value="4">Thursday</option>
+              <option value="5">Friday</option>
+              <option value="6">Saturday</option>
+              <option value="7">Sunday</option>
+
+        </select>
 
     </div>
   </div>

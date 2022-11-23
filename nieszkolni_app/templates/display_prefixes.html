@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>MATRICES</h1>
+
+<table>
+
+		<tr class="font">
+
+			<th>Matrix</th>
+			<th>ID prefix</th>
+
+		</tr>
+
+	{% for prefix in prefixes %}
+
+		<tr class="font">
+
+			<td>{{ prefix.0 }}</td>
+			<td>{{ prefix.1 }}</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+{% include 'footer.html' %}
+{% endblock %}

@@ -35,7 +35,6 @@
 
       <div class="flex-parent jc-center">
           <div class="flex-parent jc-center">
-            <button type="submit" class="button_main" name="curriculum_action" value="choose_sentences" id="choose_sentences">Sentences</button>
             <button type="submit" class="button_main" name="curriculum_action" value="choose_quiz" id="choose_quiz">Quiz</button>
           </div>
           <button type="button" class="button_main" onclick="showHideInput()" id="other_modules">Other modules</button>
@@ -70,15 +69,12 @@
 
   function showHideInput() {
   var modules = document.getElementById("list_of_modules");
-  var choose_button = document.getElementById("choose_sentences");
   var choose_quiz = document.getElementById("choose_quiz");
   if (modules.style.display === "none") {
     modules.style.display = "block";
-    choose_button.style.display = "none";
     choose_quiz.style.display = "none";
     } else {
       modules.style.display = "none";
-      choose_button.style.display = "block";
       choose_quiz.style.display = "block"; 
     }
   }

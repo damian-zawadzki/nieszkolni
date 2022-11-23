@@ -16,6 +16,7 @@
 					{% csrf_token %}
 					 <div class="flex-parent jc-center">
 					  		<input type="hidden" name="unique_id" value="{{ submission.4 }}">
+					  		<input type="hidden" name="item" value="{{ submission.5 }}">
 					  	<div class="list_button">
 							<button type="submit" class="button_main" name="submission_action" value="explore">Explore</button>
 						</div>

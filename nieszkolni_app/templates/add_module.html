@@ -1,41 +1,37 @@
 {% extends 'base.html' %}
 {% block 'content' %}
-{% include 'staff_menu.html' %}
 
 <h1>CREATE A MODULE</h1>
 
-<form action="{% url 'add_module' %}" method="POST">
+<form action="{% url 'add_module' component=component id_prefix=id_prefix reference=reference resources=resources %}" method="POST">
 	{% csrf_token %}
 
   <div class="flex-parent jc-center">
-     <div class="input_container">
+    <div class="input_container">
       <label class="input_label">Component</label>
-
-        <select required class="input_content" name="component_type">
-            <option disabled selected value></option>
-
-            {% for component in components %}
-              <option value="{{ component.0 }}">{{ component.0 }}</option>
-            {% endfor %}
-
-        </select>
-
+      <input required type="text" class="input_content input_prefilled" name="component" value="{{ component }}">
     </div>
   </div>
 
   <div class="flex-parent jc-center">
+    <div class="input_container">
+      <label class="input_label">ID prefix</label>
+      <input required type="text" class="input_content input_prefilled" name="id_prefix" value="{{ id_prefix }}">
+    </div>
+  </div>
+
+
+  <div class="flex-parent jc-center">
      <div class="input_container">
-      <label class="input_label">ID</label>
-
-        <input type="number" class="input_content" name="component_id_number">
-
+      <label class="input_label">ID suffix</label>
+      <input type="number" class="input_content input_prefilled" name="id_suffix" value="{{ next_id_suffix }}">
     </div>
   </div>
 
   <div class="flex-parent jc-center">
     <div class="input_container">
       <label class="input_label">Title</label>
-        <input required type="text" class="input_content" name="title">
+      <input required type="text" class="input_content" name="title">
     </div>
   </div>
 
@@ -43,12 +39,6 @@
     <div class="input_container">
       <label class="input_label">Content</label>
       <textarea required type="text" class="input_content input_paragraph" name="content"></textarea>
-    </div>
-  </div>
-  <div class="flex-parent jc-center">
-    <div class="input_container">
-      <label class="input_label">Resources</label>
-      <textarea required type="text" class="input_content input_paragraph" name="resources"></textarea>
     </div>
   </div>
 

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>CREATE A MODULE</h1>
+
+<form action="{% url 'choose_component' %}" method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Component</label>
+
+        <select required class="input_content" name="component">
+            <option disabled selected value></option>
+
+            {% for component in components %}
+              <option value="{{ component.0 }}">{{ component.0 }}</option>
+            {% endfor %}
+
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_module" value="next">Next</button>
+  </div>
+
+</form>
+
+{% endblock %}

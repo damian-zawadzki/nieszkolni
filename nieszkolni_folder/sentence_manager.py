@@ -26,7 +26,8 @@ class SentenceManager:
                 polish,
                 english,
                 glossary
-                ) VALUES (
+                )
+                VALUES (
                 {sentence_id},
                 '{polish}',
                 '{english}',
@@ -47,32 +48,101 @@ class SentenceManager:
 
             return sentences
 
-    def upload_sets(self, set_name, sentence_id):
+    def display_next_sentence_id(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT sentence_id
+                FROM nieszkolni_app_sentencestock
+                ORDER BY sentence_id DESC
+                LIMIT 1
+                ''')
+
+            data = cursor.fetchone()
+
+            if data is None:
+                next_sentence_id = 10001
+            else:
+                next_sentence_id = int(data[0]) + 1
+
+            return next_sentence_id
+
+    def display_sentences_by_id(self, sentence_ids):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT sentence_id, polish, english, glossary
+                FROM nieszkolni_app_sentencestock
+                WHERE sentence_id IN ({sentence_ids})
+                ''')
+
+            sentences = cursor.fetchall()
+
+            return sentences
+
+    def add_set(self, set_id, set_name, sentence_ids):
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 INSERT INTO nieszkolni_app_set (
+                set_id,
                 set_name,
-                sentence_id
-                ) VALUES (
+                sentence_ids
+                )
+                VALUES (
+                '{set_id}',
                 '{set_name}',
-                {sentence_id}
+                '{sentence_ids}'
                 )
                 ON CONFLICT
                 DO NOTHING
                 ''')
 
-    def display_set_names(self):
+    def display_next_set_id(self):
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                SELECT DISTINCT set_name 
+                SELECT set_id
                 FROM nieszkolni_app_set
-                ORDER BY set_name
+                ORDER BY set_id DESC
+                LIMIT 1
                 ''')
 
-            set_names_raw = cursor.fetchall()
-            set_names = [set_name[0] for set_name in set_names_raw]
+            data = cursor.fetchone()
 
-            return set_names
+            if data is None:
+                next_set_id = 10000
+            else:
+                next_set_id = int(data[0]) + 1
+
+            return next_set_id
+
+    def display_sets(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT set_id, set_name
+                FROM nieszkolni_app_set
+                ORDER BY set_id
+                ''')
+
+            sets = cursor.fetchall()
+
+            return sets
+
+    def display_set(self, set_id):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT set_id, set_name, sentence_ids
+                FROM nieszkolni_app_set
+                WHERE set_id = '{set_id}'
+                ''')
+
+            set_details = cursor.fetchone()
+
+            return set_details
+
+    def remove_set(self, set_id):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                DELETE FROM nieszkolni_app_set
+                WHERE set_id = '{set_id}'
+                ''')
 
     def next_list_number(self):
         with connection.cursor() as cursor:
@@ -93,20 +163,18 @@ class SentenceManager:
                 next_list_number = int(last_list_number) + 1
                 return next_list_number
 
-    def compose_sentence_lists(self, name, set_name):
+    def compose_sentence_lists(self, name, item, set_id, sentence_ids):
         next_list_number = self.next_list_number()
 
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 SELECT
-                stock.sentence_id,
-                stock.polish,
-                stock.english,
-                stock.glossary
-                FROM nieszkolni_app_sentencestock stock
-                INNER JOIN nieszkolni_app_set s
-                ON s.sentence_id = stock.sentence_id
-                WHERE s.set_name = '{set_name}'
+                sentence_id,
+                polish,
+                english,
+                glossary
+                FROM nieszkolni_app_sentencestock
+                WHERE sentence_id IN ({sentence_ids})
                 ''')
 
             entries = cursor.fetchall()
@@ -127,7 +195,9 @@ class SentenceManager:
                     "name": name,
                     "polish": entry[1],
                     "english": entry[2],
-                    "glossary": entry[3]
+                    "glossary": entry[3],
+                    "set_id": set_id,
+                    "item": item
                     })
 
                 if subindex == 10:
@@ -150,10 +220,12 @@ class SentenceManager:
             glossary = sentence.get("glossary")
             submission_stamp = 0
             submission_date = 0
-            status = "generated"
+            status = "planned"
             translation = ""
             result = ""
             reviewing_user = ""
+            set_id = sentence.get("set_id")
+            item = sentence.get("item")
 
             with connection.cursor() as cursor:
                 cursor.execute(f'''
@@ -170,26 +242,45 @@ class SentenceManager:
                     status,
                     translation,
                     result,
-                    reviewing_user
+                    reviewing_user,
+                    set_id,
+                    item
                     )
                     VALUES (
-                    {list_number},
-                    {sentence_number},
-                    {sentence_id},
+                    '{list_number}',
+                    '{sentence_number}',
+                    '{sentence_id}',
                     '{name}',
                     '{polish}',
                     '{english}',
                     '{glossary}',
-                    {submission_stamp},
-                    {submission_date},
+                    '{submission_stamp}',
+                    '{submission_date}',
                     '{status}',
                     '{translation}',
                     '{result}',
-                    '{reviewing_user}'
+                    '{reviewing_user}',
+                    '{set_id}',
+                    '{item}'
                     )
                     ON CONFLICT (sentence_number)
                     DO NOTHING
                     ''')
+
+    def find_list_number_by_item(self, item):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT list_number
+                FROM nieszkolni_app_composer
+                WHERE item = '{item}'
+                ''')
+
+            list_number = cursor.fetchone()
+
+            if list_number is not None:
+                list_number = list_number[0]
+
+            return list_number
 
     def display_planned_sentences_per_student(self, name):
         with connection.cursor() as cursor:

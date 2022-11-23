@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>ADD A SENTENCE TO SENTENCE STOCK</h1>
+
+<form action="{% url 'add_to_sentence_stock' %}"  method="POST">
+	{% csrf_token %}
+
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+            <label class="input_label">Sentence ID</label>
+            <input type="text" class="input_content input_prefilled" name="sentence_id" value="{{ next_sentence_id }}">
+        </div>
+    </div>
+
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+            <label class="input_label">Polish</label>
+            <textarea type="text" class="input_content input_paragraph" name="polish">{{ course.2 }}</textarea>
+        </div>
+    </div>
+
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+            <label class="input_label">English</label>
+            <textarea type="text" class="input_content input_paragraph" name="english">{{ course.2 }}</textarea>
+        </div>
+    </div>
+
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+            <label class="input_label">Glossary (phrases separated with a "/")</label>
+            <textarea type="text" class="input_content input_paragraph" name="glossary">{{ course.2 }}</textarea>
+        </div>
+    </div>
+
+    <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_sentence_stock" value="add">Add</button>
+    </div>
+
+</form>
+
+{% endblock %}

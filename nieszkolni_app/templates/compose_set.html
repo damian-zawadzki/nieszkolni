@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>COMPOSE A SET</h1>
+
+<form action="{% url 'compose_set' %}"  method="POST">
+	{% csrf_token %}
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Set ID</label>
+         <input type="text" class="input_content input_prefilled" name="set_id" value="{{ next_set_id }}">
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Set name</label>
+         <input type="text" class="input_content" name="set_name">
+      </div>
+   </div>
+
+   <div class="input_container">
+      <label class="input_label">Sentence 1</label>  
+      <input name="sentence_1" type="text" class="input_content" list="sentence_1">
+
+      <datalist id="sentence_1">
+
+         {% for sentence in sentences %}
+            <option value="{{ sentence.0 }}">{{ sentence.1 }}</option>
+         {% endfor %}
+
+      </datalist>
+
+   </div>
+
+   <div class="input_container">
+      <label class="input_label">Sentence 2</label>  
+      <input name="sentence_2" type="text" class="input_content" list="sentence_2">
+
+      <datalist id="sentence_2">
+
+         {% for sentence in sentences %}
+            <option value="{{ sentence.0 }}">{{ sentence.1 }}</option>
+         {% endfor %}
+
+      </datalist>
+
+   </div>
+
+   <div class="input_container">
+      <label class="input_label">Sentence 3</label>  
+      <input name="sentence_3" type="text" class="input_content" list="sentence_3">
+
+      <datalist id="sentence_3">
+
+         {% for sentence in sentences %}
+            <option value="{{ sentence.0 }}">{{ sentence.1 }}</option>
+         {% endfor %}
+
+      </datalist>
+
+   </div>
+
+   <div class="input_container">
+      <label class="input_label">Sentence 4</label>  
+      <input name="sentence_4" type="text" class="input_content" list="sentence_4">
+
+      <datalist id="sentence_4">
+
+         {% for sentence in sentences %}
+            <option value="{{ sentence.0 }}">{{ sentence.1 }}</option>
+         {% endfor %}
+
+      </datalist>
+
+   </div>
+
+   <div class="input_container">
+      <label class="input_label">Sentence 5</label>  
+      <input name="sentence_5" type="text" class="input_content" list="sentence_5">
+
+      <datalist id="sentence_5">
+
+         {% for sentence in sentences %}
+            <option value="{{ sentence.0 }}">{{ sentence.1 }}</option>
+         {% endfor %}
+
+      </datalist>
+
+   </div>
+
+   <div class="input_container">
+      <label class="input_label">Sentence 6</label>  
+      <input name="sentence_6" type="text" class="input_content" list="sentence_6">
+
+      <datalist id="sentence_6">
+
+         {% for sentence in sentences %}
+            <option value="{{ sentence.0 }}">{{ sentence.1 }}</option>
+         {% endfor %}
+
+      </datalist>
+
+   </div>
+
+   <div class="input_container">
+      <label class="input_label">Sentence 7</label>  
+      <input name="sentence_7" type="text" class="input_content" list="sentence_7">
+
+      <datalist id="sentence_7">
+
+         {% for sentence in sentences %}
+            <option value="{{ sentence.0 }}">{{ sentence.1 }}</option>
+         {% endfor %}
+
+      </datalist>
+
+   </div>
+
+   <div class="input_container">
+      <label class="input_label">Sentence 8</label>  
+      <input name="sentence_8" type="text" class="input_content" list="sentence_8">
+
+      <datalist id="sentence_8">
+
+         {% for sentence in sentences %}
+            <option value="{{ sentence.0 }}">{{ sentence.1 }}</option>
+         {% endfor %}
+
+      </datalist>
+
+   </div>
+
+   <div class="input_container">
+      <label class="input_label">Sentence 9</label>  
+      <input name="sentence_9" type="text" class="input_content" list="sentence_9">
+
+      <datalist id="sentence_9">
+
+         {% for sentence in sentences %}
+            <option value="{{ sentence.0 }}">{{ sentence.1 }}</option>
+         {% endfor %}
+
+      </datalist>
+
+   </div>
+
+   <div class="input_container">
+      <label class="input_label">Sentence 10</label>  
+      <input name="sentence_10" type="text" class="input_content" list="sentence_10">
+
+      <datalist id="sentence_10">
+
+         {% for sentence in sentences %}
+            <option value="{{ sentence.0 }}">{{ sentence.1 }}</option>
+         {% endfor %}
+
+      </datalist>
+
+   </div>
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_set" value="compose">Compose</button>
+  </div>
+
+</form>
+
+{% endblock %}

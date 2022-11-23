@@ -96,7 +96,19 @@ class SubmissionManager:
     def display_students_assignment(self, unique_id):
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                SELECT date, title, content, wordcount, unique_id, flagged_content, grade, major_errors, minor_errors, status, assignment_type
+                SELECT
+                date,
+                title,
+                content,
+                wordcount,
+                unique_id,
+                flagged_content,
+                grade,
+                major_errors,
+                minor_errors,
+                status,
+                assignment_type,
+                item
                 FROM nieszkolni_app_submission
                 WHERE unique_id = {unique_id}
                 ''')

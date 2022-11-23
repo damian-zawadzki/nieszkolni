@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% include 'staff_menu.html' %}
+
+<h1>CREATE A MATRIX</h1>
+
+<form action="{% url 'add_id_prefix' %}"  method="POST">
+	{% csrf_token %}
+
+   <div class="flex-parent jc-center" id="collection_name_box">
+      <div class="input_container">
+         <label class="input_label">Matrix</label>
+         <input type="text" class="input_content" id="collection_name" name="matrix">
+      </div>
+   </div>
+
+   <input type="hidden" name="next_id_prefix" value="{{ next_id_prefix }}">
+
+   <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_id_prefix" value="add">Add</button>
+   </div>
+
+</form>
+
+{% endblock %}

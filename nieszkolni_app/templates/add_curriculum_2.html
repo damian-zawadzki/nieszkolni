@@ -43,35 +43,18 @@
     </div>
   </div>
 
-  {% if assignment_type == 'sentences' %}
-
-    <input type="hidden" class="input_content input_prefilled" name="reference" value="0">
-
-  {% else %}
-
-    <div class="flex-parent jc-center">
-       <div class="input_container">
-        <label class="input_label">Reference</label>
-        <input type="number" class="input_content input_prefilled" name="reference" value="{{ module.6 }}">
-      </div>
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Reference</label>
+      <input type="number" class="input_content input_prefilled" name="reference" value="{{ module.6 }}">
     </div>
-
-  {% endif %}
+  </div>
 
   <div class="flex-parent jc-center">
     <div class="input_container">
       <label class="input_label">Title</label>
 
-      {% if assignment_type == 'sentences' %}
-
-        <select class="input_content" name="title">
-          <option disabled selected value></option>
-           {% for entry in entries %}
-          <option value="Translate {{ entry.0 }}">Translate {{ entry.0 }}</option>
-          {% endfor %}
-        </select>
-
-      {% elif assignment_type == 'quiz' %}
+      {% if  assignment_type == 'quiz' %}
 
         <select class="input_content" name="title">
           <option disabled selected value></option>
