@@ -383,6 +383,7 @@ class Assessment(models.Model):
     quiz_id = models.IntegerField(default=0, primary_key=True)
     client = models.CharField(max_length=200, default="")
     status = models.CharField(max_length=200, default="")
+    item = models.IntegerField(default=0)
 
 
 class Collection(models.Model):

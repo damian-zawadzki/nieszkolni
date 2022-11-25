@@ -24,6 +24,7 @@ from nieszkolni_folder.back_office_manager import BackOfficeManager
 from nieszkolni_folder.document_manager import DocumentManager
 from nieszkolni_folder.roadmap_manager import RoadmapManager
 from nieszkolni_folder.download_manager import DownloadManager
+from nieszkolni_folder.quiz_manager import QuizManager
 import csv
 import re
 import json
@@ -838,8 +839,8 @@ def submit_assignment(request):
             elif request.POST["go_to"] == "take_quiz":
                 item = request.POST["item"]
                 title = request.POST["title"]
-                quiz_id = title.replace("Take ", "")
-                quiz_question_id = KnowledgeManager().display_next_generated_question(quiz_id)
+                quiz_id = QuizManager().find_quiz_id_by_item(item)
+                quiz_question_id = QuizManager().display_next_generated_question(quiz_id)
 
                 return redirect(f"take_quiz/{quiz_question_id}/{item}")
 
@@ -1182,13 +1183,11 @@ def add_curriculum(request, client=""):
                         sentence_ids,
                         )
 
-                messages.success(request, ("Curriculum extended!"))
-                return render(request, "add_curriculum.html", {
-                    "client": name,
-                    "names": names,
-                    "modules": modules,
-                    "module_status": module_status
-                    })
+                elif assignment_type == "quiz":
+                    QuizManager().plan_quiz(name, item, reference)
+
+                messages.success(request, ("Module added to curricula!"))
+                return redirect("add_curriculum")
 
         return render(request, "add_curriculum.html", {
             "client": client,
@@ -1379,11 +1378,22 @@ def choose_id_prefix(request, component):
         if request.method == "POST":
             id_prefix = request.POST["id_prefix"]
 
-            return redirect(
-                "choose_reference",
-                component=component,
-                id_prefix=id_prefix
-                )
+            if (component == "sentences" or
+                component == "reading" or
+                    component == "quiz"):
+
+                return redirect(
+                    "choose_reference",
+                    component=component,
+                    id_prefix=id_prefix
+                    )
+            else:
+                return redirect(
+                    "choose_resources",
+                    component=component,
+                    id_prefix=id_prefix,
+                    reference=-1
+                    )
 
         return render(request, "choose_id_prefix.html", {
             "component": component,
@@ -1402,6 +1412,8 @@ def choose_reference(request, component, id_prefix):
             references = BackOfficeManager().display_library()
         elif component == "sentences":
             references = SentenceManager().display_sets()
+        elif component == "quiz":
+            references = KnowledgeManager().display_collection_ids()
 
         if request.method == "POST":
             reference = request.POST["reference"]
@@ -1419,7 +1431,7 @@ def choose_reference(request, component, id_prefix):
                     resources=resources
                     )
 
-            elif component == "sentences":
+            else:
 
                 resources = "-"
 
@@ -3909,7 +3921,7 @@ def add_question(request):
                 correct_answer = request.POST["correct_answer"]
                 question_type = request.POST["question_type"]
 
-                KnowledgeManager().add_question(
+                QuizManager().add_question(
                     description,
                     question,
                     answer_a,
@@ -3933,13 +3945,13 @@ def display_questions(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        questions = KnowledgeManager().display_questions()
+        questions = QuizManager().display_questions()
 
         if request.method == "POST":
             if request.POST["action_on_question"] == "more":
                 question_id = request.POST["question_id"]
 
-                question = KnowledgeManager().display_question(question_id)
+                question = QuizManager().display_question(question_id)
 
                 return render(request, "update_question.html", {
                     "question": question
@@ -3956,7 +3968,7 @@ def display_questions(request):
                 question_type = request.POST["question_type"]
                 question_id = request.POST["question_id"]
 
-                KnowledgeManager().update_question(
+                QuizManager().update_question(
                     description,
                     question,
                     answer_a,
@@ -3982,9 +3994,9 @@ def add_collection(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        next_collection_id = KnowledgeManager().display_next_collection_id()
-        collection_ids = KnowledgeManager().display_collection_ids()
-        questions = KnowledgeManager().display_questions()
+        next_collection_id = QuizManager().display_next_collection_id()
+        collection_ids = QuizManager().display_collection_ids()
+        questions = QuizManager().display_questions()
 
         if request.method == "POST":
             if request.POST["action_on_collection"] == "update":
@@ -3992,20 +4004,16 @@ def add_collection(request):
                 collection_id = request.POST["collection_id"]
                 question_id = request.POST["question_id"]
 
-                KnowledgeManager().add_collection(
+                QuizManager().add_collection(
                     collection_name,
                     collection_id,
                     question_id
                     )
 
-            next_collection_id = KnowledgeManager().display_next_collection_id()
+            next_collection_id = QuizManager().display_next_collection_id()
 
             messages.success(request, ("Collection updated!"))
-            return render(request, "add_collection.html", {
-                "next_collection_id": next_collection_id,
-                "collection_ids": collection_ids,
-                "questions": questions
-                })
+            return redirect("add_collection")
 
         return render(request, "add_collection.html", {
             "next_collection_id": next_collection_id,
@@ -4021,13 +4029,13 @@ def display_collection(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        collection_ids = KnowledgeManager().display_collection_ids()
+        collection_ids = QuizManager().display_collection_ids()
 
         if request.method == "POST":
             if request.POST["action_on_collection"] == "search":
                 collection_id = request.POST["collection_id"]
 
-                questions = KnowledgeManager().display_collection(collection_id)
+                questions = QuizManager().display_collection(collection_id)
 
                 return render(request, "display_collection.html", {
                     "collection_ids": collection_ids,
@@ -4036,103 +4044,6 @@ def display_collection(request):
 
         return render(request, "display_collection.html", {
             "collection_ids": collection_ids,
-            })
-
-
-@staff_member_required
-def add_quiz(request):
-    if request.user.is_authenticated:
-        first_name = request.user.first_name
-        last_name = request.user.last_name
-        current_user = first_name + " " + last_name
-
-        next_quiz_id = KnowledgeManager().display_next_quiz_id()
-        clients = ClientsManager().list_current_users()
-
-        if request.method == "POST":
-            if request.POST["action_on_quiz"] == "add":
-                quiz_id = request.POST["quiz_id"]
-                client = request.POST["client"]
-
-                KnowledgeManager().add_quiz(
-                    quiz_id,
-                    client
-                    )
-
-                next_quiz_id = KnowledgeManager().display_next_quiz_id()
-
-                messages.success(request, ("Quiz registered!"))
-                return redirect("add_question_to_quiz", client=client, quiz_id=quiz_id)
-
-        return render(request, "add_quiz.html", {
-            "next_quiz_id": next_quiz_id,
-            "clients": clients
-            })
-
-
-@staff_member_required
-def add_question_to_quiz(request, client="", quiz_id=0):
-    if request.user.is_authenticated:
-        first_name = request.user.first_name
-        last_name = request.user.last_name
-        current_user = first_name + " " + last_name
-
-        clients = ClientsManager().list_current_users()
-        collection_ids = KnowledgeManager().display_collection_ids()
-
-        if request.method == "POST":
-            if request.POST["action_on_quiz"] == "search":
-                client = request.POST["client"]
-
-                quiz_ids = KnowledgeManager().display_registered_quiz_ids_per_client(client)
-
-                return render(request, "add_question_to_quiz_2.html", {
-                    "client": client,
-                    "quiz_id": quiz_id,
-                    "quiz_ids": quiz_ids,
-                    "collection_ids": collection_ids,
-                    })
-
-            elif request.POST["action_on_quiz"] == "plan":
-                client = request.POST["client"]
-                quiz_id = request.POST["quiz_id"]
-                collection_name = request.POST["collection_name"]
-                collection_id = request.POST["collection_id"]
-
-                print(collection_name)
-
-                rows = KnowledgeManager().display_collection(collection_id)
-
-                next_position = KnowledgeManager().questions_per_quiz_plus_1(quiz_id)
-                i = 0
-
-                for row in rows:
-                    question_id = row[0]
-
-                    position = next_position + i
-                    position_number = f"{position:02d}"
-                    quiz_question_id = f"{quiz_id}{position_number}"
-
-                    KnowledgeManager().add_question_to_quiz(
-                        quiz_id,
-                        question_id,
-                        client,
-                        collection_name,
-                        collection_id,
-                        quiz_question_id
-                        )
-
-                    i += 1
-
-                KnowledgeManager().update_quiz_status(quiz_id, "planned")
-
-                messages.success(request, ("Quiz planned!"))
-                return redirect("add_curriculum", client=client)
-
-        return render(request, "add_question_to_quiz.html", {
-            "client": client,
-            "quiz_id": quiz_id,
-            "clients": clients,
             })
 
 
@@ -4180,14 +4091,14 @@ def take_quiz(request, quiz_question_id, item):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        quiz = KnowledgeManager().display_quiz(quiz_question_id)
+        quiz = QuizManager().display_quiz(quiz_question_id)
         quiz_id = str(quiz_question_id)[:-2]
 
-        number_of_questions = KnowledgeManager().display_number_of_questions(quiz_id)
+        number_of_questions = QuizManager().display_number_of_questions(quiz_id)
 
         if number_of_questions == 0 or quiz_question_id == 0:
             CurriculumManager().change_status_to_completed(item, current_user)
-            KnowledgeManager().update_quiz_status(quiz_id, "completed")
+            QuizManager().update_quiz_status(quiz_id, "completed")
             messages.success(request, ("You've completed the quiz!"))
 
         try:
@@ -4205,11 +4116,11 @@ def take_quiz(request, quiz_question_id, item):
                 next_quiz_question_id = int(quiz_question_id) + 1
 
                 # Tick off the task in student's to-do list
-                number_of_questions = KnowledgeManager().display_number_of_questions(quiz_id)
+                number_of_questions = QuizManager().display_number_of_questions(quiz_id)
                 if number_of_questions == 0:
-                    result = KnowledgeManager().display_result(quiz_id)
+                    result = QuizManager().display_result(quiz_id)
                     CurriculumManager().change_status_to_completed(item, current_user)
-                    KnowledgeManager().update_quiz_status(quiz_id, "completed")
+                    QuizManager().update_quiz_status(quiz_id, "completed")
 
                     return render(request, "take_quiz_3.html", {
                         "quiz_question_id": quiz_question_id,
@@ -4236,7 +4147,7 @@ def take_quiz(request, quiz_question_id, item):
                 else:
                     result = "incorrect"
 
-                KnowledgeManager().record_answer(
+                QuizManager().record_answer(
                     quiz_id,
                     question_id,
                     current_user,
@@ -4723,7 +4634,7 @@ def add_ticket(request):
                     current_user
                     )
 
-                return redirect("display_tickets")
+                return redirect("display_open_tickets")
 
         return render(request, "add_ticket.html", {
             "clients": clients,
