@@ -93,11 +93,19 @@
 
           {% if message.tags == 'success' %}
 
-            <div class="alert alert-success alert-dmissable" role="alert" id="info">
+            <div class="alert alert-success alert-dmissable" role="alert">
+
+          {% elif message.tags == 'info' %}
+
+            <div class="alert alert-info alert-dmissable" role="alert">
+
+          {% elif message.tags == 'warning' %}
+
+            <div class="alert alert-warning alert-dmissable" role="alert">
 
           {% else %}
 
-            <div class="alert alert-danger alert-dmissable" role="alert" id="info">
+            <div class="alert alert-danger alert-dmissable" role="alert">
 
           {% endif %}
 
@@ -191,11 +199,19 @@
 
           {% if message.tags == 'success' %}
 
-            <div class="alert alert-success alert-dmissable" role="alert" id="info">
+            <div class="alert alert-success alert-dmissable" role="alert">
+
+          {% elif message.tags == 'info' %}
+
+            <div class="alert alert-info alert-dmissable" role="alert">
+
+          {% elif message.tags == 'warning' %}
+
+            <div class="alert alert-warning alert-dmissable" role="alert">
 
           {% else %}
 
-            <div class="alert alert-danger alert-dmissable" role="alert" id="info">
+            <div class="alert alert-danger alert-dmissable" role="alert">
 
           {% endif %}
 

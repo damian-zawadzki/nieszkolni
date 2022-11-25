@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% block 'content' %}
-{% include 'staff_menu.html' %}
 
 <h1>PLAN A MATRIX</h1>
 
@@ -43,7 +42,14 @@
      <div class="input_container">
       <label class="input_label">Starting date</label>
 
-        <input type="date" class="input_content" name="starting_date">
+        <select required class="input_content" name="starting_date_number">
+            <option disabled selected value></option>
+
+            {% for sunday in sundays %}
+              <option value="{{ sunday.0 }}">{{ sunday.1 }}</option>
+            {% endfor %}
+
+        </select>
 
     </div>
   </div>

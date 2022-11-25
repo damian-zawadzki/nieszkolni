@@ -544,6 +544,18 @@ class BackOfficeManager:
 
             return end_of_semester
 
+    def display_option_by_command(self, command):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT value
+                FROM nieszkolni_app_option
+                WHERE command = '{command}'
+                ''')
+
+            data = cursor.fetchone()
+
+            return data
+
     def display_tags(self):
         with connection.cursor() as cursor:
             cursor.execute(f'''

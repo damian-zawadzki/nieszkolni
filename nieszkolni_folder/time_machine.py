@@ -185,3 +185,41 @@ class TimeMachine:
         date_number = self.date_to_number(date)
 
         return date_number
+
+    def display_sundays(self):
+        today = datetime.today()
+        weekday = datetime.today().weekday()
+        last_day = timedelta(days=105)
+
+        sundays = []
+
+        text = self.academic_week_start()
+        number = self.academic_week_start_number()
+        default_sunday = (number, text)
+
+        sundays.append(default_sunday)
+
+        for week in range(17, 0, -1):
+
+            pattern = (weekday + 1) + (week * 7)
+            difference = timedelta(days=pattern)
+
+            sunday = (today + last_day) - difference
+            sunday = datetime.strftime(sunday, today_pattern)
+
+            sunday_number = self.date_to_number(sunday)
+            entry = (sunday_number, sunday)
+
+            sundays.append(entry)
+
+        return sundays
+
+    def this_week_number_sign(self):
+        year = datetime.now().isocalendar().year
+        week = datetime.now().isocalendar().week
+
+        year_short = str(year)[2:4]
+        week_sign = f"{year_short}W{week:02d}"
+
+        return week_sign
+

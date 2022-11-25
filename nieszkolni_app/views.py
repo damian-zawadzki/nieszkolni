@@ -8,6 +8,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.conf import settings as django_settings
 from django.core.files.base import ContentFile, File
+
 from nieszkolni_folder.vocabulary_manager import VocabularyManager
 from nieszkolni_folder.clients_manager import ClientsManager
 from nieszkolni_folder.time_machine import TimeMachine
@@ -25,6 +26,10 @@ from nieszkolni_folder.document_manager import DocumentManager
 from nieszkolni_folder.roadmap_manager import RoadmapManager
 from nieszkolni_folder.download_manager import DownloadManager
 from nieszkolni_folder.quiz_manager import QuizManager
+from nieszkolni_folder.curriculum_planner import CurriculumPlanner
+from nieszkolni_folder.homework_manager import HomeworkManager
+from nieszkolni_folder.activity_manager import ActivityManager
+
 import csv
 import re
 import json
@@ -555,7 +560,17 @@ def staff(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        return render(request, "staff.html", {})
+        settlement = ActivityManager().check_if_settle_this_week()
+
+        if request.method == "POST":
+            if request.POST["action_on_system"] == "settle_last_week":
+                ActivityManager().settle_last_week_activity(current_user)
+
+                return redirect("staff")
+
+        return render(request, "staff.html", {
+            "settlement": settlement
+            })
 
 
 @staff_member_required
@@ -670,7 +685,6 @@ def profile(request):
                             result = CurriculumManager().display_assignment_status(item)
                     elif assessment_system == "component_ids":
                         component_id = course_details[9]
-                        print(component_id)
                         result = CurriculumManager().display_assignment_status_by_component_id(component_id)
 
                 else:
@@ -798,7 +812,6 @@ def submit_assignment(request):
         if request.method == "POST":
             if request.POST["go_to"] == "removal":
                 item = request.POST["item"]
-                name = request.POST["client"]
 
                 CurriculumManager().remove_curriculum(item)
 
@@ -806,7 +819,6 @@ def submit_assignment(request):
 
             if request.POST["go_to"] == "submission":
                 item = request.POST["item"]
-                current_user = request.POST["current_user"]
                 assignment_type = request.POST["assignment_type"]
 
                 return render(request, "submit_assignment_automatically.html", {
@@ -815,25 +827,38 @@ def submit_assignment(request):
                     "assignment_type": assignment_type
                     })
 
-            if request.POST["go_to"] == "marking_as_read":
+            elif request.POST["go_to"] == "mark_as_read":
                 item = request.POST["item"]
-                current_user = request.POST["current_user"]
 
-                check = CurriculumManager().change_status_to_completed(
+                product = HomeworkManager().mark_as_read(
                     item,
                     current_user
                     )
 
-                position = CurriculumManager().check_position_in_library(item)
-                value = position[2]
+                messages.add_message(request, getattr(messages, product[0]), product[1])
+                return redirect("assignments")
 
-                StreamManager().add_to_stream(
-                    current_user,
-                    "PV",
-                    value,
+            elif request.POST["go_to"] == "mark_as_done":
+                item = request.POST["item"]
+
+                product = HomeworkManager().mark_as_done(
+                    item,
                     current_user
                     )
 
+                messages.add_message(request, getattr(messages, product[0]), product[1])
+                return redirect("assignments")
+
+            elif request.POST["go_to"] == "check_stats":
+                item = request.POST["item"]
+
+                product = HomeworkManager().check_stats(
+                        item,
+                        current_user,
+                        "flashcards_7"
+                        )
+
+                messages.add_message(request, getattr(messages, product[0]), product[1])
                 return redirect("assignments")
 
             elif request.POST["go_to"] == "take_quiz":
@@ -846,7 +871,6 @@ def submit_assignment(request):
 
             elif request.POST["go_to"] == "translation":
                 item = request.POST["item"]
-                current_user = request.POST["current_user"]
                 assignment_type = request.POST["assignment_type"]
                 title = request.POST["title"]
                 list_number = SentenceManager().find_list_number_by_item(item)
@@ -900,7 +924,7 @@ def submit_assignment(request):
 
             else:
                 item = request.POST["item"]
-                name = request.POST["name"]
+                name = request.POST["client"]
                 assignment_type = request.POST["assignment_type"]
                 title = request.POST["title"]
                 content = request.POST["content"]
@@ -1151,18 +1175,11 @@ def add_curriculum(request, client=""):
                 conditions = request.POST["conditions"]
                 component_id = request.POST["component_id"]
 
-                component_type = assignment_type
-
-                if component_type == "sentences" or component_type == "quiz":
-                    component_id = re.sub(r"Translate\s|Take\s", "", title)
-                    component_id = f"{component_type}_{component_id}"
-
-                CurriculumManager().add_curriculum(
+                CurriculumPlanner().plan_curriculum(
                     item,
                     deadline,
                     name,
                     component_id,
-                    component_type,
                     assignment_type,
                     title,
                     content,
@@ -1171,20 +1188,6 @@ def add_curriculum(request, client=""):
                     conditions,
                     reference
                     )
-
-                if assignment_type == "sentences":
-                    set_details = SentenceManager().display_set(reference)
-                    set_id = set_details[0]
-                    sentence_ids = set_details[2]
-                    SentenceManager().compose_sentence_lists(
-                        name,
-                        item,
-                        set_id,
-                        sentence_ids,
-                        )
-
-                elif assignment_type == "quiz":
-                    QuizManager().plan_quiz(name, item, reference)
 
                 messages.success(request, ("Module added to curricula!"))
                 return redirect("add_curriculum")
@@ -1205,6 +1208,7 @@ def assignments(request):
         current_user = first_name + " " + last_name
 
         user_agent = get_user_agent(request)
+        score = ActivityManager().calculate_points_this_week(current_user)
 
         if request.method == "POST":
             item = request.POST["item"]
@@ -1219,13 +1223,15 @@ def assignments(request):
             if user_agent.is_mobile:
                 return render(request, "m_my_to_do_list.html", {
                     "uncomplated_assignments": uncomplated_assignments,
-                    "complated_assignments": complated_assignments
+                    "complated_assignments": complated_assignments,
+                    "score": score
                     })
 
             else:
                 return render(request, "assignments.html", {
                     "uncomplated_assignments": uncomplated_assignments,
-                    "complated_assignments": complated_assignments
+                    "complated_assignments": complated_assignments,
+                    "score": score
                     })
 
 
@@ -1392,7 +1398,7 @@ def choose_id_prefix(request, component):
                     "choose_resources",
                     component=component,
                     id_prefix=id_prefix,
-                    reference=-1
+                    reference=0
                     )
 
         return render(request, "choose_id_prefix.html", {
@@ -1581,8 +1587,6 @@ def display_matrices(request):
                 component_id = request.POST["component_id"]
                 matrix = request.POST["matrix"]
 
-                print(matrix)
-
                 CurriculumManager().remove_module_from_matrix(matrix, component_id)
 
                 return redirect("display_matrices")
@@ -1634,61 +1638,26 @@ def plan_matrix(request):
 
         matrices = CurriculumManager().display_matrices()
         clients = ClientsManager().list_current_clients()
+        sundays = TimeMachine().display_sundays()
 
         if request.method == "POST":
             client = request.POST["client"]
             matrix = request.POST["matrix"]
-            starting_date = request.POST["starting_date"]
-            starting_date_number = TimeMachine().date_to_number(starting_date)
+            starting_date_number = request.POST["starting_date_number"]
 
-            modules = CurriculumManager().display_matrix(matrix)
-
-            i = 0
-            for module in modules:
-                component_id = module["component_id"]
-                limit_number = module["limit_number"]
-
-                entry = CurriculumManager().display_module(component_id)
-
-                component_type = entry[1]
-                title = entry[2]
-                content = entry[3]
-                resources = entry[4]
-                conditions = entry[5]
-
-                item = CurriculumManager().next_item() + i
-                deadline = starting_date_number + limit_number
-                deadline_date = TimeMachine().number_to_system_date(deadline)
-                component_type_raw = re.search(r"\w.+_", component_id).group()
-                component_type = re.sub("_", "", component_type_raw)
-                reference = 0
-
-                CurriculumManager().add_curriculum(
-                    item,
-                    deadline_date,
-                    client,
-                    component_id,
-                    component_type,
-                    component_type,
-                    title,
-                    content,
-                    matrix,
-                    resources,
-                    conditions,
-                    reference
-                    )
-
-                i += 1
+            CurriculumPlanner().plan_curricula(
+                client,
+                matrix,
+                starting_date_number
+                )
 
             messages.success(request, ("You have planned a curriculum!"))
-            return render(request, "plan_matrix.html", {
-                "matrices": matrices,
-                "clients": clients
-                })
+            return redirect("plan_matrix")
 
         return render(request, "plan_matrix.html", {
             "matrices": matrices,
-            "clients": clients
+            "clients": clients,
+            "sundays": sundays
             })
 
 
@@ -2578,8 +2547,6 @@ def display_set(request, set_id):
         set_details = SentenceManager().display_set(set_id)
         sentence_ids = set_details[2]
         sentences = SentenceManager().display_sentences_by_id(sentence_ids)
-
-        print(sentences)
 
         return render(request, "display_set.html", {
             "set_id": set_id,
@@ -4301,7 +4268,6 @@ def display_spin(request, client, story, scene=1, watchword=0):
         item = RoadmapManager().display_next_scene(story, scene)
         message = item[0].replace("<<first_name>>", first_name.capitalize())
         message = message.replace("<<last_name>>", last_name.capitalize())
-        print(watchword)
 
         if watchword == 0:
             watchword = random.randint(1000000000000, 9999999999999)

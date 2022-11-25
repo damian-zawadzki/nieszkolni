@@ -40,8 +40,8 @@ class StreamManager:
                 status
                 )
                 VALUES (
-                {stamp},
-                {date_number},
+                '{stamp}',
+                '{date_number}',
                 '{date}',
                 '{name}',
                 '{command}',
@@ -213,6 +213,26 @@ class StreamManager:
                 FROM nieszkolni_app_stream
                 WHERE date_number >= ({today_number} - 28)
                 AND date_number < {today_number}
+                ''')
+
+            rows = cursor.fetchall()
+
+            return rows
+
+    def find_by_command(self, command):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                stamp,
+                date_number,
+                date,
+                name,
+                command,
+                value,
+                stream_user,
+                status
+                FROM nieszkolni_app_stream
+                WHERE command = '{command}'
                 ''')
 
             rows = cursor.fetchall()
@@ -575,6 +595,75 @@ class StreamManager:
 
             return total_po
 
+    def count_po_from_to(self, name, start, end):
+        client = name
+        start_number = TimeMachine().date_to_number(start)
+        end_number = TimeMachine().date_to_number(end)
+
+        # Repertoire
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                title,
+                duration
+                FROM nieszkolni_app_repertoire
+                ''')
+
+            repertoire_rows = cursor.fetchall()
+
+            repertoire_dict = dict()
+            for row in repertoire_rows:
+                title = row[0]
+                duration = row[1]
+                repertoire_dict.update({title: duration})
+
+        # PO
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                stamp,
+                date_number,
+                date,
+                name,
+                command,
+                value,
+                stream_user,
+                status
+                FROM nieszkolni_app_stream
+                WHERE name = '{client}'
+                AND command = 'PO'
+                AND date_number > '{start_number}'
+                AND date_number <= '{end_number}'
+                ''')
+
+            po_rows = cursor.fetchall()
+
+            po_list = []
+            for row in po_rows:
+                title = re.sub(r"\s\*\d{1,}", "", row[5])
+
+                try:
+                    number_of_episodes = int(re.sub("\s\*","",re.search("\s\*\d{1,}", row[5]).group()))
+                except Exception as e:
+                    number_of_episodes = 0
+
+                if repertoire_dict.get(title) is None:
+                    episode_duration = 0
+                else:
+                    episode_duration = repertoire_dict.get(title)
+
+                duration = number_of_episodes * episode_duration
+
+                entry = (title, number_of_episodes, episode_duration, duration)
+                po_list.append(entry)
+
+            total_po = 0
+            for entry in po_list:
+                po = entry[3]
+                total_po += po
+
+            return total_po
+
     def advanced_statistics(self, name):
         client = name
         today_number = TimeMachine().today_number()
@@ -717,14 +806,14 @@ class StreamManager:
 
     def display_ranking(self):
         with connection.cursor() as cursor:
-                    cursor.execute(f'''
-                        SELECT
-                        name,
-                        display_name
-                        FROM nieszkolni_app_profile
-                        ''')
+            cursor.execute(f'''
+                SELECT
+                name,
+                display_name
+                FROM nieszkolni_app_profile
+                ''')
 
-                    names = cursor.fetchall()
+            names = cursor.fetchall()
 
         activity_start = TimeMachine().date_to_number(self.display_activity_start())
         activity_stop = TimeMachine().date_to_number(self.display_activity_stop())
@@ -749,7 +838,7 @@ class StreamManager:
                 line = row[0]
 
                 try:
-                    point_raw = re.search(r";\d+$", line).group()
+                    point_raw = re.search(r";\d+$|;-\d+$", line).group()
                     point = re.sub(";", "", point_raw)
                     point = int(point)
                     activity.append(point)
@@ -757,8 +846,9 @@ class StreamManager:
                     client = row[1]
                     clients.append(client)
 
-                except:
+                except Exception as e:
                     pass
+
 
             table = pd.DataFrame(data, columns=["client", "activity"])
             table_2 = table.groupby("client").sum()

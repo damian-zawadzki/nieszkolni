@@ -153,7 +153,8 @@ class CurriculumManager:
     def display_assignment(self, item):
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                SELECT item,
+                SELECT
+                item,
                 deadline_text,
                 deadline_number,
                 name,
@@ -164,7 +165,8 @@ class CurriculumManager:
                 content,
                 matrix,
                 resources,
-                status
+                status,
+                conditions
                 FROM nieszkolni_app_curriculum
                 WHERE item = {item}
                 ''')
@@ -256,7 +258,8 @@ class CurriculumManager:
     def display_assignments_for_student(self, name):
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                SELECT item,
+                SELECT
+                item,
                 deadline_text,
                 deadline_number,
                 name,
@@ -331,6 +334,24 @@ class CurriculumManager:
             assignment_type = assignment_type[0]
 
             return assignment_type
+
+    def assignments_from_to(self, client, start, end, status):
+        start_number = TimeMachine().date_to_number(start)
+        end_number = TimeMachine().date_to_number(end)
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT assignment_type
+                FROM nieszkolni_app_curriculum
+                WHERE status = '{status}'
+                AND name = '{client}'
+                AND deadline_number > '{start_number}'
+                AND deadline_number <= '{end_number}'
+                ''')
+
+            assignments = cursor.fetchall()
+
+            return assignments
 
     def add_module(
             self,
