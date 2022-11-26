@@ -443,3 +443,10 @@ class Ticket(models.Model):
     comment = models.TextField(default="")
     closing_stamp = models.IntegerField(default=0)
     response_time = models.IntegerField(default=0)
+
+
+class Rating(models.Model):
+    date_number = models.IntegerField(default=0)
+    client = models.CharField(max_length=200, default="")
+    position = models.CharField(max_length=200, default="")
+    rating = models.IntegerField(default=0)

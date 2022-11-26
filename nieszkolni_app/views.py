@@ -29,6 +29,7 @@ from nieszkolni_folder.quiz_manager import QuizManager
 from nieszkolni_folder.curriculum_planner import CurriculumPlanner
 from nieszkolni_folder.homework_manager import HomeworkManager
 from nieszkolni_folder.activity_manager import ActivityManager
+from nieszkolni_folder.rating_manager import RatingManager
 
 import csv
 import re
@@ -2692,45 +2693,26 @@ def library(request):
             })
 
 
-@login_required
+@staff_member_required
 def report_reading(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        client = CurrentClientsManager().current_client(current_user)
+
         if request.method == "POST":
             link = request.POST["link"]
+            rating = request.POST["rating"]
 
-            check_if_in_library = BackOfficeManager().check_if_in_library(link)
+            # Rating
+            RatingManager().add_rating(client, link, rating)
 
-            if check_if_in_library is False:
+            # Stream
+            StreamManager().report_reading(client, link, current_user)
 
-                BackOfficeManager().add_to_library_line(
-                    current_user,
-                    link,
-                    "reported"
-                    )
-
-                return redirect("report_reading.html")
-
-            else:
-                wordcount = BackOfficeManager().get_wordcount_from_library(link)
-
-                BackOfficeManager().add_to_library_line(
-                    current_user,
-                    link,
-                    "processed_automatically"
-                    )
-
-                StreamManager().add_to_stream(
-                    current_user,
-                    "PV",
-                    wordcount,
-                    current_user
-                    )
-
-                return redirect("report_reading.html")
+            return redirect("report_reading")
 
         return render(request, "report_reading.html", {})
 
@@ -2742,14 +2724,31 @@ def library_line(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        link = BackOfficeManager().display_reported_library_line()
+        data = BackOfficeManager().display_reported_library_line()
+
+        if data is None:
+
+            messages.success(request, ("Everything's processed!"))
+            return render(request, "library_line.html", {
+                "data": data
+                })
+
+        link = data[1]
+        check_if_in_library = BackOfficeManager().check_if_in_library(link)
+
+        if check_if_in_library is True:
+            client = data[0]
+
+            StreamManager().report_reading(client, link, current_user)
+            BackOfficeManager().mark_library_line_as_processed(client, link)
+
+            return redirect("library_line")
 
         if request.method == "POST":
-            position_number = BackOfficeManager().next_custom_postion_number()
             title = request.POST["title"]
             wordcount = request.POST["wordcount"]
             link = request.POST["link"]
-            name = request.POST["name"]
+            client = request.POST["client"]
 
             BackOfficeManager().add_to_library(
                 position_number,
@@ -2758,43 +2757,13 @@ def library_line(request):
                 link
                 )
 
-            StreamManager().add_to_stream(
-                name,
-                "PV",
-                wordcount,
-                current_user
-                )
+            StreamManager().report_reading(client, link, current_user)
+            BackOfficeManager().mark_library_line_as_processed(client, link)
 
-            BackOfficeManager().mark_library_line_as_processed(name, link)
-
-            return redirect("library_line.html")
-
-        if link is None:
-            messages.success(request, ("Everything's processed!"))
-
-            return render(request, "library_line.html", {})
-
-        url = link[1]
-        check_if_in_library = BackOfficeManager().check_if_in_library(url)
-
-        if check_if_in_library is True:
-            name = link[0]
-
-            wordcount = BackOfficeManager().get_wordcount_from_library(url)
-
-            BackOfficeManager().mark_library_line_as_processed(name, url)
-
-            StreamManager().add_to_stream(
-                name,
-                "PV",
-                wordcount,
-                name
-                )
-
-            return redirect("library_line.html")
+            return redirect("library_line")
 
         return render(request, "library_line.html", {
-            "link": link
+            "data": data
             })
 
 
@@ -2810,35 +2779,26 @@ def report_listening(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        current_client = CurrentClientsManager().current_client(current_user)
+        client = CurrentClientsManager().current_client(current_user)
         titles = BackOfficeManager().display_titles()
 
         if request.method == "POST":
             title = request.POST["title"]
             number_of_episodes = request.POST["number_of_episodes"]
+            rating = request.POST["rating"]
 
-            check_if_in_repertoire = BackOfficeManager().check_if_in_repertoire(title)
+            # Rating
+            RatingManager().add_rating(client, title, rating)
 
-            if check_if_in_repertoire is False:
+            # Stream
+            StreamManager().report_listening(
+                client,
+                title,
+                number_of_episodes,
+                current_user
+                )
 
-                BackOfficeManager().add_to_repertoire_line(
-                    current_client,
-                    title,
-                    number_of_episodes,
-                    "not_in_stream"
-                    )
-
-                return redirect("report_listening.html")
-
-            else:
-                StreamManager().add_to_stream(
-                    current_client,
-                    "PO",
-                    f'{title} *{number_of_episodes}',
-                    current_user
-                    )
-
-                return redirect("report_listening.html")
+            return redirect("report_listening")
 
         return render(request, "report_listening.html", {
             "titles": titles
@@ -2868,7 +2828,7 @@ def repertoire(request):
 
                 return redirect("repertoire.html")
 
-            else:
+            elif request.POST["repertoire_action"] == "delete":
                 title = request.POST["title"]
 
                 BackOfficeManager().delete_from_repertoire(
@@ -2891,68 +2851,66 @@ def repertoire_line(request):
 
         title = BackOfficeManager().display_reported_repertoire_line()
 
-        if request.method == "POST":
-            stamp = request.POST["stamp"]
-            date = request.POST["date"]
-            name = request.POST["name"]
-            title_name = request.POST["title"]
-            number_of_episodes = request.POST["number_of_episodes"]
-            duration = request.POST["duration"]
-            title_type = request.POST["title_type"]
-            status = request.POST["status"]
-
-            if status == "not_in_stream":
-
-                BackOfficeManager().add_to_repertoire(
-                    title_name,
-                    duration,
-                    title_type
-                    )
-
-                StreamManager().add_to_stream(
-                    name,
-                    "PO",
-                    f'{title_name} *{number_of_episodes}',
-                    current_user
-                    )
-
-                BackOfficeManager().mark_repertoire_line_as_processed(stamp)
-
-                return redirect("repertoire_line.html")
-
-            else:
-
-                BackOfficeManager().add_to_repertoire(
-                    title_name,
-                    duration,
-                    title_type
-                    )
-
-                BackOfficeManager().mark_repertoire_line_as_processed(stamp)
-
-                return redirect("repertoire_line.html")
         if title is None:
             messages.success(request, ("Everything's processed!"))
             return render(request, "repertoire_line.html", {})
 
         title_name = title[3]
         number_of_episodes = title[4]
-        check_if_in_repertoire = BackOfficeManager().check_if_in_repertoire(title_name)
+        check_if_in = BackOfficeManager().check_if_in_repertoire(title_name)
 
-        if check_if_in_repertoire is True:
-            stamp = title[0]
-            name = title[2]
+        if request.method == "POST":
+            if request.POST["repertoire_line_action"] == "add":
+                stamp = request.POST["stamp"]
+                date = request.POST["date"]
+                client = request.POST["client"]
+                title_name = request.POST["title"]
+                number_of_episodes = request.POST["number_of_episodes"]
+                duration = request.POST["duration"]
+                title_type = request.POST["title_type"]
+                status = request.POST["status"]
 
-            BackOfficeManager().mark_repertoire_line_as_processed(stamp)
+                if status == "not_in_stream":
 
-            StreamManager().add_to_stream(
-                name,
-                "PO",
-                f'{title_name} *{number_of_episodes}',
-                current_user
-                )
+                    if check_if_in is True:
+                        # Repertoire line
+                        BackOfficeManager().add_to_repertoire(
+                            title_name,
+                            duration,
+                            title_type
+                            )
 
-            return redirect("repertoire_line.html")
+                    # Stream
+                    StreamManager().report_listening(
+                        client,
+                        title_name,
+                        number_of_episodes,
+                        current_user
+                        )
+
+                    BackOfficeManager().mark_repertoire_line_as_processed(stamp)
+
+                    return redirect("repertoire_line")
+
+                else:
+
+                    # Stream
+                    StreamManager().report_listening(
+                        client,
+                        title_name,
+                        number_of_episodes,
+                        current_user
+                        )
+
+                    BackOfficeManager().mark_repertoire_line_as_processed(stamp)
+
+                    return redirect("repertoire_line")
+
+            elif request.POST["repertoire_line_action"] == "remove":
+                stamp = request.POST["stamp"]
+                BackOfficeManager().remove_from_repertoire_line(stamp)
+
+                return redirect("repertoire_line")
 
         return render(request, "repertoire_line.html", {
             "title": title

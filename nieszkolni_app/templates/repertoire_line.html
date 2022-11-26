@@ -3,11 +3,11 @@
 
 {% if title == None %}
 
-<h1>Repertoire line</h1>
+<h1>REPERTOIRE</h1>
 
 {% else %}
 
-<h1>Repertoire line</h1>
+<h1>REPERTOIRE</h1>
 
 <div class="flex-parent jc-center">
   <div class="phrase_card">
@@ -23,7 +23,7 @@
         <div class="input_container">
           <input type="hidden" name="stamp" value="{{ title.0 }}">
           <input type="hidden" name="date" value="{{ title.1 }}">
-          <input type="hidden" name="name" value="{{ title.2 }}">
+          <input type="hidden" name="client" value="{{ title.2 }}">
           <input type="hidden" name="number_of_episodes" value="{{ title.4 }}">
           <input type="hidden" name="status" value="{{ title.5 }}">
           <input type="text" class="input_content_solo input_content_solo_long" name="title" value="{{ title.3 }}">
@@ -46,6 +46,7 @@
 
       <div class="flex-parent jc-center">
         <button type="submit" class="button_main" name="repertoire_line_action" value="save">Save</button>
+        <button type="submit" class="button_main" name="repertoire_line_action" value="remove">Remove</button>
       </div>
 
     </form>

@@ -10,8 +10,11 @@ from nieszkolni_app.models import Option
 from nieszkolni_app.models import Profile
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
+
 import re
 import pandas as pd
+
+from nieszkolni_folder.back_office_manager import BackOfficeManager
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
@@ -906,3 +909,47 @@ class StreamManager:
                     stories.remove(story)
 
             return stories
+
+    def report_reading(self, client, link, current_user):
+        check_if_in = BackOfficeManager().check_if_in_library(link)
+
+        if check_if_in is False:
+            BackOfficeManager().add_to_library_line(
+                current_user,
+                link,
+                "reported"
+                )
+        else:
+            wordcount = BackOfficeManager().get_wordcount_from_library(link)
+
+            StreamManager().add_to_stream(
+                client,
+                "PV",
+                wordcount,
+                current_user
+                )
+
+    def report_listening(
+            self,
+            client,
+            title,
+            number_of_episodes,
+            current_user
+            ):
+
+        check_if_in = BackOfficeManager().check_if_in_repertoire(title)
+
+        if check_if_in is False:
+            BackOfficeManager().add_to_repertoire_line(
+                client,
+                title,
+                number_of_episodes,
+                "not_in_stream"
+                )
+        else:
+            self.add_to_stream(
+                client,
+                "PO",
+                f'{title} *{number_of_episodes}',
+                current_user
+                )

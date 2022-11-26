@@ -30,6 +30,7 @@ class BackOfficeManager:
             link
             ):
 
+        position_number = self.next_custom_postion_number()
         title = Cleaner().clean_quotation_marks(title)
 
         with connection.cursor() as cursor:
@@ -140,21 +141,24 @@ class BackOfficeManager:
             status
             ):
 
-        with connection.cursor() as cursor:
-            cursor.execute(f'''
-                INSERT INTO nieszkolni_app_libraryline (
-                name,
-                link,
-                status
-                )
-                VALUES (
-                '{name}',
-                '{link}',
-                '{status}'
-                )
-                ON CONFLICT
-                DO NOTHING
-                ''')
+        check_if_in_library = self.check_if_in_library(link)
+
+        if check_if_in_library is False:
+            with connection.cursor() as cursor:
+                cursor.execute(f'''
+                    INSERT INTO nieszkolni_app_libraryline (
+                    name,
+                    link,
+                    status
+                    )
+                    VALUES (
+                    '{name}',
+                    '{link}',
+                    '{status}'
+                    )
+                    ON CONFLICT
+                    DO NOTHING
+                    ''')
 
     def display_reported_library_line(self):
         with connection.cursor() as cursor:
@@ -256,6 +260,8 @@ class BackOfficeManager:
             status
             ):
 
+        check_if_in = BackOfficeManager().check_if_in_repertoire(title)
+
         now_number = TimeMachine().now_number()
         today_number = TimeMachine().today_number()
 
@@ -309,6 +315,13 @@ class BackOfficeManager:
             cursor.execute(f'''
                 UPDATE nieszkolni_app_repertoireline
                 SET status = 'processed'
+                WHERE stamp = {stamp}
+                ''')
+
+    def remove_from_repertoire_line(self, stamp):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                DELETE FROM nieszkolni_app_repertoireline
                 WHERE stamp = {stamp}
                 ''')
 

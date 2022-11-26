@@ -1,28 +1,28 @@
 {% extends 'base.html' %}
 {% block 'content' %}
 
-{% if link == None %}
+{% if data == None %}
 
-<h1>Library line</h1>
+<h1>LIBRARY</h1>
 
 {% else %}
 
-<h1>Library line</h1>
+<h1>LIBRARY</h1>
 
 <div class="flex-parent jc-center">
   <div class="phrase_card">
 
     <div class="phrase_card_container">
-      <h5 class="phrase_card_question">Student: {{ link.0 }}</h5>
-      <h5 class="phrase_card_description"><a href="{{ link.1 }}" target="_blank">Click here.</a></h5>
+      <h5 class="phrase_card_question">Student: {{ data.0 }}</h5>
+      <h5 class="phrase_card_description"><a href="{{ data.1 }}" target="_blank">Click here.</a></h5>
       
     <form method="POST">
       {% csrf_token %}
 
       <div class="flex-parent jc-center">
         <div class="input_container">
-          <input type="hidden" name="name" value="{{ link.0 }}">
-          <input type="hidden" name="link" value="{{ link.1 }}">
+          <input type="hidden" name="client" value="{{ data.0 }}">
+          <input type="hidden" name="link" value="{{ data.1 }}">
           <input type="text" class="input_content_solo input_content_solo_long" name="title" placeholder="title">
           <input type="number" class="input_content_solo input_content_solo_long" name="wordcount" placeholder="wordcount">
           
