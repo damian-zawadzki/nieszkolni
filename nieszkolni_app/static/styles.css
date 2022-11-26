@@ -1306,18 +1306,26 @@ td {
   width: 10vw;
 }
 
+/*Claim*/
+.claim_container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 .main_title {
   color: #F9F7F5;
-  font-size: 75px;
+  font-size: 7vw;
   font-weight: 1000;
   font-family: "Google Sans", Roboto, Arial, sans-serif;
-  padding-top: 15vw;
+  line-height: 8vw;
   z-index: 10;
 }
 
 .main_subtitle {
   color: #F9F7F5;
-  font-size: 50px;
+  font-size: 3vw;
   font-weight: 1000;
   font-family: "Google Sans", Roboto, Arial, sans-serif;
   padding-bottom: 1vw;

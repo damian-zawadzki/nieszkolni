@@ -18,15 +18,14 @@
     {% if user.is_authenticated %}
     <nav class="m_navigation">
     <div class="m_side_menu" id="main_links">
+
       <li class="m_navigation_item">
         <a class="m_navigation_link" href="{% url 'ranking'%}">RANKING</a>
       </li>
       <li class="m_navigation_item">
         <a class="m_navigation_link" href="{% url 'profile'%}">MY PROFILE</a>
       </li>
-      <li class="m_navigation_item">
-        <a class="m_navigation_link" href="{% url 'logout_user'%}">LOGOUT</a>
-      </li>
+
     </div>
 
     <div class="m_menu">
@@ -36,6 +35,7 @@
 
       <div style="display: none;" id="main_side_menu">
         <ul>
+          
           <li class="m_navigation_item_inside">
             <a class="side_navigation_link_2" href="{% url 'assignments'%}">MY TO-DO LIST</a>
           </li>
@@ -66,6 +66,10 @@
           <li class="m_navigation_item_inside">
             <a class="side_navigation_link_2" href="{% url 'options'%}">MY SETTINGS</a>
           </li>
+          <li class="m_navigation_item">
+            <a class="m_navigation_link" href="{% url 'logout_user'%}">LOG OUT</a>
+          </li>
+
         </ul>
       </div>
     </div>
