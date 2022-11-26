@@ -57,10 +57,12 @@ def welcome(request):
 
         return redirect("campus")
 
-    if request.method == "POST":
-        return render(request, 'login_user.html', {})
+    else:
 
-    return render(request, 'welcome.html', {})
+        if request.method == "POST":
+            return redirect("login_user")
+        else:
+            return render(request, 'welcome.html', {})
 
 
 @login_required
@@ -347,8 +349,8 @@ def login_user(request):
 @login_required
 def logout_user(request):
     logout(request)
-    messages.success(request, ("Come back soon!"))
-    return render(request, "welcome.html", {})
+
+    return redirect("welcome")
 
 
 @staff_member_required
