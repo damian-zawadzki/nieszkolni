@@ -158,6 +158,26 @@
 
   </nav>
 
+  <!-- Side menu -->
+    <div>
+        <button type="button" class="hamburger_menu_pc" onclick="showHideSideMenu()"><img src="{% static '/images/hamburger.png' %}" width="15" height="15"></button>
+      </div>
+    <div class="side_menu_container" id="side_menu" style="display: none;">
+
+    <div class="side_menu">
+
+      <div class="side_menu_box">
+        <a class="side_menu_link side_menu_link_first">{{ user.first_name.upper }} {{ user.last_name.upper }}</a>
+      </div>
+
+      <div class="side_menu_box">
+        <a class="side_menu_link" href="{% url 'logout_user'%}">LOG OUT</a>
+      </div>
+
+    </div>
+
+  </div>
+
     {% elif user.is_authenticated %}
 
   <nav class="navigation flex-parent jc-center">
