@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% block 'content' %}
-
-
+{% load static %}
 
 <div class="flex-parent jc-center">
   <form action="{% url 'take_quiz' quiz_question_id=quiz_question_id item=item %}" method="POST">
@@ -36,19 +35,19 @@
           {% if question_type == 'typing' %}
 
             <div class="flex-parent jc-center">
-              <input type="text" class="input_content input_prefilled" id="e" name="answer" value="{{ answer }}">
+              <input type="text" class="input_content input_prefilled" id="e" name="answer" value="{{ answer }}" onclick="disableButton(this.id)">
             </div>
             <div class="flex-parent jc-center">  
               <input type="text" class="input_content_correct input_prefilled" id="f" name="answer" value="{{ correct_answer }}" style="display: none;">
             </div>
             <div class="flex-parent jc-center">
-              <button type="submit" class="button_main" name="answer" value="ok">OK</button>
+              <button type="submit" class="button_main" name="answer" value="ok" id="ok_b_1" onclick="disableButton(this.id)">OK</button>
             </div>
 
           {% else %}
 
             <div>
-              <button type="submit" class="button_main" name="answer" value="ok">OK</button>
+              <button type="submit" class="button_main" name="answer" value="ok" id="ok_b_1" onclick="disableButton(this.id)">OK</button>
             </div>
 
           {% endif %}
@@ -61,6 +60,10 @@
   </form>
 </div>
 
+<script src="{% static 'functions.js' %}"></script>
+<script type="text/javascript">
+   forgetPage(true);
+</script>
 <script type="text/javascript">
       const a = document.querySelector("#a");
       const b = document.querySelector("#b");
@@ -111,16 +114,6 @@
         e.className = "input_content input_prefilled input_prefilled_incorrect";
         f.style.display = "block";
       }
-</script>
-
-<script type="text/javascript">
-      var button = document.querySelector("#a, #b, #c, #d, #e");
-
-      button.onchange = (event) => {
-         event.preventDefault();
-         button.disabled = true;
-       }
-
 </script>
 
 {% endblock %}

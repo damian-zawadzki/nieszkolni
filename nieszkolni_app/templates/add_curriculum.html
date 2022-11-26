@@ -61,9 +61,10 @@
   </div>
 
 </form>
+
+<script src="{% static 'functions.js' %}"></script>
 <script type="text/javascript">
-  window.history.pushState({},"","x");
-</script>
-<script src="{% static 'functions.js' %}"></script>  
+   forgetPage(true);
+</script>  
 
 {% endblock %}

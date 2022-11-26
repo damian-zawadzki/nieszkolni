@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% block 'content' %}
+{% load static %} 
 
-<h1>{{ title }}</h1>
+<h1>{{ title.upper }}</h1>
 
 <form action="{% url 'submit_assignment' %}" method="POST">
   {% csrf_token %}
@@ -65,18 +66,11 @@
   <input type="hidden" name="title" value="{{ title }}">
 
   <div class="flex-parent jc-center">
-    <button type="submit" class="button_main" id="final_button" name="go_to" value="translated_sentences">Submit</button>
+    <button type="submit" class="button_main" id="final_button" name="go_to" value="translated_sentences" onclick="disableButton(this.id)">Submit</button>
   </div>
 
 </form>
 
-<script type="text/javascript">
-      var button = document.getElementById("final_button");
-
-      button.onchange = (event) => {
-         event.preventDefault();
-         button.disabled = true;
-       }
-</script>
+<script src="{% static 'functions.js' %}"></script>
 
 {% endblock %}

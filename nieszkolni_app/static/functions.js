@@ -16,11 +16,8 @@ function disableButton(button_id) {
          };
   };
 
-function forgetPage() {
-  var button = document.getElementById(button_id);
-  
-  button.onchange = (event) => {
-           event.preventDefault();
-           button.disabled = true;
-         };
+function forgetPage(state) {
+  if (state == true) {
+    history.forward();
+    };
   };

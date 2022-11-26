@@ -13,9 +13,7 @@
     <title>Zawadzky College</title>
     <!-- CSS CUSTOM -->
     <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
-</head>
 
-<body>
 
     {% if user.is_authenticated %}
     <nav class="m_navigation">
@@ -115,8 +113,10 @@
       {% endfor %}
     {% endif %}
   </div>
+</head>
 
 {% else %}
+<head>
 <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -127,39 +127,30 @@
     <title>-</title>
     <!-- CSS CUSTOM -->
     <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
-  </head>
-
-
-
-<body>
 
     {% if user.is_staff %}
 
   <nav class="navigation flex-parent jc-center">
+
     <li class="navigation_item">
       <a class="navigation_link" aria-current="page" href="{% url 'welcome'%}">CAMPUS</a>
     </li>
-    </li>
+
     <li class="navigation_item">
       <a class="navigation_link" href="{% url 'ranking'%}">RANKING</a>
     </li>
+
     <li class="navigation_item">
       <a class="navigation_link" href="{% url 'profile'%}">MY PROFILE</a>
     </li>
-    </li>
+
     <li class="navigation_item">
       <a class="navigation_link" href="{% url 'coach'%}">COACH</a>
     </li>
+
     <li class="navigation_item">
       <a class="navigation_link" href="{% url 'staff'%}">STAFF</a>
     </li>
-    <li class="navigation_item">
-      <a class="navigation_link" href="{% url 'logout_user'%}">LOGOUT</a>
-    </li>
-    
-<!--     <li class="navigation_item">
-      <a class="navigation_link navigation_user">{{ user.first_name.upper }} {{ user.last_name.upper }}</a>
-    </li> -->
 
     <div>
         <button type="button" class="hamburger_menu_pc" onclick="showHideSideMenu()"><img src="{% static '/images/hamburger.png' %}" width="15" height="15"></button>
@@ -170,9 +161,11 @@
     {% elif user.is_authenticated %}
 
   <nav class="navigation flex-parent jc-center">
+
     <li class="navigation_item">
       <a class="navigation_link" aria-current="page" href="{% url 'campus'%}">CAMPUS</a>
     </li>
+
     <li class="navigation_item">
       <a class="navigation_link" href="{% url 'ranking'%}">RANKING</a>
     </li>
@@ -181,19 +174,71 @@
       <a class="navigation_link" href="{% url 'profile'%}">MY PROFILE</a>
     </li>
 
-    <li class="navigation_item">
-      <a class="navigation_link" href="{% url 'logout_user'%}">LOGOUT</a>
-    </li>
-    
-<!--     <li class="navigation_item">
-      <a class="navigation_link navigation_user">{{ user.first_name.upper }} {{ user.last_name.upper }}</a>
-    </li> -->
-
     <div>
-        <button type="button" class="hamburger_menu_pc" onclick="showHideSideMenu()"><img src="{% static '/images/hamburger.png' %}" width="15" height="15"></button>
+        <button type="button" class="hamburger_menu_pc" onclick="showHide('side_menu')"><img src="{% static '/images/hamburger.png' %}" width="15" height="15"></button>
     </div>
 
   </nav>
+
+  <!-- Side menu -->
+    <div>
+        <button type="button" class="hamburger_menu_pc" onclick="showHideSideMenu()"><img src="{% static '/images/hamburger.png' %}" width="15" height="15"></button>
+      </div>
+    <div class="side_menu_container" id="side_menu" style="display: none;">
+
+    <div class="side_menu">
+
+      <div class="side_menu_box">
+        <a class="side_menu_link side_menu_link_first">{{ user.first_name.upper }} {{ user.last_name.upper }}</a>
+      </div>
+
+      <div class="side_menu_box">
+        <a class="side_menu_link" href="{% url 'assignments'%}">MY TO-DO LIST</a>
+      </div>
+
+      <div class="side_menu_box">
+        <a class="side_menu_link" href="{% url 'statistics'%}">MY STATS</a>
+      </div>
+
+      <div class="side_menu_box">
+        <a class="side_menu_link" href="{% url 'vocabulary'%}">MY VOCABULARY</a>
+      </div>
+
+      <div class="side_menu_box">
+        <a class="side_menu_link" href="{% url 'sentences'%}">MY SENTENCES</a>
+      </div>
+
+      <div class="side_menu_box">
+        <a class="side_menu_link" href="{% url 'my_pronunciation'%}">MY PRONUNCIATION</a>
+      </div>
+
+      <div class="side_menu_box">
+        <a class="side_menu_link" href="{% url 'memories'%}">MY MEMORIES</a>
+      </div>
+
+      <div class="side_menu_box">
+        <a class="side_menu_link" href="{% url 'submit_assignment'%}">MY SUBMISSIONS</a>
+      </div>
+
+      <div class="side_menu_box">
+        <a class="side_menu_link" href="{% url 'list_of_submissions'%}">MY ASSIGNMENTS</a>
+      </div>
+
+      <div class="side_menu_box">
+        <a class="side_menu_link" href="{% url 'report_reading'%}">MY READING</a>
+      </div>
+
+      <div class="side_menu_box">
+        <a class="side_menu_link" href="{% url 'options'%}">MY SETTINGS</a>
+      </div>
+
+      <div class="side_menu_box">
+        <a class="side_menu_link" href="{% url 'logout_user'%}">LOG OUT</a>
+      </div>
+
+    </div>
+
+  </div>
 
     {% else %}
 
@@ -235,45 +280,10 @@
 
 {% endif %}
 
-<div class="xxx" id="side_menu" style="display: none;">
-    <ul class="profile_link_list">
-      <li class="profile_navigation_item">
-        <h5>MENU</h5>
-      </li>
-      <li class="side_navigation_item">
-        <a class="side_navigation_link_2" href="{% url 'assignments'%}">MY TO-DO LIST</a>
-      </li>
-      <li class="side_navigation_item">
-        <a class="side_navigation_link_2" href="{% url 'statistics'%}">MY STATS</a>
-      </li>
-      <li class="side_navigation_item">
-        <a class="side_navigation_link_2" href="{% url 'vocabulary'%}">MY VOCABULARY</a>
-      </li>
-      <li class="side_navigation_item">
-        <a class="side_navigation_link_2" href="{% url 'sentences'%}">MY SENTENCES</a>
-      </li>
-      <li class="side_navigation_item">
-        <a class="side_navigation_link_2" href="{% url 'my_pronunciation'%}">MY PRONUNCIATION</a>
-      </li>
-      <li class="side_navigation_item">
-        <a class="side_navigation_link_2" href="{% url 'memories'%}">MY MEMORIES</a>
-      </li>
-      <li class="side_navigation_item">
-        <a class="side_navigation_link_2" href="{% url 'submit_assignment'%}">MY SUBMISSIONS</a>
-      </li>
-      <li class="side_navigation_item">
-        <a class="side_navigation_link_2" href="{% url 'list_of_submissions'%}">MY ASSIGNMENTS</a>
-      </li>
-      <li class="side_navigation_item">
-        <a class="side_navigation_link_2" href="{% url 'report_reading'%}">MY READING</a>
-      </li>
-      <li class="side_navigation_item">
-        <a class="side_navigation_link_2" href="{% url 'options'%}">MY SETTINGS</a>
-      </li>
-    </ul>
 
-</div>
+</head>
 
+<body>
 <div id="main_content">
 
   {% block 'content' %}
