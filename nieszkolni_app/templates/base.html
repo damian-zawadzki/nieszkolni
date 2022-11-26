@@ -17,23 +17,24 @@
 
     {% if user.is_authenticated %}
     <nav class="m_navigation">
-    <div class="m_side_menu" id="main_links">
+      <div class="m_navigation_box" id="main_links">
 
-      <li class="m_navigation_item">
-        <a class="m_navigation_link" href="{% url 'ranking'%}">RANKING</a>
-      </li>
-      <li class="m_navigation_item">
-        <a class="m_navigation_link" href="{% url 'profile'%}">MY PROFILE</a>
-      </li>
+        <div class="m_navigation_item">
+          <a class="m_navigation_link" href="{% url 'ranking'%}">RANKING</a>
+        </div>
+        <div class="m_navigation_item">
+          <a class="m_navigation_link" href="{% url 'profile'%}">MY PROFILE</a>
+        </div>
 
-    </div>
-
-    <div class="m_menu">
-      <div>
-          <button type="button" class="hamburger_menu" onclick="showHideHamburgerMenu()"><img src="{% static '/images/hamburger.png' %}" width="15" height="15"></button>
       </div>
+    </nav>
 
-      <div style="display: none;" id="main_side_menu">
+    <div>
+      <button type="button" class="m_hamburger_menu" onclick="showHideHamburgerMenu()"><img src="{% static '/images/hamburger.png' %}" width="15" height="15"></button>
+  </div>
+
+    <div class="m_menu" id="main_side_menu" style="display: none;">
+      <div>
         <ul>
           
           <li class="m_navigation_item_inside">
@@ -73,7 +74,6 @@
         </ul>
       </div>
     </div>
-    </nav>
 
     {% else %}
 

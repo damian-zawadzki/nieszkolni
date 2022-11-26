@@ -73,10 +73,16 @@ def campus(request):
         current_user = first_name + " " + last_name
 
         announcements = BackOfficeManager().display_latest_announcements()
+        user_agent = get_user_agent(request)
 
-        return render(request, 'campus.html', {
-            "announcements": announcements
-            })
+        if user_agent.is_mobile:
+            return render(request, 'm_campus.html', {
+                "announcements": announcements
+                })
+        else:
+            return render(request, 'campus.html', {
+                "announcements": announcements
+                })
 
 
 @login_required(login_url='login_user.html')

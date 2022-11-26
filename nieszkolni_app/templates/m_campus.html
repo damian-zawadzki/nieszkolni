@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<ul class="profile_link_list campus">
+	<li class="side_navigation_item">
+		<h5>CAMPUS</h5>
+	</li>
+
+	<li class="side_navigation_item">
+		<a class="side_navigation_link_2" href="{% url 'programs' %}">ACADEMIC PROGRAMS</a>
+	</li>
+	<li class="side_navigation_item">
+		<a class="side_navigation_link_2" href="{% url 'courses' %}">COURSES</a>
+	</li>
+	<li class="side_navigation_item">
+		<a class="side_navigation_link_2" href="{% url 'rules' %}">RULES</a>
+	</li>
+
+</ul>
+<div class="news">
+	
+	<table>
+
+		<tr>
+			<th><h4>NEWS</h4></th>
+		</tr>
+
+		{% for announcement in announcements %}
+
+			<tr class="font">
+
+				<td class="td_sentences"><a href="{% url 'display_announcement' notification_id=announcement.0 %}">{{ announcement.4 }}</a></td>
+
+			</tr>
+
+		{% endfor %}
+
+	</table>
+</div>
+
+{% include 'footer.html' %}
+{% endblock %}
