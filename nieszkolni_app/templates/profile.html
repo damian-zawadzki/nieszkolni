@@ -105,9 +105,7 @@
 
 </div>
 
-
-
-<div class="side_navigation_menu profile_content_box">
+<!-- <div class="side_navigation_menu profile_content_box ">
 		<ul class="profile_link_list">
 			<li class="profile_navigation_item">
 			  <h5>MENU</h5>
@@ -144,8 +142,8 @@
 			</li>
 		</ul>
 
-
-		<ul class="profile_content_list">
+</div> -->
+<!-- 		<ul class="profile_content_list">
 
 			<li class="list_of_courses_item">
 			  <h6>THIS SEMESTER ENDS ON {{ end_of_semester }}</h6>
@@ -156,10 +154,16 @@
 			  <span style="color: #86A697; margin-bottom: 5px;">You're eligible for early admission. Find our more <a href="{% url 'display_announcement' tags.early_admission_tag %}">here</a>!</span>
 			</li>
 			{% else %}
-			{% endif %}
+			{% endif %} -->
+			<table>
 
+				<tr>
+					<th class="td_sentences">Your courses</th>
+					<th class="">Status</th>
+
+				</tr>
 			{% for course in courses %}
-				<form action="{% url 'profile' %}"  method="POST">
+<!-- 				<form action="{% url 'profile' %}"  method="POST">
 				{% csrf_token %}
 
 					{% if course.6 == 'failed' %}
@@ -187,12 +191,21 @@
 					</li>
 
 					{% endif %}
-				</form>
+				</form> -->
+				<tr>
+					<td class="td_sentences">{{ course.2 }}</td>
+					<td class="">{{ course.6 }}</td>
+				</tr>
+
+
 			{% endfor %}
+		</table>
 
-		</ul>
+		<!-- </ul> -->
 
-		
-</div>
+<script type="text/javascript">
+	
+</script>
+
 
 {% endblock %}

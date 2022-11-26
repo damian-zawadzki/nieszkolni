@@ -13,14 +13,14 @@
 
         {% if interval != 0 %}
 
-        <button type="submit" class="button_main" value="incorrect" name="answer">Incorrect</button>
-        <button type="submit" class="button_main" value="hard" name="answer">Hard</button>
-        <button type="submit" class="button_main" value="easy" name="answer">Easy</button>
+        <button type="submit" class="button_main" value="incorrect" name="answer" id="incorrect_b" onclick="disableButton(this.id)">Incorrect</button>
+        <button type="submit" class="button_main" value="hard" name="answer" id="hard_b" onclick="disableButton(this.id)">Hard</button>
+        <button type="submit" class="button_main" value="easy" name="answer" id="easy_b" onclick="disableButton(this.id)">Easy</button>
 
         {% else %}
 
-        <button type="submit" class="button_main" value="incorrect" name="answer">Incorrect</button>
-        <button type="submit" class="button_main" value="hard" name="answer" id="Hard">Correct</button>
+        <button type="submit" class="button_main" value="incorrect" name="answer" id="incorrect_b_2" onclick="disableButton(this.id)">Incorrect</button>
+        <button type="submit" class="button_main" value="hard" name="answer" id="correct_b" onclick="disableButton(this.id)">Correct</button>
 
         {% endif %}
 
@@ -36,10 +36,10 @@
 
     <button type="submit" class="counter" name="answer" value="edit"><img src="{% static '/images/pencil.png' %}" width="15" height="15"></button>
 
-<!--     <button type="submit" class="counter" name="answer" value="play"><img src="{% static '/images/speaker.png' %}" width="15" height="15"></button> -->
-
   </form>
 </div>
+
+<script src="{% static 'functions.js' %}"></script>  
 
 
 {% endblock %}

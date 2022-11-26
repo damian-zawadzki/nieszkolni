@@ -156,9 +156,15 @@
     <li class="navigation_item">
       <a class="navigation_link" href="{% url 'logout_user'%}">LOGOUT</a>
     </li>
-    <li class="navigation_item">
+    
+<!--     <li class="navigation_item">
       <a class="navigation_link navigation_user">{{ user.first_name.upper }} {{ user.last_name.upper }}</a>
-    </li>
+    </li> -->
+
+    <div>
+        <button type="button" class="hamburger_menu_pc" onclick="showHideSideMenu()"><img src="{% static '/images/hamburger.png' %}" width="15" height="15"></button>
+    </div>
+
   </nav>
 
     {% elif user.is_authenticated %}
@@ -179,9 +185,14 @@
       <a class="navigation_link" href="{% url 'logout_user'%}">LOGOUT</a>
     </li>
     
-    <li class="navigation_item">
+<!--     <li class="navigation_item">
       <a class="navigation_link navigation_user">{{ user.first_name.upper }} {{ user.last_name.upper }}</a>
-    </li>
+    </li> -->
+
+    <div>
+        <button type="button" class="hamburger_menu_pc" onclick="showHideSideMenu()"><img src="{% static '/images/hamburger.png' %}" width="15" height="15"></button>
+    </div>
+
   </nav>
 
     {% else %}
@@ -224,6 +235,45 @@
 
 {% endif %}
 
+<div class="xxx" id="side_menu" style="display: none;">
+    <ul class="profile_link_list">
+      <li class="profile_navigation_item">
+        <h5>MENU</h5>
+      </li>
+      <li class="side_navigation_item">
+        <a class="side_navigation_link_2" href="{% url 'assignments'%}">MY TO-DO LIST</a>
+      </li>
+      <li class="side_navigation_item">
+        <a class="side_navigation_link_2" href="{% url 'statistics'%}">MY STATS</a>
+      </li>
+      <li class="side_navigation_item">
+        <a class="side_navigation_link_2" href="{% url 'vocabulary'%}">MY VOCABULARY</a>
+      </li>
+      <li class="side_navigation_item">
+        <a class="side_navigation_link_2" href="{% url 'sentences'%}">MY SENTENCES</a>
+      </li>
+      <li class="side_navigation_item">
+        <a class="side_navigation_link_2" href="{% url 'my_pronunciation'%}">MY PRONUNCIATION</a>
+      </li>
+      <li class="side_navigation_item">
+        <a class="side_navigation_link_2" href="{% url 'memories'%}">MY MEMORIES</a>
+      </li>
+      <li class="side_navigation_item">
+        <a class="side_navigation_link_2" href="{% url 'submit_assignment'%}">MY SUBMISSIONS</a>
+      </li>
+      <li class="side_navigation_item">
+        <a class="side_navigation_link_2" href="{% url 'list_of_submissions'%}">MY ASSIGNMENTS</a>
+      </li>
+      <li class="side_navigation_item">
+        <a class="side_navigation_link_2" href="{% url 'report_reading'%}">MY READING</a>
+      </li>
+      <li class="side_navigation_item">
+        <a class="side_navigation_link_2" href="{% url 'options'%}">MY SETTINGS</a>
+      </li>
+    </ul>
+
+</div>
+
 <div id="main_content">
 
   {% block 'content' %}
@@ -245,7 +295,17 @@
       main_side_menu.style.display = "none";
       main_links.style.display = "block"; 
       main_content.style.display = "block";  
-    }
+    };
+  };
+
+  function showHideSideMenu() {
+    var menu = document.getElementById("side_menu");
+
+    if (menu.style.display == "none") {
+      menu.style.display = "block";
+    } else {
+      menu.style.display = "none";
+    };
   }
 
 </script>

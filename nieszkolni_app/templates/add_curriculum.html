@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block 'content' %}
-{% include 'staff_menu.html' %}
+{% load static %} 
 
 <h1>PLAN A MODULE</h1>
 
@@ -34,7 +34,7 @@
       <label class="input_label">What would you like to plan?</label>
 
       <div class="flex-parent jc-center">
-          <button type="button" class="button_main" onclick="showHideInput()" id="other_modules">Other modules</button>
+          <button type="button" class="button_main" id="other_modules" onclick="showHide('list_of_modules')">Other modules</button>
       </div>
 
     </div>
@@ -61,21 +61,9 @@
   </div>
 
 </form>
-
 <script type="text/javascript">
-
-  function showHideInput() {
-  var modules = document.getElementById("list_of_modules");
-  var choose_quiz = document.getElementById("choose_quiz");
-  if (modules.style.display === "none") {
-    modules.style.display = "block";
-    choose_quiz.style.display = "none";
-    } else {
-      modules.style.display = "none";
-      choose_quiz.style.display = "block"; 
-    }
-  }
-
+  window.history.pushState({},"","x");
 </script>
+<script src="{% static 'functions.js' %}"></script>  
 
 {% endblock %}

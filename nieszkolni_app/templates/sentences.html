@@ -8,7 +8,7 @@
       <h5 class="phrase_card_question">{{ polish }}</h5>
       <form action="{% url 'sentences' %}" method="POST">
         {% csrf_token %}
-        <button type="submit" class="button_main"  name="answer" value="show" style="text-decoration: none;">Show</button>
+        <button type="submit" class="button_main"  name="answer" value="show" style="text-decoration: none;" id="show_b" onclick="disableButton(this.id)">Show</button>
       </form>
     </div>
   </div>
@@ -22,5 +22,7 @@
     <button type="submit" class="counter" title="Edit" name="answer" value="edit"><img src="{% static '/images/pencil.png' %}" width="15" height="15"></button>
   </form>
 </div>
+
+<script src="{% static 'functions.js' %}"></script> 
 
 {% endblock %}

@@ -1790,18 +1790,14 @@ def session_mode(request):
             elif request.POST["add_knowledge"] == "add_wordbook":
                 entry = request.POST["wordbook_entry"]
 
-                add_to_wordbook = KnowledgeManager().add_to_book(current_client, entry, current_user, "vocabulary")
+                KnowledgeManager().add_to_book(
+                    current_client,
+                    entry,
+                    current_user,
+                    "vocabulary"
+                    )
 
-                return render(request, "session_mode.html", {
-                        "current_client": current_client,
-                        "last_form": last_form,
-                        "catalogues": catalogues,
-                        "pronunciation": pronunciation,
-                        "sentencebook": sentencebook,
-                        "wordbook": wordbook,
-                        "prompts": prompts,
-                        "memories": memories
-                        })
+                return redirect("session_mode")
 
             elif request.POST["add_knowledge"] == "add_sentencebook":
                 entry = request.POST["sentencebook_entry"]

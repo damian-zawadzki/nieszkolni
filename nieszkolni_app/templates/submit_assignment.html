@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block 'content' %}
+{% load static %}
 
 <h1>SUBMIT AN ASSIGNMENT</h1>
 
@@ -48,8 +49,10 @@
   </div>
   
   <div class="flex-parent jc-center">
-  <button type="submit" class="button_main" name="go_to" value="database">Submit</button>
+  <button type="submit" class="button_main" name="go_to" value="database" id="submit_b" onclick="disableButton(this.id)">Submit</button>
   </div>
 </form>
+
+<script src="{% static 'functions.js' %}"></script>
 
 {% endblock %}

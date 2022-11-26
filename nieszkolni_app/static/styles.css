@@ -555,43 +555,28 @@ h6 {
 }
 
 .list {
+  align-items: center;
   list-style: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .list_item {
-  alignment-baseline:  middle;
-  appearance: none;
+  align-items: baseline;
   background-color: #fff;
   border-radius: 24px;
   border-style: none;
   box-shadow: rgba(0, 0, 0, .2) 0 3px 5px -1px,rgba(0, 0, 0, .14) 0 6px 10px 0,rgba(0, 0, 0, .12) 0 1px 18px 0;
-  box-sizing: border-box;
   color: #3c4043;
   display: flex;
-  fill: currentcolor;
   font-family: "Google Sans", Roboto, Arial, sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 75px;
-  letter-spacing: .25px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  max-width: 90%;
-  padding: 0px 25px 0px 25px;
-  position: relative;
-  text-decoration: none;
-  text-transform: none;
-  transition: box-shadow 280ms cubic-bezier(.4, 0, .2, 1), opacity 15ms linear 30ms, transform 270ms cubic-bezier(0, 0, .2, 1) 0ms;
-  touch-action: manipulation;
+  justify-content: center;
+  margin-top: 1vh;
+  margin-bottom: 1vh;
+  padding: 0vh 1vw 0vh 1vw;
   user-select: none;
-  width: 70%;
-  will-change: transform, opacity;
-  z-index: 0;
-  overflow:hidden; 
-  white-space:no-wrap; 
-  text-overflow:ellipsis;
+  width: 70vw;
 }
 
 .list_content {
@@ -980,6 +965,18 @@ h3 {
   float: right;
   margin-right: 2em;
   padding: 10px;
+}
+
+.hamburger_menu_pc {
+  background-color: #fff;
+  border-radius: 24px;
+  border-style: none;
+  box-shadow: rgba(0, 0, 0, .2) 0 3px 5px -1px,rgba(0, 0, 0, .14) 0 6px 10px 0,rgba(0, 0, 0, .12) 0 1px 18px 0;
+  cursor: default;
+  float: right;
+  margin-right: 2em;
+  padding: 10px;
+  z-index: 100;
 }
 
 table.m_table {
@@ -1595,16 +1592,6 @@ hr.line {
   width: auto;
 }
 
-.important_information {
-  align-items: baseline;
-  display: flex;
-  font-family: "Google Sans", Roboto, Arial, sans-serif;
-  font-size: 25px;
-  font-weight: 1000;
-  justify-content: center;
-  padding: 1vw;
-}
-
 /*Checklist*/
 .dot {
   height: 25px;
@@ -1623,4 +1610,50 @@ hr.line {
   border-style: none;
   box-shadow: rgba(0, 0, 0, .2) 0 3px 5px -1px,rgba(0, 0, 0, .14) 0 6px 10px 0,rgba(0, 0, 0, .12) 0 1px 18px 0;
   box-sizing: border-box;
+}
+
+/*Important information*/
+.main_box {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.main_card {
+  align-content: center;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  border-radius: 100px;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  transition: 0.3s;
+  text-align: center;
+  width: 150px;
+}
+
+.main_card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+.main_info {
+  align-self: center;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 50px;
+  font-weight: 1000;
+}
+
+/*Side navigation*/
+
+.xxx {
+  background-color: #bbb;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 30vw;
+  padding-top: 15vh;
+}
+
+.toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
 }

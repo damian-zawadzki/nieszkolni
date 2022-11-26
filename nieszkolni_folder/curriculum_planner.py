@@ -13,6 +13,7 @@ import re
 from nieszkolni_folder.sentence_manager import SentenceManager
 from nieszkolni_folder.quiz_manager import QuizManager
 from nieszkolni_folder.curriculum_manager import CurriculumManager
+from nieszkolni_folder.vocabulary_manager import VocabularyManager
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()

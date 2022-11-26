@@ -6,6 +6,8 @@ from nieszkolni_app.models import Set
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
 
+from nieszkolni_folder.knowledge_manager import KnowledgeManager
+
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
 
@@ -266,6 +268,22 @@ class SentenceManager:
                     ON CONFLICT (sentence_number)
                     DO NOTHING
                     ''')
+
+            if glossary is not None:
+                number_of_phrases = glossary.count("/")
+                if number_of_phrases == 1:
+                    phrases = glossary.split("/")
+                elif number_of_phrases == 0:
+                    phrases = []
+                    phrases.append(glossary)
+
+            for phrase in phrases:
+                KnowledgeManager().add_to_book(
+                    name,
+                    phrase,
+                    "system",
+                    "vocabulary"
+                    )
 
     def find_list_number_by_item(self, item):
         with connection.cursor() as cursor:

@@ -189,12 +189,17 @@ class KnowledgeManager:
     def add_to_book(self, name, english, publicating_user, deck):
         english = Cleaner().clean_quotation_marks(english)
         polish = self.translate(english)
-        print(polish)
         deck = deck
         today_number = TimeMachine().today_number()
 
         if polish is not None:
-            add_entry = VocabularyManager().add_entry(name, deck, english, polish, publicating_user)
+            add_entry = VocabularyManager().add_entry(
+                name,
+                deck,
+                english,
+                polish,
+                publicating_user
+                )
 
         else:
             with connection.cursor() as cursor:
@@ -230,17 +235,35 @@ class KnowledgeManager:
     def display_open_book(self, deck):
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                SELECT id, english, status, deck
+                SELECT id, english, status, deck, publicating_user
                 FROM nieszkolni_app_book
                 WHERE deck = '{deck}'
                 AND (status = 'open'
                 OR status = 'rejected')
                 ''')
             entries = cursor.fetchall()
-            if len(entries) == 0:
+
+            remaining_entries = []
+
+            for entry in entries:
+                english = entry[1]
+                polish = self.translate(english)
+
+                if polish is not None:
+                    add_entry = VocabularyManager().add_entry(
+                        name,
+                        deck,
+                        english,
+                        polish,
+                        publicating_user
+                        )
+                else:
+                    remaining_entries.append(entry)
+
+            if len(remaining_entries) == 0:
                 return None
             else:
-                return entries
+                return remaining_entries
 
     def delete_book_entry(self, unique_id):
         with connection.cursor() as cursor:

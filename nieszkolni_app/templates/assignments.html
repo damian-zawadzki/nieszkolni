@@ -4,26 +4,10 @@
 
 <h1>MY TO-DO LIST</h1>
 
-<div class="flex-parent jc-center margins">
-
-    <div class="phrase_card">
-      <div class="phrase_card_container">
-        
-        <div>THIS WEEK YOU WILL GET</div>
-        <div class="important_information">{{ score }} <img src="{% static '/images/star.png' %}" width="20" height="20"></div>
-
-        <div class="flex-parent jc-center">
-      		<button type="submit" class="button_main" name="action_on_collection" value="update">More info</button>
-  			</div>
-
-      </div>
-    </div>
-
-</div>
-
 <div class="list_container">
 
 	<ul class="list">
+
 
 		{% for uncomplated_assignment in uncomplated_assignments %}
 

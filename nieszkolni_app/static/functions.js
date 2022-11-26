@@ -1,8 +1,26 @@
-function showHide() {
-  var file = document.getElementById("file_upload");
-  if (file.style.display === "none") {
-    file.style.display = "block";
+function showHide(element) {
+  var object = document.getElementById(element);
+  if (object.style.display == "none") {
+    object.style.display = "block";
   } else {
-    file.style.display = "none";
-  }
-}
+    object.style.display = "none";
+  };
+};
+
+function disableButton(button_id) {
+  var button = document.getElementById(button_id);
+  
+  button.onchange = (event) => {
+           event.preventDefault();
+           button.disabled = true;
+         };
+  };
+
+function forgetPage() {
+  var button = document.getElementById(button_id);
+  
+  button.onchange = (event) => {
+           event.preventDefault();
+           button.disabled = true;
+         };
+  };
