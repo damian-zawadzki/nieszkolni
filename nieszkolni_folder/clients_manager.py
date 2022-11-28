@@ -36,7 +36,10 @@ class ClientsManager:
                 status,
                 coach,
                 level,
-                daily_limit_of_new_cards
+                daily_limit_of_new_vocabulary,
+                maximal_interval_vocabulary,
+                daily_limit_of_new_sentences,
+                maximal_interval_sentences
                 )
                 VALUES (
                 'client',
@@ -53,7 +56,10 @@ class ClientsManager:
                 'active',
                 '-',
                 '-',
-                33
+                '25',
+                '90',
+                '25',
+                '90'
                 )
                 ON CONFLICT (name)
                 DO NOTHING

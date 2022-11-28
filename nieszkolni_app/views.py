@@ -384,12 +384,17 @@ def register_user(request):
                 is_client = ClientsManager().verify_client(username)
                 if is_client is False:
 
-                    add = ClientsManager().add_client(
-                        username,
-                        internal_email_address
-                        )
+                    try:
+                        add = ClientsManager().add_client(
+                            username,
+                            internal_email_address
+                            )
 
-                    user.save()
+                        user.save()
+
+                    except Exception as e:
+                        messages.error(request, ("There has been a mistake. Contact the administration team."))
+                        return redirect("register_user")
 
                     messages.success(request, ("The user has been added to the database."))
                     return redirect("list_current_users")
