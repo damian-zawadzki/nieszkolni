@@ -2792,9 +2792,6 @@ def report_listening(request):
             number_of_episodes = request.POST["number_of_episodes"]
             rating = request.POST["rating"]
 
-            # Rating
-            RatingManager().add_rating(client, title, rating)
-
             # Stream
             StreamManager().report_listening(
                 client,
