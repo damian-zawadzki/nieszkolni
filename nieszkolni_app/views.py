@@ -2790,7 +2790,6 @@ def report_listening(request):
         if request.method == "POST":
             title = request.POST["title"]
             number_of_episodes = request.POST["number_of_episodes"]
-            rating = request.POST["rating"]
 
             # Stream
             StreamManager().report_listening(
