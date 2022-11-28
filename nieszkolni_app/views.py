@@ -431,10 +431,12 @@ def register_client(request):
                 status = request.POST["status"]
                 coach = request.POST["coach"]
                 level = request.POST["level"]
-                daily_limit_of_new_cards = request.POST["daily_limit_of_new_cards"]
+                daily_limit_of_new_vocabulary = request.POST["daily_limit_of_new_vocabulary"]
+                maximal_interval_vocabulary = request.POST["maximal_interval_vocabulary"]
+                daily_limit_of_new_sentences = request.POST["daily_limit_of_new_sentences"]
+                maximal_interval_sentences = request.POST["maximal_interval_sentences"]
 
-
-                edit = ClientsManager().edit_client(
+                ClientsManager().edit_client(
                     user_type,
                     name,
                     phone_number,
@@ -448,8 +450,13 @@ def register_client(request):
                     status,
                     coach,
                     level,
-                    daily_limit_of_new_cards
+                    daily_limit_of_new_vocabulary,
+                    maximal_interval_vocabulary,
+                    daily_limit_of_new_sentences,
+                    maximal_interval_sentences
                     )
+
+                return redirect("list_current_users")
 
         current_clients = ClientsManager().list_current_users()
 
@@ -484,7 +491,10 @@ def list_current_users(request):
                 status = client_details[11]
                 coach = client_details[12]
                 level = client_details[13]
-                daily_limit_of_new_cards = client_details[14]
+                daily_limit_of_new_vocabulary = client_details[14]
+                maximal_interval_vocabulary = client_details[15]
+                daily_limit_of_new_sentences = client_details[16]
+                maximal_interval_sentences = client_details[17]
 
                 return render(request, "register_client.html", {
                     "name": name,
@@ -500,7 +510,10 @@ def list_current_users(request):
                     "status": status,
                     "coach": coach,
                     "level": level,
-                    "daily_limit_of_new_cards": daily_limit_of_new_cards
+                    "daily_limit_of_new_vocabulary": daily_limit_of_new_vocabulary,
+                    "maximal_interval_vocabulary": maximal_interval_vocabulary,
+                    "daily_limit_of_new_sentences": daily_limit_of_new_sentences,
+                    "maximal_interval_sentences": maximal_interval_sentences
                     })
             else:
 

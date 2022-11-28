@@ -120,7 +120,10 @@ class ClientsManager:
                 status,
                 coach,
                 level,
-                daily_limit_of_new_cards
+                daily_limit_of_new_vocabulary,
+                maximal_interval_vocabulary,
+                daily_limit_of_new_sentences,
+                maximal_interval_sentences
                 FROM nieszkolni_app_client
                 WHERE name = '{name}'
                 ''')
@@ -144,7 +147,11 @@ class ClientsManager:
             status,
             coach,
             level,
-            daily_limit_of_new_cards):
+            daily_limit_of_new_vocabulary,
+            maximal_interval_vocabulary,
+            daily_limit_of_new_sentences,
+            maximal_interval_sentences
+            ):
 
         with connection.cursor() as cursor:
             cursor.execute(f'''
@@ -163,6 +170,9 @@ class ClientsManager:
                 status = '{status}',
                 coach = '{coach}',
                 level = '{level}',
-                daily_limit_of_new_cards = {daily_limit_of_new_cards}
+                daily_limit_of_new_vocabulary = '{daily_limit_of_new_vocabulary}',
+                maximal_interval_vocabulary = '{maximal_interval_vocabulary}',
+                daily_limit_of_new_sentences = '{daily_limit_of_new_sentences}',
+                maximal_interval_sentences = '{daily_limit_of_new_sentences}'
                 WHERE name = '{name}'
                 ''')
