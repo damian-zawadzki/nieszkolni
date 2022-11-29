@@ -3986,6 +3986,13 @@ def display_collection(request):
                     "questions": questions
                     })
 
+            elif request.POST["action_on_collection"] == "remove":
+                position_id = request.POST["position_id"]
+
+                QuizManager().remove_from_collection(position_id)
+
+                return redirect("display_collection")
+
         return render(request, "display_collection.html", {
             "collection_ids": collection_ids,
             })

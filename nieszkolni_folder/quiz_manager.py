@@ -250,7 +250,8 @@ class QuizManager:
             cursor.execute(f'''
                 SELECT
                 c.question_id,
-                q.question
+                q.question,
+                c.id
                 FROM nieszkolni_app_collection AS c
                 INNER JOIN nieszkolni_app_question AS q ON q.question_id = c.question_id
                 WHERE c.collection_id = '{collection_id}'
@@ -259,6 +260,13 @@ class QuizManager:
             questions = cursor.fetchall()
 
             return questions
+
+    def remove_from_collection(self, position_id):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                DELETE FROM nieszkolni_app_collection
+                WHERE id = '{position_id}'
+                ''')
 
     # Assessment
     # We register a quiz.

@@ -35,6 +35,15 @@
 		<tr class="font">
 
 			<td class="td_sentences">{{ question.1 }}</td>
+			<td>
+				<form action="{% url 'display_collection' %}" method="POST">
+					{% csrf_token %}
+
+					<input type="hidden" name="position_id" value="{{ question.2 }}">
+					<button type="submit" class="list_button button_main" name="action_on_collection" value="remove">Remove</button>
+
+				</form>
+			</td>
 
 		</tr>
 
