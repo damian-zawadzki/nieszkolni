@@ -116,7 +116,7 @@ class QuizManager:
 
             data = cursor.fetchone()
 
-            if data is not None:
+            if data is None:
                 next_question_id = 1000000
             else:
                 next_question_id = int(data[0]) + 1
