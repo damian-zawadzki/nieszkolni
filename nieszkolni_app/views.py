@@ -1609,8 +1609,13 @@ def display_matrices(request):
             elif request.POST["action_on_matrix"] == "remove":
                 component_id = request.POST["component_id"]
                 matrix = request.POST["matrix"]
+                limit_number = request.POST["limit_number"]
 
-                CurriculumManager().remove_module_from_matrix(matrix, component_id)
+                CurriculumManager().remove_module_from_matrix(
+                    matrix,
+                    component_id,
+                    limit_number
+                    )
 
                 return redirect("display_matrices")
 

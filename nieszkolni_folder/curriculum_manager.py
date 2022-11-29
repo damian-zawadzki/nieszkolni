@@ -573,12 +573,13 @@ class CurriculumManager:
 
             return prefixes
 
-    def remove_module_from_matrix(self, matrix, component_id):
+    def remove_module_from_matrix(self, matrix, component_id, limit_number):
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 DELETE FROM nieszkolni_app_matrix
                 WHERE matrix = '{matrix}'
                 AND component_id = '{component_id}'
+                AND limit_number = '{limit_number}'
                 ''')
 
     def next_id_suffix(self, component, id_prefix):
