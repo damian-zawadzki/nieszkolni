@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block 'content' %}
 
-<h1>Register a client</h1>
+<h1>REGISTER A CLIENT</h1>
 
 <form action="{% url 'register_client' %}" method="POST">
 	{% csrf_token %}
@@ -36,22 +36,8 @@
 
   <div class="flex-parent jc-center"> 
     <div class="input_container">
-      <label class="input_label">Internal email address</label>
-      <input type="email" class="input_content" name="internal_email_address" value="{{ internal_email_address }}" required>
-    </div>
-  </div>
-
-  <div class="flex-parent jc-center"> 
-    <div class="input_container">
       <label class="input_label">Meeting duration</label>
       <input type="number" class="input_content" name="meeting_duration" value="{{ meeting_duration }}" required>
-    </div>
-  </div>
-
-  <div class="flex-parent jc-center"> 
-    <div class="input_container">
-      <label class="input_label">Price</label>
-      <input type="number" class="input_content" name="price" value="{{ price }}" required>
     </div>
   </div>
 

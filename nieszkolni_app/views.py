@@ -422,9 +422,7 @@ def register_client(request):
                 name = request.POST["name"]
                 phone_number = request.POST["phone_number"]
                 contact_email_address = request.POST["contact_email_address"]
-                internal_email_address = request.POST["internal_email_address"]
-                meeting_duration = request.POST["meeting_duration"]
-                price = request.POST["price"]
+                meeting_duration = request.POST["meeting_duration"]    
                 acquisition_channel = request.POST["acquisition_channel"]
                 recommenders = request.POST["recommenders"]
                 reasons_for_resignation = request.POST["reasons_for_resignation"]
@@ -441,9 +439,7 @@ def register_client(request):
                     name,
                     phone_number,
                     contact_email_address,
-                    internal_email_address,
                     meeting_duration,
-                    price,
                     acquisition_channel,
                     recommenders,
                     reasons_for_resignation,
