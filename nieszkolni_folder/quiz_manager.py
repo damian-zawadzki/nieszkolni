@@ -31,6 +31,7 @@ class QuizManager:
             question_type
             ):
 
+        question_id = self.display_next_question_id()
         description = Cleaner().clean_quotation_marks(description)
         question = Cleaner().clean_quotation_marks(question)
         answer_a = Cleaner().clean_quotation_marks(answer_a)
@@ -42,6 +43,7 @@ class QuizManager:
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 INSERT INTO nieszkolni_app_question (
+                question_id,
                 description,
                 question,
                 answer_a,
@@ -52,6 +54,7 @@ class QuizManager:
                 question_type
                 )
                 VALUES (
+                '{question_id}',
                 '{description}',
                 '{question}',
                 '{answer_a}',
@@ -100,6 +103,25 @@ class QuizManager:
                 question_type = '{question_type}'
                 WHERE question_id = {question_id}
                 ''')
+
+    def display_next_question_id(self):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT question_id
+                FROM nieszkolni_app_question
+                ORDER BY question_id DESC
+                LIMIT 1
+                ''')
+
+            data = cursor.fetchone()
+
+            if data is not None:
+                next_question_id = 1000000
+            else:
+                next_question_id = int(data[0]) + 1
+
+            return next_question_id
 
     def display_questions(self):
 
