@@ -1442,7 +1442,7 @@ def choose_reference(request, component, id_prefix):
         elif component == "sentences":
             references = SentenceManager().display_sets()
         elif component == "quiz":
-            references = KnowledgeManager().display_collection_ids()
+            references = QuizManager().display_collection_ids()
 
         if request.method == "POST":
             reference = request.POST["reference"]
