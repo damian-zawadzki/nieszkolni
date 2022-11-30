@@ -153,6 +153,11 @@
       <a class="navigation_link" href="{% url 'staff'%}">STAFF</a>
     </li>
 
+    <input type="hidden" name="status" id="status_info" value="{{ status }}">
+    <li class="navigation_item">
+      <a class="navigation_link" href="{% url 'clock'%}"><span class="clock_dot" id="clock_info"></span></a>
+    </li>
+
     <div>
         <button type="button" class="hamburger_menu_pc" onclick="showHideSideMenu()"><img src="{% static '/images/hamburger.png' %}" width="15" height="15"></button>
     </div>
@@ -308,7 +313,9 @@
 
 </div>
 
+<script src="{% static 'functions.js' %}"></script> 
 <script type="text/javascript">
+  window.addEventListener('load', monitorClock());
 
   function showHideHamburgerMenu() {
   var main_side_menu = document.getElementById("main_side_menu");

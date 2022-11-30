@@ -450,3 +450,26 @@ class Rating(models.Model):
     client = models.CharField(max_length=200, default="")
     position = models.CharField(max_length=200, default="")
     rating = models.IntegerField(default=0)
+
+
+class Category(models.Model):
+    category_name = models.CharField(max_length=200, default="")
+    category_display_name = models.CharField(max_length=200, default="")
+    category_number = models.IntegerField(default=0)
+    category_value = models.IntegerField(default=0)
+
+
+class Audit(models.Model):
+    stamp = models.IntegerField(default=0)
+    date_number = models.IntegerField(default=0)
+    clock_in = models.IntegerField(default=0)
+    clock_out = models.IntegerField(default=0)
+    duration = models.IntegerField(default=0)
+    category_number = models.IntegerField(default=0)
+    category_name = models.CharField(max_length=200, default="")
+    remarks = models.CharField(max_length=200, default="")
+    status = models.CharField(max_length=200, default="")
+    clocking_user = models.CharField(max_length=200, default="")
+    entry_type = models.CharField(max_length=200, default="")
+    category_value = models.IntegerField(default=0)
+    tags = models.CharField(max_length=200, default="")

@@ -59,7 +59,7 @@ class TimeMachine:
             day = re.search("\d\d\d\d\-\d\d\-\d\d", self.date).group()
 
             return day
-        except:
+        except Exception as e:
             pass
 
     def date_to_number(self, date):

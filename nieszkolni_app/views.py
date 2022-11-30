@@ -30,6 +30,7 @@ from nieszkolni_folder.curriculum_planner import CurriculumPlanner
 from nieszkolni_folder.homework_manager import HomeworkManager
 from nieszkolni_folder.activity_manager import ActivityManager
 from nieszkolni_folder.rating_manager import RatingManager
+from nieszkolni_folder.audit_manager import AuditManager
 
 import csv
 import re
@@ -1129,7 +1130,7 @@ def upload_curriculum(request):
                     )
 
             messages.success(request, ("The file has been uploaded!"))
-            return redirect("upload_curriculum.html")
+            return redirect("upload_curriculum")
 
         return render(request, "upload_curriculum.html", {})
 
@@ -4671,6 +4672,135 @@ def display_ticket(request, ticket_id):
         return render(request, "display_ticket.html", {
             "ticket": ticket,
             "staff": staff
+            })
+
+# Categories
+
+
+@staff_member_required
+def add_category(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        categories = AuditManager().display_category_names()
+
+        if request.method == "POST":
+            if request.POST["action_on_category"] == "add_new_category":
+                category_name = request.POST["category_name"]
+                category_display_name = request.POST["category_display_name"]
+                category_number = request.POST["category_number"]
+                category_value = request.POST["category_value"]
+
+                AuditManager().add_category(
+                    category_name,
+                    category_display_name,
+                    category_number,
+                    category_value
+                    )
+
+                messages.success(request, ("Category addded!"))
+                return redirect("display_categories")
+
+            elif request.POST["action_on_category"] == "add_category_display_name":
+                category_name = request.POST["category_name"]
+                category_display_name = request.POST["category_display_name"]
+
+                AuditManager().add_category_display_name(
+                    category_name,
+                    category_display_name
+                    )
+
+                messages.success(request, ("Category addded!"))
+                return redirect("display_categories")
+
+            elif request.POST["action_on_category"] == "upload":
+                csv_file = request.FILES["csv_file"]
+
+                file = csv_file.read().decode("utf8")
+                entries = StringToCsv().convert(file)
+
+                for entry in entries:
+                    AuditManager().add_category(
+                        entry[0],
+                        entry[1],
+                        entry[2],
+                        entry[3]
+                        )
+
+                messages.success(request, ("Category addded!"))
+                return redirect("display_categories")
+
+        return render(request, "add_category.html", {
+            "categories": categories
+            })
+
+
+@staff_member_required
+def display_categories(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        categories = AuditManager().display_categories()
+
+        return render(request, "display_categories.html", {
+            "categories": categories
+            }) 
+
+# Clock
+
+
+@staff_member_required
+def clock(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        categories = AuditManager().display_categories()
+        status = AuditManager().check_if_clocked_in(current_user)
+
+        if request.method == "POST":
+            if request.POST["action_on_clock"] == "start":
+                category_display_name = request.POST["category_display_name"]
+                remarks = request.POST["remarks"]
+                tags = ""
+
+                AuditManager().clock_in(
+                    category_display_name,
+                    remarks,
+                    current_user,
+                    "automatic",
+                    tags
+                    )
+
+                return redirect("clock")
+
+            elif request.POST["action_on_clock"] == "stop":
+                AuditManager().clock_out(current_user)
+
+                return redirect("clock")
+
+        return render(request, "clock.html", {
+            "categories": categories,
+            "status": status
+            })
+
+
+@staff_member_required
+def timesheet(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        entries = AuditManager().display_entries(current_user)
+
+        return render(request, "timesheet.html", {
+            "entries": entries
             })
 
 

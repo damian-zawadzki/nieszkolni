@@ -129,4 +129,8 @@ urlpatterns = [
     path('display_open_tickets', views.display_open_tickets, name="display_open_tickets"),
     path('display_closed_tickets', views.display_closed_tickets, name="display_closed_tickets"),
     path('display_ticket/<int:ticket_id>', views.display_ticket, name="display_ticket"),
+    path('add_category.html', views.add_category, name="add_category"),
+    path('display_categories.html', views.display_categories, name="display_categories"),
+    path('clock.html', views.clock, name="clock"),
+    path('timesheet.html', views.timesheet, name="timesheet"),
        ]

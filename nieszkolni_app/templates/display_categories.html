@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>CATEGORIES</h1>
+
+<table>
+
+	<tr>
+		<th class="short_column">Number</th>
+		<th class="short_column">Value</th>
+		<th class="td_sentences">Name</th>
+		<th class="td_sentences">Display name</th>
+	</tr>
+
+	{% for category in categories %}
+
+		<tr>
+			<td class="short_column">{{ category.2 }}</td>
+			<td class="short_column">{{ category.3 }}</td>
+			<td class="td_sentences">{{ category.0 }}</td>
+			<td class="td_sentences">{{ category.1 }}</td>
+		</tr>
+
+	{% endfor %}
+	
+</table>
+
+{% include 'footer.html' %}
+{% endblock %}

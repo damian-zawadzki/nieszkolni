@@ -422,6 +422,7 @@ class KnowledgeManager:
                 SELECT prompt, parent, pattern
                 FROM nieszkolni_app_prompt
                 WHERE parent = '{parent}'
+                ORDER BY prompt ASC
                 ''')
 
             prompts = cursor.fetchall()

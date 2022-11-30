@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %} 
+
+<h1>ADD A CATEGORY</h1>
+
+<div class="flex-parent jc-center input_label">What would you like to do?</div>
+<div class="flex-parent jc-center">
+   <button type="button" class="button_main" onclick="showHideWidgets('a_widget', 'b_widget', 'c_widget')">Plan a completely new category</button>
+   <button type="button" class="button_main" onclick="showHideWidgets('b_widget', 'a_widget', 'c_widget')">Add a hint for an existing category</button>
+   <button type="button" class="button_main" onclick="showHideWidgets('c_widget', 'a_widget', 'b_widget')">Upload categories</button>
+</div>
+
+<form action="{% url 'add_category' %}"  method="POST" id="a_widget" style="display: none">
+   {% csrf_token %}
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Category name</label>
+         <input type="text" class="input_content" name="category_name">
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Simplified category name</label>
+         <input type="text" class="input_content" name="category_display_name">
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Value</label>
+
+        <select required class="input_content" name="category_value">
+            <option disabled selected value></option>
+
+            <option value="1">Maintenance</option>
+            <option value="2">Improvement</option>
+            <option value="3">Development</option>
+
+        </select>
+
+    </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Category number</label>
+         <input type="text" class="input_content" min="1000" max="9999" name="category_number">
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_category" value="add_new_category">Add</button>
+   </div>
+
+</form>
+
+<form action="{% url 'add_category' %}"  method="POST" id="b_widget" style="display: none">
+   {% csrf_token %}
+
+   <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Category</label>
+
+        <select required class="input_content" name="category_name">
+            <option disabled selected value></option>
+
+            {% for category in categories %}
+               <option value="{{ category.0 }}">{{ category.0 }}</option>
+            {% endfor %}
+
+        </select>
+
+    </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Simplified category name</label>
+         <input type="text" class="input_content" name="category_display_name">
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_category" value="add_category_display_name">Add</button>
+   </div>
+
+</form>
+
+<form action="{% url 'add_category' %}" method="POST" enctype="multipart/form-data" id="c_widget" style="display: none"> 
+   {% csrf_token %}
+
+    <div class="flex-parent jc-center">
+        <button type="button" class="button_main">
+            <label style="margin: 25px; font-weight: bold;">
+                    Browse
+                <input type="file" style="display: none; margin: 25px;" name="csv_file" required="True" class="input_content">
+            </label>
+        </button>                 
+    </div>
+
+   <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_category" value="upload">Upload</button>
+   </div>
+
+</form>
+
+<script src="{% static 'functions.js' %}"></script>  
+
+{% endblock %}

@@ -1726,3 +1726,30 @@ hr.line {
   left: 5vw;
   z-index: 100;
 }
+
+/*Keyframes*/
+@keyframes show_modal {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/*Clock*/
+.clock_dot {
+  border-radius: 100%;
+  display: block;
+  height: 1vw;
+  width: 1vw;
+}
+
+.clocked_in {
+  background-color: #BCE043;
+}
+
+.clocked_out {
+  background-color: #E0432D;
+}

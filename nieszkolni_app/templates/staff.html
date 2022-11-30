@@ -6,14 +6,18 @@
 
 	<div class="flex-parent jc-center">
 		<ul class="square_menu">
-			<a class="square_menu_link" href="{% url 'old_staff' %}">OLD VIEW</a>
-			<a class="square_menu_link" href="{% url 'old_staff' %}">OLD VIEW</a>
 
 			{% if not settlement %}
 
 				<button type="submit" class="square_menu_link" name="action_on_system" value="settle_last_week">SETTLE LAST WEEK</button>
 
 			{% endif %}
+
+			<a class="square_menu_link" href="{% url 'old_staff' %}">OLD VIEW</a>
+			<a class="square_menu_link" href="{% url 'add_category' %}">CATEGORIES</a>
+			<a class="square_menu_link" href="{% url 'clock' %}">CLOCK</a>
+			<a class="square_menu_link" href="{% url 'timesheet' %}">TIMESHEET</a>
+
 
 		</ul>
 	</div>
