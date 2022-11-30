@@ -10,3 +10,6 @@ def sections_processor(request):
         status = AuditManager().check_if_clocked_in(current_user)
 
         return {"status": status}
+
+    else:
+        return {}

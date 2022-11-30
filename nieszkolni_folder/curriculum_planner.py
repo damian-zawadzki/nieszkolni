@@ -21,7 +21,7 @@ django.setup()
 
 class CurriculumPlanner:
     def __init__(self):
-        today_pattern = "%Y-%m-%d"
+        pass
 
     def plan_curriculum(
             self,
