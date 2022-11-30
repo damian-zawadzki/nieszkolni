@@ -132,5 +132,6 @@ urlpatterns = [
     path('add_category.html', views.add_category, name="add_category"),
     path('display_categories.html', views.display_categories, name="display_categories"),
     path('clock.html', views.clock, name="clock"),
+    path('manual_clock.html', views.manual_clock, name="manual_clock"),
     path('timesheet.html', views.timesheet, name="timesheet"),
        ]

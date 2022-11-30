@@ -4791,6 +4791,40 @@ def clock(request):
 
 
 @staff_member_required
+def manual_clock(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        categories = AuditManager().display_categories()
+
+        if request.method == "POST":
+            if request.POST["action_on_manual_clock"] == "add":
+                clock_in = request.POST["clock_in"]
+                clock_out = request.POST["clock_out"]
+                category_display_name = request.POST["category_display_name"]
+                remarks = request.POST["remarks"]
+                tags = ""
+
+                AuditManager().clock_in_out(
+                    clock_in,
+                    clock_out,
+                    category_display_name,
+                    remarks,
+                    current_user,
+                    "manual",
+                    tags
+                    )
+
+                return redirect("timesheet")
+
+        return render(request, "manual_clock.html", {
+            "categories": categories
+            })
+
+
+@staff_member_required
 def timesheet(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name

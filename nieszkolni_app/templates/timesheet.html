@@ -18,7 +18,7 @@
 			<td>{{ entry.clock_in }}</td>
 			<td>{{ entry.clock_out }}</td>
 			<td>{{ entry.duration }}</td>
-			<td class="td_sentences">{{ entry.category_name }}</td>
+			<td class="td_sentences">{{ entry.category_name|safe }}</td>
 		</tr>
 
 	{% endfor %}

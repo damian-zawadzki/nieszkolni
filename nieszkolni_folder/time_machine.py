@@ -9,9 +9,11 @@ date_today = datetime.today()
 class TimeMachine:
     global now_pattern
     global now_pattern_colons
+    global now_pattern_colons_2
     global today_pattern
     now_pattern = "%Y-%m-%d %H-%M-%S-%f"
     now_pattern_colons = "%Y-%m-%d %H:%M:%S"
+    now_pattern_colons_2 = "%Y-%m-%dT%H:%M"
     today_pattern = "%Y-%m-%d"
 
     def show_now_pattern(self):
@@ -78,7 +80,11 @@ class TimeMachine:
 
     def date_time_to_number(self, date):
         if isinstance(date, str):
-            end = datetime.strptime(date, now_pattern_colons)
+            try:
+                end = datetime.strptime(date, now_pattern_colons)
+            except Exception as e:
+                end = datetime.strptime(date, now_pattern_colons_2)
+
         else:
             end = datetime.strftime(date, now_pattern_colons)
             end = datetime.strptime(end, now_pattern_colons)
@@ -125,6 +131,7 @@ class TimeMachine:
         return now_number
 
     def number_to_system_date(self, date_number):
+        date_number = int(date_number)
         start = datetime.strptime("2000-01-01", today_pattern)
         difference = timedelta(days=date_number)
         end = start + difference
@@ -223,3 +230,8 @@ class TimeMachine:
 
         return week_sign
 
+    def time_number_to_date_number(self, time_number):
+        date_number_raw = time_number/86400
+        date_number = re.search(r"\d{1,}", str(date_number_raw)).group()
+
+        return date_number

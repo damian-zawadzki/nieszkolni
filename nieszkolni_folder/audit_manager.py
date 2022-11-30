@@ -80,6 +80,65 @@ class AuditManager:
                 )
                 ''')
 
+    def clock_in_out(
+            self,
+            clock_in,
+            clock_out,
+            category_display_name,
+            remarks,
+            clocking_user,
+            entry_type,
+            tags
+            ):
+
+        stamp = TimeMachine().now_number()
+        clock_in = TimeMachine().date_time_to_number(clock_in)
+        clock_out = TimeMachine().date_time_to_number(clock_out)
+        duration = clock_out - clock_in
+
+        category = self.find_category_by_display_name(category_display_name)
+        category_number = category["category_number"]
+        category_name = category["category_name"]
+        category_value = category["category_value"]
+        date_number = TimeMachine().time_number_to_date_number(clock_in)
+        remarks = Cleaner().clean_quotation_marks(remarks)
+        status = "awaiting"
+        tags = Cleaner().clean_quotation_marks(tags)
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                INSERT INTO nieszkolni_app_audit (
+                stamp,
+                clock_in,
+                clock_out,
+                duration,
+                category_number,
+                category_name,
+                date_number,
+                remarks,
+                status,
+                clocking_user,
+                entry_type,
+                category_value,
+                tags
+                )
+                VALUES (
+                '{stamp}',
+                '{clock_in}',
+                '{clock_out}',
+                '{duration}',
+                '{category_number}',
+                '{category_name}',
+                '{date_number}',
+                '{remarks}',
+                '{status}',
+                '{clocking_user}',
+                '{entry_type}',
+                '{category_value}',
+                '{tags}'
+                )
+                ''')
+
     def clock_out(self, clocking_user):
 
         current_entry = self.current_entry(clocking_user)
@@ -107,6 +166,7 @@ class AuditManager:
                 FROM nieszkolni_app_audit
                 WHERE clocking_user = '{clocking_user}'
                 AND entry_type = 'automatic'
+                AND status = 'started'
                 ORDER BY stamp DESC
                 LIMIT 1
                 ''')
@@ -144,6 +204,7 @@ class AuditManager:
                 FROM nieszkolni_app_audit
                 WHERE clocking_user = '{clocking_user}'
                 AND entry_type = 'automatic'
+                AND status = 'started'
                 ORDER BY stamp DESC
                 LIMIT 1
                 ''')
@@ -178,6 +239,14 @@ class AuditManager:
 
             entries = []
             for row in rows:
+                status = row[9]
+                category_name = row[6]
+
+                if status == "awaiting":
+                    category_name = f"<b><b>Awaiting approval: </b></b>{category_name}"
+
+
+
                 entry = {
                     "entry_id": row[0],
                     "stamp": row[1],
@@ -185,10 +254,10 @@ class AuditManager:
                     "clock_out": TimeMachine().number_to_system_date_time(row[3]),
                     "duration": round(int(row[4])/60),
                     "category_number": row[5],
-                    "category_name": row[6],
+                    "category_name": category_name,
                     "date_number":  TimeMachine().number_to_system_date(row[7]),
                     "remarks": row[8],
-                    "status": row[9],
+                    "status": status,
                     "clocking_user": row[10],
                     "entry_type": row[11],
                     "category_value": row[12],
