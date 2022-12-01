@@ -4831,11 +4831,60 @@ def timesheet(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        entries = AuditManager().display_entries(current_user)
+        if request.method == "POST":
+            if request.POST["action_on_timesheet"] == "filter":
+                start = request.POST["start"]
+                end = request.POST["end"]
 
-        return render(request, "timesheet.html", {
-            "entries": entries
-            })
+                entries = AuditManager().display_entries(
+                    current_user,
+                    start,
+                    end
+                    )
+
+                return render(request, "timesheet.html", {
+                    "entries": entries
+                    })
+
+        return render(request, "timesheet.html", {})
+
+
+@staff_member_required
+def upload_timesheet(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        if request.method == "POST":
+            if request.POST["action_on_timesheet"] == "upload":
+                csv_file = request.FILES["csv_file"]
+
+                file = csv_file.read().decode("utf8")
+                entries = StringToCsv().convert(file)
+
+                for entry in entries:
+                    print(entry)
+                    AuditManager().upload_timesheet(
+                        entry[0],
+                        entry[1],
+                        entry[2],
+                        entry[3],
+                        entry[4],
+                        entry[5],
+                        entry[6],
+                        entry[7],
+                        entry[8],
+                        entry[9],
+                        entry[10],
+                        entry[11],
+                        entry[12]
+                        )
+
+                messages.success(request, ("Category addded!"))
+                return redirect("timesheet")
+
+        return render(request, "upload_timesheet.html", {})
 
 
 def footer(request):

@@ -139,6 +139,65 @@ class AuditManager:
                 )
                 ''')
 
+    def upload_timesheet(
+            self,
+            stamp,
+            clock_in,
+            clock_out,
+            duration,
+            category_number,
+            category_name,
+            date_number,
+            remarks,
+            status,
+            clocking_user,
+            entry_type,
+            category_value,
+            tags
+            ):
+
+        stamp = TimeMachine().date_time_to_number(stamp)
+        clock_in = TimeMachine().date_time_to_number(clock_in)
+        clock_out = TimeMachine().date_time_to_number(clock_out)
+        date_number = TimeMachine().date_to_number(date_number)
+        category_name = Cleaner().clean_quotation_marks(category_name)
+        remarks = Cleaner().clean_quotation_marks(remarks)
+        tags = Cleaner().clean_quotation_marks(tags)
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                INSERT INTO nieszkolni_app_audit (
+                stamp,
+                clock_in,
+                clock_out,
+                duration,
+                category_number,
+                category_name,
+                date_number,
+                remarks,
+                status,
+                clocking_user,
+                entry_type,
+                category_value,
+                tags
+                )
+                VALUES (
+                '{stamp}',
+                '{clock_in}',
+                '{clock_out}',
+                '{duration}',
+                '{category_number}',
+                '{category_name}',
+                '{date_number}',
+                '{remarks}',
+                '{status}',
+                '{clocking_user}',
+                '{entry_type}',
+                '{category_value}',
+                '{tags}'
+                )
+                ''')
+
     def clock_out(self, clocking_user):
 
         current_entry = self.current_entry(clocking_user)
@@ -158,6 +217,15 @@ class AuditManager:
                 status = '{status}'
                 WHERE id = '{current_entry_id}'
                 ''')
+
+    # def remove(self):
+
+
+    #     with connection.cursor() as cursor:
+    #         cursor.execute(f'''
+    #             DELETE FROM nieszkolni_app_audit
+    #             WHERE id >= 0
+    #             ''')
 
     def check_if_clocked_in(self, clocking_user):
         with connection.cursor() as cursor:
@@ -213,7 +281,12 @@ class AuditManager:
 
             return entry
 
-    def display_entries(self, clocking_user):
+    def display_entries(self, clocking_user, start, end):
+        start_number = TimeMachine().date_to_number(start)
+        end_number = TimeMachine().date_to_number(end)
+
+        print(start_number)
+
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 SELECT
@@ -232,6 +305,8 @@ class AuditManager:
                 category_value,
                 tags
                 FROM nieszkolni_app_audit
+                WHERE date_number >= '{start_number}'
+                AND date_number <= '{end_number}'
                 ORDER BY stamp DESC
                 ''')
 
@@ -244,8 +319,6 @@ class AuditManager:
 
                 if status == "awaiting":
                     category_name = f"<b><b>Awaiting approval: </b></b>{category_name}"
-
-
 
                 entry = {
                     "entry_id": row[0],

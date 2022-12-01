@@ -7,9 +7,14 @@ def sections_processor(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        if request.user.is_superuser:
+            superuser_status = True
+        else:
+            superuser_status = False
+
         status = AuditManager().check_if_clocked_in(current_user)
 
-        return {"status": status}
+        return {"status": status, "superuser_status": superuser_status}
 
     else:
         return {}

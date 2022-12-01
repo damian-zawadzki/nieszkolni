@@ -134,4 +134,5 @@ urlpatterns = [
     path('clock.html', views.clock, name="clock"),
     path('manual_clock.html', views.manual_clock, name="manual_clock"),
     path('timesheet.html', views.timesheet, name="timesheet"),
+    path('upload_timesheet.html', views.upload_timesheet, name="upload_timesheet"),
        ]

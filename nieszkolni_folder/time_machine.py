@@ -75,8 +75,10 @@ class TimeMachine:
         start = datetime.strptime(start, today_pattern)
 
         difference = end - start
+        result_raw = difference.days
+        result = int(result_raw)
 
-        return int(difference.days)
+        return result
 
     def date_time_to_number(self, date):
         if isinstance(date, str):
