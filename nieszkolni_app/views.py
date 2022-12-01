@@ -1267,6 +1267,9 @@ def assignment(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        no_submissions = KnowledgeManager().display_list_of_prompts("no_submission")
+        print(no_submissions)
+
         if request.method == "POST":
             item = request.POST["item"]
 
@@ -1277,7 +1280,8 @@ def assignment(request):
                 if request.POST["go_to"] != "submission":
                     return render(request, "assignment.html", {
                         "assignment": assignment,
-                        "current_user": current_user
+                        "current_user": current_user,
+                        "no_submissions": no_submissions
                         })
 
             elif request.POST["go_to"] == "check":

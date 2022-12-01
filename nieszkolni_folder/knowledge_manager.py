@@ -429,6 +429,23 @@ class KnowledgeManager:
 
             return prompts
 
+    def display_list_of_prompts(self, parent):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT prompt, parent, pattern
+                FROM nieszkolni_app_prompt
+                WHERE parent = '{parent}'
+                ORDER BY prompt ASC
+                ''')
+
+            rows = cursor.fetchall()
+
+            prompts = []
+            for row in rows:
+                prompts.append(row[0])
+
+            return prompts
+
     def display_all_prompts(self):
         with connection.cursor() as cursor:
             cursor.execute(f'''
