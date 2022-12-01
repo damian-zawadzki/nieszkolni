@@ -218,13 +218,13 @@ class AuditManager:
                 WHERE id = '{current_entry_id}'
                 ''')
 
-    # def remove(self):
+    def remove(self):
 
-    #     with connection.cursor() as cursor:
-    #         cursor.execute(f'''
-    #             DELETE FROM nieszkolni_app_audit
-    #             WHERE id >= 0
-    #             ''')
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                DELETE FROM nieszkolni_app_audit
+                WHERE id >= 0
+                ''')
 
     def check_if_clocked_in(self, clocking_user):
         with connection.cursor() as cursor:
