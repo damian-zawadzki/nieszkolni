@@ -31,6 +31,7 @@ from nieszkolni_folder.homework_manager import HomeworkManager
 from nieszkolni_folder.activity_manager import ActivityManager
 from nieszkolni_folder.rating_manager import RatingManager
 from nieszkolni_folder.audit_manager import AuditManager
+from nieszkolni_folder.onboarding_manager import OnboardingManager
 
 import csv
 import re
@@ -4888,6 +4889,27 @@ def upload_timesheet(request):
 
         return render(request, "upload_timesheet.html", {})
 
+
+@staff_member_required
+def onboard_client(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        clients = ClientsManager().list_current_users()
+
+        if request.method == "POST":
+            client = request.POST["client"]
+
+            OnboardingManager().onboard_client(client, current_user)
+
+            messages.success(request, ("Client onboarded!"))
+            return redirect("onboard_client")
+
+        return render(request, "onboard_client.html", {
+            "clients": clients
+            })
 
 def footer(request):
     return render(request, "footer.html", {})
