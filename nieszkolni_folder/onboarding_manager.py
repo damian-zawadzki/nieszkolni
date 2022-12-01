@@ -33,6 +33,7 @@ class OnboardingManager:
     def onboard_client(self, client, current_user):
         self.add_wordbook(client, current_user)
         self.add_pronunciation(client, current_user)
+        self.add_memories(client, current_user)
 
     def add_wordbook(self, client, current_user):
         entries = [
@@ -119,4 +120,21 @@ class OnboardingManager:
                 client,
                 entry,
                 current_user
+                )
+
+    def add_memories(self, client, current_user):
+        entries = [
+            ("past", "catch", ""),
+            ("comma before", "if", ""),
+            ("difference", "realise", "realize")
+            ]
+
+        for entry in entries:
+            print(entry)
+            KnowledgeManager().add_memory(
+                current_user,
+                client,
+                entry[0],
+                entry[1],
+                entry[2]
                 )

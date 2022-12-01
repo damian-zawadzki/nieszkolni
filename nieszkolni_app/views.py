@@ -1854,7 +1854,13 @@ def session_mode(request):
                 left_option = request.POST["left_option"]
                 right_option = request.POST["right_option"]
 
-                add_memory = KnowledgeManager().add_memory(current_user, current_client, prompt, left_option, right_option)
+                KnowledgeManager().add_memory(
+                    current_user,
+                    current_client,
+                    prompt,
+                    left_option,
+                    right_option
+                    )
 
                 return render(request, "session_mode.html", {
                         "current_client": current_client,
