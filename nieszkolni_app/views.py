@@ -4831,6 +4831,8 @@ def timesheet(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        AuditManager().remove()
+
         if request.method == "POST":
             if request.POST["action_on_timesheet"] == "filter":
                 start = request.POST["start"]
