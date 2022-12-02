@@ -1251,7 +1251,7 @@ def assignments(request):
 
         # Delete
         display_first_name = first_name.capitalize()
-        messages.warning(request, (f"{display_first_name}, it's Damian here. I'm sorry, but I'm still working on your homework. I'll need a few more hours."))
+        messages.sucess(request, (f"{display_first_name}, if you encounter an error, take a screenshot and send it to Damian via email."))
 
         if request.method == "POST":
             item = request.POST["item"]
