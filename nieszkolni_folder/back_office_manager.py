@@ -557,6 +557,25 @@ class BackOfficeManager:
 
             return end_of_semester
 
+    def display_start_of_semester(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT value
+                FROM nieszkolni_app_option
+                WHERE command = 'activity_start'
+                ORDER BY stamp DESC
+                LIMIT 1
+                ''')
+
+            data = cursor.fetchone()
+
+            if data is None:
+                start_of_semester = "SOON!"
+            else:
+                start_of_semester = data[0]
+
+            return start_of_semester
+
     def display_option_by_command(self, command):
         with connection.cursor() as cursor:
             cursor.execute(f'''

@@ -16,6 +16,7 @@ from nieszkolni_folder.curriculum_manager import CurriculumManager
 from nieszkolni_folder.vocabulary_manager import VocabularyManager
 from nieszkolni_folder.back_office_manager import BackOfficeManager
 from nieszkolni_folder.roadmap_manager import RoadmapManager
+from nieszkolni_folder.clients_manager import ClientsManager
 from nieszkolni_folder.stream_manager import StreamManager
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
@@ -129,8 +130,6 @@ class CurriculumPlanner:
         if rows is not None:
             for row in rows:
                 entry = row[5].split(";")
-                print(entry)
-                print(row[5])
                 if entry[0] == semester and entry[1] == program[0]:
                     check_if_planned = True
 
@@ -213,3 +212,23 @@ class CurriculumPlanner:
                     )
 
                 i += 1
+
+    def client_to_plan_program(self):
+        start = BackOfficeManager().display_start_of_semester()
+        end = BackOfficeManager().display_end_of_semester()
+        start_number = TimeMachine().date_to_number(start)
+        end_number = TimeMachine().date_to_number(end)
+        rows = StreamManager().find_by_command("Program")
+        covered_clients = set()
+
+        if rows is not None:
+            for row in rows:
+                if row[1] >= start_number - 21 and row[1] < end_number:
+                    covered_clients.add(row[3])
+
+        clients = ClientsManager().list_current_clients()
+        clients = set(clients)
+        clients.difference_update(covered_clients)
+
+        return clients
+

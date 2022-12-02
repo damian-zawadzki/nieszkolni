@@ -4548,7 +4548,7 @@ def plan_program(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        clients = ClientsManager().list_current_users()
+        clients = CurriculumPlanner().client_to_plan_program()
         programs = RoadmapManager().display_programs()
         semesters = RoadmapManager().display_profiles()
 
