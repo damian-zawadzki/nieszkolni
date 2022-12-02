@@ -1426,6 +1426,7 @@ td {
   position: absolute;
   left: 5vw;
   bottom: 2vw;
+  text-align: left;
 }
 
 .program_degree {
