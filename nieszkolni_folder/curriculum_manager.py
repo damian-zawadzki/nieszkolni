@@ -528,7 +528,9 @@ class CurriculumManager:
                 id
                 FROM nieszkolni_app_matrix
                 WHERE matrix = '{matrix}'
-                ORDER BY limit_number ASC
+                ORDER BY
+                limit_number ASC, 
+                component_id ASC
                 ''')
 
             rows = cursor.fetchall()
