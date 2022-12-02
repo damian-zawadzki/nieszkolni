@@ -4558,13 +4558,14 @@ def plan_program(request):
                 program_id = request.POST["program_id"]
                 semester = request.POST["semester"]
 
-                CurriculumPlanner().plan_program(
+                info = CurriculumPlanner().plan_program(
                     client,
                     current_user,
                     program_id,
                     semester
                     )
 
+                messages.success(request, (f"{info}"))
                 return redirect("programs")
 
         return render(request, "plan_program.html", {

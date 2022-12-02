@@ -16,6 +16,7 @@ from nieszkolni_folder.curriculum_manager import CurriculumManager
 from nieszkolni_folder.vocabulary_manager import VocabularyManager
 from nieszkolni_folder.back_office_manager import BackOfficeManager
 from nieszkolni_folder.roadmap_manager import RoadmapManager
+from nieszkolni_folder.stream_manager import StreamManager
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
@@ -118,12 +119,47 @@ class CurriculumPlanner:
     def plan_program(self, client, current_user, program_id, semester):
 
         program = RoadmapManager().display_program(program_id)
-        course_ids_list = program[3].split(", ")
 
-        self.plan_courses(client, current_user, course_ids_list, semester)
+        rows = StreamManager().find_by_command_and_client(
+            "Program",
+            client
+            )
+
+        check_if_planned = False
+        if rows is not None:
+            for row in rows:
+                entry = row[5].split(";")
+                print(entry)
+                print(row[5])
+                if entry[0] == semester and entry[1] == program[0]:
+                    check_if_planned = True
+
+        if check_if_planned is True:
+            return "The client has such a program already!"
+        else:
+            if program[3].count(", ") > 0:
+                course_ids_list = program[3].split(", ")
+            else:
+                course_ids_list = []
+                course_ids_list.append(program[3])
+
+            self.plan_courses(client, current_user, course_ids_list, semester)
+
+            StreamManager().add_to_stream(
+                client,
+                "Program",
+                f"{semester};{program[0]}",
+                current_user
+                )
+
+            return "Program assigned!"
 
     def plan_courses(self, client, current_user, course_ids_list, semester):
-        course_ids = tuple(course_ids_list)
+        if len(course_ids_list) > 1:
+            course_ids = tuple(course_ids_list)
+        else:
+            course_ids = f"({course_ids_list[0]})"
+
         courses = RoadmapManager().display_courses_by_ids(course_ids)
         deadline_roadmap = BackOfficeManager().display_end_of_semester()
         starting_date_number = TimeMachine().academic_week_start_number()

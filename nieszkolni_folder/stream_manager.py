@@ -242,6 +242,27 @@ class StreamManager:
 
             return rows
 
+    def find_by_command_and_client(self, command, client):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                stamp,
+                date_number,
+                date,
+                name,
+                command,
+                value,
+                stream_user,
+                status
+                FROM nieszkolni_app_stream
+                WHERE command = '{command}'
+                AND name = '{client}'
+                ''')
+
+            rows = cursor.fetchall()
+
+            return rows
+
     def add_to_repertoire_line(
             self,
             name,
