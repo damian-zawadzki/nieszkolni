@@ -1247,6 +1247,8 @@ def assignments(request):
         user_agent = get_user_agent(request)
         score = ActivityManager().calculate_points_this_week(current_user)
 
+
+        # Delete
         display_first_name = first_name.capitalize()
         messages.warning(request, (f"{display_first_name}, it's Damian here. I'm sorry, but I'm still working on your homework. I'll need a few more hours."))
 
@@ -1719,21 +1721,15 @@ def update_matrix(request, matrix):
         matrix_details = CurriculumManager().display_matrix(matrix)
 
         if request.method == "POST":
-            component_id = request.POST["component_id"]
             new_matrix = request.POST["new_matrix"]
-            limit_number = request.POST["limit_number"]
-            matrix_id = request.POST["matrix_id"]
-
-            print(matrix_id)
+            old_matrix = request.POST["old_matrix"]
 
             CurriculumManager().update_matrix(
-                component_id,
                 new_matrix,
-                limit_number,
-                matrix_id
+                old_matrix
                 )
 
-            id_prefix = CurriculumManager().display_prefix_by_matrix(matrix)
+            id_prefix = CurriculumManager().display_prefix_by_matrix(old_matrix)
             CurriculumManager().change_matrix_name(new_matrix, id_prefix)
 
             return redirect("display_prefixes")

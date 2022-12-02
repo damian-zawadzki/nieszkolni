@@ -13,21 +13,7 @@
         </div>
     </div>
 
-    <div class="flex-parent jc-center">
-        <div class="input_container">
-            <label class="input_label">Component ID</label>
-            <input type="text" class="input_content" name="component_id" value="{{ component_id }}">
-        </div>
-    </div>
-
-    <div class="flex-parent jc-center">
-        <div class="input_container">
-            <label class="input_label">Limit_number</label>
-            <input type="text" class="input_content" name="limit_number" value="{{ limit_number }}">
-        </div>
-    </div>
-
-    <input type="hidden" name="matrix_id" value="{{ matrix_id }}">
+    <input type="hidden" name="old_matrix" value="{{ matrix }}">
 
     <div class="flex-parent jc-center">
         <button type="submit" class="button_main" name="action_on_matrix" value="update">Update</button>

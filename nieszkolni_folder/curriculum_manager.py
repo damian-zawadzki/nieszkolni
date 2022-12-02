@@ -506,20 +506,15 @@ class CurriculumManager:
 
     def update_matrix(
             self,
-            component_id,
-            matrix,
-            limit_number,
-            matrix_id
+            new_matrix,
+            old_matrix
             ):
 
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 UPDATE nieszkolni_app_matrix
-                SET
-                component_id = '{component_id}',
-                matrix = '{matrix}',
-                limit_number = '{limit_number}'
-                WHERE id = '{matrix_id}'
+                SET matrix = '{new_matrix}'
+                WHERE matrix = '{old_matrix}'
                 ''')
 
     def display_matrix(self, matrix):
@@ -537,7 +532,6 @@ class CurriculumManager:
                 ''')
 
             rows = cursor.fetchall()
-            print(rows)
             modules = []
             for row in rows:
                 entry = dict()
