@@ -189,7 +189,7 @@ class BackOfficeManager:
             last_custom_postion_number = cursor.fetchone()
 
             if last_custom_postion_number[0] is None:
-                next_custom_postion_number = 10000
+                next_custom_postion_number = 90000
                 return next_custom_postion_number
 
             else:

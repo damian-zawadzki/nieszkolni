@@ -2707,7 +2707,7 @@ def library(request):
                     link
                     )
 
-                return redirect("library.html")
+                return redirect("library")
 
             else:
                 position_number = request.POST["position_number"]
@@ -2716,7 +2716,7 @@ def library(request):
                     position_number,
                     )
 
-                return redirect("library.html")
+                return redirect("library")
 
         return render(request, "library.html", {
             "positions": positions
