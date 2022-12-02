@@ -15,6 +15,7 @@ from nieszkolni_folder.curriculum_manager import CurriculumManager
 from nieszkolni_folder.back_office_manager import BackOfficeManager
 from nieszkolni_folder.stream_manager import StreamManager
 from nieszkolni_folder.clients_manager import ClientsManager
+from nieszkolni_folder.knowledge_manager import KnowledgeManager
 
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
@@ -29,44 +30,67 @@ class ActivityManager:
         last_sunday = TimeMachine().last_sunday()
         this_sunday = TimeMachine().this_sunday()
 
-        assignments = CurriculumManager().assignments_from_to(
+        assignments = CurriculumManager().assignments_and_status_from_to(
                 client,
                 last_sunday,
-                this_sunday,
-                "uncompleted"
+                this_sunday
                 )
 
-        completed_assignments = CurriculumManager().assignments_from_to(
-                client,
-                last_sunday,
-                this_sunday,
-                "completed"
-                )
-
+        no_submissions = KnowledgeManager().display_list_of_prompts("no_submission")
         po = StreamManager().count_po_from_to(client, last_sunday, this_sunday)
+        stats = StreamManager().statistics(client)
+        flashcards_check = stats["study_days_this_week"]
 
         no_homework = BackOfficeManager().display_option_by_command("no_homework_ap")
         full_homework = BackOfficeManager().display_option_by_command("full_homework_ap")
         main_homework = BackOfficeManager().display_option_by_command("main_homework_ap")
 
-        if len(completed_assignments) != 0:
-            completed_assignments = [item[0] for item in completed_assignments]
+        completed = []
+        uncompleted = []
 
-            if po != 0:
-                if "flashcards" in completed_assignments:
-                    if len(assignments) != 0:
-                        score = main_homework
-                    else:
-                        score = full_homework
-            else:
-                score = no_homework
+        for assignment in assignments:
+            if assignment[0] not in no_submissions:
+                if assignment[1] == "completed":
+                    completed.append(assignment[0])
+                else:
+                    uncompleted.append(assignment[0])
 
-        else:
-            score = no_homework
+        print(completed)
+        print(uncompleted)
+        print(flashcards_check)
 
-        score = int(score[0])
+        checks = 0
 
-        return score
+        if po > 30 and flashcards_check >= 2:
+            checks += 1
+
+        # for no_submission in no_submissions:
+        #     uncompleted
+
+
+
+
+
+
+
+        # if len(completed_assignments) != 0:
+        #     completed_assignments = [item[0] for item in completed_assignments]
+
+        #     if po != 0:
+        #         if "flashcards" in completed_assignments:
+        #             if len(assignments) != 0:
+        #                 score = main_homework
+        #             else:
+        #                 score = full_homework
+        #     else:
+        #         score = no_homework
+
+        # else:
+        #     score = no_homework
+
+        # score = int(score[0])
+
+        # return score
 
     def check_if_settle_this_week(self):
         week_sign = TimeMachine().this_week_number_sign()

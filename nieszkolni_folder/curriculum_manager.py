@@ -353,6 +353,23 @@ class CurriculumManager:
 
             return assignments
 
+    def assignments_and_status_from_to(self, client, start, end):
+        start_number = TimeMachine().date_to_number(start)
+        end_number = TimeMachine().date_to_number(end)
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT assignment_type, status
+                FROM nieszkolni_app_curriculum
+                WHERE name = '{client}'
+                AND deadline_number > '{start_number}'
+                AND deadline_number <= '{end_number}'
+                ''')
+
+            assignments = cursor.fetchall()
+
+            return assignments
+
     def add_module(
             self,
             component_id,

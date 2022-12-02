@@ -1268,7 +1268,6 @@ def assignment(request):
         current_user = first_name + " " + last_name
 
         no_submissions = KnowledgeManager().display_list_of_prompts("no_submission")
-        print(no_submissions)
 
         if request.method == "POST":
             item = request.POST["item"]
@@ -4908,6 +4907,7 @@ def onboard_client(request):
         current_user = first_name + " " + last_name
 
         clients = ClientsManager().list_current_users()
+        ActivityManager().calculate_points_this_week("Joe Doe")
 
         if request.method == "POST":
             client = request.POST["client"]

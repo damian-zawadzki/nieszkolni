@@ -284,8 +284,6 @@ class AuditManager:
         start_number = TimeMachine().date_to_number(start)
         end_number = TimeMachine().date_to_number(end)
 
-        print(start_number)
-
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 SELECT
@@ -306,6 +304,7 @@ class AuditManager:
                 FROM nieszkolni_app_audit
                 WHERE date_number >= '{start_number}'
                 AND date_number <= '{end_number}'
+                AND clocking_user = '{clocking_user}'
                 ORDER BY stamp DESC
                 ''')
 
