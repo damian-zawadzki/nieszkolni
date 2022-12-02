@@ -549,8 +549,7 @@ class CurriculumManager:
 
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                SELECT DISTINCT
-                matrix
+                SELECT DISTINCT matrix
                 FROM nieszkolni_app_matrix
                 ''')
 

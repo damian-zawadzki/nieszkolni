@@ -3052,6 +3052,8 @@ def add_course(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        courses = RoadmapManager().display_courses_to_plan()
+        print(courses)
         course_types = KnowledgeManager().display_prompts("course_type")
         assessment_methods = KnowledgeManager().display_prompts("assessment_method")
         assessment_systems = KnowledgeManager().display_prompts("assessment_system")
@@ -3126,6 +3128,7 @@ def add_course(request):
                     })      
 
         return render(request, "add_course.html", {
+            "courses": courses,
             "course_types": course_types,
             "assessment_methods": assessment_methods,
             "assessment_systems": assessment_systems

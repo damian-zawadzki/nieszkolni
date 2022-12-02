@@ -10,6 +10,7 @@ from nieszkolni_app.models import Spin
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
 
+from nieszkolni_folder.curriculum_manager import CurriculumManager
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
@@ -217,6 +218,22 @@ class RoadmapManager:
 
             return courses
 
+    def display_courses_to_plan(self):
+
+        matrices = CurriculumManager().display_matrices()
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT course
+                FROM nieszkolni_app_course
+                ''')
+
+            rows = cursor.fetchall()
+            courses = [row[0] for row in rows]
+            courses_to_plan = [matrix[0] for matrix in matrices if matrix[0] not in courses]
+
+            return courses_to_plan
+
     def display_courses_by_ids(self, course_ids):
 
         with connection.cursor() as cursor:
@@ -244,8 +261,7 @@ class RoadmapManager:
 
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                SELECT
-                threshold
+                SELECT threshold
                 FROM nieszkolni_app_course
                 WHERE course = '{course}'
                 ''')
@@ -282,7 +298,7 @@ class RoadmapManager:
                 status_type
                 )
                 VALUES (
-                '{roadmap_matrix}',
+                '{course}',
                 '{semester}',
                 '{course}',
                 '{name}',
