@@ -50,6 +50,37 @@ class HomeworkManager:
 
             return product
 
+        elif command == "flashcards_sentences_7":
+            assignment = CurriculumManager().display_assignment(item)
+            client = assignment[3]
+            target = int(assignment[12])
+            end = assignment[2]
+            start = end - 7
+            end_date = TimeMachine().number_to_system_date(end)
+            start_date = TimeMachine().number_to_system_date(start)
+
+            result = StreamManager().studied_days_by_deck(
+                client,
+                start_date,
+                end_date,
+                "sentences"
+                )
+
+            if result >= target:
+
+                CurriculumManager().change_status_to_completed(
+                    item,
+                    current_user
+                    )
+
+                product = ("SUCCESS", "Task completed!")
+
+            else:
+                difference = target - result
+                product = ("WARNING", f"{difference} days still left! Keep up the good work!")
+
+            return product
+
     def mark_as_done(self, item, current_user):
         CurriculumManager().change_status_to_completed(
             item,

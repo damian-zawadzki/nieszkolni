@@ -336,6 +336,23 @@ class StreamManager:
 
         return len(result)
 
+    def studied_days_by_deck(self, client, start, end, deck):
+        start = TimeMachine().date_to_number(start)
+        end = TimeMachine().date_to_number(end)
+
+        rows = Card.objects.filter(client=client, deck=deck)
+
+        result = set()
+        for row in rows:
+            items = row.card_revision_days.split(";")
+            for item in items:
+                if item != "":
+                    item = int(item)
+                    if item > start and item <= end:
+                        result.add(item)
+
+        return len(result)
+
     def statistics(self, name):
         client = name
         today_number = TimeMachine().today_number()

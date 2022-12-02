@@ -59,6 +59,12 @@
 
 							{% elif assignment.6 == 'flashcards' %}
 
+								<input type="hidden" name="command" value="flashcards_7">
+								<button type="submit" class="button_main" name="go_to" value="check_stats">Check</button>
+
+							{% elif assignment.6 == 'flashcardssentences' %}
+
+								<input type="hidden" name="command" value="flashcards_sentences_7">
 								<button type="submit" class="button_main" name="go_to" value="check_stats">Check</button>
 
 							{% elif assignment.6 in no_submissions %}

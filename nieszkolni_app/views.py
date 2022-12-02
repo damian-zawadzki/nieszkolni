@@ -887,12 +887,13 @@ def submit_assignment(request):
                 return redirect("assignments")
 
             elif request.POST["go_to"] == "check_stats":
+                command = request.POST["command"]
                 item = request.POST["item"]
 
                 product = HomeworkManager().check_stats(
                         item,
                         current_user,
-                        "flashcards_7"
+                        command
                         )
 
                 messages.add_message(request, getattr(messages, product[0]), product[1])
@@ -1292,6 +1293,7 @@ def assignment(request):
             if request.POST["go_to"] == "assignment":
 
                 assignment = CurriculumManager().display_assignment(item)
+                print(assignment)
 
                 if request.POST["go_to"] != "submission":
                     return render(request, "assignment.html", {
