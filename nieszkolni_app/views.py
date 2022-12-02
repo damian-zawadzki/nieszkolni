@@ -1664,7 +1664,7 @@ def add_matrix(request):
             week = request.POST["week"]
             day = request.POST["day"]
 
-            limit_number = int(week) * int(day)
+            limit_number = ((int(week) - 1) * 7) + int(day)
 
             CurriculumManager().add_matrix(
                 component_id,
