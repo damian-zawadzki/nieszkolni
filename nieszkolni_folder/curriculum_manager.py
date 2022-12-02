@@ -504,6 +504,24 @@ class CurriculumManager:
                 )
                 ''')
 
+    def update_matrix(
+            self,
+            component_id,
+            matrix,
+            limit_number,
+            matrix_id
+            ):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                UPDATE nieszkolni_app_matrix
+                SET
+                component_id = '{component_id}',
+                matrix = '{matrix}',
+                limit_number = '{limit_number}'
+                WHERE id = '{matrix_id}'
+                ''')
+
     def display_matrix(self, matrix):
 
         with connection.cursor() as cursor:
@@ -511,21 +529,23 @@ class CurriculumManager:
                 SELECT
                 component_id,
                 matrix,
-                limit_number
+                limit_number,
+                id
                 FROM nieszkolni_app_matrix
                 WHERE matrix = '{matrix}'
                 ORDER BY limit_number ASC
                 ''')
 
             rows = cursor.fetchall()
-
+            print(rows)
             modules = []
             for row in rows:
                 entry = dict()
                 entry.update({
                     "component_id": row[0],
                     "matrix": row[1],
-                    "limit_number": row[2]
+                    "limit_number": row[2],
+                    "matrix_id": row[3]
                     })
                 modules.append(entry)
 
@@ -589,6 +609,33 @@ class CurriculumManager:
             prefixes = cursor.fetchall()
 
             return prefixes
+
+    def display_prefix_by_matrix(self, matrix):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT id_prefix
+                FROM nieszkolni_app_prefix
+                WHERE matrix = '{matrix}'
+                ''')
+
+            data = cursor.fetchone()
+
+            if data is not None:
+                id_prefix = data[0]
+            else:
+                id_prefix = None
+
+            return id_prefix
+
+    def change_matrix_name(self, matrix, id_prefix):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                UPDATE nieszkolni_app_prefix
+                SET matrix = '{matrix}'
+                WHERE id_prefix = '{id_prefix}'
+                ''')
 
     def remove_module_from_matrix(self, matrix, component_id, limit_number):
         with connection.cursor() as cursor:

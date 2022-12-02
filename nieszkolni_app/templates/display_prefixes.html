@@ -18,6 +18,15 @@
 
 			<td>{{ prefix.0 }}</td>
 			<td>{{ prefix.1 }}</td>
+			<td>
+				<form action="{% url 'display_prefixes' %}" method="POST">
+					{% csrf_token %}
+
+					<input type="hidden" name="matrix" value="{{ prefix.0 }}">
+					<button type="submit" class="list_button button_main" name="action_on_matrix" value="more">More</button>
+
+				</form>
+			</td>
 
 		</tr>
 

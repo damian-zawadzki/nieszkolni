@@ -586,6 +586,7 @@ class BackOfficeManager:
 
             return tags
 
+# Store
     def add_to_store(
             self,
             watchword,
@@ -633,6 +634,7 @@ class BackOfficeManager:
                 WHERE watchword = '{watchword}'
                 ''')
 
+# Tickets
     def add_ticket(
             self,
             client,

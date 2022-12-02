@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>PLAN A PROGRAM</h1>
+
+<form action="{% url 'plan_program' %}"  method="POST">
+	{% csrf_token %}
+
+   <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Client</label>
+
+        <select required class="input_content" name="client">
+            <option disabled selected value></option>
+
+            {% for client in clients %}
+               <option value="{{ client }}">{{ client }}</option>
+            {% endfor %}
+            
+        </select>
+
+    </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Program</label>
+
+        <select required class="input_content" name="program_id">
+            <option disabled selected value></option>
+
+            {% for program in programs %}
+               <option value="{{ program.0 }}">{{ program.1 }}</option>
+            {% endfor %}
+            
+        </select>
+
+    </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+        <label class="input_label">Semester</label>
+        <input type="number" class="input_content" min="1" max="16" name="semester">
+      </div>
+   </div>
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_program" value="plan">Plan</button>
+  </div>
+
+</form>
+
+{% endblock %}

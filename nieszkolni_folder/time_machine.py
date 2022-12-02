@@ -182,7 +182,7 @@ class TimeMachine:
     def academic_week_start(self):
         weekday = datetime.today().isoweekday()
 
-        if weekday >= 5:
+        if weekday > 5:
             academic_week_start = self.this_sunday()
         else:
             academic_week_start = self.last_sunday()

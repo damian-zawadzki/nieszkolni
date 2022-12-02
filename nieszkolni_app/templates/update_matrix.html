@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>UPDATE THE COURSE</h1>
+
+<form action="{% url 'update_matrix' matrix=matrix %}"  method="POST">
+	{% csrf_token %}
+
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+            <label class="input_label">Matrix</label>
+            <input type="text" class="input_content" name="new_matrix" value="{{ matrix }}">
+        </div>
+    </div>
+
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+            <label class="input_label">Component ID</label>
+            <input type="text" class="input_content" name="component_id" value="{{ component_id }}">
+        </div>
+    </div>
+
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+            <label class="input_label">Limit_number</label>
+            <input type="text" class="input_content" name="limit_number" value="{{ limit_number }}">
+        </div>
+    </div>
+
+    <input type="hidden" name="matrix_id" value="{{ matrix_id }}">
+
+    <div class="flex-parent jc-center">
+        <button type="submit" class="button_main" name="action_on_matrix" value="update">Update</button>
+    </div>
+
+</form>
+
+{% endblock %}

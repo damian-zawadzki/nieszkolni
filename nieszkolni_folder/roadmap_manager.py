@@ -240,8 +240,6 @@ class RoadmapManager:
                 WHERE course = '{course}'
                 ''')
 
-
-
     def display_course_threshold(self, course):
 
         with connection.cursor() as cursor:
@@ -284,14 +282,14 @@ class RoadmapManager:
                 status_type
                 )
                 VALUES (
-                'custom',
-                {semester},
+                '{roadmap_matrix}',
+                '{semester}',
                 '{course}',
                 '{name}',
-                {deadline_number},
+                '{deadline_number}',
                 '{planning_user}',
                 'ongoing',
-                {item},
+                '{item}',
                 '{status_type}'
                 )
                 ''')
@@ -608,7 +606,36 @@ class RoadmapManager:
     def display_profiles(self):
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                SELECT name
+                SELECT
+                name,
+                display_name,
+                avatar,
+                current_english_level,
+                current_semester,
+                current_specialization,
+                current_degree,
+                early_admission,
+                semester_1_status,
+                semester_2_status,
+                semester_3_status,
+                semester_4_status,
+                semester_5_status,
+                semester_6_status,
+                semester_7_status,
+                semester_8_status,
+                semester_9_status,
+                semester_10_status,
+                semester_11_status,
+                semester_12_status,
+                semester_13_status,
+                semester_14_status,
+                semester_15_status,
+                semester_16_status,
+                associates_degree_status,
+                bachelors_degree_status,
+                masters_degree_status,
+                doctorate_degree_status,
+                professors_title_status
                 FROM nieszkolni_app_profile
                 ''')
 

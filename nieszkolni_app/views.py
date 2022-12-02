@@ -714,13 +714,25 @@ def profile(request):
 
                 else:
                     if assessment_system == "last_final":
-                        result = RoadmapManager().display_last_final_grade(current_user, course)
+                        result = RoadmapManager().display_last_final_grade(
+                            current_user,
+                            course
+                            )
                     elif assessment_system == "average_final":
-                        result = RoadmapManager().display_average_final_grade(current_user, course)
-                    elif assessment_system == "last_mid_term":
-                        result = RoadmapManager().display_last_midterm_grade(current_user, course)
-                    else:
-                        result = RoadmapManager().display_average_midterm_grade(current_user, course)
+                        result = RoadmapManager().display_average_final_grade(
+                            current_user,
+                            course
+                            )
+                    elif assessment_system == "last_midterm":
+                        result = RoadmapManager().display_last_midterm_grade(
+                            current_user,
+                            course
+                            )
+                    elif assessment_system == "average_midterm":
+                        result = RoadmapManager().display_average_midterm_grade(
+                            current_user,
+                            course
+                            )
 
                 # Status: passed/ongoing/failed
                 if status_type == "manual":
@@ -1235,6 +1247,9 @@ def assignments(request):
         user_agent = get_user_agent(request)
         score = ActivityManager().calculate_points_this_week(current_user)
 
+        display_first_name = first_name.capitalize()
+        messages.warning(request, (f"{first_name}"))
+
         if request.method == "POST":
             item = request.POST["item"]
 
@@ -1695,6 +1710,41 @@ def plan_matrix(request):
 
 
 @staff_member_required
+def update_matrix(request, matrix):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        matrix_details = CurriculumManager().display_matrix(matrix)
+
+        if request.method == "POST":
+            component_id = request.POST["component_id"]
+            new_matrix = request.POST["new_matrix"]
+            limit_number = request.POST["limit_number"]
+            matrix_id = request.POST["matrix_id"]
+
+            print(matrix_id)
+
+            CurriculumManager().update_matrix(
+                component_id,
+                new_matrix,
+                limit_number,
+                matrix_id
+                )
+
+            id_prefix = CurriculumManager().display_prefix_by_matrix(matrix)
+            CurriculumManager().change_matrix_name(new_matrix, id_prefix)
+
+            return redirect("display_prefixes")
+
+        return render(request, "update_matrix.html", {
+            "matrix": matrix,
+            "matrix_details": matrix_details
+            })
+
+
+@staff_member_required
 def add_id_prefix(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
@@ -1728,6 +1778,12 @@ def display_prefixes(request):
         current_user = first_name + " " + last_name
 
         prefixes = CurriculumManager().display_prefixes()
+
+        if request.method == "POST":
+            if request.POST["action_on_matrix"] == "more":
+                matrix = request.POST["matrix"]
+
+                return redirect("update_matrix", matrix=matrix)
 
         return render(request, "display_prefixes.html", {
             "prefixes": prefixes
@@ -3169,7 +3225,7 @@ def add_roadmap(request):
                     status_type
                     )
 
-                return redirect("roadmaps.html")
+                return redirect("roadmaps")
 
         return render(request, "add_roadmap.html", {
             "names": names,
@@ -3193,8 +3249,7 @@ def update_roadmap(request):
                 item = request.POST["item"]
                 status = request.POST["status"]
                 status_type = request.POST["status_type"]
-                roadmap_id_number = request.POST["roadmap_id_number"]
-                
+                roadmap_id_number = request.POST["roadmap_id_number"] 
 
                 RoadmapManager().update_roadmap_details(
                     client,
@@ -3208,7 +3263,7 @@ def update_roadmap(request):
                     roadmap_id_number
                     )
 
-                return redirect("roadmaps.html")
+                return redirect("roadmaps")
 
 
 @login_required
@@ -4288,63 +4343,18 @@ def display_spin(request, client, story, scene=1, watchword=0):
             if view_type == "last_view":
 
                 items = BackOfficeManager().display_from_store(watchword)
+                semester = items["semester"][0]
                 course_ids_list = items["courses"]
+
                 course_ids = tuple(course_ids_list)
                 courses = RoadmapManager().display_courses_by_ids(course_ids)
 
-                semester = items["semester"][0]
-                deadline_roadmap = BackOfficeManager().display_end_of_semester()
-                starting_date_number = TimeMachine().academic_week_start_number()
-
-                for course in courses:
-                    RoadmapManager().add_roadmap(
-                        current_user,
-                        semester,
-                        course[0],
-                        deadline_roadmap,
-                        "spin",
-                        -1,
-                        "automatic"
-                        )
-
-                    modules = CurriculumManager().display_matrix(course[0])
-
-                    i = 0
-                    for module in modules:
-                        component_id = module["component_id"]
-                        limit_number = module["limit_number"]
-
-                        entry = CurriculumManager().display_module(component_id)
-
-                        component_type = entry[1]
-                        title = entry[2]
-                        content = entry[3]
-                        resources = entry[4]
-                        conditions = entry[5]
-
-                        item = CurriculumManager().next_item() + i
-                        deadline = starting_date_number + limit_number
-                        deadline_date = TimeMachine().number_to_system_date(deadline)
-                        component_type_raw = re.search(r"\w.+_", component_id).group()
-                        component_type = re.sub("_", "", component_type_raw)
-                        reference = 0
-
-                        CurriculumManager().add_curriculum(
-                            item,
-                            deadline_date,
-                            client,
-                            component_id,
-                            component_type,
-                            component_type,
-                            title,
-                            content,
-                            course[0],
-                            resources,
-                            conditions,
-                            reference
-                            )
-
-                        i += 1
+                CurriculumPlanner().plan_courses(
+                    current_user,
+                    current_user,
+                    semester,
+                    course_ids_list
+                    )
 
                 BackOfficeManager().reset_store(watchword)
                 StreamManager().add_to_stream(
@@ -4527,6 +4537,39 @@ def program(request, program_id):
             "program": program,
             "program_id": program_id,
             "courses": courses
+            })
+
+
+@staff_member_required
+def plan_program(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        clients = ClientsManager().list_current_users()
+        programs = RoadmapManager().display_programs()
+        semesters = RoadmapManager().display_profiles()
+
+        if request.method == "POST":
+            if request.POST["action_on_program"] == "plan":
+                client = request.POST["client"]
+                program_id = request.POST["program_id"]
+                semester = request.POST["semester"]
+
+                CurriculumPlanner().plan_program(
+                    client,
+                    current_user,
+                    program_id,
+                    semester
+                    )
+
+                return redirect("programs")
+
+        return render(request, "plan_program.html", {
+            "clients": clients,
+            "programs": programs,
+            "semesters": semesters
             })
 
 
