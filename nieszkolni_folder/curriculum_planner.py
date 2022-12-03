@@ -164,54 +164,23 @@ class CurriculumPlanner:
         starting_date_number = TimeMachine().academic_week_start_number()
 
         for course in courses:
+            matrix = course[0]
+
             RoadmapManager().add_roadmap(
                 client,
                 semester,
-                course[0],
+                matrix,
                 deadline_roadmap,
                 current_user,
                 -1,
                 "automatic"
                 )
 
-            modules = CurriculumManager().display_matrix(course[0])
-
-            i = 0
-            for module in modules:
-                component_id = module["component_id"]
-                limit_number = module["limit_number"]
-
-                entry = CurriculumManager().display_module(component_id)
-
-                component_type = entry[1]
-                title = entry[2]
-                content = entry[3]
-                resources = entry[4]
-                conditions = entry[5]
-
-                item = CurriculumManager().next_item() + i
-                deadline = starting_date_number + limit_number
-                deadline_date = TimeMachine().number_to_system_date(deadline)
-                component_type_raw = re.search(r"\w.+_", component_id).group()
-                component_type = re.sub("_", "", component_type_raw)
-                reference = 0
-
-                CurriculumManager().add_curriculum(
-                    item,
-                    deadline_date,
-                    client,
-                    component_id,
-                    component_type,
-                    component_type,
-                    title,
-                    content,
-                    course[0],
-                    resources,
-                    conditions,
-                    reference
-                    )
-
-                i += 1
+            self.plan_curricula(
+                client,
+                matrix,
+                starting_date_number
+                )
 
     def client_to_plan_program(self):
         start = BackOfficeManager().display_start_of_semester()
