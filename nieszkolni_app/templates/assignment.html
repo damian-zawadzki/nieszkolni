@@ -21,6 +21,7 @@
 	      <div class="task_card_details"><b>Deadline:</b> {{ assignment.1 }} <b>Item:</b> {{ assignment.0 }}</div>
 	      <div class="task_card_content">{{ assignment.8 }}</div>
 
+
 	      {% if assignment.6 == 'reading' %}
 
 	      	<div><b>Resources</b></div>
@@ -30,6 +31,13 @@
 
 	      	<div><b>Resources</b></div>
 	      	<div class="task_card_content"><span>{{ assignment.10|safe }}</span></div>
+
+	      {% endif %}
+
+	      {% if user.is_staff %}
+
+	      	<div><b>Reference</b></div>
+	      	<div class="task_card_content">{{ assignment.16 }}</div>
 
 	      {% endif %}
 

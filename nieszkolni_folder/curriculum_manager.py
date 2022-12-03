@@ -166,9 +166,13 @@ class CurriculumManager:
                 matrix,
                 resources,
                 status,
-                conditions
+                conditions,
+                completion_stamp,
+                completion_date,
+                submitting_user,
+                reference
                 FROM nieszkolni_app_curriculum
-                WHERE item = {item}
+                WHERE item = '{item}'
                 ''')
 
             assignment = cursor.fetchone()

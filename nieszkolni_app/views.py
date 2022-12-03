@@ -1295,7 +1295,6 @@ def assignment(request):
             if request.POST["go_to"] == "assignment":
 
                 assignment = CurriculumManager().display_assignment(item)
-                print(assignment)
 
                 if request.POST["go_to"] != "submission":
                     return render(request, "assignment.html", {
