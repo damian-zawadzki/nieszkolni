@@ -462,7 +462,7 @@ class QuizManager:
                 INNER JOIN nieszkolni_app_question AS qs ON qs.question_id = qz.question_id
                 WHERE qz.quiz_question_id = '{quiz_question_id}'
                 AND status = 'generated'
-                ORDER BY RAND()
+                ORDER BY RANDOM()
                 LIMIT 1
                 ''')
 
