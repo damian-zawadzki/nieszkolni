@@ -903,6 +903,8 @@ def submit_assignment(request):
                 item = request.POST["item"]
                 title = request.POST["title"]
                 quiz_id = QuizManager().find_quiz_id_by_item(item)
+
+                print(quiz_id)
                 quiz_question_id = QuizManager().display_next_generated_question(quiz_id)
 
                 return redirect(f"take_quiz/{quiz_question_id}/{item}")

@@ -314,7 +314,7 @@ class CurriculumManager:
                 FROM nieszkolni_app_library l
                 INNER JOIN nieszkolni_app_curriculum c
                 ON c.reference = l.position_number
-                WHERE c.item = {item}
+                WHERE c.item = '{item}'
                 ''')
 
             position = cursor.fetchone()
