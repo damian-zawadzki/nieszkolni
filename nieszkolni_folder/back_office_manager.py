@@ -30,7 +30,6 @@ class BackOfficeManager:
             link
             ):
 
-        position_number = self.next_custom_postion_number()
         title = Cleaner().clean_quotation_marks(title)
 
         with connection.cursor() as cursor:
@@ -42,9 +41,9 @@ class BackOfficeManager:
                 link
                 )
                 VALUES (
-                {position_number},
+                '{position_number}',
                 '{title}',
-                {wordcount},
+                '{wordcount}',
                 '{link}'
                 )
                 ON CONFLICT (position_number)
