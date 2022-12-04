@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<h1>UPLOAD MEMORIES</h1>
+
+<form action="{% url 'upload_memories' %}" method="POST" enctype="multipart/form-data"> 
+{% csrf_token %}
+
+    <div class="flex-parent jc-center">
+        <button type="button" class="button_main">
+            <label style="margin: 25px; font-weight: bold;">
+                    Browse
+                <input type="file" style="display: none; margin: 25px;" name="csv_file" required="True" class="input_content">
+            </label>
+        </button>
+        <label id="file_upload" style="display: none;" id="file_upload">
+            <span class="button_main">File</span>
+        </label>                    
+    </div>
+
+    <div class="flex-parent jc-center">                    
+         <button type="submit" class="button_main">Upload</button>
+    </div>
+
+</form>
+
+{% endblock %}

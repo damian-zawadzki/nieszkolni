@@ -15,6 +15,8 @@ from nieszkolni_folder.cleaner import Cleaner
 import random
 import re
 
+from nieszkolni_folder.clients_manager import ClientsManager
+
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
 
@@ -24,6 +26,13 @@ class KnowledgeManager:
         today_pattern = "%Y-%m-%d"
 
     def add_pronunciation(self, name, entry, coach):
+
+        verify_client = ClientsManager().verify_client(name)
+        if verify_client is False:
+            return "The client does not exist!"
+
+        entry = Cleaner().clean_quotation_marks(entry)
+
         now_number = TimeMachine().now_number()
         today_number = TimeMachine().today_number()
 
@@ -41,12 +50,12 @@ class KnowledgeManager:
                 revision_days
                 )
                 VALUES (
-                {now_number},
-                {today_number},
+                '{now_number}',
+                '{today_number}',
                 '{coach}',
                 '{name}',
                 '{entry}',
-                {today_number},
+                '{today_number}',
                 0,
                 '',
                 ''
@@ -490,6 +499,17 @@ class KnowledgeManager:
             right_option=""
             ):
 
+        verify_client = ClientsManager().verify_client(name)
+        if verify_client is False:
+            return "The client does not exist!"
+
+        prompts = self.display_list_of_prompts("memories")
+        if prompt not in prompts:
+            return "The prompt does not exist!"
+
+        left_option = Cleaner().clean_quotation_marks(left_option)
+        right_option = Cleaner().clean_quotation_marks(right_option)
+
         publication_stamp = TimeMachine().now_number()
         publication_date = TimeMachine().today_number()
         due_date = TimeMachine().today_number()
@@ -512,15 +532,15 @@ class KnowledgeManager:
                 answers,
                 revision_days
                 ) VALUES (
-                {publication_stamp},
-                {publication_date},
+                '{publication_stamp}',
+                '{publication_date}',
                 '{coach}',
                 '{name}',
                 '{prompt}',
                 '{left_option}',
                 '{right_option}',
-                {due_date},
-                {number_of_reviews},
+                '{due_date}',
+                '{number_of_reviews}',
                 '{answers}',
                 '{revision_days}'
                 )
@@ -532,6 +552,21 @@ class KnowledgeManager:
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 SELECT DISTINCT left_option
+                FROM nieszkolni_app_memory
+                ''')
+
+            memories = cursor.fetchall()
+
+            return memories
+
+    def display_all_memories_entries(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                name,
+                prompt,
+                left_option,
+                right_option
                 FROM nieszkolni_app_memory
                 ''')
 

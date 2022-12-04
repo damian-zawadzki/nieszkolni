@@ -2359,6 +2359,60 @@ def memories(request):
 
 
 @staff_member_required
+def upload_memories(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        if request.method == "POST":
+            csv_file = request.FILES["csv_file"]
+
+            file = csv_file.read().decode("utf8")
+            entries = StringToCsv().convert(file)
+
+            for entry in entries:
+                KnowledgeManager().add_memory(
+                    entry[0],
+                    entry[1],
+                    entry[2],
+                    entry[3],
+                    entry[4]
+                    )
+
+            messages.success(request, ("The file has been uploaded!"))
+            return redirect("upload_memories")
+
+        return render(request, "upload_memories.html", {})
+
+
+@staff_member_required
+def upload_pronunciation(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        if request.method == "POST":
+            csv_file = request.FILES["csv_file"]
+
+            file = csv_file.read().decode("utf8")
+            entries = StringToCsv().convert(file)
+
+            for entry in entries:
+                KnowledgeManager().add_pronunciation(
+                    entry[0],
+                    entry[1],
+                    entry[2]
+                    )
+
+            messages.success(request, ("The file has been uploaded!"))
+            return redirect("upload_pronunciation")
+
+        return render(request, "upload_pronunciation.html", {})
+
+
+@staff_member_required
 def stream(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
