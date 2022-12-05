@@ -18,6 +18,7 @@ import re
 from nieszkolni_folder.sentence_manager import SentenceManager
 from nieszkolni_folder.quiz_manager import QuizManager
 from nieszkolni_folder.curriculum_manager import CurriculumManager
+from nieszkolni_folder.curriculum_planner import CurriculumPlanner
 from nieszkolni_folder.vocabulary_manager import VocabularyManager
 
 from nieszkolni_folder.knowledge_manager import KnowledgeManager
@@ -34,6 +35,16 @@ class OnboardingManager:
         self.add_wordbook(client, current_user)
         self.add_pronunciation(client, current_user)
         self.add_memories(client, current_user)
+
+        matrix = "Onboarding"
+        last_sunday_date = TimeMachine().last_sunday()
+        last_sunday_number = TimeMachine().date_to_number(last_sunday_date)
+
+        CurriculumPlanner().plan_curricula(
+            client,
+            matrix,
+            last_sunday_number
+            )
 
     def add_wordbook(self, client, current_user):
         entries = [
