@@ -1287,6 +1287,7 @@ def assignment(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        user_agent = get_user_agent(request)
         no_submissions = KnowledgeManager().display_list_of_prompts("no_submission")
 
         if request.method == "POST":
@@ -1297,11 +1298,20 @@ def assignment(request):
                 assignment = CurriculumManager().display_assignment(item)
 
                 if request.POST["go_to"] != "submission":
-                    return render(request, "assignment.html", {
-                        "assignment": assignment,
-                        "current_user": current_user,
-                        "no_submissions": no_submissions
-                        })
+
+                    if user_agent.is_mobile:
+                        return render(request, "m_assignment.html", {
+                                "assignment": assignment,
+                                "current_user": current_user,
+                                "no_submissions": no_submissions
+                                })
+
+                    else:
+                        return render(request, "assignment.html", {
+                            "assignment": assignment,
+                            "current_user": current_user,
+                            "no_submissions": no_submissions
+                            })
 
             elif request.POST["go_to"] == "check":
 

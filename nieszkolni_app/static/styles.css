@@ -675,16 +675,18 @@ task_card_content_list {
 
 /*Footer*/
 .footer {
-  display: flex;
-  height: 150px;
-  width: 100%;
+  background-color: #F9F9F9;
   bottom: 0;
+  display: flex;
+  height: 10vh;
   left: 0;
+  position: relative;
+  width: 100%;
 }
 
 /*Nagivation*/
 .navigation {
-  background-color: #f9f9f9;
+  background-color: #F9F9F9;
   padding: 5vh 0vw;
   margin-bottom: 5vh;
 }
@@ -994,7 +996,14 @@ h3 {
   z-index: 100;
 }
 
-
+.m_inscription_below {
+  margin-top: 10px;
+  color: #3c4043;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 750;
+  text-align: center;
+}
 
 table.m_table {
   border-collapse: separate;
@@ -1066,11 +1075,66 @@ td.m_td {
 }
 
 .m_semester_display {
-  display: block;
+  display: inline-flex;
+  justify-content: center;
   margin-top: 5%;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 1vw;
   text-align: center;
+}
+
+.m_task_card {
+  color: #3c4043;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
+  border-radius: 5px;
+  max-width: 90%;
+  text-align: center;
+}
+
+.task_card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+.task_card_container {
+  padding: 35px 35px 35px 35px;
+}
+
+.task_card_title {
+  font-size: 25px;
+  font-weight: 850;
+}
+
+.task_card_details {
+  font-size: 12px;
+  letter-spacing: .4px;
+  margin-bottom: 25px;
+}
+
+.task_card_content {
+  margin-bottom: 25px;
+}
+
+task_card_content_list {
+  margin-bottom: 0px;
+}
+
+.task_card_description {
+  font-size: 12px;
+  letter-spacing: .4px;
+}
+
+.task_card_content_important_line {
+  font-size: 16px;
+}
+
+.task_card_content_small_line {
+  font-size: 10px;
+  font-style: italic;
+}
+
+.task_card_content_line {
+  font-size: 14px;
 }
 
 /*profile*/
@@ -1548,6 +1612,12 @@ hr.line {
 
 .invisible_navigation {
   margin-top: 10vw;
+}
+
+.break {
+  display: flex;
+  width: 100%;
+  height: 10vh;
 }
 
 /*Square menu*/

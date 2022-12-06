@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+	<div class="flex-parent jc-center">
+
+		{% if assignment.11 == 'uncompleted' %}
+
+			<div class="m_task_card">
+
+		{% else %}
+
+			<div class="m_task_card list_item_complted">
+
+		{% endif %}
+
+	  
+	    <div class="task_card_container">
+	      <div class="task_card_title">{{ assignment.7 }}</div>
+	      <div class="task_card_details"><b>Deadline:</b> {{ assignment.1 }} <b>Item:</b> {{ assignment.0 }}</div>
+	      <div class="task_card_content">{{ assignment.8 }}</div>
+
+
+	      {% if assignment.6 == 'reading' %}
+
+	      	<div><b>Resources</b></div>
+	      	<div class="task_card_content"><span><a href="{{ assignment.10 }}" target="_blank">Here.</a></span></div>
+
+	      {% elif assignment.10 != '-' %}
+
+	      	<div><b>Resources</b></div>
+	      	<div class="task_card_content"><span>{{ assignment.10|safe }}</span></div>
+
+	      {% endif %}
+
+	      {% if user.is_staff %}
+
+	      	<div><b>Reference</b></div>
+	      	<div class="task_card_content">{{ assignment.16 }}</div>
+
+	      {% endif %}
+
+			<form action="{% url 'submit_assignment' %}" method="POST">
+				{% csrf_token %}
+
+
+
+					<div class="flex-parent jc-center">
+						<input type="hidden" name="item" value="{{ assignment.0 }}">
+						<input type="hidden" name="client" value="{{ assignment.2 }}">
+						<input type="hidden" name="assignment_type" value="{{ assignment.6 }}">
+						<input type="hidden" name="title" value="{{ assignment.7 }}">
+
+		    			
+							{% if assignment.6 == 'sentences' %}
+
+								<button type="submit" class="button_main" name="go_to" value="translation">Translate</button>
+
+							{% elif assignment.6 == 'reading' %}
+
+								<button type="submit" class="button_main" name="go_to" value="mark_as_read">Mark as read</button>
+
+							{% elif assignment.6 == 'quiz' %}
+
+								<button type="submit" class="button_main" name="go_to" value="take_quiz">Take the quiz</button>
+
+							{% elif assignment.6 == 'flashcards' %}
+
+								<input type="hidden" name="command" value="flashcards_7">
+								<button type="submit" class="button_main" name="go_to" value="check_stats">Check</button>
+
+							{% elif assignment.6 == 'flashcardssentences' %}
+
+								<input type="hidden" name="command" value="flashcards_sentences_7">
+								<button type="submit" class="button_main" name="go_to" value="check_stats">Check</button>
+
+							{% elif assignment.6 in no_submissions %}
+
+								<button type="submit" class="button_main" name="go_to" value="mark_as_done">Mark as done</button>
+
+							{% else %}
+
+								<button type="submit" class="button_main" name="go_to" value="submission">Submit</button>
+
+							{% endif %}
+
+
+						{% if user.is_staff %}
+
+							<button type="submit" class="button_main" name="go_to" value="removal">Remove</button>
+
+						{% else %}
+						{% endif %}
+
+					</div>
+
+			</form>
+
+	    </div>
+	  </div>
+	</div>
+
+{% endblock %}
