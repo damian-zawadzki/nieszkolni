@@ -180,7 +180,6 @@ class KnowledgeManager:
         return sentencebook
 
     def translate(self, english):
-        print(english)
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 SELECT polish

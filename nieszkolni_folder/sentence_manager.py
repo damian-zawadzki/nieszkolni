@@ -362,16 +362,17 @@ class SentenceManager:
         for translation in translations:
             sentence_number = translation[0]
             answer = translation[1]
+            answer = Cleaner().clean_quotation_marks(answer)
 
             with connection.cursor() as cursor:
                 cursor.execute(f'''
                     UPDATE nieszkolni_app_composer
                     SET
-                    submission_stamp = {now_number},
-                    submission_date = {today_number},
+                    submission_stamp = '{now_number}',
+                    submission_date = '{today_number}',
                     status = 'translated',
                     translation = '{answer}'
-                    WHERE sentence_number = {sentence_number}
+                    WHERE sentence_number = '{sentence_number}'
                     ''')
 
     def display_sentences_to_grade(self):
