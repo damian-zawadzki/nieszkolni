@@ -674,7 +674,7 @@ task_card_content_list {
 }
 
 /*Footer*/
-.footer {
+/*.footer {
   background-color: #F9F9F9;
   bottom: 0;
   display: flex;
@@ -682,7 +682,7 @@ task_card_content_list {
   left: 0;
   position: relative;
   width: 100%;
-}
+}*/
 
 /*Nagivation*/
 .navigation {
