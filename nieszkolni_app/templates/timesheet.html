@@ -6,6 +6,30 @@
 <form action="{% url 'timesheet' %}"  method="POST">
    {% csrf_token %}
 
+   {% if user.is_superuser %}
+
+	   <div class="flex-parent jc-center">
+	     <div class="input_container">
+	        <label class="input_label">Employee</label>
+
+	        <select required class="input_content" name="employee">
+	            <option value="{{ current_user }}">{{ current_user }}</option>
+
+	            {% for employee in employees %}
+	            	<option value="{{ employee }}">{{ employee }}</option>
+	            {% endfor %}
+
+	        </select>
+
+	    </div>
+	   </div>
+
+   {% else %}
+
+   	<input type="hidden" class="input_content" name="employee" value="{{ current_user }}">
+
+   {% endif %}
+
    <div class="flex-parent jc-center">
       <div class="input_container">
          <label class="input_label">From</label>

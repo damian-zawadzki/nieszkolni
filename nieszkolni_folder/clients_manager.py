@@ -77,7 +77,12 @@ class ClientsManager:
 
     def list_current_users(self):
         with connection.cursor() as cursor:
-            cursor.execute(f"SELECT name FROM nieszkolni_app_client")
+            cursor.execute(f'''
+                SELECT name
+                FROM nieszkolni_app_client
+                ORDER BY name ASC
+                ''')
+
             users = cursor.fetchall()
 
             current_users = [user[0] for user in users]
@@ -86,7 +91,14 @@ class ClientsManager:
 
     def list_current_clients(self):
         with connection.cursor() as cursor:
-            cursor.execute(f"SELECT name FROM nieszkolni_app_client WHERE status = 'active' AND user_type = 'client'")
+            cursor.execute(f'''
+                SELECT name
+                FROM nieszkolni_app_client
+                WHERE status = 'active'
+                AND user_type = 'client'
+                ORDER BY name ASC
+                ''')
+
             clients = cursor.fetchall()
 
             current_clients = [client[0] for client in clients]
@@ -95,7 +107,13 @@ class ClientsManager:
 
     def list_current_staff(self):
         with connection.cursor() as cursor:
-            cursor.execute(f"SELECT name FROM nieszkolni_app_client WHERE status = 'active' AND user_type = 'staff'")
+            cursor.execute(f'''
+                SELECT name
+                FROM nieszkolni_app_client
+                WHERE status = 'active'
+                AND user_type = 'staff'
+                ''')
+
             employees = cursor.fetchall()
 
             current_employees = [employee[0] for employee in employees]

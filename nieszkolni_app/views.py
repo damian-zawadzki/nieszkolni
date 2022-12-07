@@ -4951,15 +4951,16 @@ def timesheet(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        # AuditManager().remove()
+        employees = ClientsManager().list_current_staff()
 
         if request.method == "POST":
             if request.POST["action_on_timesheet"] == "filter":
+                employee = request.POST["employee"]
                 start = request.POST["start"]
                 end = request.POST["end"]
 
                 entries = AuditManager().display_entries(
-                    current_user,
+                    employee,
                     start,
                     end
                     )
@@ -4968,7 +4969,10 @@ def timesheet(request):
                     "entries": entries
                     })
 
-        return render(request, "timesheet.html", {})
+        return render(request, "timesheet.html", {
+            "current_user": current_user,
+            "employees": employees
+            })
 
 
 @staff_member_required
