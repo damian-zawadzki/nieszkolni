@@ -218,13 +218,15 @@ class AuditManager:
                 WHERE id = '{current_entry_id}'
                 ''')
 
-    # def remove(self):
+    def remove_entry(self, clocking_user, stamp):
+        stamp = TimeMachine().date_time_to_number(stamp)
 
-    #     with connection.cursor() as cursor:
-    #         cursor.execute(f'''
-    #             DELETE FROM nieszkolni_app_audit
-    #             WHERE id >= 0
-    #             ''')
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                DELETE FROM nieszkolni_app_audit
+                WHERE clocking_user = '{clocking_user}'
+                AND stamp = '{stamp}'
+                ''')
 
     def check_if_clocked_in(self, clocking_user):
         with connection.cursor() as cursor:

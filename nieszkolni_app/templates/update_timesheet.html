@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>UPDATE THE TIMESHEET</h1>
+
+{% if user.is_superuser %}
+	<form action="{% url 'update_timesheet' %}"  method="POST">
+	   {% csrf_token %}
+
+	   <div class="flex-parent jc-center">
+	     <div class="input_container">
+	        <label class="input_label">Employee</label>
+
+	        <select required class="input_content" name="employee">
+	            <option value="{{ current_user }}">{{ current_user }}</option>
+
+	            {% for employee in employees %}
+	            	<option value="{{ employee }}">{{ employee }}</option>
+	            {% endfor %}
+
+	        </select>
+
+	    </div>
+	   </div>
+
+	   <div class="flex-parent jc-center">
+	      <div class="input_container">
+	         <label class="input_label">Timestamp</label>
+	         <input type="text" class="input_content" name="stamp">
+	      </div>
+	   </div>
+
+	   <div class="flex-parent jc-center">
+	      <button type="submit" class="button_main" name="action_on_timesheet" value="remove">Remove</button>
+	   </div>
+
+	</form>
+{% endif %}
+
+{% include 'footer.html' %}
+{% endblock %}

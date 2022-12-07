@@ -378,10 +378,7 @@ def register_user(request):
             username = first_name_variable + " " + last_name_variable
 
             user = authenticate(request, username=system_username, password=password)
-            add = ClientsManager().add_client(
-                username,
-                internal_email_address
-                )
+
             if user is None:
                 user = User.objects.create_user(system_username, internal_email_address, password)
                 user.first_name = first_name_variable
@@ -4976,6 +4973,34 @@ def timesheet(request):
                     })
 
         return render(request, "timesheet.html", {
+            "current_user": current_user,
+            "employees": employees
+            })
+
+
+@staff_member_required
+def update_timesheet(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        employees = ClientsManager().list_current_staff()
+
+        if request.method == "POST":
+            if request.POST["action_on_timesheet"] == "remove":
+                employee = request.POST["employee"]
+                stamp = request.POST["stamp"]
+
+                entries = AuditManager().remove_entry(
+                    employee,
+                    stamp
+                    )
+
+                messages.success(request, ("Entry removed"))
+                return redirect("update_timesheet")
+
+        return render(request, "update_timesheet.html", {
             "current_user": current_user,
             "employees": employees
             })
