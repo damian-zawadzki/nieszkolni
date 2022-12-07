@@ -653,6 +653,7 @@ class RoadmapManager:
                 doctorate_degree_status,
                 professors_title_status
                 FROM nieszkolni_app_profile
+                ORDER BY name ASC
                 ''')
 
             profiles = cursor.fetchall()
