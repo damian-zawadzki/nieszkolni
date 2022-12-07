@@ -4966,7 +4966,9 @@ def timesheet(request):
                     )
 
                 return render(request, "timesheet.html", {
-                    "entries": entries
+                    "entries": entries,
+                    "current_user": current_user,
+                    "employees": employees
                     })
 
         return render(request, "timesheet.html", {
