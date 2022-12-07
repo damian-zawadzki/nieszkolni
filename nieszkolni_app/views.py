@@ -383,6 +383,11 @@ def register_user(request):
                 user.first_name = first_name_variable
                 user.last_name = last_name_variable
 
+                add = ClientsManager().add_client(
+                    username,
+                    internal_email_address
+                    )
+
                 is_client = ClientsManager().verify_client(username)
                 if is_client is False:
 

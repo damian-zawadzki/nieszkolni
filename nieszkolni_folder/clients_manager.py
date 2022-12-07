@@ -112,6 +112,7 @@ class ClientsManager:
                 FROM nieszkolni_app_client
                 WHERE status = 'active'
                 AND user_type = 'staff'
+                ORDER BY name ASC
                 ''')
 
             employees = cursor.fetchall()
