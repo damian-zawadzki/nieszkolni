@@ -1,10 +1,15 @@
 import os
 import django
 import re
+from io import BytesIO
+
 from django.db import connection
+from django.core.files.base import ContentFile
+
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
 from nieszkolni_app.models import Material
+from nieszkolni_app.models import Paper
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -36,10 +41,11 @@ class DocumentManager:
             ):
 
         today = TimeMachine().today()
+        name_slug = name.replace(" ", "_")
+        paper_title = f"A_{today}---{name_slug}.docx"
 
         document = Document()
 
-        # Label
         paragraph_0 = document.add_paragraph()
 
         paragraph_0 = document.add_heading()
@@ -94,9 +100,17 @@ class DocumentManager:
         font.name = "Times New Roman"
         font.size = Pt(12)
 
-        file = document.save(f'[A] {today}, {title} -- {name}.docx')
+        file_bytes = BytesIO()
+        document.save(file_bytes)
+        file_bytes.seek(0)
 
-        return file
+        paper = Paper()
+        paper.stamp = TimeMachine().now_number()
+        paper.title = paper_title
+        paper.content.save(paper_title, ContentFile(file_bytes.read()))
+        paper.save()
+
+        return paper_title
 
     def add_material(self, title, content):
         title = Cleaner().clean_quotation_marks(title)

@@ -904,8 +904,6 @@ def submit_assignment(request):
                 item = request.POST["item"]
                 title = request.POST["title"]
                 quiz_id = QuizManager().find_quiz_id_by_item(item)
-
-                print(quiz_id)
                 quiz_question_id = QuizManager().display_next_generated_question(quiz_id)
 
                 return redirect(f"take_quiz/{quiz_question_id}/{item}")
@@ -3071,44 +3069,53 @@ def download_assignments(request):
         current_user = first_name + " " + last_name
 
         if request.method == "POST":
-            start_date = request.POST["start_date"]
-            end_date = request.POST["end_date"]
+            if request.POST["action_on_download"] == "download":
+                start_date = request.POST["start_date"]
+                end_date = request.POST["end_date"]
 
-            assignments = SubmissionManager().download_graded_assignments(
-                start_date,
-                end_date
-                )
-
-            for assignment in assignments:
-                date = assignment[0]
-                item = assignment[1]
-                name = assignment[2]
-                title = assignment[3]
-                wordcount = assignment[4]
-                flagged_content = assignment[5]
-                minor_errors = assignment[6]
-                major_errors = assignment[7]
-                reviewing_user = assignment[8]
-                comment = assignment[9]
-                grade = assignment[10]
-
-                file = DocumentManager().create_assignment_doc(
-                    date,
-                    item,
-                    name,
-                    title,
-                    wordcount,
-                    flagged_content,
-                    minor_errors,
-                    major_errors,
-                    reviewing_user,
-                    comment,
-                    grade
+                assignments = SubmissionManager().download_graded_assignments(
+                    start_date,
+                    end_date
                     )
 
-                DownloadManager().create_document()
+                for assignment in assignments:
+                    date = assignment[0]
+                    item = assignment[1]
+                    name = assignment[2]
+                    title = assignment[3]
+                    wordcount = assignment[4]
+                    flagged_content = assignment[5]
+                    minor_errors = assignment[6]
+                    major_errors = assignment[7]
+                    reviewing_user = assignment[8]
+                    comment = assignment[9]
+                    grade = assignment[10]
 
-                return HttpResponse(opened_file, content_type='text/plain')
+                    path = DocumentManager().create_assignment_doc(
+                        date,
+                        item,
+                        name,
+                        title,
+                        wordcount,
+                        flagged_content,
+                        minor_errors,
+                        major_errors,
+                        reviewing_user,
+                        comment,
+                        grade
+                        )
+
+                    file_path = os.path.join(django_settings.MEDIA_ROOT, path)
+                    if os.path.exists(file_path):
+
+                        with open(file_path, 'rb') as fh:
+                            response = HttpResponse(fh.read(), content_type="application/force-download")
+                            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+                            return response
+                    raise Http404
+
+
+                    # return render(request, "download_assignments.html", {})
 
         return render(request, "download_assignments.html", {})
 
@@ -3121,7 +3128,6 @@ def add_course(request):
         current_user = first_name + " " + last_name
 
         courses = RoadmapManager().display_courses_to_plan()
-        print(courses)
         course_types = KnowledgeManager().display_prompts("course_type")
         assessment_methods = KnowledgeManager().display_prompts("assessment_method")
         assessment_systems = KnowledgeManager().display_prompts("assessment_system")
@@ -5021,7 +5027,6 @@ def upload_timesheet(request):
                 entries = StringToCsv().convert(file)
 
                 for entry in entries:
-                    print(entry)
                     AuditManager().upload_timesheet(
                         entry[0],
                         entry[1],

@@ -473,3 +473,9 @@ class Audit(models.Model):
     entry_type = models.CharField(max_length=200, default="")
     category_value = models.IntegerField(default=0)
     tags = models.CharField(max_length=200, default="")
+
+
+class Paper(models.Model):
+    stamp = models.IntegerField(default=0)
+    title = models.CharField(max_length=200, default="")
+    content = models.FileField()
