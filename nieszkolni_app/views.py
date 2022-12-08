@@ -37,8 +37,11 @@ import csv
 import re
 import json
 import os
+import requests
+from io import BytesIO
 from gtts import gTTS
 import random
+from zipfile import *
 
 from nieszkolni_app.models import *
 
@@ -3078,6 +3081,8 @@ def download_assignments(request):
                     end_date
                     )
 
+                file_paths = []
+
                 for assignment in assignments:
                     date = assignment[0]
                     item = assignment[1]
@@ -3106,16 +3111,20 @@ def download_assignments(request):
                         )
 
                     file_path = os.path.join(django_settings.MEDIA_ROOT, path)
-                    if os.path.exists(file_path):
+                    file_paths.append((path, file_path))
 
-                        with open(file_path, 'rb') as fh:
-                            response = HttpResponse(fh.read(), content_type="application/force-download")
-                            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
-                            return response
-                    raise Http404
+                zone = BytesIO()
+                zip_file = ZipFile(zone, "w")
 
+                for file_path in file_paths:
+                    zip_file.write(file_path[1], file_path[0])
 
-                    # return render(request, "download_assignments.html", {})
+                zip_file.close()
+
+                respone = HttpResponse(zone.getvalue(), content_type="application/x-zip-compressed")
+                respone['Content-Disposition'] = 'attachment; filename=%s' % "assignments.zip"
+
+                return respone
 
         return render(request, "download_assignments.html", {})
 
