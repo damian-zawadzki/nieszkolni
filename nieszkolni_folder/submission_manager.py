@@ -211,7 +211,8 @@ class SubmissionManager:
                 major_errors,
                 reviewing_user,
                 comment,
-                grade
+                grade,
+                assignment_type
                 FROM nieszkolni_app_submission
                 WHERE status = 'graded'
                 AND date_number >= {start}

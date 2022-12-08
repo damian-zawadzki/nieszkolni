@@ -2793,7 +2793,7 @@ def grade_sentences(request):
 
             SentenceManager().grade_sentence(sentence_number, result, current_user)
 
-            return redirect("grade_sentences.html")
+            return redirect("grade_sentences")
 
         return render(request, "grade_sentences.html", {
             "entry": entry
@@ -3076,55 +3076,12 @@ def download_assignments(request):
                 start_date = request.POST["start_date"]
                 end_date = request.POST["end_date"]
 
-                assignments = SubmissionManager().download_graded_assignments(
-                    start_date,
-                    end_date
-                    )
-
-                file_paths = []
-
-                for assignment in assignments:
-                    date = assignment[0]
-                    item = assignment[1]
-                    name = assignment[2]
-                    title = assignment[3]
-                    wordcount = assignment[4]
-                    flagged_content = assignment[5]
-                    minor_errors = assignment[6]
-                    major_errors = assignment[7]
-                    reviewing_user = assignment[8]
-                    comment = assignment[9]
-                    grade = assignment[10]
-
-                    path = DocumentManager().create_assignment_doc(
-                        date,
-                        item,
-                        name,
-                        title,
-                        wordcount,
-                        flagged_content,
-                        minor_errors,
-                        major_errors,
-                        reviewing_user,
-                        comment,
-                        grade
+                response = DownloadManager().download_assignments(
+                        start_date,
+                        end_date
                         )
 
-                    file_path = os.path.join(django_settings.MEDIA_ROOT, path)
-                    file_paths.append((path, file_path))
-
-                zone = BytesIO()
-                zip_file = ZipFile(zone, "w")
-
-                for file_path in file_paths:
-                    zip_file.write(file_path[1], file_path[0])
-
-                zip_file.close()
-
-                respone = HttpResponse(zone.getvalue(), content_type="application/x-zip-compressed")
-                respone['Content-Disposition'] = 'attachment; filename=%s' % "assignments.zip"
-
-                return respone
+                return response
 
         return render(request, "download_assignments.html", {})
 

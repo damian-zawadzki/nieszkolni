@@ -420,6 +420,45 @@ class SentenceManager:
 
             return entries
 
+    def download_graded_sentence_lists(self, start_date, end_date):
+        start = TimeMachine().date_to_number(start_date)
+        end = TimeMachine().date_to_number(end_date)
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                result,
+                polish,
+                translation,
+                list_number,
+                name,
+                submission_date,
+                reviewing_user,
+                item
+                FROM nieszkolni_app_composer
+                WHERE status = 'graded'
+                AND submission_date >= {start}
+                AND submission_date <= {end}
+                ''')
+
+            items = cursor.fetchall()
+
+            sentence_lists = []
+            sentence_list = []
+            sentence_list_no = 0
+
+            i = 0
+            for item in items:
+                sentence_list.append(item)
+
+                if i == 9:
+                    sentence_lists.append(sentence_list)
+                    sentence_list = []
+
+                i += 1
+
+            return sentence_lists
+
     def display_list_status(self, list_number):
         with connection.cursor() as cursor:
             cursor.execute(f'''
