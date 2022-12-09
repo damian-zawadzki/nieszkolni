@@ -276,15 +276,18 @@ class DocumentManager:
             clock_in = entry["clock_in"]
             clock_out = entry["clock_out"]
             duration = entry["duration"]
-            category_name = entry["category_name"]
+            category_name = entry["category_name"].replace("<b>", "").replace("</b>", "")
 
-            run = paragraph_2.add_run(f"{clock_in}\t{clock_out}\t{duration}\t{category_name}")
+            run = paragraph_2.add_run()
             font = run.font
             font.name = "Times New Roman"
             font.size = Pt(10)
             font.bold = False
-            font.italic = True
             font.color.rgb = RGBColor(0, 0, 0)
+            run.add_text(clock_in + "\t")
+            run.add_text(clock_out + "\t")
+            run.add_text(duration + "\t")
+            run.add_text(category_name)
             run.add_break()
 
         file_bytes = BytesIO()
