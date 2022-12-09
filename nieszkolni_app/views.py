@@ -4964,7 +4964,7 @@ def timesheet(request):
                     end
                     )
 
-                duration = AuditManager().display_total_duration_min(entries)
+                duration = AuditManager().display_total_duration_h_min(entries)
                 path = DocumentManager().create_timesheet_pdf(
                     employee,
                     start,
