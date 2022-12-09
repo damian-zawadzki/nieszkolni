@@ -14,7 +14,6 @@ from nieszkolni_folder.sentence_manager import SentenceManager
 import re
 from io import BytesIO
 from zipfile import ZipFile
-from docx2pdf import convert
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()

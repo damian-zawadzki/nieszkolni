@@ -17,8 +17,6 @@ from docx.shared import Inches
 from docx.shared import Pt
 from docx.shared import RGBColor
 
-from docx2pdf import convert
-
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
 
