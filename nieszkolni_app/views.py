@@ -42,7 +42,6 @@ from io import BytesIO
 from gtts import gTTS
 import random
 from zipfile import *
-from docx2pdf import convert
 
 from nieszkolni_app.models import *
 
