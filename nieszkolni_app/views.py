@@ -42,6 +42,7 @@ from io import BytesIO
 from gtts import gTTS
 import random
 from zipfile import *
+from docx2pdf import convert
 
 from nieszkolni_app.models import *
 
@@ -4938,11 +4939,44 @@ def timesheet(request):
                     end
                     )
 
-                return render(request, "timesheet.html", {
+                duration = AuditManager().display_duration_h_min(entries)
+
+                return render(request, "timesheet_details.html", {
+                    "employee": employee,
+                    "start": start,
+                    "end": end,
                     "entries": entries,
                     "current_user": current_user,
-                    "employees": employees
+                    "employees": employees,
+                    "duration": duration
                     })
+
+            elif request.POST["action_on_timesheet"] == "new":
+                return redirect("timesheet")
+
+            elif request.POST["action_on_timesheet"] == "download":
+                employee = request.POST["employee"]
+                start = request.POST["start"]
+                end = request.POST["end"]
+
+                entries = AuditManager().display_entries(
+                    employee,
+                    start,
+                    end
+                    )
+
+                duration = AuditManager().display_duration_h_min(entries)
+                path = DocumentManager().create_timesheet_pdf(
+                    employee,
+                    start,
+                    end,
+                    duration,
+                    entries
+                    )
+
+                response = DownloadManager().download_document(path)
+
+                return response
 
         return render(request, "timesheet.html", {
             "current_user": current_user,

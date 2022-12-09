@@ -50,27 +50,5 @@
 
 </form>
 
-<table>
-
-	<tr>
-		<th>Start</th>
-		<th>Stop</th>
-		<th >Duration (min)</th>
-		<th class="td_sentences">Task</th>
-	</tr>
-
-	{% for entry in entries %}
-
-		<tr>
-			<td>{{ entry.clock_in }}</td>
-			<td>{{ entry.clock_out }}</td>
-			<td>{{ entry.duration }}</td>
-			<td class="td_sentences">{{ entry.category_name|safe }}</td>
-		</tr>
-
-	{% endfor %}
-	
-</table>
-
 {% include 'footer.html' %}
 {% endblock %}

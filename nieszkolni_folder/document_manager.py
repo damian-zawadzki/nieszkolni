@@ -17,6 +17,8 @@ from docx.shared import Inches
 from docx.shared import Pt
 from docx.shared import RGBColor
 
+from docx2pdf import convert
+
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
 
@@ -194,6 +196,98 @@ class DocumentManager:
             font.bold = False
             font.color.rgb = RGBColor(0, 0, 0)
             run.add_break()
+            run.add_break()
+
+        file_bytes = BytesIO()
+        document.save(file_bytes)
+        file_bytes.seek(0)
+
+        paper = Paper()
+        paper.stamp = TimeMachine().now_number()
+        paper.title = paper_title
+        paper.content.save(paper_title, ContentFile(file_bytes.read()))
+        paper.save()
+
+        return paper_title
+
+    def create_timesheet_pdf(
+            self,
+            employee,
+            start,
+            end,
+            duration,
+            entries
+            ):
+
+        today = TimeMachine().today()
+        employee_slug = employee.replace(" ", "_")
+        paper_title = f"timesshet_{today}---{employee_slug}.pdf"
+
+        document = Document()
+
+        paragraph_0 = document.add_paragraph()
+
+        paragraph_0 = document.add_heading()
+        paragraph_format = paragraph_0.paragraph_format
+        paragraph_format.alignment = WD_ALIGN_PARAGRAPH.LEFT
+        paragraph_format.alignment
+        tab_stops = paragraph_0.paragraph_format.tab_stops
+        tab_stop = tab_stops.add_tab_stop(Inches(2))
+
+        run = paragraph_0.add_run(
+            f'''
+            Employee:\t{employee}
+            Generated on:\t{today}
+            From:\t{start}
+            To:\t{end}
+            Duration:\t{duration["hours"]}h {duration["minutes"]}min
+            '''
+            )
+        font = run.font
+        font.name = "Times New Roman"
+        font.size = Pt(12)
+        font.bold = False
+        font.color.rgb = RGBColor(0, 0, 0)
+
+        # Heading
+        paragraph_1 = document.add_heading()
+        paragraph_format = paragraph_1.paragraph_format
+        paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+        paragraph_format.alignment
+
+        run = paragraph_1.add_run("Timesheet")
+        font = run.font
+        font.name = "Times New Roman"
+        font.size = Pt(20)
+        font.bold = True
+        font.color.rgb = RGBColor(0, 0, 0)
+
+        # Content
+        paragraph_2 = document.add_paragraph()
+
+        paragraph_format = paragraph_2.paragraph_format
+        paragraph_format.alignment = WD_ALIGN_PARAGRAPH.LEFT
+        paragraph_format.alignment
+        tab_stops = paragraph_2.paragraph_format.tab_stops
+        tab_stop = tab_stops.add_tab_stop(Inches(1.5))
+        tab_stop = tab_stops.add_tab_stop(Inches(3))
+        tab_stop = tab_stops.add_tab_stop(Inches(4))
+
+        for entry in entries:
+
+            clock_in = entry["clock_in"]
+            clock_out = entry["clock_out"]
+            duration_raw = entry["duration"]
+            duration = f"{duration_raw // 60}h {duration_raw % 60}min"
+            category_name = entry["category_name"]
+
+            run = paragraph_2.add_run(f"{clock_in}\t{clock_out}\t{duration}\t{category_name}")
+            font = run.font
+            font.name = "Times New Roman"
+            font.size = Pt(10)
+            font.bold = False
+            font.italic = True
+            font.color.rgb = RGBColor(0, 0, 0)
             run.add_break()
 
         file_bytes = BytesIO()

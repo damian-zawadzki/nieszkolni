@@ -341,6 +341,25 @@ class AuditManager:
 
             return entries
 
+    def display_duration_min(self, entries):
+        duration_entries = [int(entry["duration"]) for entry in entries]
+        duration = sum(duration_entries)
+
+        return duration
+
+    def display_duration_h_min(self, entries):
+        duration = self.display_duration_min(entries)
+
+        hours = duration // 60
+        minutes = duration % 60
+
+        result = {
+            "hours": hours,
+            "minutes": minutes
+        }
+
+        return result
+
     # Category
     def add_category(
             self,

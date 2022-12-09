@@ -14,6 +14,7 @@ from nieszkolni_folder.sentence_manager import SentenceManager
 import re
 from io import BytesIO
 from zipfile import ZipFile
+from docx2pdf import convert
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
@@ -89,3 +90,14 @@ class DownloadManager:
         response['Content-Disposition'] = 'attachment; filename=%s' % "assignments.zip"
 
         return response
+
+    def download_document(self, path):
+
+        file_path = os.path.join(django_settings.MEDIA_ROOT, path)
+
+        with open(file_path, 'rb') as file:
+
+            response = HttpResponse(file.read(), content_type="application/force-download")
+            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+
+            return response
