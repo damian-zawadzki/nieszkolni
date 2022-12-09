@@ -219,7 +219,7 @@ class DocumentManager:
 
         today = TimeMachine().today()
         employee_slug = employee.replace(" ", "_")
-        paper_title = f"timesshet_{today}---{employee_slug}.pdf"
+        paper_title = f"timesshet_{today}---{employee_slug}.docx"
 
         document = Document()
 
