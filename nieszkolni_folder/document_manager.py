@@ -194,7 +194,7 @@ class DocumentManager:
             font.bold = False
             font.color.rgb = RGBColor(0, 0, 0)
             run.add_break()
-
+            run.add_break()
 
         file_bytes = BytesIO()
         document.save(file_bytes)

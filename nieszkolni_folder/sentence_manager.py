@@ -8,6 +8,8 @@ from nieszkolni_folder.cleaner import Cleaner
 
 from nieszkolni_folder.knowledge_manager import KnowledgeManager
 
+from copy import deepcopy
+
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
 
@@ -384,7 +386,7 @@ class SentenceManager:
                 translation,
                 sentence_number
                 FROM nieszkolni_app_composer
-                WHERE result = ''
+                WHERE status = 'translated'
                 ''')
 
             entries = cursor.fetchall()
@@ -442,20 +444,7 @@ class SentenceManager:
                 ''')
 
             items = cursor.fetchall()
-
-            sentence_lists = []
-            sentence_list = []
-            sentence_list_no = 0
-
-            i = 0
-            for item in items:
-                sentence_list.append(item)
-
-                if i == 9:
-                    sentence_lists.append(sentence_list)
-                    sentence_list = []
-
-                i += 1
+            sentence_lists = [items[i*10:(i+1)*10] for i in range(int(len(items)/10))]
 
             return sentence_lists
 
