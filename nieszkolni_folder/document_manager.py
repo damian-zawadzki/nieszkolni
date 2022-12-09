@@ -238,7 +238,7 @@ class DocumentManager:
             Generated on:\t{today}
             From:\t{start}
             To:\t{end}
-            Duration:\t{duration["hours"]}h {duration["minutes"]}min
+            Duration:\t{duration}
             '''
             )
         font = run.font
@@ -275,8 +275,7 @@ class DocumentManager:
 
             clock_in = entry["clock_in"]
             clock_out = entry["clock_out"]
-            duration_raw = entry["duration"]
-            duration = f"{duration_raw // 60}h {duration_raw % 60}min"
+            duration = entry["duration"]
             category_name = entry["category_name"]
 
             run = paragraph_2.add_run(f"{clock_in}\t{clock_out}\t{duration}\t{category_name}")

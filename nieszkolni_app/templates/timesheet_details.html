@@ -6,7 +6,7 @@
 <form action="{% url 'timesheet' %}"  method="POST">
    {% csrf_token %}
 
-   <h3>{{ duration.hours }}h {{ duration.minutes }}min</h3>
+   <h3>{{ duration }}</h3>
 
    <input type="hidden" name="employee" value="{{ employee }}">
    <input type="hidden" name="start" value="{{ start }}">

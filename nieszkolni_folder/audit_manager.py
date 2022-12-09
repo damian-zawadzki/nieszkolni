@@ -325,7 +325,7 @@ class AuditManager:
                     "stamp": row[1],
                     "clock_in": TimeMachine().number_to_system_date_time(row[2]),
                     "clock_out": TimeMachine().number_to_system_date_time(row[3]),
-                    "duration": round(int(row[4])/60),
+                    "duration": self.convert_to_h_min(round(int(row[4])/60)),
                     "category_number": row[5],
                     "category_name": category_name,
                     "date_number":  TimeMachine().number_to_system_date(row[7]),
@@ -341,24 +341,43 @@ class AuditManager:
 
             return entries
 
-    def display_duration_min(self, entries):
-        duration_entries = [int(entry["duration"]) for entry in entries]
+    def display_total_duration_min(self, entries):
+        duration_entries = [
+            self.convert_to_min_from_h_min(entry["duration"])
+            for entry in entries
+            ]
+
         duration = sum(duration_entries)
 
         return duration
 
-    def display_duration_h_min(self, entries):
-        duration = self.display_duration_min(entries)
+    def display_total_duration_h_min(self, entries):
+        duration_raw = self.display_total_duration_min(entries)
+        duration = self.convert_to_h_min(duration_raw)
+
+        return duration
+
+    def convert_to_h_min(self, duration):
+        duration = int(duration)
 
         hours = duration // 60
         minutes = duration % 60
 
-        result = {
-            "hours": hours,
-            "minutes": minutes
-        }
+        result = f"{hours}h {minutes}min"
 
         return result
+
+    def convert_to_min_from_h_min(self, duration):
+        hours_text = re.search(r"\d{1,}h", duration).group()
+        hours = int(re.sub("h", "", hours_text))
+
+        minutes_text = re.search(r"\s\d{1,}min", duration).group()
+        minutes = int(re.sub(r"\s|min", "", minutes_text))
+
+        duration = (hours * 60) + minutes
+
+        return duration
+
 
     # Category
     def add_category(
