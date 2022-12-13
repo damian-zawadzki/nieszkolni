@@ -2871,6 +2871,7 @@ def library(request):
         current_user = first_name + " " + last_name
 
         positions = BackOfficeManager().display_library()
+        next_postion_number = BackOfficeManager().next_postion_number()
 
         if request.method == "POST":
             if request.POST["library_action"] == "add":
@@ -2898,7 +2899,8 @@ def library(request):
                 return redirect("library")
 
         return render(request, "library.html", {
-            "positions": positions
+            "positions": positions,
+            "next_postion_number": next_postion_number
             })
 
 
@@ -2919,7 +2921,7 @@ def report_reading(request):
             RatingManager().add_rating(client, link, rating)
 
             # Stream
-            StreamManager().report_reading(client, link, current_user)
+            BackOfficePlanner().report_reading(client, link, current_user)
 
             return redirect("report_reading")
 
@@ -2948,7 +2950,7 @@ def library_line(request):
         if check_if_in_library is True:
             client = data[0]
 
-            StreamManager().report_reading(client, link, current_user)
+            BackOfficePlanner().report_reading(client, link, current_user)
             BackOfficeManager().mark_library_line_as_processed(client, link)
 
             return redirect("library_line")
@@ -2966,7 +2968,7 @@ def library_line(request):
                 link
                 )
 
-            StreamManager().report_reading(client, link, current_user)
+            BackOfficePlanner().report_reading(client, link, current_user)
             BackOfficeManager().mark_library_line_as_processed(client, link)
 
             return redirect("library_line")
@@ -2996,7 +2998,7 @@ def report_listening(request):
             number_of_episodes = request.POST["number_of_episodes"]
 
             # Stream
-            StreamManager().report_listening(
+            BackOfficePlanner().report_listening(
                 client,
                 title,
                 number_of_episodes,
@@ -3031,7 +3033,7 @@ def repertoire(request):
                     title_type
                     )
 
-                return redirect("repertoire.html")
+                return redirect("repertoire")
 
             elif request.POST["repertoire_action"] == "delete":
                 title = request.POST["title"]
@@ -3040,7 +3042,7 @@ def repertoire(request):
                     title
                     )
 
-                return redirect("repertoire.html")
+                return redirect("repertoire")
 
         return render(request, "repertoire.html", {
             "titles": titles
@@ -3054,62 +3056,22 @@ def repertoire_line(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        title = BackOfficeManager().display_reported_repertoire_line()
-
-        if title is None:
-            messages.success(request, ("Everything's processed!"))
-            return render(request, "repertoire_line.html", {})
-
-        title_name = title[3]
-        number_of_episodes = title[4]
-        check_if_in = BackOfficeManager().check_if_in_repertoire(title_name)
+        position = BackOfficeManager().display_reported_repertoire_line()
 
         if request.method == "POST":
             if request.POST["repertoire_line_action"] == "add":
-                stamp = request.POST["stamp"]
-                date = request.POST["date"]
-                client = request.POST["client"]
-                title_name = request.POST["title"]
-                number_of_episodes = request.POST["number_of_episodes"]
+                title = request.POST["title"]
                 duration = request.POST["duration"]
                 title_type = request.POST["title_type"]
-                status = request.POST["status"]
 
-                if status == "not_in_stream":
+                BackOfficePlanner().process_repertoire_line(
+                    title,
+                    duration,
+                    title_type,
+                    position
+                    )
 
-                    if check_if_in is True:
-                        # Repertoire line
-                        BackOfficeManager().add_to_repertoire(
-                            title_name,
-                            duration,
-                            title_type
-                            )
-
-                    # Stream
-                    StreamManager().report_listening(
-                        client,
-                        title_name,
-                        number_of_episodes,
-                        current_user
-                        )
-
-                    BackOfficeManager().mark_repertoire_line_as_processed(stamp)
-
-                    return redirect("repertoire_line")
-
-                else:
-
-                    # Stream
-                    StreamManager().report_listening(
-                        client,
-                        title_name,
-                        number_of_episodes,
-                        current_user
-                        )
-
-                    BackOfficeManager().mark_repertoire_line_as_processed(stamp)
-
-                    return redirect("repertoire_line")
+                return redirect("repertoire_line")
 
             elif request.POST["repertoire_line_action"] == "remove":
                 stamp = request.POST["stamp"]
@@ -3117,9 +3079,15 @@ def repertoire_line(request):
 
                 return redirect("repertoire_line")
 
-        return render(request, "repertoire_line.html", {
-            "title": title
-            })
+        if position is None:
+
+            messages.success(request, ("Everything's processed!"))
+            return render(request, "repertoire_line.html", {})
+
+        else:
+            return render(request, "repertoire_line.html", {
+                "position": position
+                })
 
 
 @staff_member_required

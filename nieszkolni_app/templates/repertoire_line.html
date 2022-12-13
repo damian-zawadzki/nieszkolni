@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block 'content' %}
 
-{% if title == None %}
+{% if position == None %}
 
 <h1>REPERTOIRE</h1>
 
@@ -13,20 +13,16 @@
   <div class="phrase_card">
 
     <div class="phrase_card_container">
-      <h5 class="phrase_card_question">{{ title.3 }}</h5>
-      <h5 class="phrase_card_description">{{ title.2 }}</h5>
+      <h5 class="phrase_card_question">{{ position.3 }}</h5>
+      <h5 class="phrase_card_description">{{ position.2 }}</h5>
       
     <form method="POST">
       {% csrf_token %}
 
       <div class="flex-parent jc-center">
         <div class="input_container">
-          <input type="hidden" name="stamp" value="{{ title.0 }}">
-          <input type="hidden" name="date" value="{{ title.1 }}">
-          <input type="hidden" name="client" value="{{ title.2 }}">
-          <input type="hidden" name="number_of_episodes" value="{{ title.4 }}">
-          <input type="hidden" name="status" value="{{ title.5 }}">
-          <input type="text" class="input_content_solo input_content_solo_long" name="title" value="{{ title.3 }}">
+          <input type="hidden" name="stamp" value="{{ position.0 }}">
+          <input type="text" class="input_content_solo input_content_solo_long" name="title" value="{{ position.3 }}">
           <input type="number" class="input_content_solo input_content_solo_long" name="duration" placeholder="duration (minutes)">          
         </div>
       </div>
@@ -45,7 +41,7 @@
       </div>
 
       <div class="flex-parent jc-center">
-        <button type="submit" class="button_main" name="repertoire_line_action" value="save">Save</button>
+        <button type="submit" class="button_main" name="repertoire_line_action" value="add">Add</button>
         <button type="submit" class="button_main" name="repertoire_line_action" value="remove">Remove</button>
       </div>
 

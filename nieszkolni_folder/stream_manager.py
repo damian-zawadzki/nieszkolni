@@ -960,7 +960,7 @@ class StreamManager:
         else:
             wordcount = BackOfficeManager().get_wordcount_from_library(link)
 
-            StreamManager().add_to_stream(
+            self().add_to_stream(
                 client,
                 "PV",
                 wordcount,

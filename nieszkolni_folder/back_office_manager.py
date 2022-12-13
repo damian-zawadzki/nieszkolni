@@ -177,12 +177,31 @@ class BackOfficeManager:
                 link = links[0]
                 return link
 
+    def next_postion_number(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT MAX(position_number)
+                FROM nieszkolni_app_library
+                WHERE position_number < 90000
+                ''')
+
+            last_postion_number = cursor.fetchone()
+
+            if last_postion_number[0] is None:
+                next_postion_number = 10000
+                return next_postion_number
+
+            else:
+                next_postion_number = last_postion_number[0] + 1
+
+                return next_postion_number
+
     def next_custom_postion_number(self):
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 SELECT MAX(position_number)
                 FROM nieszkolni_app_library
-                WHERE position_number > 9999
+                WHERE position_number > 89999
                 ''')
 
             last_custom_postion_number = cursor.fetchone()
@@ -223,7 +242,7 @@ class BackOfficeManager:
                 )
                 VALUES (
                 '{title}',
-                {duration},
+                '{duration}',
                 '{title_type}'
                 )
                 ON CONFLICT (title)
@@ -251,6 +270,26 @@ class BackOfficeManager:
 
             return titles
 
+    def display_repertoire_position(self, title):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                title,
+                duration,
+                title_type
+                FROM nieszkolni_app_repertoire
+                WHERE title = '{title}'
+                ''')
+
+            title = cursor.fetchone()
+
+            if title is None:
+                return None
+            else:
+                title = title[0]
+
+                return title
+
     def add_to_repertoire_line(
             self,
             name,
@@ -259,7 +298,7 @@ class BackOfficeManager:
             status
             ):
 
-        check_if_in = BackOfficeManager().check_if_in_repertoire(title)
+        check_if_in = self.check_if_in_repertoire(title)
 
         now_number = TimeMachine().now_number()
         today_number = TimeMachine().today_number()
@@ -299,15 +338,35 @@ class BackOfficeManager:
                 FROM nieszkolni_app_repertoireline
                 WHERE status = 'not_in_stream'
                 OR status = 'not_in_repertoire'
+                LIMIT 1
                 ''')
 
-            titles = cursor.fetchall()
+            position = cursor.fetchone()
 
-            if len(titles) == 0:
-                return None
-            else:
-                title = titles[0]
-                return title
+            stamp = position[0]
+            client = position[2]
+            title = position[3]
+            number_of_episodes = position[4]
+            status = position[5]
+
+            check_if_in = self.check_if_in_repertoire(title)
+            print(check_if_in)
+
+            while check_if_in is True:
+                if status == "not_in_stream":
+
+                    title_details = self.display_repertoire_position(title)
+                    duration = title_details[1]
+                    title_type = title_details[2]
+
+                    self.process_repertoire_line(
+                        title,
+                        duration,
+                        title_type,
+                        position
+                        )
+
+            return position
 
     def mark_repertoire_line_as_processed(self, stamp):
         with connection.cursor() as cursor:
