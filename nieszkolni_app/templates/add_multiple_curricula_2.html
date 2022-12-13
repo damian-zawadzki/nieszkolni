@@ -1,38 +1,34 @@
 {% extends 'base.html' %}
 {% block 'content' %}
-{% include 'staff_menu.html' %}
+{% load static %} 
 
-<h1>PLAN A MODULE</h1>
+<h1>PLAN MULTIPLE MODULES</h1>
 
-<form method="POST">
+<form action="{% url 'add_multiple_curricula_2' component_id=component_id %}" method="POST">
 	{% csrf_token %}
 
   <div class="flex-parent jc-center">
      <div class="input_container">
       <label class="input_label">Client</label>
 
-          {% if names|length == 1 %}
+        <ul>
 
-            <input type="text" class="input_content input_prefilled" name="client" value="{{ names.0 }}">
-
-          {% else %}
-        <select required class="input_content" name="client">
-
-            <option disabled selected value></option>
-            {% for name in names %}
-            <option value="{{ name }}">{{ name }}</option>
+            {% for client in clients %}
+              <li class="checkbox_list">
+                <input type="checkbox" id="{{ client }}" value="{{ client }}" name="client">
+                <label for="{{ client }}">{{ client }}</label>
+              </li>
             {% endfor %}
 
-          {% endif %}
+        </ul>
 
-      </select>
     </div>
   </div>
 
   <div class="flex-parent jc-center">
      <div class="input_container">
       <label class="input_label">Component</label>
-      <input type="text" class="input_content input_prefilled" name="assignment_type" value="{{ assignment_type }}">
+      <input type="text" class="input_content input_prefilled" name="assignment_type" value="{{ module.1 }}">
     </div>
   </div>
 
@@ -53,17 +49,7 @@
   <div class="flex-parent jc-center">
     <div class="input_container">
       <label class="input_label">Title</label>
-
-      {% if module_status == 1 %}
-
-        <input required type="text" class="input_content" name="title" value="{{ module.2 }}">
-
-      {% else %}
-
-        <input required type="text" class="input_content" name="title">
-
-      {% endif%}
-
+      <input required type="text" class="input_content" name="title" value="{{ module.2 }}">
     </div>
   </div>
 
@@ -71,29 +57,25 @@
     <div class="input_container">
       <label class="input_label">Content</label>
 
-      {% if assignment_type == 'sentences' %}
+      {% if module.1 == 'sentences' %}
 
         <textarea class="input_content input_paragraph" cols="2" wrap="hard" name="content">Click the button below and translate 10 sentences. For the best effects, refrain from using dictionary or Google Translate.</textarea>
 
-      {% elif module_status == 1 %}
-
-        <textarea class="input_content input_paragraph" cols="2" wrap="hard" name="content">{{ module.3 }}</textarea>
-
       {% else %}
 
-        <input required type="text" class="input_content input_paragraph" name="content">
+        <textarea class="input_content input_paragraph" cols="2" wrap="hard" name="content">{{ module.3 }}</textarea>
 
       {% endif %}
 
     </div>
   </div>
 
-{% if assignment_type == 'sentences' %}
+{% if module.1 == 'sentences' %}
 
   <input type="hidden" name="resources" value="-">
   <input type="hidden" name="conditions" value="-">
 
-{% elif module_status == 1 %}
+{% else %}
 
   <div class="flex-parent jc-center">
     <div class="input_container">
@@ -109,30 +91,14 @@
     </div>
   </div>
 
-{% else %}
-
-  <div class="flex-parent jc-center">
-    <div class="input_container">
-      <label class="input_label">Resources</label>
-      <textarea required type="text" class="input_content input_paragraph" name="resources"></textarea>
-    </div>
-  </div>
-
-  <div class="flex-parent jc-center">
-    <div class="input_container">
-      <label class="input_label">Conditions</label>
-      <textarea required type="text" class="input_content input_paragraph" name="conditions"></textarea>
-    </div>
-  </div>
-
 {% endif %}
 
-  <input type="hidden" name="component_id" value="{{ component_id }}">
-
   <div class="flex-parent jc-center">
-      <button type="submit" class="button_main" name="curriculum_action" value="plan_curriculum">Plan</button>
+      <button type="submit" class="button_main" name="curricula_action" value="plan_curricula">Plan</button>
   </div>
 
 </form>
+
+<script src="{% static 'functions.js' %}"></script>
 
 {% endblock %}

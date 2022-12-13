@@ -29,7 +29,6 @@ class CurriculumPlanner:
 
     def plan_curriculum(
             self,
-            item,
             deadline,
             client,
             component_id,
@@ -42,6 +41,7 @@ class CurriculumPlanner:
             reference
             ):
 
+        item = CurriculumManager().next_item()
         component_type = assignment_type
 
         CurriculumManager().add_curriculum(
@@ -83,7 +83,6 @@ class CurriculumPlanner:
 
         modules = CurriculumManager().display_matrix(matrix)
 
-        i = 0
         for module in modules:
             component_id = module["component_id"]
             limit_number = module["limit_number"]
@@ -97,12 +96,10 @@ class CurriculumPlanner:
             conditions = entry[5]
             reference = entry[6]
 
-            item = CurriculumManager().next_item() + i
             deadline_number = int(starting_date_number) + limit_number
             deadline = TimeMachine().number_to_system_date(deadline_number)
 
             self.plan_curriculum(
-                item,
                 deadline,
                 client,
                 component_id,
@@ -115,7 +112,33 @@ class CurriculumPlanner:
                 reference
                 )
 
-            i += 1
+    def plan_multiple_curricula(
+            self,
+            deadline,
+            clients,
+            component_id,
+            assignment_type,
+            title,
+            content,
+            matrix,
+            resources,
+            conditions,
+            reference
+            ):
+
+        for client in clients:
+            self.plan_curriculum(
+                deadline,
+                client,
+                component_id,
+                assignment_type,
+                title,
+                content,
+                matrix,
+                resources,
+                conditions,
+                reference
+                )
 
     def plan_program(self, client, current_user, program_id, semester):
 

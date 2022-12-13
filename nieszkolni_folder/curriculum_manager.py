@@ -200,7 +200,6 @@ class CurriculumManager:
                 ''')
 
             rows = cursor.fetchall()
-            print(rows)
 
             items = [row[0] for row in rows]
 
@@ -373,6 +372,12 @@ class CurriculumManager:
             assignments = cursor.fetchall()
 
             return assignments
+
+    def component_id_to_component(self, component_id):
+        component_raw = re.search(r"\w.+_", component_id).group()
+        component = re.sub("_", "", component_raw)
+
+        return component
 
     def add_module(
             self,

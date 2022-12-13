@@ -673,6 +673,11 @@ task_card_content_list {
   font-size: 14px;
 }
 
+/*Checkbox list*/
+.checkbox_list {
+  display: block;
+}
+
 /*Footer*/
 /*.footer {
   background-color: #F9F9F9;

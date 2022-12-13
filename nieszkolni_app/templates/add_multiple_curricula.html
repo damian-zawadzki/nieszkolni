@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %} 
+
+<h1>PLAN MULTIPLE MODULES</h1>
+
+<form action="{% url 'add_multiple_curricula' %}" method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center" id="list_of_modules">
+     <div class="input_container">
+      <label class="input_label">Module</label>
+
+        <select class="input_content" name="component_id">
+            <option disabled selected value></option>
+
+            {% for module in modules %}
+              <option value="{{ module.0 }}">{{ module.0 }}</option>
+            {% endfor %}
+
+        </select>
+
+      <div class="flex-parent jc-center">
+          <button type="submit" class="button_main" name="curriculum_action" value="choose_other_modules">Choose</button>
+      </div>
+
+    </div>
+  </div>
+
+</form>
+
+<script src="{% static 'functions.js' %}"></script>
+<script type="text/javascript">
+   forgetPage(true);
+</script>  
+
+{% endblock %}

@@ -58,15 +58,15 @@ class SubmissionManager:
                 grade
                 )
                 VALUES (
-                {stamp},
-                {date_number},
+                '{stamp}',
+                '{date_number}',
                 '{date}',
-                {item},
+                '{item}',
                 '{name}',
                 '{assignment_type}',
                 '{title}',
                 '{content}',
-                {wordcount},
+                '{wordcount}',
                 '{status}',
                 '{content}',
                 '',

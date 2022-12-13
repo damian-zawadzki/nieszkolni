@@ -1133,7 +1133,7 @@ def upload_curriculum(request):
             entries = StringToCsv().convert(file)
 
             for entry in entries:
-                add_curriculum = CurriculumManager().add_curriculum(
+                CurriculumManager().add_curriculum(
                     entry[0],
                     entry[1],
                     entry[2],
@@ -1165,23 +1165,7 @@ def add_curriculum(request, client=""):
         module_status = 0
 
         if request.method == "POST":
-            if request.POST["curriculum_action"] == "choose_quiz":
-                name = request.POST["name"]        
-                names = [name]
-                assignment_type = "quiz"
-
-                entries = KnowledgeManager().display_planned_quizzes_per_student(name)
-
-                return render(request, "add_curriculum_2.html", {
-                    "client": name,
-                    "names": names,
-                    "assignment_type": assignment_type,
-                    "entries": entries,
-                    "modules": modules,
-                    "module_status": module_status
-                    })
-
-            elif request.POST["curriculum_action"] == "choose_other_modules":
+            if request.POST["curriculum_action"] == "choose_other_modules":
                 name = request.POST["name"]
                 component_id = request.POST["component_id"]
 
@@ -1190,14 +1174,12 @@ def add_curriculum(request, client=""):
                 assignment_type = re.sub("_", "", assignment_type_raw)
                 names = [name]
 
-                entries = SentenceManager().display_planned_sentence_lists_per_student(name)
                 module = CurriculumManager().display_module(component_id)
 
                 return render(request, "add_curriculum_2.html", {
                     "client": name,
                     "names": names,
                     "assignment_type": assignment_type,
-                    "entries": entries,
                     "modules": modules,
                     "module": module,
                     "module_status": module_status,
@@ -1205,9 +1187,8 @@ def add_curriculum(request, client=""):
                     })
 
             else:
-                item = CurriculumManager().next_item()
                 deadline = request.POST["deadline"]
-                name = request.POST["name"]
+                client = request.POST["client"]
                 assignment_type = request.POST["assignment_type"]
                 title = request.POST["title"]
                 content = request.POST["content"]
@@ -1218,9 +1199,8 @@ def add_curriculum(request, client=""):
                 component_id = request.POST["component_id"]
 
                 CurriculumPlanner().plan_curriculum(
-                    item,
                     deadline,
-                    name,
+                    client,
                     component_id,
                     assignment_type,
                     title,
@@ -1239,6 +1219,74 @@ def add_curriculum(request, client=""):
             "names": names,
             "modules": modules,
             "module_status": module_status
+            })
+
+
+@staff_member_required
+def add_multiple_curricula(request, client=""):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        modules = CurriculumManager().display_modules()
+
+        if request.method == "POST":
+            if request.POST["curriculum_action"] == "choose_other_modules":
+                component_id = request.POST["component_id"]
+
+                return redirect(
+                    "add_multiple_curricula_2",
+                    component_id=component_id
+                    )
+
+        return render(request, "add_multiple_curricula.html", {
+            "modules": modules
+            })
+
+
+@staff_member_required
+def add_multiple_curricula_2(request, component_id):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        clients = ClientsManager().list_current_clients()
+        module = CurriculumManager().display_module(component_id)
+
+        if request.method == "POST":
+            if request.POST["curricula_action"] == "plan_curricula":        
+                deadline = request.POST["deadline"]
+                clients = request.POST.getlist("client")
+                assignment_type = request.POST["assignment_type"]
+                title = request.POST["title"]
+                content = request.POST["content"]
+                matrix = "custom matrix"
+                reference = request.POST["reference"]
+                resources = request.POST["resources"]
+                conditions = request.POST["conditions"]
+
+                CurriculumPlanner().plan_multiple_curricula(
+                    deadline,
+                    clients,
+                    component_id,
+                    assignment_type,
+                    title,
+                    content,
+                    matrix,
+                    resources,
+                    conditions,
+                    reference
+                    )
+
+                messages.success(request, ("Module added to curricula!"))
+                return redirect("add_curriculum")
+
+        return render(request, "add_multiple_curricula_2.html", {
+            "component_id": component_id,
+            "clients": clients,
+            "module": module
             })
 
 
@@ -2782,7 +2830,6 @@ def composed_sentences(request):
                     "entries": entries,
                     "search_type": search_type
                     })
-
 
         return render(request, "composed_sentences.html", {
             "current_clients": current_clients
