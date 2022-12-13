@@ -187,7 +187,7 @@ class KnowledgeManager:
                 WHERE english = '{english}'
                 ''')
             polish = cursor.fetchone()
-            print(polish)
+
             if polish is None:
                 return None
             else:
@@ -243,35 +243,36 @@ class KnowledgeManager:
     def display_open_book(self, deck):
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                SELECT id, english, status, deck, publicating_user
+                SELECT id, english, status, deck, publicating_user, name
                 FROM nieszkolni_app_book
                 WHERE deck = '{deck}'
                 AND (status = 'open'
                 OR status = 'rejected')
+                ORDER BY english ASC
+                LIMIT 1
                 ''')
-            entries = cursor.fetchall()
 
-            remaining_entries = []
+            entry = cursor.fetchone()
 
-            for entry in entries:
+            if entry is not None:
+                unique_id = entry[0]
                 english = entry[1]
                 polish = self.translate(english)
+                publicating_user = entry[4]
 
                 if polish is not None:
-                    add_entry = VocabularyManager().add_entry(
-                        name,
-                        deck,
+                    self.approve_book_entry(
+                        unique_id,
                         english,
-                        polish,
                         publicating_user
                         )
-                else:
-                    remaining_entries.append(entry)
 
-            if len(remaining_entries) == 0:
-                return None
+                    return None
+
+                else:
+                    return entry
             else:
-                return remaining_entries
+                return None
 
     def delete_book_entry(self, unique_id):
         with connection.cursor() as cursor:
@@ -280,70 +281,109 @@ class KnowledgeManager:
                 WHERE id = {unique_id}
                 ''')
 
-    def translate_book_entry(self, unique_id, polish):
+    def translate_book_entry(self, english, polish):
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 UPDATE nieszkolni_app_book
                 SET
                 polish = '{polish}',
                 status = 'translated'
-                WHERE id = {unique_id}
+                WHERE english = '{english}'
                 ''')
 
-    def approve_book_entry(self, unique_id, publicating_user):
+    def approve_book_entry(self, unique_id, english, publicating_user):
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 UPDATE nieszkolni_app_book
                 SET status = 'approved'
-                WHERE id = {unique_id}
+                WHERE english = '{english}'
                 ''')
 
+            self.add_from_book_to_dictionary(english)
+
+    def add_from_book_to_dictionary(self, english):
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                SELECT english, polish, deck, name, publicating_user
+                SELECT id, polish, deck, name, publicating_user
                 FROM nieszkolni_app_book
-                WHERE id = {unique_id}
-                ''')
-
-            entry = cursor.fetchone()
-            english = entry[0]
-            polish = entry[1]
-            publication_date = TimeMachine().today_number()
-            deck = entry[2]
-            client = entry[3]
-            coach = entry[4]
-
-            self.upload_dictionary(english, polish, publicating_user, publication_date, deck)
-            VocabularyManager().add_entry(client, deck, english, polish, coach)
-
-            with connection.cursor() as cursor:
-                cursor.execute(f'''
-                    DELETE FROM nieszkolni_app_book
-                    WHERE id = {unique_id}
-                    ''')
-
-    def display_translated_book(self, deck):
-        with connection.cursor() as cursor:
-            cursor.execute(f'''
-                SELECT id, english, polish, deck
-                FROM nieszkolni_app_book
-                WHERE status = 'translated'
-                AND deck = '{deck}'
+                WHERE english = '{english}'
                 ''')
 
             entries = cursor.fetchall()
 
-            if len(entries) == 0:
-                return None
-            else:
-                return entries
+            for entry in entries:
+                unique_id = entry[0]
+                polish = entry[1]
+                publication_date = TimeMachine().today_number()
+                deck = entry[2]
+                client = entry[3]
+                coach = entry[4]
 
-    def reject_book_entry(self, unique_id):
+                check_if_in = self.translate(english)
+                if check_if_in is None:
+                    self.upload_dictionary(
+                            english,
+                            polish,
+                            coach,
+                            publication_date,
+                            deck
+                            )
+
+                VocabularyManager().add_entry(
+                    client,
+                    deck,
+                    english,
+                    polish,
+                    coach
+                    )
+
+                with connection.cursor() as cursor:
+                    cursor.execute(f'''
+                        DELETE FROM nieszkolni_app_book
+                        WHERE id = '{unique_id}'
+                        ''')
+
+    def display_translated_book(self, deck):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT id, english, polish, deck, publicating_user, name
+                FROM nieszkolni_app_book
+                WHERE status = 'translated'
+                AND deck = '{deck}'
+                LIMIT 1
+                ''')
+
+            entry = cursor.fetchone()
+
+            if entry is not None:
+                name = entry[5]
+                english = entry[1]
+                polish = self.translate(english)
+                publicating_user = entry[4]
+
+                if polish is not None:
+                    VocabularyManager().add_entry(
+                        name,
+                        deck,
+                        english,
+                        polish,
+                        publicating_user
+                        )
+
+                    return None
+
+                else:
+                    return entry
+
+            else:
+                return None
+
+    def reject_book_entry(self, english):
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 UPDATE nieszkolni_app_book
                 SET status = 'rejected'
-                WHERE id = {unique_id}
+                WHERE english = '{english}'
                 ''')
 
     def upload_catalogues(

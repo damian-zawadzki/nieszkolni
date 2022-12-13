@@ -38,6 +38,7 @@ urlpatterns = [
     path('display_modules.html', views.display_modules, name="display_modules"),
     path('assignments.html', views.assignments, name="assignments"),
     path('assignment.html', views.assignment, name="assignment"),
+    path('assignment/<str:item>', views.assignment, name="assignment"),
     path('submit_assignment_automatically.html.html', views.submit_assignment, name="submit_assignment_automatically"),
     path('list_of_submissions.html', views.list_of_submissions, name="list_of_submissions"),
     path('list_of_assignments_to_grade.html', views.list_of_assignments_to_grade, name="list_of_assignments_to_grade"),

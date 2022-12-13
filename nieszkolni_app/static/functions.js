@@ -69,3 +69,8 @@ function monitorClock() {
     dot.className = 'clock_dot clocked_out';
   };
 }
+
+  function jump(link) {
+    var link = document.getElementById(link)
+    link.click()
+  }

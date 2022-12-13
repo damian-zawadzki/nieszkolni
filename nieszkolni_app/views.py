@@ -1283,7 +1283,7 @@ def assignments(request):
 
 
 @login_required
-def assignment(request):
+def assignment(request, item):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
@@ -1291,31 +1291,10 @@ def assignment(request):
 
         user_agent = get_user_agent(request)
         no_submissions = KnowledgeManager().display_list_of_prompts("no_submission")
+        assignment = CurriculumManager().display_assignment(item)
 
         if request.method == "POST":
-            item = request.POST["item"]
-
-            if request.POST["go_to"] == "assignment":
-
-                assignment = CurriculumManager().display_assignment(item)
-
-                if request.POST["go_to"] != "submission":
-
-                    if user_agent.is_mobile:
-                        return render(request, "m_assignment.html", {
-                                "assignment": assignment,
-                                "current_user": current_user,
-                                "no_submissions": no_submissions
-                                })
-
-                    else:
-                        return render(request, "assignment.html", {
-                            "assignment": assignment,
-                            "current_user": current_user,
-                            "no_submissions": no_submissions
-                            })
-
-            elif request.POST["go_to"] == "check":
+            if request.POST["go_to"] == "check":
 
                 check = CurriculumManager().change_status_to_completed(
                     item,
@@ -1323,6 +1302,7 @@ def assignment(request):
                     )
 
                 assignment_type = CurriculumManager().check_assignment_type(item)
+
                 if assignment_type == "reading":
 
                     position = CurriculumManager().check_position_in_library(item)
@@ -1335,7 +1315,7 @@ def assignment(request):
                         current_user
                         )
 
-                return redirect("check_homework.html")
+                return redirect("check_homework")
 
             elif request.POST["go_to"] == "uncheck":
                 uncheck = CurriculumManager().change_status_to_uncompleted(
@@ -1343,7 +1323,85 @@ def assignment(request):
                     current_user
                     )
 
-                return redirect("check_homework.html")
+                return redirect("check_homework")
+
+        if user_agent.is_mobile:
+            return render(request, "m_assignment.html", {
+                    "assignment": assignment,
+                    "current_user": current_user,
+                    "no_submissions": no_submissions
+                    })
+
+        else:
+            return render(request, "assignment.html", {
+                "assignment": assignment,
+                "current_user": current_user,
+                "no_submissions": no_submissions
+                })
+
+
+# @login_required
+# def assignment(request):
+#     if request.user.is_authenticated:
+#         first_name = request.user.first_name
+#         last_name = request.user.last_name
+#         current_user = first_name + " " + last_name
+
+#         user_agent = get_user_agent(request)
+#         no_submissions = KnowledgeManager().display_list_of_prompts("no_submission")
+
+#         if request.method == "POST":
+#             item = request.POST["item"]
+
+#             if request.POST["go_to"] == "assignment":
+
+#                 assignment = CurriculumManager().display_assignment(item)
+
+#                 if request.POST["go_to"] != "submission":
+
+#                     if user_agent.is_mobile:
+#                         return render(request, "m_assignment.html", {
+#                                 "assignment": assignment,
+#                                 "current_user": current_user,
+#                                 "no_submissions": no_submissions
+#                                 })
+
+#                     else:
+#                         return render(request, "assignment.html", {
+#                             "assignment": assignment,
+#                             "current_user": current_user,
+#                             "no_submissions": no_submissions
+#                             })
+
+#             elif request.POST["go_to"] == "check":
+
+#                 check = CurriculumManager().change_status_to_completed(
+#                     item,
+#                     current_user
+#                     )
+
+#                 assignment_type = CurriculumManager().check_assignment_type(item)
+#                 if assignment_type == "reading":
+
+#                     position = CurriculumManager().check_position_in_library(item)
+#                     value = position[2]
+
+#                     StreamManager().add_to_stream(
+#                         current_user,
+#                         "PV",
+#                         value,
+#                         current_user
+#                         )
+
+#                 return redirect("check_homework")
+
+#             elif request.POST["go_to"] == "uncheck":
+#                 uncheck = CurriculumManager().change_status_to_uncompleted(
+#                     item,
+#                     current_user
+#                     )
+
+#                 return redirect("check_homework")
 
 
 @login_required
@@ -2032,39 +2090,27 @@ def translate_wordbook(request):
         current_user = first_name + " " + last_name
 
         entries = KnowledgeManager().display_open_book("vocabulary")
+
         if entries is None:
             messages.success(request, ("You've translated all the wordbook entries!"))
-            return render(request, "translate_wordbook.html", {"entries": entries})
+            return render(request, "translate_wordbook.html", {})
+
         else:
             if request.method == "POST":
                 if request.POST["wordbook_action"] == "delete":
                     unique_id = request.POST["unique_id"]
                     delete_entry = KnowledgeManager().delete_book_entry(unique_id)
 
-                    entries = KnowledgeManager().display_open_book("vocabulary")
-
-                    if entries is None:
-                        messages.success(request, ("You've translated all the wordbook entries!"))
-                        return render(request, "translate_wordbook.html", {"entries": entries})
-                    else:
-                        entries = entries[0]
-                        return render(request, "translate_wordbook.html", {"entries": entries})
+                    return redirect("translate_wordbook")
 
                 elif request.POST["wordbook_action"] == "save":
-                    unique_id = request.POST["unique_id"]
+                    english = request.POST["english"]
                     polish = request.POST["polish"]
 
-                    translate_entry = KnowledgeManager().translate_book_entry(unique_id, polish)
-                    entries = KnowledgeManager().display_open_book("vocabulary")
+                    translate_entry = KnowledgeManager().translate_book_entry(english, polish)
 
-                    if entries is None:
-                        messages.success(request, ("You've translated all the wordbook entries!"))
-                        return render(request, "translate_wordbook.html", {"entries": entries})
-                    else:
-                        entries = entries[0]
-                        return render(request, "translate_wordbook.html", {"entries": entries})
+                    return redirect("translate_wordbook")
 
-            entries = entries[0]
             return render(request, "translate_wordbook.html", {"entries": entries})
 
 
@@ -2076,38 +2122,27 @@ def approve_wordbook(request):
         current_user = first_name + " " + last_name
 
         entries = KnowledgeManager().display_translated_book("vocabulary")
+
         if entries is None:
             messages.success(request, ("You've translated all the wordbook entries!"))
-            return render(request, "approve_wordbook.html", {"entries": entries})
+            return render(request, "approve_wordbook.html", {})
+
         else:
             if request.method == "POST":
                 if request.POST["wordbook_action"] == "reject":
-                    unique_id = request.POST["unique_id"]
-                    delete_entry = KnowledgeManager().reject_book_entry(unique_id)
+                    english = request.POST["english"]
+                    KnowledgeManager().reject_book_entry(english)
 
-                    entries = KnowledgeManager().display_translated_book("vocabulary")
-
-                    if entries is None:
-                        messages.success(request, ("You've covered all the wordbook entries!"))
-                        return render(request, "approve_wordbook.html", {"entries": entries})
-                    else:
-                        entries = entries[0]
-                        return render(request, "approve_wordbook.html", {"entries": entries})
+                    return redirect("approve_wordbook")
 
                 elif request.POST["wordbook_action"] == "approve":
                     unique_id = request.POST["unique_id"]
+                    english = request.POST["english"]
 
-                    approve_entry = KnowledgeManager().approve_book_entry(unique_id, current_user)
-                    entries = KnowledgeManager().display_translated_book("vocabulary")
+                    KnowledgeManager().approve_book_entry(unique_id, english, current_user)
 
-                    if entries is None:
-                        messages.success(request, ("You've translated all the wordbook entries!"))
-                        return render(request, "approve_wordbook.html", {"entries": entries})
-                    else:
-                        entries = entries[0]
-                        return render(request, "approve_wordbook.html", {"entries": entries})
+                    return redirect("approve_wordbook")
 
-            entries = entries[0]
             return render(request, "approve_wordbook.html", {"entries": entries})
 
 
@@ -2119,39 +2154,27 @@ def translate_sentencebook(request):
         current_user = first_name + " " + last_name
 
         entries = KnowledgeManager().display_open_book("sentences")
+
         if entries is None:
             messages.success(request, ("You've translated all the sentencebook entries!"))
-            return render(request, "translate_sentencebook.html", {"entries": entries})
+            return render(request, "translate_sentencebook.html", {})
+
         else:
             if request.method == "POST":
                 if request.POST["sentencebook_action"] == "delete":
                     unique_id = request.POST["unique_id"]
-                    delete_entry = KnowledgeManager().delete_book_entry(unique_id)
+                    KnowledgeManager().delete_book_entry(unique_id)
 
-                    entries = KnowledgeManager().display_open_book("sentences")
-
-                    if entries is None:
-                        messages.success(request, ("You've translated all the sentencebook entries!"))
-                        return render(request, "translate_sentencebook.html", {"entries": entries})
-                    else:
-                        entries = entries[0]
-                        return render(request, "translate_sentencebook.html", {"entries": entries})
+                    return redirect("translate_sentencebook")
 
                 elif request.POST["sentencebook_action"] == "save":
-                    unique_id = request.POST["unique_id"]
+                    english = request.POST["english"]
                     polish = request.POST["polish"]
 
-                    translate_entry = KnowledgeManager().translate_book_entry(unique_id, polish)
-                    entries = KnowledgeManager().display_open_book("sentences")
+                    translate_entry = KnowledgeManager().translate_book_entry(english, polish)
 
-                    if entries is None:
-                        messages.success(request, ("You've translated all the sentencebook entries!"))
-                        return render(request, "translate_sentencebook.html", {"entries": entries})
-                    else:
-                        entries = entries[0]
-                        return render(request, "translate_sentencebook.html", {"entries": entries})
+                    return redirect("translate_sentencebook")
 
-            entries = entries[0]
             return render(request, "translate_sentencebook.html", {"entries": entries})
 
 
@@ -2165,36 +2188,24 @@ def approve_sentencebook(request):
         entries = KnowledgeManager().display_translated_book("sentences")
         if entries is None:
             messages.success(request, ("You've translated all the sentencebook entries!"))
-            return render(request, "approve_sentencebook.html", {"entries": entries})
+            return render(request, "approve_sentencebook.html", {})
+
         else:
             if request.method == "POST":
                 if request.POST["sentencebook_action"] == "reject":
-                    unique_id = request.POST["unique_id"]
-                    delete_entry = KnowledgeManager().reject_book_entry(unique_id)
+                    english = request.POST["english"]
+                    KnowledgeManager().reject_book_entry(english)
 
-                    entries = KnowledgeManager().display_translated_book("sentences")
-
-                    if entries is None:
-                        messages.success(request, ("You've covered all the sentencebook entries!"))
-                        return render(request, "approve_sentencebook.html", {"entries": entries})
-                    else:
-                        entries = entries[0]
-                        return render(request, "approve_sentencebook.html", {"entries": entries})
+                    return redirect("approve_sentencebook")
 
                 elif request.POST["sentencebook_action"] == "approve":
                     unique_id = request.POST["unique_id"]
+                    english = request.POST["english"]
 
-                    approve_entry = KnowledgeManager().approve_book_entry(unique_id, current_user)
-                    entries = KnowledgeManager().display_translated_book("sentences")
+                    KnowledgeManager().approve_book_entry(unique_id, english, current_user)
 
-                    if entries is None:
-                        messages.success(request, ("You've translated all the sentencebook entries!"))
-                        return render(request, "approve_sentencebook.html", {"entries": entries})
-                    else:
-                        entries = entries[0]
-                        return render(request, "approve_sentencebook.html", {"entries": entries})
+                    return redirect("approve_sentencebook")
 
-            entries = entries[0]
             return render(request, "approve_sentencebook.html", {"entries": entries})
 
 

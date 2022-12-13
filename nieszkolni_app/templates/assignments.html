@@ -11,45 +11,35 @@
 
 		{% for uncomplated_assignment in uncomplated_assignments %}
 
-			<form action="{% url 'assignment' %}" method="POST">
-				{% csrf_token %}
-				<li class="list_item">
+			<li class="list_item tr_clickable" onclick="jump({{ uncomplated_assignment.0 }})">
 
-					<div class="list_content">{{ uncomplated_assignment.1 }}</div>
-					<div class="list_content_small">{{ uncomplated_assignment.0 }}</div>
-					<div class="list_content_inside">{{ uncomplated_assignment.7 }}</div>
+				<div class="list_content">{{ uncomplated_assignment.1 }}</div>
+				<div class="list_content_small">{{ uncomplated_assignment.0 }}</div>
+				<div class="list_content_inside">{{ uncomplated_assignment.7 }}</div>
 
-					<input type="hidden" name="item" value="{{ uncomplated_assignment.0 }}">
-					<button type="submit" class="list_button button_main" name="go_to" value="assignment">More</button>
+				<a id="{{ uncomplated_assignment.0 }}" href="{% url 'assignment' item=uncomplated_assignment.0 %}"></a>
 
-				</li>
-			</form>
+			</li>
 
 		{% endfor %}
 		{% for complated_assignment in complated_assignments %}
 
-			<form action="{% url 'assignment' %}" method="POST">
-				{% csrf_token %}
-				<li class="list_item list_item_complted list_item_crossed">
+			<li class="list_item list_item_complted list_item_crossed tr_clickable" onclick="jump({{ complated_assignment.0 }})">
 
-					<div class="list_content">{{ complated_assignment.1 }}</div>
-					<div class="list_content_small">{{ complated_assignment.0 }}</div>
-					<div class="list_content_inside">{{ complated_assignment.7 }}</div>
+				<div class="list_content">{{ complated_assignment.1 }}</div>
+				<div class="list_content_small">{{ complated_assignment.0 }}</div>
+				<div class="list_content_inside">{{ complated_assignment.7 }}</div>
 
-					<input type="hidden" name="item" value="{{ complated_assignment.0 }}">
-					<button type="submit" class="list_button button_main" name="go_to" value="assignment">More</button>
+				<a id="{{ complated_assignment.0 }}" href="{% url 'assignment' item=complated_assignment.0 %}"></a>
 
-				</li>
-			</form>
+			</li>
 
 		{% endfor %}
 
 	</ul>
 </div>
 
-<script type="text/javascript">
-	var container = document.getElementById()
-</script>
+<script src="{% static 'functions.js' %}"></script>  
 
 {% include 'footer.html' %}
 {% endblock %}

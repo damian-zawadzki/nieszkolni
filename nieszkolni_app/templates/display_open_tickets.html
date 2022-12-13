@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block 'content' %}
+{% load static %}
 
 <h1>OPEN TICKETS</h1>
 
@@ -27,12 +28,7 @@
 	
 </table>
 
-<script type="text/javascript">
-	function jump(ticket_id) {
-		var link = document.getElementById(ticket_id)
-		link.click()
-	}
-</script>
+<script src="{% static 'functions.js' %}"></script>  
 
 {% include 'footer.html' %}
 {% endblock %}

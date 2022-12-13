@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block 'content' %}
+{% load static %}
 
 <h1>MY TO-DO LIST</h1>
 
@@ -7,18 +8,12 @@
 
 	{% for uncomplated_assignment in uncomplated_assignments %}
 
-		<tr class="font">
+		<tr class="font tr_clickable" onclick="jump({{ uncomplated_assignment.0 }})">
 
 			<td class="m_td_sentences">{{ uncomplated_assignment.1 }}</td>
 			<td class="m_td_sentences">{{ uncomplated_assignment.7 }}</td>
 
-			<form action="{% url 'assignment' %}"  method="POST">
-				{% csrf_token %}
-					<td>
-					<input type="hidden" name="item" value="{{ uncomplated_assignment.0 }}">
-					<button type="submit" class="list_button button_main" name="go_to" value="assignment">More</button>
-					</td>
-			</form>
+			<a id="{{ uncomplated_assignment.0 }}" href="{% url 'assignment' item=uncomplated_assignment.0 %}"></a>
 
 		</tr>
 
@@ -26,23 +21,19 @@
 
 	{% for complated_assignment in complated_assignments %}
 
-		<tr class="font">
+		<tr class="font list_item_complted tr_clickable" onclick="jump({{ complated_assignment.0 }})">
 
 			<td class="m_td_sentences">{{ complated_assignment.1 }}</td>
 			<td class="m_td_sentences">{{ complated_assignment.7 }}</td>
 
-			<form action="{% url 'assignment' %}"  method="POST">
-				{% csrf_token %}
-					<td>
-					<input type="hidden" name="item" value="{{ complated_assignment.0 }}">
-					<button type="submit" class="list_button button_main" name="go_to" value="assignment">More</button>
-					</td>
-			</form>
+			<a id="{{ complated_assignment.0 }}" href="{% url 'assignment' item=complated_assignment.0 %}"></a>
 
 		</tr>
 
 	{% endfor %}
 
 </table>
+
+<script src="{% static 'functions.js' %}"></script>  
 
 {% endblock %}
