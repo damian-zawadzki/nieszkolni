@@ -237,3 +237,10 @@ class TimeMachine:
         date_number = re.search(r"\d{1,}", str(date_number_raw)).group()
 
         return date_number
+
+    def month_ago(self):
+        today_number = self.today_number()
+        month_ago_number = today_number - 30
+        month_ago = self.number_to_system_date(month_ago_number)
+
+        return month_ago

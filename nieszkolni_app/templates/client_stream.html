@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>STREAM</h1>
+
+<table>
+
+		<tr class="font">
+
+			<th>Date</th>
+			<th>Name</th>
+			<th>Command</th>
+			<th>Value</th>
+
+		</tr>
+
+	{% for row in rows %}
+
+		<tr class="font">
+
+			<td>{{ row.2 }}</td>
+			<td>{{ row.3 }}</td>
+			<td>{{ row.4 }}</td>
+			<td>{{ row.5 }}</td>
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+
+{% include 'footer.html' %}
+{% endblock %}

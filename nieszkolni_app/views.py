@@ -32,6 +32,7 @@ from nieszkolni_folder.activity_manager import ActivityManager
 from nieszkolni_folder.rating_manager import RatingManager
 from nieszkolni_folder.audit_manager import AuditManager
 from nieszkolni_folder.onboarding_manager import OnboardingManager
+from nieszkolni_folder.back_office_planner import BackOfficePlanner
 
 import csv
 import re
@@ -1909,7 +1910,12 @@ def display_prefixes(request):
 
 @staff_member_required
 def coach(request):
-    return render(request, "coach.html", {})
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        return render(request, "coach.html", {})
 
 
 @staff_member_required
@@ -2519,6 +2525,27 @@ def stream(request):
 
 
 @staff_member_required
+def client_stream(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        today = TimeMachine().today()
+        month_ago = TimeMachine().month_ago()
+        current_client = CurrentClientsManager().current_client(current_user)
+        rows = StreamManager().display_stream_range_per_client(
+                month_ago,
+                today,
+                current_client
+                )
+
+        return render(request, "client_stream.html", {
+            "rows": rows
+            })
+
+
+@staff_member_required
 def upload_stream(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
@@ -2921,7 +2948,7 @@ def report_reading(request):
             RatingManager().add_rating(client, link, rating)
 
             # Stream
-            BackOfficePlanner().report_reading(client, link, current_user)
+            BackOfficeManager().report_reading(client, link, current_user)
 
             return redirect("report_reading")
 
@@ -2950,7 +2977,7 @@ def library_line(request):
         if check_if_in_library is True:
             client = data[0]
 
-            BackOfficePlanner().report_reading(client, link, current_user)
+            BackOfficeManager().report_reading(client, link, current_user)
             BackOfficeManager().mark_library_line_as_processed(client, link)
 
             return redirect("library_line")
@@ -2968,7 +2995,7 @@ def library_line(request):
                 link
                 )
 
-            BackOfficePlanner().report_reading(client, link, current_user)
+            BackOfficeManager().report_reading(client, link, current_user)
             BackOfficeManager().mark_library_line_as_processed(client, link)
 
             return redirect("library_line")
@@ -2998,7 +3025,7 @@ def report_listening(request):
             number_of_episodes = request.POST["number_of_episodes"]
 
             # Stream
-            BackOfficePlanner().report_listening(
+            BackOfficeManager().report_listening(
                 client,
                 title,
                 number_of_episodes,
@@ -3064,7 +3091,7 @@ def repertoire_line(request):
                 duration = request.POST["duration"]
                 title_type = request.POST["title_type"]
 
-                BackOfficePlanner().process_repertoire_line(
+                BackOfficeManager().process_repertoire_line(
                     title,
                     duration,
                     title_type,

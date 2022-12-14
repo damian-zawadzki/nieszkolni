@@ -78,6 +78,7 @@ urlpatterns = [
     path('memories.html', views.memories, name="memories"),
     path('upload_memories.html', views.upload_memories, name="upload_memories"),
     path('stream.html', views.stream, name="stream"),
+    path('client_stream/', views.client_stream, name="client_stream"),
     path('upload_stream.html', views.upload_stream, name="upload_stream"),
     path('library.html', views.library, name="library"),
     path('library_line.html', views.library_line, name="library_line"),

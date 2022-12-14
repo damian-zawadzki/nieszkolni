@@ -14,8 +14,6 @@ from nieszkolni_folder.cleaner import Cleaner
 import re
 import pandas as pd
 
-from nieszkolni_folder.back_office_manager import BackOfficeManager
-
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
 
@@ -128,6 +126,32 @@ class StreamManager:
                 FROM nieszkolni_app_stream
                 WHERE date_number >= {start_date}
                 AND date_number <= {end_date}
+                ''')
+
+            rows = cursor.fetchall()
+
+            return rows
+
+    def display_stream_range_per_client(self, start, end, client):
+        start_date = TimeMachine().date_to_number(start)
+        end_date = TimeMachine().date_to_number(end)
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                stamp,
+                date_number,
+                date,
+                name,
+                command,
+                value,
+                stream_user,
+                status,
+                id
+                FROM nieszkolni_app_stream
+                WHERE date_number >= '{start_date}'
+                AND date_number <= '{end_date}'
+                AND name = '{client}'
                 ''')
 
             rows = cursor.fetchall()
@@ -948,46 +972,3 @@ class StreamManager:
 
             return stories
 
-    def report_reading(self, client, link, current_user):
-        check_if_in = BackOfficeManager().check_if_in_library(link)
-
-        if check_if_in is False:
-            BackOfficeManager().add_to_library_line(
-                current_user,
-                link,
-                "reported"
-                )
-        else:
-            wordcount = BackOfficeManager().get_wordcount_from_library(link)
-
-            self().add_to_stream(
-                client,
-                "PV",
-                wordcount,
-                current_user
-                )
-
-    def report_listening(
-            self,
-            client,
-            title,
-            number_of_episodes,
-            current_user
-            ):
-
-        check_if_in = BackOfficeManager().check_if_in_repertoire(title)
-
-        if check_if_in is False:
-            BackOfficeManager().add_to_repertoire_line(
-                client,
-                title,
-                number_of_episodes,
-                "not_in_stream"
-                )
-        else:
-            self.add_to_stream(
-                client,
-                "PO",
-                f'{title} *{number_of_episodes}',
-                current_user
-                )

@@ -14,6 +14,8 @@ from nieszkolni_folder.cleaner import Cleaner
 
 import re
 
+from nieszkolni_folder.stream_manager import StreamManager
+
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
 
@@ -224,6 +226,27 @@ class BackOfficeManager:
                 AND link = '{link}'
                 ''')
 
+    def report_reading(self, client, link, current_user):
+        check_if_in = self.check_if_in_library(link)
+
+        if check_if_in is False:
+            self.add_to_library_line(
+                current_user,
+                link,
+                "reported"
+                )
+        else:
+            wordcount = self.get_wordcount_from_library(link)
+
+            StreamManager().add_to_stream(
+                client,
+                "PV",
+                wordcount,
+                current_user
+                )
+
+    # Repertoire and repertoire line
+
     def add_to_repertoire(
             self,
             title,
@@ -343,30 +366,67 @@ class BackOfficeManager:
 
             position = cursor.fetchone()
 
-            stamp = position[0]
-            client = position[2]
-            title = position[3]
-            number_of_episodes = position[4]
-            status = position[5]
+            if position is None:
+                return None
+            else:
 
-            check_if_in = self.check_if_in_repertoire(title)
-            print(check_if_in)
+                stamp = position[0]
+                client = position[2]
+                title = position[3]
+                number_of_episodes = position[4]
+                status = position[5]
 
-            while check_if_in is True:
-                if status == "not_in_stream":
+                check_if_in = self.check_if_in_repertoire(title)
+                print(check_if_in)
 
-                    title_details = self.display_repertoire_position(title)
-                    duration = title_details[1]
-                    title_type = title_details[2]
+                if check_if_in is True:
+                    if status == "not_in_stream":
 
-                    self.process_repertoire_line(
-                        title,
-                        duration,
-                        title_type,
-                        position
-                        )
+                        title_details = self.display_repertoire_position(title)
+                        duration = title_details[1]
+                        title_type = title_details[2]
 
-            return position
+                        self.process_repertoire_line(
+                            title,
+                            duration,
+                            title_type,
+                            position
+                            )
+                        return self.display_reported_repertoire_line()
+
+                return position
+
+    def process_repertoire_line(
+            self,
+            title,
+            duration,
+            title_type,
+            position
+            ):
+
+        stamp = position[0]
+        client = position[2]
+        number_of_episodes = position[4]
+        status = position[5]
+
+        check_if_in = self.check_if_in_repertoire(title)
+
+        if check_if_in is False:
+            self.add_to_repertoire(
+                title,
+                duration,
+                title_type
+                )
+
+        if status == "not_in_stream":
+            self.report_listening(
+                client,
+                title,
+                number_of_episodes,
+                "automatic"
+                )
+
+            self.mark_repertoire_line_as_processed(stamp)
 
     def mark_repertoire_line_as_processed(self, stamp):
         with connection.cursor() as cursor:
@@ -426,6 +486,33 @@ class BackOfficeManager:
             titles = cursor.fetchall()
 
             return titles
+
+    def report_listening(
+            self,
+            client,
+            title,
+            number_of_episodes,
+            current_user
+            ):
+
+        check_if_in = self.check_if_in_repertoire(title)
+
+        if check_if_in is False:
+            self.add_to_repertoire_line(
+                client,
+                title,
+                number_of_episodes,
+                "not_in_stream"
+                )
+        else:
+            StreamManager().add_to_stream(
+                client,
+                "PO",
+                f'{title} *{number_of_episodes}',
+                current_user
+                )
+
+    # Notifications
 
     def add_notification(
             self,
