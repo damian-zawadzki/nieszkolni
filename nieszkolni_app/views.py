@@ -2464,6 +2464,52 @@ def upload_memories(request):
 
 
 @staff_member_required
+def display_memories(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        clients = ClientsManager().list_current_clients()
+
+        if request.method == "POST":
+            if request.POST["action_on_memories"] == "filter":
+                client = request.POST["client"]
+
+                memories = KnowledgeManager().display_memories_by_client(client)
+
+                return render(request, "display_memories.html", {
+                    "clients": clients,
+                    "memories": memories
+                    })
+
+        return render(request, "display_memories.html", {
+            "clients": clients
+            })
+
+
+@staff_member_required
+def display_memory(request, unique_id):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        memory = KnowledgeManager().display_memory(unique_id)
+
+        if request.method == "POST":
+            if request.POST["action_on_memories"] == "remove":
+
+                KnowledgeManager().remove_memory(unique_id)
+
+                return redirect("display_memories")
+
+        return render(request, "display_memory.html", {
+            "memory": memory
+            })
+
+
+@staff_member_required
 def upload_pronunciation(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name

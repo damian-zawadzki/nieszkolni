@@ -613,6 +613,46 @@ class KnowledgeManager:
 
             return memories
 
+    def display_memories_by_client(self, name):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                id,
+                prompt,
+                left_option,
+                right_option
+                FROM nieszkolni_app_memory
+                WHERE name = '{name}'
+                ''')
+
+            memories = cursor.fetchall()
+
+            return memories
+
+    def display_memory(self, unique_id):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                id,
+                prompt,
+                left_option,
+                right_option,
+                name
+                FROM nieszkolni_app_memory
+                WHERE id = '{unique_id}'
+                ''')
+
+            memory = cursor.fetchone()
+
+            return memory
+
+    def remove_memory(self, unique_id):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                DELETE FROM nieszkolni_app_memory
+                WHERE id = '{unique_id}'
+                ''')
+
     def display_memories(self, name):
         with connection.cursor() as cursor:
             cursor.execute(f'''
