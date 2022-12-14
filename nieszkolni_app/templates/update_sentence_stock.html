@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<h1>UPDATE THE SENTENCE STOCK</h1>
+
+<form action="{% url 'update_sentence_stock' %}"  method="POST">
+	{% csrf_token %}
+
+   <div class="input_container">
+      <label class="input_label">Sentence ID</label>  
+      <input type="text" class="input_content" list="sentence_ids" name="sentence_id" onchange="fillData(this)">
+
+        <datalist id="sentence_ids">
+
+            {% for sentence in sentences %}
+               <option value="{{ sentence.0 }}">{{ sentence.1 }}</option>
+            {% endfor %}
+
+        </datalist>
+   </div>
+
+   <div class="flex-parent jc-center"> 
+      <div class="input_container">
+         <label class="input_label">Polish</label>
+         <input type="text" class="input_content" id="polish" name="polish">
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center"> 
+      <div class="input_container">
+         <label class="input_label">English</label>
+         <input type="text" class="input_content" id="english" name="english">
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center"> 
+      <div class="input_container">
+         <label class="input_label">Glossary</label>
+         <input type="text" class="input_content" id="glossary" name="glossary">
+      </div>
+   </div>
+
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_sentence_stock" value="update">Update</button>
+  </div>
+
+</form>
+
+{{ rows|json_script:"data" }}
+
+<script src="{% static 'functions.js' %}"></script>  
+
+{% endblock %}

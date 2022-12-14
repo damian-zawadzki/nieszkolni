@@ -58,6 +58,7 @@ urlpatterns = [
     path('upload_catalogues.html', views.upload_catalogues, name="upload_catalogues"),
     path('upload_sentence_stock.html', views.upload_sentence_stock, name="upload_sentence_stock"),
     path('sentence_stock.html', views.sentence_stock, name="sentence_stock"),
+    path('update_sentence_stock/', views.update_sentence_stock, name="update_sentence_stock"),
     path('add_to_sentence_stock.html', views.add_to_sentence_stock, name="add_to_sentence_stock"),
     path('compose_set.html', views.compose_set, name="compose_set"),
     path('display_sets.html', views.display_sets, name="display_sets"),

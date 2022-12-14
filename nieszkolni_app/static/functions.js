@@ -74,3 +74,18 @@ function monitorClock() {
     var link = document.getElementById(link)
     link.click()
   }
+
+ function fillData(object) {
+    var key = object.value;
+    var data = JSON.parse(document.getElementById('data').textContent);
+    var polish = data[key].polish;
+    var english = data[key].english;
+    var glossary = data[key].glossary;
+    var polish_form = document.getElementById('polish');
+    var english_form = document.getElementById('english');
+    var glossary_form = document.getElementById('glossary');
+
+    polish_form.value = polish;
+    english_form.value = english;
+    glossary_form.value = glossary;
+ }

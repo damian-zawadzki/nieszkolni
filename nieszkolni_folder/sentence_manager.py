@@ -9,6 +9,7 @@ from nieszkolni_folder.cleaner import Cleaner
 from nieszkolni_folder.knowledge_manager import KnowledgeManager
 
 from copy import deepcopy
+import json
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
@@ -32,13 +33,28 @@ class SentenceManager:
                 glossary
                 )
                 VALUES (
-                {sentence_id},
+                '{sentence_id}',
                 '{polish}',
                 '{english}',
                 '{glossary}'
                 )
                 ON CONFLICT (sentence_id)
                 DO NOTHING
+                ''')
+
+    def update_sentence_stock(self, sentence_id, polish, english, glossary):
+        polish = Cleaner().clean_quotation_marks(polish)
+        english = Cleaner().clean_quotation_marks(english)
+        glossary = Cleaner().clean_quotation_marks(glossary)
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                UPDATE nieszkolni_app_sentencestock
+                SET
+                polish = '{polish}',
+                english = '{english}',
+                glossary = '{glossary}'
+                WHERE sentence_id = '{sentence_id}'
                 ''')
 
     def display_sentence_stock(self):
@@ -51,6 +67,30 @@ class SentenceManager:
             sentences = cursor.fetchall()
 
             return sentences
+
+    def display_sentence_stock_json(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT sentence_id, polish, english, glossary
+                FROM nieszkolni_app_sentencestock
+                ''')
+
+            sentences = cursor.fetchall()
+
+            entries = dict()
+            for sentence in sentences:
+                value = {
+                    "polish": sentence[1],
+                    "english": sentence[2],
+                    "glossary": sentence[3],
+                }
+
+                key = sentence[0]
+                entries.update({key: value})
+
+            # sentences_json = json.dumps(entries)
+
+            return entries
 
     def display_next_sentence_id(self):
         with connection.cursor() as cursor:

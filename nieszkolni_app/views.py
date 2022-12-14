@@ -2676,6 +2676,39 @@ def sentence_stock(request):
 
 
 @staff_member_required
+def update_sentence_stock(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        sentences = SentenceManager().display_sentence_stock()
+        rows = SentenceManager().display_sentence_stock_json()
+
+        if request.method == "POST":
+            if request.POST["action_on_sentence_stock"] == "update":
+                sentence_id = request.POST["sentence_id"]
+                polish = request.POST["polish"]
+                english = request.POST["english"]
+                glossary = request.POST["glossary"]
+
+                SentenceManager().update_sentence_stock(
+                    sentence_id,
+                    polish,
+                    english,
+                    glossary
+                    )
+
+                messages.success(request, ("Sentence updated!"))
+                return redirect("update_sentence_stock")    
+
+        return render(request, "update_sentence_stock.html", {
+            "sentences": sentences,
+            "rows": rows
+            })
+
+
+@staff_member_required
 def add_to_sentence_stock(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
