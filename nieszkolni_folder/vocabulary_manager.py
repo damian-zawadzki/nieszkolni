@@ -297,9 +297,6 @@ class VocabularyManager:
         return database
 
     def display_test_cards(self, client, deck):
-        today_number = TimeMachine().today_number()
-        minimum_due_date = today_number + 7
-
         if deck == "vocabulary":
             limit = 20
         else:
@@ -312,11 +309,11 @@ class VocabularyManager:
                 deck,
                 english,
                 polish,
-                due_date
+                interval
                 FROM nieszkolni_app_card
                 WHERE client = '{client}'
-                AND number_of_reviews != 0
-                AND interval > 14
+                AND number_of_reviews != '0'
+                AND interval > '7'
                 AND deck = '{deck}'
                 LIMIT '{limit}'
                 ''')
