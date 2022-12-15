@@ -1319,7 +1319,7 @@ def assignments(request):
                     "uncomplated_assignments": uncomplated_assignments,
                     "complated_assignments": complated_assignments,
                     "score": score,
-                    "ratings": ratings
+                    # "ratings": ratings
                     })
 
 
