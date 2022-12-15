@@ -298,7 +298,7 @@ class VocabularyManager:
 
     def display_test_cards(self, client, deck):
         today_number = TimeMachine().today_number()
-        due_date = today_number + 14
+        due_date = today_number + 7
 
         if deck == "vocabulary":
             limit = 20
