@@ -590,6 +590,8 @@ def staff(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        ratings = RatingManager().display_unrated_rading(current_user)
+
         return render(request, "staff.html", {})
 
 
