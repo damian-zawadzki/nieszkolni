@@ -146,7 +146,7 @@ class CurriculumManager:
                 WHERE name = '{name}'
                 AND status = 'completed'
                 AND completion_date >= '{display_limit}'
-                ORDER BY deadline_number ASC
+                ORDER BY deadline_number DESC
                 ''')
 
             completed_assignments = cursor.fetchall()
