@@ -313,7 +313,7 @@ class VocabularyManager:
                 FROM nieszkolni_app_card
                 WHERE client = '{client}'
                 AND number_of_reviews != 0
-                AND interval != 0
+                AND interval > 7
                 AND deck = '{deck}'
                 LIMIT {limit}
                 ''')

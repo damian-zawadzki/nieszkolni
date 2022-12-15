@@ -5223,23 +5223,14 @@ def examination_mode(request):
 
         current_client = CurrentClientsManager().current_client(current_user)
         phrases = VocabularyManager().display_test_cards(
-                current_user,
+                current_client,
                 "vocabulary"
                 )
 
         sentences = VocabularyManager().display_test_cards(
-                current_user,
+                current_client,
                 "sentences"
                 )
-
-        print(phrases)
-
-        if request.method == "POST":
-            if request.POST["action_on_system"] == "settle_last_week":
-
-                ActivityManager().settle_last_week_activity(current_user)
-
-                return redirect("weekly_checklist")
 
         return render(request, "examination_mode.html", {
             "phrases": phrases,
