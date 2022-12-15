@@ -150,4 +150,5 @@ urlpatterns = [
     path('onboard_client.html', views.onboard_client, name="onboard_client"),
     path('weekly_checklist/', views.weekly_checklist, name="weekly_checklist"),
     path('examination_mode/', views.examination_mode, name="examination_mode"),
+    path('rating/<str:client>/<str:category>/<int:position>', views.rating, name="rating"),
        ]

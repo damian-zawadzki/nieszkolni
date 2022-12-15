@@ -313,6 +313,21 @@ class BackOfficeManager:
 
                 return title
 
+    def find_position_in_repertoire(self, unique_id):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                title,
+                duration,
+                title_type
+                FROM nieszkolni_app_repertoire
+                WHERE id = '{unique_id}'
+                ''')
+
+            position = cursor.fetchone()
+
+            return position
+
     def add_to_repertoire_line(
             self,
             name,

@@ -1291,6 +1291,7 @@ def assignments(request):
         user_agent = get_user_agent(request)
         score = ActivityManager().calculate_points_this_week(current_user)
 
+        ratings = RatingManager().display_unrated_rading(current_user)
 
         # Delete
         display_first_name = first_name.capitalize()
@@ -1317,7 +1318,8 @@ def assignments(request):
                 return render(request, "assignments.html", {
                     "uncomplated_assignments": uncomplated_assignments,
                     "complated_assignments": complated_assignments,
-                    "score": score
+                    "score": score,
+                    "ratings": ratings
                     })
 
 
@@ -3011,14 +3013,10 @@ def report_reading(request):
 
         if request.method == "POST":
             link = request.POST["link"]
-            rating = request.POST["rating"]
 
-            # Rating
-            RatingManager().add_rating(client, link, rating)
-
-            # Stream
             BackOfficeManager().report_reading(client, link, current_user)
 
+            messages.success(request, ("Reported!"))
             return redirect("report_reading")
 
         return render(request, "report_reading.html", {})
@@ -5236,6 +5234,41 @@ def examination_mode(request):
             "phrases": phrases,
             "sentences": sentences,
             "current_client": current_client
+            })
+
+
+@login_required
+def rating(request, client, category, position):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        if category == "reading":
+            title_raw = BackOfficeManager().find_position_in_library(position)
+            title = title_raw[1]
+        elif category == "listening":
+            title_raw = BackOfficeManager().find_position_in_repertoire(position)
+            title = title_raw[0]
+
+        if request.method == "POST":
+            rating = request.POST["action_on_rating"]
+
+            RatingManager().add_rating(
+                client,
+                category,
+                position,
+                rating
+                )
+
+            messages.success(request, ("Rated!"))
+            return redirect("assignments")
+
+        return render(request, "rating.html", {
+            "client": client,
+            "category": category,
+            "position": position,
+            "title": title
             })
 
 

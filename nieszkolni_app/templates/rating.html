@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<div class="flex-parent jc-center">
+		<div class="task_card">
+    	<div class="task_card_container">
+      	<div class="task_card_title">Would you recommend this title?</div>
+      	<div class="task_card_content">'{{ title }}'</div>
+
+				<form action="{% url 'rating' client=client category=category position=position %}" method="POST">
+					{% csrf_token %}
+
+						<div class="flex-parent jc-center">
+							<button type="submit" class="button_main" name="action_on_rating" value="yes">Yes</button>
+							<button type="submit" class="button_main" name="action_on_rating" value="no">No</button>
+						</div>
+
+				</form>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

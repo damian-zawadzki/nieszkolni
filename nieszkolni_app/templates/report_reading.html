@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block 'content' %}
 
-<h1>MY READING</h1>
+<h1>REPORT READING</h1>
 
 <form action="{% url 'report_reading' %}" method="POST">
   {% csrf_token %}
@@ -10,18 +10,6 @@
     <div class="input_container">
       <label class="input_label">Link</label>
       <input type="url" class="input_content" name="link">
-    </div>
-  </div>
-
-  <div class="flex-parent jc-center">
-     <div class="input_container">
-        <label class="input_label">Would you recommend this piece?</label>
-        <select required class="input_content"  name="rating">
-            <option disabled selected value></option>
-            <option value="1">Yes</option>
-            <option value="0">No</option>
-            
-        </select>
     </div>
   </div>
 

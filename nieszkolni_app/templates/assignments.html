@@ -8,6 +8,18 @@
 
 	<ul class="list">
 
+		{% for rating in ratings %}
+
+			<li class="list_item tr_clickable" onclick="jump({{ rating.2 }})">
+
+				<div class="list_content">{% now "Y-m-d" %}</div>
+				<div class="list_content_inside">Fill in a survey</div>
+
+				<a id="{{ rating.2 }}" href="{% url 'rating' client=rating.0 category=rating.1 position=rating.2 %}"></a>
+
+			</li>
+
+		{% endfor %}
 
 		{% for uncomplated_assignment in uncomplated_assignments %}
 
@@ -22,6 +34,7 @@
 			</li>
 
 		{% endfor %}
+
 		{% for complated_assignment in complated_assignments %}
 
 			<li class="list_item list_item_complted list_item_crossed tr_clickable" onclick="jump({{ complated_assignment.0 }})">

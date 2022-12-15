@@ -450,6 +450,7 @@ class Rating(models.Model):
     client = models.CharField(max_length=200, default="")
     position = models.CharField(max_length=200, default="")
     rating = models.IntegerField(default=0)
+    category = models.CharField(max_length=200, default="")
 
 
 class Category(models.Model):
