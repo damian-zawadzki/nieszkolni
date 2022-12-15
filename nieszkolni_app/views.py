@@ -590,8 +590,6 @@ def staff(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        ratings = RatingManager().display_unrated_rading(current_user)
-
         return render(request, "staff.html", {})
 
 
@@ -1293,7 +1291,7 @@ def assignments(request):
         user_agent = get_user_agent(request)
         score = ActivityManager().calculate_points_this_week(current_user)
 
-        # ratings = RatingManager().display_unrated_rading(current_user)
+        ratings = RatingManager().display_unrated_rading(current_user)
 
         # Delete
         display_first_name = first_name.capitalize()
@@ -1321,7 +1319,7 @@ def assignments(request):
                     "uncomplated_assignments": uncomplated_assignments,
                     "complated_assignments": complated_assignments,
                     "score": score,
-                    # "ratings": ratings
+                    "ratings": ratings
                     })
 
 
