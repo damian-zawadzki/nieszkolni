@@ -448,7 +448,7 @@ class Ticket(models.Model):
 class Rating(models.Model):
     date_number = models.IntegerField(default=0)
     client = models.CharField(max_length=200, default="")
-    position = models.CharField(max_length=200, default="")
+    position = models.IntegerField(default=0)
     rating = models.IntegerField(default=0)
     category = models.CharField(max_length=200, default="")
 
