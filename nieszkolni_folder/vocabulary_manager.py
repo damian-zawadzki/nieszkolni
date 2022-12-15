@@ -315,7 +315,7 @@ class VocabularyManager:
                 AND number_of_reviews != '0'
                 AND interval > '7'
                 AND deck = '{deck}'
-                LIMIT '{limit}'
+                LIMIT {limit}
                 ''')
 
             cards = cursor.fetchall()
