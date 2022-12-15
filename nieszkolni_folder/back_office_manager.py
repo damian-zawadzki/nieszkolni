@@ -3,7 +3,7 @@ import django
 from django.db import connection
 from nieszkolni_app.models import Library
 from nieszkolni_app.models import LibraryLine
-from nieszkolni_app.models import Repertoire
+from nieszkolni_app.models import Theater
 from nieszkolni_app.models import RepertoireLine
 from nieszkolni_app.models import Notification
 from nieszkolni_app.models import Option
@@ -245,7 +245,7 @@ class BackOfficeManager:
                 current_user
                 )
 
-    # Repertoire and repertoire line
+    # Theater and repertoire line
 
     def add_to_repertoire(
             self,
@@ -255,27 +255,27 @@ class BackOfficeManager:
             ):
 
         title = Cleaner().clean_quotation_marks(title)
+        check_if_in = self.check_if_in_repertoire(title)
 
-        with connection.cursor() as cursor:
-            cursor.execute(f'''
-                INSERT INTO nieszkolni_app_repertoire (
-                title,
-                duration,
-                title_type
-                )
-                VALUES (
-                '{title}',
-                '{duration}',
-                '{title_type}'
-                )
-                ON CONFLICT (title)
-                DO NOTHING
-                ''')
+        if check_if_in is False:
+            with connection.cursor() as cursor:
+                cursor.execute(f'''
+                    INSERT INTO nieszkolni_app_theater (
+                    title,
+                    duration,
+                    title_type
+                    )
+                    VALUES (
+                    '{title}',
+                    '{duration}',
+                    '{title_type}'
+                    )
+                    ''')
 
     def delete_from_repertoire(self, title):
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                DELETE FROM nieszkolni_app_repertoire
+                DELETE FROM nieszkolni_app_theater
                 WHERE title = '{title}'
                 ''')
 
@@ -286,7 +286,7 @@ class BackOfficeManager:
                 title,
                 duration,
                 title_type
-                FROM nieszkolni_app_repertoire
+                FROM nieszkolni_app_theater
                 ''')
 
             titles = cursor.fetchall()
@@ -300,7 +300,7 @@ class BackOfficeManager:
                 title,
                 duration,
                 title_type
-                FROM nieszkolni_app_repertoire
+                FROM nieszkolni_app_theater
                 WHERE title = '{title}'
                 ''')
 
@@ -313,14 +313,14 @@ class BackOfficeManager:
 
                 return title
 
-    def find_position_in_repertoire(self, unique_id):
+    def find_position_in_theater(self, unique_id):
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 SELECT
                 title,
                 duration,
                 title_type
-                FROM nieszkolni_app_repertoire
+                FROM nieszkolni_app_theater
                 WHERE id = '{unique_id}'
                 ''')
 
@@ -392,10 +392,9 @@ class BackOfficeManager:
                 status = position[5]
 
                 check_if_in = self.check_if_in_repertoire(title)
-                print(check_if_in)
 
                 if check_if_in is True:
-                    if status == "not_in_stream":
+                    if status != "processed":
 
                         title_details = self.display_repertoire_position(title)
                         duration = title_details[1]
@@ -407,6 +406,7 @@ class BackOfficeManager:
                             title_type,
                             position
                             )
+
                         return self.display_reported_repertoire_line()
 
                 return position
@@ -448,14 +448,14 @@ class BackOfficeManager:
             cursor.execute(f'''
                 UPDATE nieszkolni_app_repertoireline
                 SET status = 'processed'
-                WHERE stamp = {stamp}
+                WHERE stamp = '{stamp}'
                 ''')
 
     def remove_from_repertoire_line(self, stamp):
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 DELETE FROM nieszkolni_app_repertoireline
-                WHERE stamp = {stamp}
+                WHERE stamp = '{stamp}'
                 ''')
 
     def check_if_in_repertoire(self, title):
@@ -463,7 +463,7 @@ class BackOfficeManager:
             cursor.execute(f'''
                 SELECT
                 title
-                FROM nieszkolni_app_repertoire
+                FROM nieszkolni_app_theater
                 WHERE title = '{title}'
                 ''')
 
@@ -479,7 +479,7 @@ class BackOfficeManager:
             cursor.execute(f'''
                 SELECT
                 duration
-                FROM nieszkolni_app_repertoire
+                FROM nieszkolni_app_theater
                 WHERE title = '{title}'
                 ''')
 
@@ -495,7 +495,7 @@ class BackOfficeManager:
             cursor.execute(f'''
                 SELECT
                 title
-                FROM nieszkolni_app_repertoire
+                FROM nieszkolni_app_theater
                 ''')
 
             titles = cursor.fetchall()

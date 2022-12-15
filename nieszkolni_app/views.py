@@ -1291,7 +1291,9 @@ def assignments(request):
         user_agent = get_user_agent(request)
         score = ActivityManager().calculate_points_this_week(current_user)
 
-        ratings = RatingManager().display_unrated_rading(current_user)
+        ratings = RatingManager().display_unrated(current_user)
+
+        RatingManager().display_ratings()
 
         # Delete
         display_first_name = first_name.capitalize()
@@ -5248,7 +5250,7 @@ def rating(request, client, category, position):
             title_raw = BackOfficeManager().find_position_in_library(position)
             title = title_raw[1]
         elif category == "listening":
-            title_raw = BackOfficeManager().find_position_in_repertoire(position)
+            title_raw = BackOfficeManager().find_position_in_theater(position)
             title = title_raw[0]
 
         if request.method == "POST":

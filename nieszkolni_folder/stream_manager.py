@@ -2,7 +2,7 @@ import os
 import django
 from django.db import connection
 from nieszkolni_app.models import Stream
-from nieszkolni_app.models import Repertoire
+from nieszkolni_app.models import Theater
 from nieszkolni_app.models import RepertoireLine
 from nieszkolni_app.models import Card
 from nieszkolni_app.models import Client
@@ -426,7 +426,7 @@ class StreamManager:
                 try:
                     pv = int(row[5])
 
-                except:
+                except Exception as e:
                     pv = 0
 
                 total_PV += pv
@@ -509,7 +509,7 @@ class StreamManager:
                 SELECT
                 title,
                 duration
-                FROM nieszkolni_app_repertoire
+                FROM nieszkolni_app_theater
                 ''')
 
             repertoire_rows = cursor.fetchall()
@@ -603,7 +603,7 @@ class StreamManager:
                 SELECT
                 title,
                 duration
-                FROM nieszkolni_app_repertoire
+                FROM nieszkolni_app_theater
                 WHERE title_type = '{title_type}'
                 ''')
 
@@ -671,7 +671,7 @@ class StreamManager:
                 SELECT
                 title,
                 duration
-                FROM nieszkolni_app_repertoire
+                FROM nieszkolni_app_theater
                 ''')
 
             repertoire_rows = cursor.fetchall()
@@ -728,6 +728,49 @@ class StreamManager:
                 total_po += po
 
             return total_po
+
+    def display_titles_per_client(self, client):
+
+        # Theater
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                title,
+                id
+                FROM nieszkolni_app_theater
+                ''')
+
+            repertoire_rows = cursor.fetchall()
+
+            repertoire_dict = dict()
+            for row in repertoire_rows:
+                title = row[0]
+                unique_id = row[1]
+                repertoire_dict.update({title: unique_id})
+
+        # PO
+        start = TimeMachine().date_to_number("2022-12-01")
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT DISTINCT value
+                FROM nieszkolni_app_stream
+                WHERE name = '{client}'
+                AND command = 'PO'
+                AND date_number >= '{start}'
+                ''')
+
+            po_rows = cursor.fetchall()
+
+            titles = set()
+            for row in po_rows:
+                title = re.sub(r"\s\*\d{1,}", "", row[0])
+
+                if repertoire_dict.get(title) is not None:
+                    unique_id = repertoire_dict.get(title)
+                    titles.add(unique_id)
+
+            return titles
 
     def advanced_statistics(self, name):
         client = name

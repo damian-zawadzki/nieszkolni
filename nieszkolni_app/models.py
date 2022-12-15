@@ -252,6 +252,12 @@ class Repertoire(models.Model):
     title_type = models.CharField(max_length=200, default="")
 
 
+class Theater(models.Model):
+    title = models.CharField(max_length=200, default="")
+    duration = models.IntegerField(default=0)
+    title_type = models.CharField(max_length=200, default="")
+
+
 class RepertoireLine(models.Model):
     stamp = models.IntegerField()
     date = models.IntegerField()

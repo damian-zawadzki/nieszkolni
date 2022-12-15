@@ -8,6 +8,9 @@ from nieszkolni_app.models import Library
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
 
+from nieszkolni_folder.stream_manager import StreamManager
+from nieszkolni_folder.back_office_manager import BackOfficeManager
+
 import re
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
@@ -54,10 +57,11 @@ class RatingManager:
                 ''')
 
             rows = cursor.fetchall()
+            print(rows)
 
             return rows
 
-    def display_unrated_rading(self, client):
+    def display_unrated_reading(self, client):
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 SELECT DISTINCT c.name, c.assignment_type, c.reference, l.title
@@ -78,8 +82,43 @@ class RatingManager:
 
                 ''')
 
+            unrated = cursor.fetchall()
+
+            return unrated
+
+    def display_unrated_listening(self, client):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT position
+                FROM nieszkolni_app_rating
+                WHERE client = '{client}'
+                AND category = 'listening'
+                ''')
+
             references = cursor.fetchall()
 
-            print(references)
+        references = set(reference[0] for reference in references)
+        titles = StreamManager().display_titles_per_client(client)
+        titles.difference_update(references)
 
-            return references
+        unrated = [(
+            client,
+            "listening",
+            title,
+            BackOfficeManager().find_position_in_theater(title)[0]
+            )
+            for title
+            in titles
+            ]
+
+        return unrated
+
+    def display_unrated(self, client):
+        reading = self.display_unrated_reading(client)
+        listening = self.display_unrated_listening(client)
+
+        unrated = []
+        unrated.extend(reading)
+        unrated.extend(listening)
+
+        return unrated
