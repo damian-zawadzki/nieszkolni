@@ -1291,7 +1291,7 @@ def assignments(request):
         user_agent = get_user_agent(request)
         score = ActivityManager().calculate_points_this_week(current_user)
 
-        ratings = RatingManager().display_unrated_rading(current_user)
+        # ratings = RatingManager().display_unrated_rading(current_user)
 
         # Delete
         display_first_name = first_name.capitalize()
