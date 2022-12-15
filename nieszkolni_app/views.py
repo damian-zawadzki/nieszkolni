@@ -5232,6 +5232,8 @@ def examination_mode(request):
                 "sentences"
                 )
 
+        print(phrases)
+
         if request.method == "POST":
             if request.POST["action_on_system"] == "settle_last_week":
 
