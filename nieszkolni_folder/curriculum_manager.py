@@ -93,7 +93,8 @@ class CurriculumManager:
 
     def display_uncompleted_assignments(self, name):
         today_number = TimeMachine().today_number()
-        display_limit = today_number + 7
+        this_sunday = TimeMachine().this_sunday()
+        display_limit = TimeMachine().date_to_number(this_sunday)
 
         with connection.cursor() as cursor:
             cursor.execute(f'''
@@ -113,16 +114,18 @@ class CurriculumManager:
                 FROM nieszkolni_app_curriculum
                 WHERE name = '{name}' AND status != 'completed'
                 AND deadline_number <= '{display_limit}'
+                ORDER BY deadline_number ASC
                 ''')
 
             uncompleted_assignments = cursor.fetchall()
-            uncompleted_assignments.sort(key=lambda item: item[2])
 
         return uncompleted_assignments
 
     def display_completed_assignments(self, name):
         today_number = TimeMachine().today_number()
-        display_limit = today_number - 7
+        last_sunday = TimeMachine().last_sunday()
+        last_sunday_number = TimeMachine().date_to_number(last_sunday)
+        display_limit = last_sunday_number - 7
 
         with connection.cursor() as cursor:
             cursor.execute(f'''
@@ -142,11 +145,11 @@ class CurriculumManager:
                 FROM nieszkolni_app_curriculum
                 WHERE name = '{name}'
                 AND status = 'completed'
-                AND completion_date >= {display_limit}
+                AND completion_date >= '{display_limit}'
+                ORDER BY deadline_number ASC
                 ''')
 
             completed_assignments = cursor.fetchall()
-            completed_assignments.sort(key=lambda item: item[2])
 
         return completed_assignments
 
@@ -362,7 +365,12 @@ class CurriculumManager:
 
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                SELECT assignment_type, status
+                SELECT
+                item,
+                deadline_number,
+                assignment_type,
+                status,
+                completion_date
                 FROM nieszkolni_app_curriculum
                 WHERE name = '{client}'
                 AND deadline_number > '{start_number}'

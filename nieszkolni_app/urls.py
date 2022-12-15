@@ -148,4 +148,5 @@ urlpatterns = [
     path('update_timesheet.html', views.update_timesheet, name="update_timesheet"),
     path('upload_timesheet.html', views.upload_timesheet, name="upload_timesheet"),
     path('onboard_client.html', views.onboard_client, name="onboard_client"),
+    path('weekly_checklist/', views.weekly_checklist, name="weekly_checklist"),
        ]

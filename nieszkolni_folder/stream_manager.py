@@ -545,7 +545,7 @@ class StreamManager:
 
                 try:
                     number_of_episodes = int(re.sub("\s\*","",re.search("\s\*\d{1,}", row[5]).group()))
-                except:
+                except Exception as e:
                     number_of_episodes = 0
 
                 if repertoire_dict.get(title) is None:

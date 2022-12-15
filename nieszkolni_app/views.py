@@ -590,17 +590,7 @@ def staff(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        settlement = ActivityManager().check_if_settle_this_week()
-
-        if request.method == "POST":
-            if request.POST["action_on_system"] == "settle_last_week":
-                ActivityManager().settle_last_week_activity(current_user)
-
-                return redirect("staff")
-
-        return render(request, "staff.html", {
-            "settlement": settlement
-            })
+        return render(request, "staff.html", {})
 
 
 @staff_member_required
@@ -1282,7 +1272,7 @@ def add_multiple_curricula_2(request, component_id):
                     )
 
                 messages.success(request, ("Module added to curricula!"))
-                return redirect("add_curriculum")
+                return redirect("add_multiple_curricula_2")
 
         return render(request, "add_multiple_curricula_2.html", {
             "component_id": component_id,
@@ -5201,6 +5191,28 @@ def onboard_client(request):
         return render(request, "onboard_client.html", {
             "clients": clients
             })
+
+
+@staff_member_required
+def weekly_checklist(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        settlement = ActivityManager().check_if_settle_this_week()
+
+        if request.method == "POST":
+            if request.POST["action_on_system"] == "settle_last_week":
+
+                ActivityManager().settle_last_week_activity(current_user)
+
+                return redirect("weekly_checklist")
+
+        return render(request, "weekly_checklist.html", {
+            "settlement": settlement
+            })
+
 
 def footer(request):
     return render(request, "footer.html", {})

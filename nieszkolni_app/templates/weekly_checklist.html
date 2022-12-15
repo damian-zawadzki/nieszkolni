@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<h1>WEEKLY CHECKLIST</h1>
+
+<div class="list_container">
+
+	<ul class="list">
+
+		{% if not settlement %}
+		
+			<form action="{% url 'weekly_checklist' %}" method="POST">
+			{% csrf_token %}
+				<div class="flex-parent jc-center">
+					<ul class="square_menu">
+						<button type="submit" class="square_menu_link" name="action_on_system" value="settle_last_week">SETTLE LAST WEEK</button>
+					</ul>
+				</div>
+			</form>
+
+		{% endif %}
+
+
+		{% for uncomplated_task in uncomplated_tasks %}
+
+			<li class="list_item tr_clickable" onclick="jump({{ uncomplated_task.0 }})">
+
+				<div class="list_content">{{ uncomplated_task.1 }}</div>
+				<div class="list_content_small">{{ uncomplated_task.0 }}</div>
+				<div class="list_content_inside">{{ uncomplated_task.7 }}</div>
+
+				<!-- <a id="{{ uncomplated_task.0 }}" href="{% url 'task' item=uncomplated_task.0 %}"></a> -->
+
+			</li>
+
+		{% endfor %}
+		{% for complated_task in complated_tasks %}
+
+			<li class="list_item list_item_complted list_item_crossed tr_clickable" onclick="jump({{ complated_task.0 }})">
+
+				<div class="list_content">{{ complated_task.1 }}</div>
+				<div class="list_content_small">{{ complated_task.0 }}</div>
+				<div class="list_content_inside">{{ complated_task.7 }}</div>
+
+				<!-- <a id="{{ complated_task.0 }}" href="{% url 'task' item=complated_task.0 %}"></a> -->
+
+			</li>
+
+		{% endfor %}
+
+	</ul>
+</div>
+
+<script src="{% static 'functions.js' %}"></script>  
+
+{% include 'footer.html' %}
+{% endblock %}

@@ -27,6 +27,7 @@ class ActivityManager:
         pass
 
     def calculate_points_this_week(self, client):
+        today = TimeMachine().today_number()
         last_sunday = TimeMachine().last_sunday()
         this_sunday = TimeMachine().this_sunday()
 
@@ -39,58 +40,67 @@ class ActivityManager:
         no_submissions = KnowledgeManager().display_list_of_prompts("no_submission")
         po = StreamManager().count_po_from_to(client, last_sunday, this_sunday)
         stats = StreamManager().statistics(client)
+        duration = stats["duration"]
         flashcards_check = stats["study_days_this_week"]
 
         no_homework = BackOfficeManager().display_option_by_command("no_homework_ap")
         full_homework = BackOfficeManager().display_option_by_command("full_homework_ap")
         main_homework = BackOfficeManager().display_option_by_command("main_homework_ap")
 
+        no_homework = no_homework[0]
+        full_homework = full_homework[0]
+        main_homework = main_homework[0]
+
+        check = {
+            "minimum": False,
+            "maximum": False,
+            "attendance": False
+            }
+
         completed = []
         uncompleted = []
 
         for assignment in assignments:
-            if assignment[0] not in no_submissions:
-                if assignment[1] == "completed":
-                    completed.append(assignment[0])
-                else:
+            if assignment[2] not in no_submissions:
+                deadline = assignment[1]
+                completion_date = assignment[4]
+
+                if completion_date > deadline:
                     uncompleted.append(assignment[0])
 
-        print(completed)
-        print(uncompleted)
-        print(flashcards_check)
+                elif completion_date == 0 and deadline < today:
+                    uncompleted.append(assignment[0])
 
-        checks = 0
+                else:
+                    completed.append(assignment[0])
 
-        if po > 30 and flashcards_check >= 2:
-            checks += 1
+        if len(uncompleted) == 0:
+            check.update({"maximum": True})
 
-        # for no_submission in no_submissions:
-        #     uncompleted
+        if po > 30 and flashcards_check > 2:
+            check.update({"minimum": True})
 
+        if duration > 0:
+            check.update({"attendance": True})
 
+        minimum = check["minimum"]
+        maximum = check["maximum"]
+        attendance = check["attendance"]
 
+        score = 0
 
+        if minimum is False:
+            score = no_homework
+        else:
+            if maximum is True:
+                score = full_homework
+            else:
+                score = main_homework
 
+        if attendance is True and minimum is not False:
+            score *= 2
 
-
-        # if len(completed_assignments) != 0:
-        #     completed_assignments = [item[0] for item in completed_assignments]
-
-        #     if po != 0:
-        #         if "flashcards" in completed_assignments:
-        #             if len(assignments) != 0:
-        #                 score = main_homework
-        #             else:
-        #                 score = full_homework
-        #     else:
-        #         score = no_homework
-
-        # else:
-        #     score = no_homework
-
-        # score = int(score[0])
-
-        # return score
+        return score
 
     def check_if_settle_this_week(self):
         week_sign = TimeMachine().this_week_number_sign()
