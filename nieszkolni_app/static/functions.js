@@ -7,6 +7,29 @@ function showHide(element) {
   };
 }
 
+async function hideByTagName(tag) {
+  var tables = document.getElementsByTagName(tag);
+  for (var i = 0; i < tables.length; i++) {
+        tables[i].style.display = 'none';
+      };
+}
+
+async function showTable(element) {
+  var table = document.getElementById(element);
+  table.style.display = 'table';
+}
+
+async function showHideTable(element) {
+  var object = document.getElementById(element);
+
+  if (object.style.display == 'none') {
+    hideByTagName('table');
+    await showTable(element);
+  } else {
+    hideByTagName('table');
+  };
+}
+
 function disableButton(button_id) {
   var button = document.getElementById(button_id);
   

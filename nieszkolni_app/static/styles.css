@@ -750,9 +750,21 @@ h3 {
   text-align: center;
 }
 
-/*Session styles - Navigation */
+/*Session and examination styles - Navigation */
 .session_navigation {
   background-color: #D95B72;
+  height: 15%;
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 35px;
+}
+
+.examination_navigation {
+  background-color: #34738C;
   height: 15%;
   display: inline-flex;
   flex-direction: row;
@@ -792,10 +804,29 @@ h3 {
   letter-spacing: .5px;
 }
 
-.session_button_leave{
+.examination_button {
+  color: #34738C;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: .5px;
+}
+
+.session_button_leave {
   background-color: #fff;
   border: 2px solid #337EA1;
   color: #337EA1;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 950;
+  letter-spacing: .5px;
+  margin-right: 15%;  
+}
+
+.examination_button_leave {
+  background-color: #fff;
+  border: 2px solid #D95B72;
+  color: #D95B72;
   font-family: "Google Sans", Roboto, Arial, sans-serif;
   font-size: 13px;
   font-weight: 950;
@@ -812,6 +843,16 @@ h3 {
 .session_label, .session_label:hover, .session_label:focus  {
   color: #fff;
   background-color: #D95B72;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 20px;
+  font-weight: 750;
+  letter-spacing: .5px;
+  text-decoration: none;
+}
+
+.examination_label, .examination_label:hover, .examination_label:focus  {
+  color: #fff;
+  background-color: #34738C;
   font-family: "Google Sans", Roboto, Arial, sans-serif;
   font-size: 20px;
   font-weight: 750;

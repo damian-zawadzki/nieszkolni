@@ -5214,5 +5214,37 @@ def weekly_checklist(request):
             })
 
 
+@staff_member_required
+def examination_mode(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        current_client = CurrentClientsManager().current_client(current_user)
+        phrases = VocabularyManager().display_test_cards(
+                current_user,
+                "vocabulary"
+                )
+
+        sentences = VocabularyManager().display_test_cards(
+                current_user,
+                "sentences"
+                )
+
+        if request.method == "POST":
+            if request.POST["action_on_system"] == "settle_last_week":
+
+                ActivityManager().settle_last_week_activity(current_user)
+
+                return redirect("weekly_checklist")
+
+        return render(request, "examination_mode.html", {
+            "phrases": phrases,
+            "sentences": sentences,
+            "current_client": current_client
+            })
+
+
 def footer(request):
     return render(request, "footer.html", {})

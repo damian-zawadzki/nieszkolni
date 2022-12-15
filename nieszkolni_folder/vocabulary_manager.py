@@ -273,13 +273,13 @@ class VocabularyManager:
 
     def edit_card(self, card_id, polish, english):
         with connection.cursor() as cursor:
-           cursor.execute(f"UPDATE nieszkolni_app_card SET polish = '{polish}', english = '{english}' WHERE card_id = {card_id}")
+            cursor.execute(f"UPDATE nieszkolni_app_card SET polish = '{polish}', english = '{english}' WHERE card_id = {card_id}")
 
         return "Card edited!"
 
     def delete_card(self, card_id):
         with connection.cursor() as cursor:
-           cursor.execute(f"DELETE FROM nieszkolni_app_card WHERE card_id = {card_id}")
+            cursor.execute(f"DELETE FROM nieszkolni_app_card WHERE card_id = {card_id}")
 
         return "Card deleted!"
 
@@ -295,3 +295,33 @@ class VocabularyManager:
             database.append(row)
 
         return database
+
+    def display_test_cards(self, client, deck):
+        today_number = TimeMachine().today_number()
+        due_date = today_number + 14
+
+        if deck == "vocabulary":
+            limit = 20
+        else:
+            limit = 10
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                card_id,
+                deck,
+                english,
+                polish,
+                due_date
+                FROM nieszkolni_app_card
+                WHERE client = '{client}'
+                AND number_of_reviews != 0
+                AND interval != 0
+                AND due_date >= '{due_date}'
+                AND deck = '{deck}'
+                LIMIT '{limit}'
+                ''')
+
+            cards = cursor.fetchall()
+
+        return cards
