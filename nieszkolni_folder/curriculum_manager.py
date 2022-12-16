@@ -333,7 +333,7 @@ class CurriculumManager:
 
             if date_raw is not None:
                 date = TimeMachine().number_to_system_date(date_raw[0])
-                return (client, date_raw, date)
+                return (client, date_raw[0], date)
             else:
                 return (client, 0, "expired")
 
