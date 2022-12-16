@@ -1,3 +1,11 @@
+// Menu
+const staff_side_menu = document.getElementById('side_menu')
+
+window.addEventListener('click', e =>
+  e.target == staff_side_menu ? staff_side_menu.style.display = 'none' : false
+  );
+
+
 function showHide(element) {
   var object = document.getElementById(element);
   if (object.style.display == "none") {

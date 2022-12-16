@@ -8,7 +8,11 @@
 	    	<div class="task_card_container">
 		    	
 		      	<div class="task_card_title">{{ announcement.4 }}</div>
-		      	<div class="task_card_details"><b>ID:</b> {{ announcement.0 }} <b>Timestamp:</b> {{ stamp }} <b>Type:</b> {{ announcement.6 }}</div>
+
+		      	{% if user.is_staff %}
+		      		<div class="task_card_details"><b>ID:</b> {{ announcement.0 }} <b>Timestamp:</b> {{ stamp }} <b>Type:</b> {{ announcement.6 }}</div>
+		      	{% endif %}
+		      	
 		      	<div><b>Content</b></div>
 		      	<div class="task_card_content">{{ announcement.5 }}</div>
 	    	</div>

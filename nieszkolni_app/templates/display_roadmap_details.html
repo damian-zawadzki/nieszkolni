@@ -1,69 +1,67 @@
 {% extends 'base.html' %}
 {% block 'content' %}
 
-<h1></h1>
+<div class="flex-parent jc-center">
+	<div class="assignment_card">
+    	<div class="task_card_container">
+	    	
+	      	<div class="task_card_title">{{ course_details.0 }}</div>
+	      	<div class="task_card_details"><b>deadline:</b> {{ deadline }} <b>id:</b> {{ roadmap_details.0 }} <b>status:</b> {{ status }}</div>
+	      	<div><b>Description</b></div>
+	      	<div class="task_card_content">{{ course_details.2|safe }}</div>
+	      	<div><b>Addmission</b></div>
+	      	<div class="task_card_content"><span>{{ course_details.4|safe }}</span></div>
 
-	<div class="flex-parent jc-center">
-		<div class="assignment_card">
-	    	<div class="task_card_container">
-		    	
-		      	<div class="task_card_title">{{ course_details.0 }}</div>
-		      	<div class="task_card_details"><b>deadline:</b> {{ deadline }} <b>id:</b> {{ roadmap_details.0 }} <b>status:</b> {{ status }}</div>
-		      	<div><b>Description</b></div>
-		      	<div class="task_card_content">{{ course_details.2 }}</div>
-		      	<div><b>Addmission</b></div>
-		      	<div class="task_card_content"><span>{{ course_details.4 }}</span></div>
+	      	{% if course_details.6 == '' %}
+	      	{% else %}		      	
+		      	<div><b>Link</b></div>
+		      	<div class="task_card_content"><span>{{ course_details.6 }}</span></div>
+			{% endif %}
 
-		      	{% if course_details.6 == '' %}
-		      	{% else %}		      	
-			      	<div><b>Link</b></div>
-			      	<div class="task_card_content"><span>{{ course_details.6 }}</span></div>
-				{% endif %}
+	      	{% if course_details.8 == -1 %}
+	      	{% else %}
+		      	<div><b>Threshold</b></div>
+		      	<div class="task_card_content"><span>{{ course_details.8 }}</span></div>
+		    {% endif %}
 
-		      	{% if course_details.8 == -1 %}
-		      	{% else %}
-			      	<div><b>Threshold</b></div>
-			      	<div class="task_card_content"><span>{{ course_details.8 }}</span></div>
-			    {% endif %}
+	      	
 
+
+	      	{% if assessment_method == 'statistics' %}
+
+	      		<div><b>Result</b></div>
+			    <div class="task_card_content">{{ result }}/{{ course_details.8 }}</div>
+
+			{% elif assessment_method == 'assignment' %}
+
+				<div><b>Result</b></div>
+				<div class="task_card_content">{{ result }}</span></div>
+
+	      	{% else %}
+
+	      		{% if assessment_system == 'average_midterm' or assessment_system == 'average_final' %}
+
+	      			<div><b>Average result</b></div>
+	      			<div class="task_card_content">{{ result }}%</div>
+	      			<div><b>Grades</b></div>
+
+	      		{% else %}
+
+	      			<div><b>Results</b></div>
+
+	      		{% endif %}
+
+	      			
+
+		      	{% for grade in grades %}
 		      	
+			      	<div class="task_card_content_list"><b>Date:</b> {{ grade.0 }} <b>Result:</b> {{ grade.1 }}% <b>Type:</b> {{ grade.2 }}</div>
 
+		      	{% endfor %}
+		    {% endif %}
 
-		      	{% if assessment_method == 'statistics' %}
-
-		      		<div><b>Result</b></div>
-				    <div class="task_card_content">{{ result }}/{{ course_details.8 }}</div>
-
-				{% elif assessment_method == 'assignment' %}
-
-					<div><b>Result</b></div>
-					<div class="task_card_content">{{ result }}</span></div>
-
-		      	{% else %}
-
-		      		{% if assessment_system == 'average_midterm' or assessment_system == 'average_final' %}
-
-		      			<div><b>Average result</b></div>
-		      			<div class="task_card_content">{{ result }}%</div>
-		      			<div><b>Grades</b></div>
-
-		      		{% else %}
-
-		      			<div><b>Results</b></div>
-
-		      		{% endif %}
-
-		      			
-
-			      	{% for grade in grades %}
-			      	
-				      	<div class="task_card_content_list"><b>Date:</b> {{ grade.0 }} <b>Result:</b> {{ grade.1 }}% <b>Type:</b> {{ grade.2 }}</div>
-
-			      	{% endfor %}
-			    {% endif %}
-
-	    	</div>
-	  	</div>
-	</div>
+    	</div>
+  	</div>
+</div>
 
 {% endblock %}

@@ -1184,7 +1184,7 @@ task_card_content_list {
 }
 
 /*profile*/
-.avatar {
+/*.avatar {
   display: flex;
   flex-direction: row;
   margin-left: 15%;
@@ -1273,7 +1273,7 @@ task_card_content_list {
   width: fit-content;
   max-width: 100px; 
   text-align: center;
-}
+}*/
 
 /*Profile content*/
 
@@ -1875,4 +1875,171 @@ hr.line {
 
 .clocked_out {
   background-color: #E0432D;
+}
+
+/*visit card*/
+.visit_card {
+  border-radius: 3%;
+  background-color: #E3D0CC;
+  display: none;
+  height: 20vmin;
+  left: 25%;
+  position: fixed;
+  width: 40vmin;
+}
+
+.visit_card:hover {
+  display: block;
+}
+
+/*new profile*/
+.avatar {
+  background-color: #E3D0CC;
+  border-radius: 3%;
+  left: 3vw;
+  height: 75vh;
+  position: absolute;
+  top: 20vh;
+  width: 20vw;
+}
+
+.avatar_frame {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  top: 6vh;
+}
+
+.avatar_name_box {
+  display: block;
+  position: relative;
+  text-align: center;
+  top: 10vh;
+}
+
+.avatar_name {
+  font-family: var(--font-family);
+  font-size: 3vh;
+  font-weight: 1000;
+}
+
+.avatar_subname {
+  font-family: var(--font-family);
+  font-size: 2vh;
+  font-weight: 750;
+}
+
+.bio {
+  background-color: #E3D0CC;
+  border-radius: 3%;
+  left: 26vw;
+  height: 33vh;
+  padding: 0vh 3vw 3vh 3vw;
+  position: absolute;
+  top: 20vh;
+  width: 30vw;
+}
+
+.bio_title {
+  display: block;
+  position: relative;
+  text-align: center;
+  top: 5vh;
+  font-family: var(--font-family);
+  font-size: 3vh;
+  font-weight: 1000;  
+}
+
+.bio_text {
+  display: inline-block;
+  font-family: var(--font-family);
+  font-size: 2vh;
+  font-weight: 500;
+  height: 15vh;
+  overflow: hidden;
+  position: relative;
+  text-align: center;
+  top: 8vh;
+}
+
+.courses{
+  background-color: #E3D0CC;
+  border-radius: 3%;
+  left: 26vw;
+  height: 25vh;
+  padding: 0vh 3vw 3vh 3vw;
+  position: absolute;
+  top: 56vh;
+  width: 30vw;
+}
+
+
+.avatar_description_box {
+}
+
+
+.avatar_description {
+  margin-left: 5%;
+  white-space: nowrap;
+}
+
+.avatar_image {
+  border-width: 4px;
+  border-radius: 50%;
+  border-style:  solid;
+  border-color: #FFFFFF;
+}
+
+.activity_target {
+  display: flex;
+  color: #3c4043;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 50px;
+  font-weight: 1000;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.side_navigation_menu {
+  margin-left: 10%;
+  margin-top: 5%;
+}
+
+.profile_navigation_item {
+  display: flex;
+  list-style-type: none;
+  padding: 10px;
+  margin-left: 50px;
+}
+
+.semester_display {
+  margin-top: 5%;
+}
+
+.list_of_courses_item {
+  display: flex;
+  list-style-type: none;
+  padding: 10px;
+}
+
+.block {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  flex-flow: column wrap;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.inscription_below {
+  margin-top: 10px;
+  color: #3c4043;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 750;
+  width: fit-content;
+  max-width: 100px; 
+  text-align: center;
 }

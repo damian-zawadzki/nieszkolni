@@ -1227,7 +1227,7 @@ def add_multiple_curricula(request, client=""):
                 component_id = request.POST["component_id"]
 
                 return redirect(
-                    "add_multiple_curricula_2",
+                    "add_multiple_curricula",
                     component_id=component_id
                     )
 
