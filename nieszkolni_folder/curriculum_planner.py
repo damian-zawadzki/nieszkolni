@@ -252,6 +252,6 @@ class CurriculumPlanner:
 
             dates.append(date)
 
-        dates.sort(key=lambda item: (item[1], item[0]))
+        dates.sort(key=lambda item: item[1])
 
         return dates
