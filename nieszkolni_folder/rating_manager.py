@@ -73,7 +73,8 @@ class RatingManager:
                 WHERE NOT EXISTS (
                 SELECT NULL
                 FROM nieszkolni_app_rating r
-                WHERE c.reference = r.position
+                WHERE r.position = c.reference
+                AND r.client = '{client}'
                 )
                 AND c.assignment_type = 'reading'
                 AND c.name = '{client}'
@@ -155,11 +156,30 @@ class RatingManager:
 
                     entries.append(entry)
 
-        titles = {entry[0] for entry in entries}
+        positions = {entry[0] for entry in entries}
 
         ratings = []
-        for title in titles:
-            ratings_no = [entry[2] for entry in entries if entry[0] == title]
+        for position in positions:
+            category = list({entry[1] for entry in entries if entry[0] == position})
+            category = category[0]
+            title = list({entry[3] for entry in entries if entry[0] == position})
+            title = title[0]
 
-            # print(ratings_no)
+            votes = [entry[2] for entry in entries if entry[0] == position]
+            total = len(votes)
+            postive = votes.count(1)
+            result = round(postive/total * 100)
+
+            rating = (
+                category,
+                title,
+                total,
+                result
+                )
+
+            ratings.append(rating)
+
+        ratings.sort(key=lambda item: (item[0], item[3]))
+
+        return ratings
 

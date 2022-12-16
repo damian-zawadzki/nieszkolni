@@ -1324,12 +1324,6 @@ def assignments(request):
 
         ratings = RatingManager().display_unrated(current_user)
 
-        RatingManager().display_ratings()
-
-        # Delete
-        display_first_name = first_name.capitalize()
-        messages.success(request, (f"{display_first_name}, if you encounter an error, take a screenshot and send it to Damian via email."))
-
         if request.method == "POST":
             item = request.POST["item"]
 
