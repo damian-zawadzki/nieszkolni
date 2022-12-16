@@ -670,7 +670,6 @@ class KnowledgeManager:
                 ''')
 
             memories = cursor.fetchall()
-            print(memories)
 
             parsed_memories = []
             for memory in memories:

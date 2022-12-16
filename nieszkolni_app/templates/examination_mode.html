@@ -26,6 +26,9 @@
         <button type="button" class="button_main examination_button" name="session_form" onclick="showHideTable('sentences')">SENTENCES</button>
       </li>
 
+      <li class="navigation_link session_navigation_item">
+        <button type="button" class="button_main examination_button" name="session_form" onclick="showHideTable('memories')">MEMORIES</button>
+      </li>
 
       <li class="navigation_link session_navigation_item_right">
         <a class="button_main examination_button_leave" href="{% url 'coach'%}">LEAVE</a>
@@ -86,6 +89,21 @@
   {% endfor %}
 
 </table>
+
+<table id="memories" style="display: none;">
+
+  {% for memory in memories %}
+
+    <tr class="font">
+
+      <td class="td_sentences">{{ memory }}</td>
+
+    </tr>
+
+  {% endfor %}
+
+</table>
+
 
 <script src="{% static 'functions.js' %}"></script>  
 

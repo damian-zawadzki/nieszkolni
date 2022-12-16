@@ -5263,9 +5263,12 @@ def examination_mode(request):
                 "sentences"
                 )
 
+        memories = KnowledgeManager().display_memories(current_client)
+
         return render(request, "examination_mode.html", {
             "phrases": phrases,
             "sentences": sentences,
+            "memories": memories,
             "current_client": current_client
             })
 
