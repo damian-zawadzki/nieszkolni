@@ -5208,7 +5208,7 @@ def onboard_client(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        clients = ClientsManager().list_current_users()
+        clients = ClientsManager().list_current_clients()
         ActivityManager().calculate_points_this_week("Joe Doe")
 
         if request.method == "POST":
@@ -5302,6 +5302,23 @@ def rating(request, client, category, position):
             "category": category,
             "position": position,
             "title": title
+            })
+
+
+@staff_member_required
+def inspection(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        clients = ClientsManager().list_current_clients()
+        dates = CurriculumPlanner().display_expiration_dates(
+                clients
+                )
+
+        return render(request, "inspection.html", {
+            "dates": dates
             })
 
 

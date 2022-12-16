@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %} 
+
+<h1>INSPECTION</h1>
+
+<table>
+
+		<tr class="font">
+
+			<th>Client</th>
+			<th>Curriculum Expiration Date</th>
+
+		</tr>
+
+	{% for date in dates %}
+
+		<tr class="font">
+
+			<td>{{ date.0 }}</td>
+			<td>{{ date.2 }}</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+{% endblock %}

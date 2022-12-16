@@ -152,4 +152,5 @@ urlpatterns = [
     path('weekly_checklist/', views.weekly_checklist, name="weekly_checklist"),
     path('examination_mode/', views.examination_mode, name="examination_mode"),
     path('rating/<str:client>/<str:category>/<int:position>', views.rating, name="rating"),
+    path('inspection/', views.inspection, name="inspection"),
        ]

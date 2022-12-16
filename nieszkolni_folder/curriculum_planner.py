@@ -239,3 +239,19 @@ class CurriculumPlanner:
                 component_id,
                 deadline
                 )
+
+    def display_expiration_dates(self, clients):
+
+        dates = []
+
+        for client in clients:
+
+            date = CurriculumManager().display_expiration_date(
+                client
+                )
+
+            dates.append(date)
+
+        dates.sort(key=lambda item: (item[1], item[0]))
+
+        return dates

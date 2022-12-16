@@ -318,6 +318,25 @@ class CurriculumManager:
                 AND deadline_number = '{deadline}'
                 ''')
 
+    def display_expiration_date(self, client):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT DISTINCT deadline_number
+                FROM nieszkolni_app_curriculum
+                WHERE name = '{client}'
+                AND status = 'uncompleted'
+                ORDER BY deadline_number DESC
+                LIMIT 1
+                ''')
+
+            date_raw = cursor.fetchone()
+
+            if date_raw is not None:
+                date = TimeMachine().number_to_system_date(date_raw[0])
+                return (client, date_raw, date)
+            else:
+                return (client, 0, "expired")
+
     def check_position_in_library(self, item):
         with connection.cursor() as cursor:
             cursor.execute(f'''
