@@ -224,3 +224,18 @@ class CurriculumPlanner:
 
         return clients
 
+    def remove_multiple_curricula(
+            self,
+            clients,
+            component_id,
+            deadline
+            ):
+
+        deadline = TimeMachine().date_to_number(deadline)
+
+        for client in clients:
+            CurriculumManager().remove_curricula(
+                client,
+                component_id,
+                deadline
+                )

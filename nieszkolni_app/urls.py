@@ -27,6 +27,7 @@ urlpatterns = [
     path('add_curriculum/<str:client>', views.add_curriculum, name="add_curriculum"),
     path('add_multiple_curricula/', views.add_multiple_curricula, name="add_multiple_curricula"),
     path('add_multiple_curricula_2/<str:component_id>', views.add_multiple_curricula_2, name="add_multiple_curricula_2"),
+    path('remove_multiple_curricula/', views.remove_multiple_curricula, name="remove_multiple_curricula"),    
     path('add_matrix.html', views.add_matrix, name="add_matrix"),
     path('display_matrices.html', views.display_matrices, name="display_matrices"),
     path('plan_matrix.html', views.plan_matrix, name="plan_matrix"),

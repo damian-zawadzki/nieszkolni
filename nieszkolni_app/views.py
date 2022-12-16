@@ -1227,7 +1227,7 @@ def add_multiple_curricula(request, client=""):
                 component_id = request.POST["component_id"]
 
                 return redirect(
-                    "add_multiple_curricula",
+                    "add_multiple_curricula_2",
                     component_id=component_id
                     )
 
@@ -1272,12 +1272,43 @@ def add_multiple_curricula_2(request, component_id):
                     )
 
                 messages.success(request, ("Module added to curricula!"))
-                return redirect("add_multiple_curricula_2")
+                return redirect("add_multiple_curricula")
 
         return render(request, "add_multiple_curricula_2.html", {
             "component_id": component_id,
             "clients": clients,
             "module": module
+            })
+
+
+@staff_member_required
+def remove_multiple_curricula(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        clients = ClientsManager().list_current_clients()
+        modules = CurriculumManager().display_modules()
+
+        if request.method == "POST":
+            if request.POST["action_on_curricula"] == "remove":
+                clients = request.POST.getlist("client")
+                component_id = request.POST["component_id"]
+                deadline = request.POST["deadline"]
+
+                CurriculumPlanner().remove_multiple_curricula(
+                        clients,
+                        component_id,
+                        deadline
+                        )
+
+                messages.success(request, ("Curricula removed"))
+                return redirect("remove_multiple_curricula")
+
+        return render(request, "remove_multiple_curricula.html", {
+            "clients": clients,
+            "modules": modules
             })
 
 

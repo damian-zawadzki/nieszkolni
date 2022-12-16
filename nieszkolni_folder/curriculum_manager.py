@@ -306,7 +306,16 @@ class CurriculumManager:
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 DELETE FROM nieszkolni_app_curriculum
-                WHERE item = {item}
+                WHERE item = '{item}'
+                ''')
+
+    def remove_curricula(self, client, component_id, deadline):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                DELETE FROM nieszkolni_app_curriculum
+                WHERE name = '{client}'
+                AND component_id = '{component_id}'
+                AND deadline_number = '{deadline}'
                 ''')
 
     def check_position_in_library(self, item):

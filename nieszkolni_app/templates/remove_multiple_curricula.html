@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %} 
+
+<h1>PLAN MULTIPLE MODULES</h1>
+
+<form action="{% url 'remove_multiple_curricula' %}" method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Client</label>
+
+        <ul>
+
+            {% for client in clients %}
+              <li class="checkbox_list">
+                <input type="checkbox" id="{{ client }}" value="{{ client }}" name="client">
+                <label for="{{ client }}">{{ client }}</label>
+              </li>
+            {% endfor %}
+
+        </ul>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center" id="list_of_modules">
+     <div class="input_container">
+      <label class="input_label">Module</label>
+
+        <select class="input_content" name="component_id">
+            <option disabled selected value></option>
+
+            {% for module in modules %}
+              <option value="{{ module.0 }}">{{ module.0 }}</option>
+            {% endfor %}
+
+        </select>
+        
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+     <div class="input_container">
+      <label class="input_label">Deadline</label>
+      <input required type="date" class="input_content" name="deadline">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_curricula" value="remove">Remove</button>
+  </div>
+
+</form>
+
+<script src="{% static 'functions.js' %}"></script>
+<script type="text/javascript">
+   forgetPage(true);
+</script>  
+
+{% endblock %}
