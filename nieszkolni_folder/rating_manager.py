@@ -122,3 +122,44 @@ class RatingManager:
         unrated.extend(listening)
 
         return unrated
+
+    def display_ratings(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                position,
+                category,
+                rating
+                FROM nieszkolni_app_rating
+                ''')
+
+            rows = cursor.fetchall()
+
+        entries = []
+
+        if rows is not None:
+            for row in rows:
+
+                if row[1] == "reading" or row[1] == "listening":
+                    if row[1] == "reading":
+                        title = BackOfficeManager().find_position_in_library(row[0])[1]
+                    elif row[1] == "listening":
+                        title = BackOfficeManager().find_position_in_theater(row[0])[0]
+
+                    entry = (
+                        row[0],
+                        row[1],
+                        row[2],
+                        title
+                        )
+
+                    entries.append(entry)
+
+        titles = {entry[0] for entry in entries}
+
+        ratings = []
+        for title in titles:
+            ratings_no = [entry[2] for entry in entries if entry[0] == title]
+
+            # print(ratings_no)
+

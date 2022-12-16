@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %} 
+
+<h1>RATINGS</h1>
+
+<table>
+
+		<tr class="font">
+
+			<th>Title</th>
+			<th>Number of Ratings</th>
+			<th>Rating</th>
+
+		</tr>
+
+	{% for rating in ratings %}
+
+		<tr class="font">
+
+			<td>{{ rating.0 }}</td>
+			<td>{{ rating.1 }}</td>
+			<th>{{ rating.2 }}</th>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+{% endblock %}

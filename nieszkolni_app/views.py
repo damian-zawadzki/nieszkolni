@@ -5309,6 +5309,20 @@ def rating(request, client, category, position):
 
 
 @staff_member_required
+def ratings(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        ratings = RatingManager().display_ratings()
+
+        return render(request, "ratings.html", {
+            "ratings": ratings
+            })
+
+
+@staff_member_required
 def inspection(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
