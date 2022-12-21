@@ -4033,7 +4033,7 @@ def announcements(request):
             if request.POST["action_on_announcement"] == "more":
                 notification_id = request.POST["notification_id"]
 
-                return redirect(f"display_announcement/{notification_id}")
+                return redirect(f"announcement/{notification_id}")
 
         return render(request, "announcements.html", {
             "announcements": announcements

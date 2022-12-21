@@ -21,7 +21,7 @@
     <div class="task_card_container">
       <div class="task_card_title">{{ submission.1 }}</div>
       <div class="task_card_details"><b>Date:</b> {{ submission.0 }} <b>Number of words:</b> {{ submission.3 }} <b>Grade:</b> {{ submission.6 }} <b>Major errors:</b>{{ submission.7 }} promile <b>Minor errors:</b> {{ submission.8 }} promile 
-        <a class="info_small" href="{% url 'display_announcement' tags.errors_tag %}"><img src="{% static '/images/information.png' %}" width="7" height="7"></a>
+        <a class="info_small" href="{% url 'announcement' tags.errors_tag %}"><img src="{% static '/images/information.png' %}" width="7" height="7"></a>
       </div>
       <div class="task_card_content">{{ submission.5 }}</div>
     </div>

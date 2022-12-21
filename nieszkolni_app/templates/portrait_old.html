@@ -13,14 +13,14 @@
 		<div class="avatar_name">
 			<div class="info">
 				<h2>{{ display_name.upper }}</h2>
-				<a class="" href="{% url 'display_announcement' tags.degrees_tag %}"><img src="{% static '/images/information.png' %}" width="10" height="10"></a>
+				<a class="" href="{% url 'announcement' tags.degrees_tag %}"><img src="{% static '/images/information.png' %}" width="10" height="10"></a>
 			</div>
 		</div>
 
 		<div class="avatar_description">
 			<div class="info">
 				<h3>{{ activity_points }}/{{ target }}</h3>
-				<a class="" href="{% url 'display_announcement' tags.activity_target_tag %}"><img src="{% static '/images/information.png' %}" width="10" height="10"></a>
+				<a class="" href="{% url 'announcement' tags.activity_target_tag %}"><img src="{% static '/images/information.png' %}" width="10" height="10"></a>
 			</div>
 		</div>
 
@@ -151,7 +151,7 @@
 
 			{% if early_admission == 'yes' %}
 			<li class="list_of_courses_item ">
-			  <span style="color: #86A697; margin-bottom: 5px;">You're eligible for early admission. Find our more <a href="{% url 'display_announcement' tags.early_admission_tag %}">here</a>!</span>
+			  <span style="color: #86A697; margin-bottom: 5px;">You're eligible for early admission. Find our more <a href="{% url 'announcement' tags.early_admission_tag %}">here</a>!</span>
 			</li>
 			{% else %}
 			{% endif %} -->
