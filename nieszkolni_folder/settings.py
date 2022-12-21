@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'nieszkolni_app.apps.NieszkolniAppConfig',
     'django_user_agents',
+    'chartjs',
 ]
 
 MIDDLEWARE = [

@@ -8,6 +8,10 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.conf import settings as django_settings
 from django.core.files.base import ContentFile, File
+from django_user_agents.utils import get_user_agent
+from django.template import RequestContext
+
+from nieszkolni_app.models import *
 
 from nieszkolni_folder.vocabulary_manager import VocabularyManager
 from nieszkolni_folder.clients_manager import ClientsManager
@@ -34,21 +38,16 @@ from nieszkolni_folder.audit_manager import AuditManager
 from nieszkolni_folder.onboarding_manager import OnboardingManager
 from nieszkolni_folder.back_office_planner import BackOfficePlanner
 
+from io import BytesIO
+
 import csv
 import re
 import json
 import os
 import requests
-from io import BytesIO
-from gtts import gTTS
 import random
-from zipfile import *
-
-from nieszkolni_app.models import *
-
-from django_user_agents.utils import get_user_agent
-
-from django.template import RequestContext
+import plotly.express as px
+import pandas as pd
 
 card_opening_time = 0
 
@@ -590,7 +589,9 @@ def staff(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        return render(request, "staff.html", {})
+        return render(request, "staff.html", {
+            "current_user": current_user
+            })
 
 
 @staff_member_required
@@ -620,6 +621,49 @@ def profile_menu(request):
         current_user = first_name + " " + last_name
 
         return render(request, "profile_menu.html", {})
+
+
+@staff_member_required
+def portrait(request, client):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        user_agent = get_user_agent(request)
+        profile = RoadmapManager().display_profile(current_user)
+        semesters = RoadmapManager().display_semesters(current_user)
+        tags = BackOfficeManager().display_tags()
+        end_of_semester = BackOfficeManager().display_end_of_semester()
+        activity_points = StreamManager().display_activity(current_user)
+        target = StreamManager().display_activity_target(current_user)
+        target_list = []
+        target_list.append(activity_points)
+        target_list.append(target)
+
+        display_name = profile[1]
+        avatar = profile[2]
+        current_semester = profile[4]
+        current_degree = profile[6]
+        early_admission = profile[7]
+
+        degrees = RoadmapManager().display_degrees(current_user)
+        current_degree_status = degrees.get(current_degree)
+        courses = RoadmapManager().display_roadmap(current_user, current_semester)
+
+        first_name = first_name.capitalize()
+
+        return render(request, "portrait.html", {
+            "display_name": display_name,
+            "avatar": avatar,
+            "end_of_semester": end_of_semester,
+            "activity_points": activity_points,
+            "target": target,
+            "tags": tags,
+            "first_name": first_name,
+            "courses": courses,
+            "target_list": target_list
+            })
 
 
 @login_required
@@ -667,11 +711,9 @@ def profile(request):
 
         degrees = RoadmapManager().display_degrees(current_user)
         current_degree_status = degrees.get(current_degree)
-
         courses = RoadmapManager().display_roadmap(current_user, current_semester)
 
         end_of_semester = BackOfficeManager().display_end_of_semester()
-
         activity_points = StreamManager().display_activity(current_user)
         target = StreamManager().display_activity_target(current_user)
 
@@ -859,10 +901,20 @@ def submit_assignment(request):
                     "assignment_type": assignment_type
                     })
 
+            if request.POST["go_to"] == "uncheck":
+                item = request.POST["item"]
+
+                CurriculumManager().change_status_to_fake_completed(
+                        item,
+                        current_user
+                        )
+
+                return redirect("assignments")
+
             elif request.POST["go_to"] == "mark_as_read":
                 item = request.POST["item"]
 
-                product = HomeworkManager().mark_as_read(
+                product = HomeworkManager().check_assignment(
                     item,
                     current_user
                     )
@@ -1324,6 +1376,8 @@ def assignments(request):
 
         ratings = RatingManager().display_unrated(current_user)
 
+        messages.success(request, ("Now, it's possible to uncheck a task if you did it by mistake!"))
+
         if request.method == "POST":
             item = request.POST["item"]
 
@@ -1360,38 +1414,6 @@ def assignment(request, item):
         user_agent = get_user_agent(request)
         no_submissions = KnowledgeManager().display_list_of_prompts("no_submission")
         assignment = CurriculumManager().display_assignment(item)
-
-        if request.method == "POST":
-            if request.POST["go_to"] == "check":
-
-                check = CurriculumManager().change_status_to_completed(
-                    item,
-                    current_user
-                    )
-
-                assignment_type = CurriculumManager().check_assignment_type(item)
-
-                if assignment_type == "reading":
-
-                    position = CurriculumManager().check_position_in_library(item)
-                    value = position[2]
-
-                    StreamManager().add_to_stream(
-                        current_user,
-                        "PV",
-                        value,
-                        current_user
-                        )
-
-                return redirect("check_homework")
-
-            elif request.POST["go_to"] == "uncheck":
-                uncheck = CurriculumManager().change_status_to_uncompleted(
-                    item,
-                    current_user
-                    )
-
-                return redirect("check_homework")
 
         if user_agent.is_mobile:
             return render(request, "m_assignment.html", {
@@ -2683,14 +2705,35 @@ def check_homework(request):
         completed_assignments = CurriculumManager().display_completed_assignments(current_client)
 
         if request.method == "POST":
-            return render(request, "check_homework.html", {
-                "uncompleted_assignments": uncompleted_assignments,
-                "completed_assignments": completed_assignments
-                })
+            if request.POST["action_on_check"] == "check":
+                item = request.POST["item"]
+                product = HomeworkManager().check_assignment(
+                        item,
+                        current_user
+                        )
+
+                messages.add_message(request, getattr(messages, product[0]), product[1])
+                return redirect("check_homework")
+
+            elif request.POST["action_on_check"] == "uncheck":
+                item = request.POST["item"]
+                CurriculumManager().change_status_to_fake_completed(
+                        item,
+                        current_user
+                        )
+
+                messages.success(request, ("Assignment marked as uncompleted!"))
+                return redirect("check_homework")
+
+            elif request.POST["action_on_check"] == "explore":
+                item = request.POST["item"]
+
+                return redirect("assignment", item=item)
 
         return render(request, "check_homework.html", {
                 "uncompleted_assignments": uncompleted_assignments,
-                "completed_assignments": completed_assignments
+                "completed_assignments": completed_assignments,
+                "first_name": first_name
                 })
 
 
@@ -2805,7 +2848,23 @@ def add_to_sentence_stock(request):
 
 
 @staff_member_required
-def compose_set(request):
+def choose_set_type(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        if request.method == "POST":
+            if request.POST["action_on_set"] == "choose":
+                set_type = request.POST["set_type"]
+
+                return redirect("compose_set", set_type=set_type)
+
+        return render(request, "choose_set_type.html", {})
+
+
+@staff_member_required
+def compose_set(request, set_type):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
@@ -2817,6 +2876,7 @@ def compose_set(request):
         if request.method == "POST":
             if request.POST["action_on_set"] == "compose":
                 set_id = request.POST["set_id"]
+                set_type = request.POST["set_type"]
                 set_name = request.POST["set_name"]
                 sentence_1 = request.POST["sentence_1"]
                 sentence_2 = request.POST["sentence_2"]
@@ -2846,16 +2906,32 @@ def compose_set(request):
                 SentenceManager().add_set(
                     set_id,
                     set_name,
-                    sentence_ids
+                    sentence_ids,
+                    set_type
                     )
 
                 messages.success(request, ("Set created!"))
-                return redirect("compose_set")
+                return redirect("display_sets")
 
-        return render(request, "compose_set.html", {
-            "sentences": sentences,
-            "next_set_id": next_set_id
-            })
+            elif request.POST["action_on_set"] == "compose_text":
+                sentence_ids = request.POST["sentence_ids"]
+                sentence_ids = sentence_ids.split(",")
+                print(sentence_ids)
+
+                return redirect("choose_set_type")
+
+        if set_type == "translation":
+            return render(request, "compose_translation_set.html", {
+                "set_type": set_type,
+                "sentences": sentences,
+                "next_set_id": next_set_id
+                })
+        else:
+            return render(request, "compose_set.html", {
+                    "set_type": set_type,
+                    "sentences": sentences,
+                    "next_set_id": next_set_id
+                    })
 
 
 @staff_member_required
@@ -3964,8 +4040,8 @@ def announcements(request):
             })
 
 
-@login_required
-def add_notification(request):
+@staff_member_required
+def make_announcement(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
@@ -3991,17 +4067,15 @@ def add_notification(request):
                     status
                     )
 
-                return render(request, "add_notification.html", {
-                    "clients": clients
-                    })
+                return redirect("announcements")
 
-        return render(request, "add_notification.html", {
+        return render(request, "make_announcement.html", {
             "clients": clients
             })
 
 
 @login_required
-def display_announcement(request, notification_id):
+def announcement(request, notification_id):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
@@ -4010,7 +4084,7 @@ def display_announcement(request, notification_id):
         announcement = BackOfficeManager().display_announcement(notification_id)
         stamp = TimeMachine().number_to_system_date_time(announcement[1])
 
-        return render(request, "display_announcement.html", {
+        return render(request, "announcement.html", {
             "announcement": announcement,
             "stamp": stamp
             })
@@ -5330,6 +5404,27 @@ def inspection(request):
 
         return render(request, "inspection.html", {
             "dates": dates
+            })
+
+
+@staff_member_required
+def mychart(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        labels = []
+        data = []
+
+        ratings = RatingManager().display_ratings()
+        for rating in ratings:
+            labels.append(rating[1])
+            data.append(rating[3])
+
+        return render(request, "mychart.html", {
+            "labels": labels,
+            "data": data
             })
 
 

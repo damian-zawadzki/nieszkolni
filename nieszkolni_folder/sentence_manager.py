@@ -122,18 +122,20 @@ class SentenceManager:
 
             return sentences
 
-    def add_set(self, set_id, set_name, sentence_ids):
+    def add_set(self, set_id, set_name, sentence_ids, set_type):
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 INSERT INTO nieszkolni_app_set (
                 set_id,
                 set_name,
-                sentence_ids
+                sentence_ids,
+                set_type
                 )
                 VALUES (
                 '{set_id}',
                 '{set_name}',
-                '{sentence_ids}'
+                '{sentence_ids}',
+                '{set_type}'
                 )
                 ON CONFLICT
                 DO NOTHING
@@ -160,7 +162,7 @@ class SentenceManager:
     def display_sets(self):
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                SELECT set_id, set_name
+                SELECT set_id, set_name, set_type
                 FROM nieszkolni_app_set
                 ORDER BY set_id
                 ''')

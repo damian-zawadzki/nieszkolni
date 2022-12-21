@@ -81,6 +81,18 @@ class HomeworkManager:
 
             return product
 
+    def check_assignment(self, item, current_user):
+        assignment_type_raw = CurriculumManager().display_assignment(item)
+        assignment_type = assignment_type_raw[6]
+        status = assignment_type_raw[11]
+
+        if assignment_type == "reading" and status == "uncompleted":
+            product = self.mark_as_read(item, current_user)
+        else:
+            product = self.mark_as_done(item, current_user)
+
+        return product
+
     def mark_as_done(self, item, current_user):
         CurriculumManager().change_status_to_completed(
             item,

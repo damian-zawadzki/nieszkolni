@@ -3,7 +3,7 @@
 
 <h1>COMPOSE A SET</h1>
 
-<form action="{% url 'compose_set' %}"  method="POST">
+<form action="{% url 'compose_set' set_type=set_type %}"  method="POST">
 	{% csrf_token %}
 
    <div class="flex-parent jc-center">
@@ -12,6 +12,14 @@
          <input type="text" class="input_content input_prefilled" name="set_id" value="{{ next_set_id }}">
       </div>
    </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Set type</label>
+         <input type="text" class="input_content input_prefilled" name="set_type" value="{{ set_type }}">
+      </div>
+   </div>
+
 
    <div class="flex-parent jc-center">
       <div class="input_container">
@@ -160,9 +168,9 @@
 
    </div>
 
-  <div class="flex-parent jc-center">
+   <div class="flex-parent jc-center">
       <button type="submit" class="button_main" name="action_on_set" value="compose">Compose</button>
-  </div>
+   </div>
 
 </form>
 

@@ -187,7 +187,7 @@ class CurriculumManager:
             cursor.execute(f'''
                 SELECT status
                 FROM nieszkolni_app_curriculum
-                WHERE item = {item}
+                WHERE item = '{item}'
                 ''')
 
             assignment_status = cursor.fetchone()
@@ -225,6 +225,20 @@ class CurriculumManager:
                 completion_date = {today_number},
                 submitting_user = '{submitting_user}'
                 WHERE item = {item}
+                ''')
+
+    def change_status_to_fake_completed(self, item, submitting_user):
+        now_number = TimeMachine().now_number()
+        today_number = TimeMachine().today_number()
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                UPDATE nieszkolni_app_curriculum
+                SET status = 'fake_completed',
+                completion_stamp = '{now_number}',
+                completion_date = '{today_number}',
+                submitting_user = '{submitting_user}'
+                WHERE item = '{item}'
                 ''')
 
     def change_status_to_uncompleted(self, item, submitting_user):

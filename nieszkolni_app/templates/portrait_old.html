@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<div class="avatar">
+
+	<div class="avatar_frame">
+		<img class="avatar_image" src="{{ avatar }}" width="175" height="175">
+	</div>
+
+	<div class="avatar_description_box">
+
+		<div class="avatar_name">
+			<div class="info">
+				<h2>{{ display_name.upper }}</h2>
+				<a class="" href="{% url 'display_announcement' tags.degrees_tag %}"><img src="{% static '/images/information.png' %}" width="10" height="10"></a>
+			</div>
+		</div>
+
+		<div class="avatar_description">
+			<div class="info">
+				<h3>{{ activity_points }}/{{ target }}</h3>
+				<a class="" href="{% url 'display_announcement' tags.activity_target_tag %}"><img src="{% static '/images/information.png' %}" width="10" height="10"></a>
+			</div>
+		</div>
+
+	</div>
+
+</div>
+
+<div class="semester_display flex-parent jc-center">
+
+{% for semester in semesters %}
+	
+	{% if semester == 'inactive' or semester == 'graduated' %}
+	{% elif semester == 'ongoing' %}
+
+
+	<div class="block">
+		<div>
+			<img class="avatar_image" src="https://docs.google.com/drawings/d/e/2PACX-1vRV8c5SLW8O9AZgK3PhDjKz1ja8jsb3rZC7eVNV4jlRmZSVUMLgCBQdxK0lWoSTcffEyt-R_m90PULq/pub?w=685&h=686" width="50" height="50">
+		</div>
+		<div class="inscription_below">{{ forloop.counter }}.</br>SEMESTER</br>({{ semester_duration }} MO)</div>
+	</div>
+
+	{% elif semester == 'upcoming' %}
+
+	<div class="block">
+		<div>
+			<img class="avatar_image" src="https://docs.google.com/drawings/d/e/2PACX-1vQPU82bIgaEybDHe_-2vc92GRSe7aRAF7VzB-SjRp4jMACuDevX6khz4CEP7qJz8MMfv3NjCIG-9RvD/pub?w=685&h=686" width="50" height="50">
+		</div>
+		<div class="inscription_below">{{ forloop.counter }}.</br>SEMESTER</br>({{ semester_duration }} MO)</div>
+	</div>
+
+	{% elif semester == 'passed' %}
+
+	<div class="block">
+		<div>
+			<img class="avatar_image" src="https://docs.google.com/drawings/d/e/2PACX-1vQNMMEU13OwUQ_EFRgtMNa4ctHo41y7cKMgM8lEDrAMAiss_zvcE0-xSUxf-nVb4wDaViuhhQXWC16_/pub?w=685&h=686" width="50" height="50">
+		</div>
+		<div class="inscription_below">{{ forloop.counter }}.</br>SEMESTER</br>({{ semester_duration }} MO)</div>
+	</div>
+
+	{% elif semester == 'failed' %}
+
+	<div class="block">
+		<div>
+			<img class="avatar_image" src="https://docs.google.com/drawings/d/e/2PACX-1vR5PPizo3e8qcPCTYoiYiBw2_4v_lqSf_1SXT8j9YfdwpkpSZl04copPjn5dSMT8CIPPzIGgxpTxFcd/pub?w=685&h=686" width="50" height="50">
+		</div>
+		<div class="inscription_below">{{ forloop.counter }}.</br>SEMESTER</br>({{ semester_duration }} MO)</div>
+	</div>
+
+	{% endif %}
+
+{% endfor %}
+
+{% if current_degree_status == 'not_granted' %}
+
+	<div class="block">
+		<div>
+			<img class="avatar_image" src="https://docs.google.com/drawings/d/e/2PACX-1vQPU82bIgaEybDHe_-2vc92GRSe7aRAF7VzB-SjRp4jMACuDevX6khz4CEP7qJz8MMfv3NjCIG-9RvD/pub?w=685&h=686" width="50" height="50">
+		</div>
+		<div class="inscription_below">THE END OF THE COURSE</br>{{ current_degree.upper }}</div>
+	</div>
+
+{% elif current_degree_status == 'granted' %}
+
+	<div class="block">
+		<div>
+			<img class="avatar_image" src="https://docs.google.com/drawings/d/e/2PACX-1vQNMMEU13OwUQ_EFRgtMNa4ctHo41y7cKMgM8lEDrAMAiss_zvcE0-xSUxf-nVb4wDaViuhhQXWC16_/pub?w=685&h=686" width="50" height="50">
+		</div>
+		<div class="inscription_below">THE END OF THE COURSE</br>{{ current_degree.upper }}</div>
+	</div>
+
+{% else %}
+
+	<div class="block">
+		<div>
+			<img class="avatar_image" src="https://docs.google.com/drawings/d/e/2PACX-1vQPU82bIgaEybDHe_-2vc92GRSe7aRAF7VzB-SjRp4jMACuDevX6khz4CEP7qJz8MMfv3NjCIG-9RvD/pub?w=685&h=686" width="50" height="50">
+		</div>
+		<div class="inscription_below">THE BEGINNING OF THE COURSE</br></div>
+	</div>
+
+{% endif %}
+
+</div>
+
+<!-- <div class="side_navigation_menu profile_content_box ">
+		<ul class="profile_link_list">
+			<li class="profile_navigation_item">
+			  <h5>MENU</h5>
+			</li>
+			<li class="side_navigation_item">
+			  <a class="side_navigation_link_2" href="{% url 'assignments'%}">MY TO-DO LIST</a>
+			</li>
+			<li class="side_navigation_item">
+			  <a class="side_navigation_link_2" href="{% url 'statistics'%}">MY STATS</a>
+			</li>
+			<li class="side_navigation_item">
+			  <a class="side_navigation_link_2" href="{% url 'vocabulary'%}">MY VOCABULARY</a>
+			</li>
+			<li class="side_navigation_item">
+			  <a class="side_navigation_link_2" href="{% url 'sentences'%}">MY SENTENCES</a>
+			</li>
+			<li class="side_navigation_item">
+			  <a class="side_navigation_link_2" href="{% url 'my_pronunciation'%}">MY PRONUNCIATION</a>
+			</li>
+			<li class="side_navigation_item">
+			  <a class="side_navigation_link_2" href="{% url 'memories'%}">MY MEMORIES</a>
+			</li>
+			<li class="side_navigation_item">
+			  <a class="side_navigation_link_2" href="{% url 'submit_assignment'%}">MY SUBMISSIONS</a>
+			</li>
+			<li class="side_navigation_item">
+			  <a class="side_navigation_link_2" href="{% url 'list_of_submissions'%}">MY ASSIGNMENTS</a>
+			</li>
+			<li class="side_navigation_item">
+			  <a class="side_navigation_link_2" href="{% url 'report_reading'%}">MY READING</a>
+			</li>
+			<li class="side_navigation_item">
+			  <a class="side_navigation_link_2" href="{% url 'options'%}">MY SETTINGS</a>
+			</li>
+		</ul>
+
+</div> -->
+<!-- 		<ul class="profile_content_list">
+
+			<li class="list_of_courses_item">
+			  <h6>THIS SEMESTER ENDS ON {{ end_of_semester }}</h6>
+			</li>
+
+			{% if early_admission == 'yes' %}
+			<li class="list_of_courses_item ">
+			  <span style="color: #86A697; margin-bottom: 5px;">You're eligible for early admission. Find our more <a href="{% url 'display_announcement' tags.early_admission_tag %}">here</a>!</span>
+			</li>
+			{% else %}
+			{% endif %} -->
+			<table>
+
+				<tr>
+					<th class="td_sentences">Your courses</th>
+					<th class="">Status</th>
+
+				</tr>
+			{% for course in courses %}
+<!-- 				<form action="{% url 'profile' %}"  method="POST">
+				{% csrf_token %}
+
+					{% if course.6 == 'failed' %}
+
+					<li class="profile_item profile_item_red">
+						<div class="list_content">{{ course.2 }}</div>
+						<input type="hidden" name="roadmap_id_number" value="{{ course.0 }}">
+						<button type="submit" class="list_button button_main" name="action_on_profile" value="more">More</button>
+					</li>
+
+					{% elif course.6 == 'passed' %}
+
+					<li class="profile_item profile_item_green">
+						<div class="list_content">{{ course.2 }}</div>
+						<input type="hidden" name="roadmap_id_number" value="{{ course.0 }}">
+						<button type="submit" class="list_button button_main" name="action_on_profile" value="more">More</button>
+					</li>
+
+					{% else %}
+
+					<li class="profile_item">
+						<div class="list_content">{{ course.2 }}</div>
+						<input type="hidden" name="roadmap_id_number" value="{{ course.0 }}">
+						<button type="submit" class="list_button button_main" name="action_on_profile" value="more">More</button>
+					</li>
+
+					{% endif %}
+				</form> -->
+				<tr>
+					<td class="td_sentences">{{ course.2 }}</td>
+					<td class="">{{ course.6 }}</td>
+				</tr>
+
+
+			{% endfor %}
+		</table>
+
+		<!-- </ul> -->
+<hr class="line"></hr>
+
+
+{% endblock %}

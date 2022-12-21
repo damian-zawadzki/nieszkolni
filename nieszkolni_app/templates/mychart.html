@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<h1>CHART</h1>
+
+<div style="height: 25%; width: 25%">
+  <canvas id="myChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+	var labels = {{ labels|safe }};
+	var data = {{ data|safe }};
+	const ctx = document.getElementById('myChart');
+
+	new Chart(ctx, {
+	type: 'bar',
+	data: {
+	  labels: labels,
+	  datasets: [{
+	    label: 'Rating',
+	    data: data,
+	    borderWidth: 1
+	  }]
+	},
+	options: {
+	  scales: {
+	    y: {
+	      beginAtZero: true
+	    }
+	  }
+	}
+	});
+</script>
+
+{% endblock %}

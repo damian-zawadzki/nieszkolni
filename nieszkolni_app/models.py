@@ -228,6 +228,7 @@ class Set(models.Model):
     set_name = models.CharField(max_length=200, default="")
     set_id = models.IntegerField(default=0)
     sentence_ids = models.CharField(max_length=200, default="")
+    set_type = models.CharField(max_length=200, default="sentences")
 
 
 class Library(models.Model):

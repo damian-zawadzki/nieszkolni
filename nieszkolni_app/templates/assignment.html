@@ -3,7 +3,7 @@
 
 <div class="flex-parent jc-center">
 
-	{% if assignment.11 == 'uncompleted' %}
+	{% if assignment.11 != 'completed' %}
 
 		<div class="task_card">
 
@@ -13,7 +13,8 @@
 
 	{% endif %}
 
-  
+
+
     <div class="task_card_container">
       <div class="task_card_title">{{ assignment.7 }}</div>
       <div class="task_card_details"><b>Deadline:</b> {{ assignment.1 }} <b>Item:</b> {{ assignment.0 }}</div>
@@ -39,6 +40,7 @@
 
       {% endif %}
 
+
 			<form action="{% url 'submit_assignment' %}" method="POST">
 				{% csrf_token %}
 
@@ -50,7 +52,7 @@
 						<input type="hidden" name="assignment_type" value="{{ assignment.6 }}">
 						<input type="hidden" name="title" value="{{ assignment.7 }}">
 
-		    			
+		    			{% if assignment.11 != 'completed' %}
 							{% if assignment.6 == 'sentences' %}
 
 								<button type="submit" class="button_main" name="go_to" value="translation">Translate</button>
@@ -83,6 +85,11 @@
 
 							{% endif %}
 
+							{% else %}
+
+								<button type="submit" class="button_main" name="go_to" value="uncheck">Uncheck</button>
+
+							{% endif %}
 
 						{% if user.is_staff %}
 

@@ -2,9 +2,9 @@
 {% block 'content' %}
 {% include 'staff_menu.html' %}
 
-<h1>Send a notification</h1>
+<h1>MAKE AN ANNOUNCEMENT</h1>
 
-<form action="{% url 'add_notification' %}"  method="POST">
+<form action="{% url 'make_announcement' %}"  method="POST">
 	{% csrf_token %}
 
   <div class="flex-parent jc-center">

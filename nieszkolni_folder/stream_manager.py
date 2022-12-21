@@ -152,6 +152,7 @@ class StreamManager:
                 WHERE date_number >= '{start_date}'
                 AND date_number <= '{end_date}'
                 AND name = '{client}'
+                ORDER BY stamp DESC
                 ''')
 
             rows = cursor.fetchall()

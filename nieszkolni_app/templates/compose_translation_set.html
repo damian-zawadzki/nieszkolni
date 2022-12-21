@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<h1>COMPOSE A TRANSLATION SET</h1>
+
+<form action="{% url 'compose_set' set_type=set_type %}"  method="POST" id="form">
+	{% csrf_token %}
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Set ID</label>
+         <input type="text" class="input_content input_prefilled" name="set_id" value="{{ next_set_id }}">
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Set type</label>
+         <input type="text" class="input_content input_prefilled" name="set_type" value="{{ set_type }}">
+      </div>
+   </div>
+
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Set name</label>
+         <input type="text" class="input_content" name="set_name" required>
+      </div>
+   </div>
+
+   <div class="input_container">
+      <label class="input_label">Pick a sentence</label>
+      <div class="input_container_inline">
+         <input type="text" class="input_content_short" list="sentence" id="sentence_input">
+         <button type="button" class="input_button" id="add_button" onclick="addSentence()">+</button>
+      </div>
+
+      <datalist id="sentence">
+
+         {% for sentence in sentences %}
+            <option value="{{ sentence.0 }}: {{ sentence.1 }}"></option>
+         {% endfor %}
+
+      </datalist>
+
+   </div>
+
+   <fieldset class="clip_box" id="clip_box" name="sentence_ids_raw">
+      <input class="invisible" id="clip" name="clip" onclick="removeSentence(this)" readonly>
+   </fieldset>
+
+   <input type="hidden" name="sentence_ids" id="sentence_ids">
+
+
+   <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_set" value="compose_text" onclick="getData()">Compose</button>
+   </div>
+
+</form>
+
+<script type="text/javascript">
+   function addSentence() {
+      var id_sentence_box = document.getElementById('sentence_input');
+      var id_sentence = id_sentence_box.value.split(': ');
+      var id = id_sentence[0];
+      var sentence = id_sentence[1];
+      var clip = document.getElementById('clip');
+      var box = document.getElementById('clip_box');
+      var last = box.lastElementChild;
+      var clone = ''
+
+      if (id_sentence_box.value != '') {
+         clone = clip.cloneNode(true);
+         last.after(clone);
+         clone.classList.remove('invisible');
+         clone.classList.add('clip');
+         clone.id = id;
+         clone.value = sentence;
+         clone.style.width = (sentence.length + 2) + 'ch';
+         id_sentence_box.value = '';
+      }
+   }
+
+   function removeSentence(clip) {
+      var clip = document.getElementById(clip.id);
+      var parent = clip.parentNode;
+      parent.removeChild(clip)
+   }
+
+   function getData() {
+      var ids = document.getElementsByName('clip');
+      var sentence_ids = document.getElementById('sentence_ids');
+      for (let i = 1; i < ids.length; i++) {
+         if (i == ids.length - 1) {
+            sentence_ids.value += ids[i].id
+         } else {
+            sentence_ids.value += ids[i].id + ',';
+         }
+      }
+      
+   }
+   
+</script>
+
+{% endblock %}

@@ -578,8 +578,7 @@ class BackOfficeManager:
                 notification_type,
                 status
                 FROM nieszkolni_app_notification
-                WHERE notification_type = 'visible_announcement'
-                OR notification_type = 'hidden_announcement'
+                WHERE notification_type != 'comment'
                 ''')
 
             announcements = cursor.fetchall()
@@ -602,7 +601,11 @@ class BackOfficeManager:
                 notification_type,
                 status
                 FROM nieszkolni_app_notification
-                WHERE notification_type = 'visible_announcement'
+                WHERE (
+                notification_type = 'visible_announcement'
+                OR notification_type = 'article'
+                OR notification_type = 'rule'
+                )
                 AND stamp >= {Seven_days_ago_stamp}
                 ORDER BY stamp DESC
                 ''')

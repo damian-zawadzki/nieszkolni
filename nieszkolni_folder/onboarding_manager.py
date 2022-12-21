@@ -141,7 +141,6 @@ class OnboardingManager:
             ]
 
         for entry in entries:
-            print(entry)
             KnowledgeManager().add_memory(
                 current_user,
                 client,

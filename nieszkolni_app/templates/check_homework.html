@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 {% block 'content' %}
 
-<h1>HOMEWORK</h1>
+<h1>{{ first_name.upper }}'S HOMEWORK</h1>
 
 <div class="list_container">
 	<ul class="list">
 
 		{% for uncompleted_assignment in uncompleted_assignments %}
 
-			<form action="{% url 'assignment' item=uncompleted_assignment.0 %}" method="POST">
+			<form action="{% url 'check_homework' %}" method="POST">
 				{% csrf_token %}
 				<li class="list_item">
 
@@ -16,9 +16,11 @@
 					<div class="list_content_small">{{ uncompleted_assignment.0 }}</div>
 					<div class="list_content_inside">{{ uncompleted_assignment.7 }}</div>
 
+					<input type="hidden" name="item" value="{{ uncompleted_assignment.0 }}">
+
 					<div class="list_button">
-						<button type="submit" class="button_main" name="go_to" value="check">Check</button>
-						<button type="submit" class="button_main" name="go_to" value="assignment">Explore</button>
+						<button type="submit" class="button_main" name="action_on_check" value="check">Check</button>
+						<button type="submit" class="button_main" name="action_on_check" value="explore">Explore</button>
 					</div>
 
 				</li>
@@ -27,7 +29,7 @@
 		{% endfor %}
 		{% for completed_assignment in completed_assignments %}
 
-			<form action="{% url 'assignment' item=completed_assignment.0 %}" method="POST">
+			<form action="{% url 'check_homework' %}" method="POST">
 				{% csrf_token %}
 				<li class="list_item list_item_complted list_item_crossed">
 
@@ -35,13 +37,11 @@
 					<div class="list_content_small">{{ completed_assignment.0 }}</div>
 					<div class="list_content_inside">{{ completed_assignment.7 }}</div>
 
-					<div class="list_button">
+					<input type="hidden" name="item" value="{{ completed_assignment.0 }}">
 
-						{% if completed_assignment.6 == 'reading' %}
-						{% else %}
-							<button type="submit" class="button_main" name="go_to" value="uncheck">Uncheck</button>
-						{% endif %}
-						<button type="submit" class="button_main" name="go_to" value="assignment">Explore</button>
+					<div class="list_button">
+						<button type="submit" class="button_main" name="action_on_check" value="uncheck">Uncheck</button>
+						<button type="submit" class="button_main" name="action_on_check" value="explore">Explore</button>
 					</div>
 
 				</li>
