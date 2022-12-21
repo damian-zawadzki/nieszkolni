@@ -31,12 +31,11 @@ class OnboardingManager:
     def __init__(self):
         pass
 
-    def onboard_client(self, client, current_user):
+    def onboard_client(self, client, current_user, matrix):
         self.add_wordbook(client, current_user)
         self.add_pronunciation(client, current_user)
         self.add_memories(client, current_user)
 
-        matrix = "Onboarding"
         last_sunday_date = TimeMachine().last_sunday()
         last_sunday_number = TimeMachine().date_to_number(last_sunday_date)
 

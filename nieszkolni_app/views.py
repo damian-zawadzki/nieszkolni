@@ -5281,8 +5281,9 @@ def onboard_client(request):
 
         if request.method == "POST":
             client = request.POST["client"]
+            matrix = request.POST["matrix"]
 
-            OnboardingManager().onboard_client(client, current_user)
+            OnboardingManager().onboard_client(client, current_user, matrix)
 
             messages.success(request, ("Client onboarded!"))
             return redirect("onboard_client")
