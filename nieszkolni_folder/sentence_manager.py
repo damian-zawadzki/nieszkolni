@@ -321,13 +321,13 @@ class SentenceManager:
                     phrases = []
                     phrases.append(glossary)
 
-            for phrase in phrases:
-                KnowledgeManager().add_to_book(
-                    name,
-                    phrase,
-                    "system",
-                    "vocabulary"
-                    )
+                for phrase in phrases:
+                    KnowledgeManager().add_to_book(
+                        name,
+                        phrase,
+                        "system",
+                        "vocabulary"
+                        )
 
     def find_list_number_by_item(self, item):
         with connection.cursor() as cursor:
