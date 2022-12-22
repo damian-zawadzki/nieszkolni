@@ -315,9 +315,9 @@ class SentenceManager:
 
             if glossary is not None:
                 number_of_phrases = glossary.count("/")
-                if number_of_phrases == 1:
+                if number_of_phrases > 1:
                     phrases = glossary.split("/")
-                elif number_of_phrases == 0:
+                elif number_of_phrases < 2:
                     phrases = []
                     phrases.append(glossary)
 
