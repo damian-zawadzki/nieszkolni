@@ -112,7 +112,9 @@ class CurriculumManager:
                 resources,
                 status
                 FROM nieszkolni_app_curriculum
-                WHERE name = '{name}' AND status != 'completed'
+                WHERE name = '{name}'
+                AND status != 'completed'
+                AND status != 'removed'
                 AND deadline_number <= '{display_limit}'
                 ORDER BY deadline_number ASC
                 ''')
@@ -176,6 +178,7 @@ class CurriculumManager:
                 reference
                 FROM nieszkolni_app_curriculum
                 WHERE item = '{item}'
+                AND status != 'removed'
                 ''')
 
             assignment = cursor.fetchone()
@@ -224,7 +227,7 @@ class CurriculumManager:
                 completion_stamp = {now_number},
                 completion_date = {today_number},
                 submitting_user = '{submitting_user}'
-                WHERE item = {item}
+                WHERE item = '{item}'
                 ''')
 
     def change_status_to_fake_completed(self, item, submitting_user):
@@ -249,7 +252,7 @@ class CurriculumManager:
                 completion_stamp = 0,
                 completion_date = 0,
                 submitting_user = '{submitting_user}'
-                WHERE item = {item}
+                WHERE item = '{item}'
                 ''')
 
     def display_all_assignments(self):
@@ -268,6 +271,7 @@ class CurriculumManager:
                 resources,
                 status
                 FROM nieszkolni_app_curriculum
+                WHERE status != 'removed'
                 ''')
 
             all_assignments = cursor.fetchall()
@@ -293,6 +297,7 @@ class CurriculumManager:
                 status
                 FROM nieszkolni_app_curriculum
                 WHERE name = '{name}'
+                AND status != 'removed'
                 ''')
 
             assignments = cursor.fetchall()
@@ -319,14 +324,16 @@ class CurriculumManager:
     def remove_curriculum(self, item):
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                DELETE FROM nieszkolni_app_curriculum
+                UPDATE nieszkolni_app_curriculum
+                SET status = 'removed'
                 WHERE item = '{item}'
                 ''')
 
     def remove_curricula(self, client, component_id, deadline):
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                DELETE FROM nieszkolni_app_curriculum
+                UPDATE nieszkolni_app_curriculum
+                SET status = 'removed'
                 WHERE name = '{client}'
                 AND component_id = '{component_id}'
                 AND deadline_number = '{deadline}'
