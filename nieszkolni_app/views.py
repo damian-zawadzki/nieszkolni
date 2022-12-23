@@ -259,10 +259,10 @@ def view_answer(request):
                     # If there are no more cards to review
                     if len(all_due_entries) == 0:
                         VocabularyManager().reset_line(current_user)
-                        return redirect('congratulations.html')
+                        return redirect('congratulations')
 
                     else:
-                        return redirect(f'{deck}.html')
+                        return redirect(f'{deck}')
                 else:
                     return render(request, "edit_card.html", {
                         "card_id": card_id,
@@ -318,13 +318,13 @@ def edit_card(request):
                     commit_change = VocabularyManager().edit_card(card_id, polish, english)
                     messages.success(request, ("The changes have been made!"))
 
-                    return redirect("vocabulary.html")
+                    return redirect("vocabulary")
 
                 elif request.POST["change"] == "delete":
                     commit_change = VocabularyManager().delete_card(card_id)
                     messages.success(request, ("The card has been deleted!"))
 
-                    return redirect("vocabulary.html")
+                    return redirect("vocabulary")
 
         return render(request, "edit_card.html", {"card_id": card_id, "polish": polish, "english": english})
 
@@ -1074,7 +1074,7 @@ def submit_assignment(request):
                 StreamManager().add_to_stream(name, command, value, current_user)
 
                 messages.success(request, ("Your assignment has been submitted!"))
-                return redirect("assignments.html")
+                return redirect("assignments")
         else:
             return render(request, "submit_assignment.html", {})
 
@@ -1185,7 +1185,7 @@ def list_of_assignments_to_grade(request):
                     grade
                     )
 
-                return redirect("list_of_assignments_to_grade.html")
+                return redirect("list_of_assignments_to_grade")
 
         return render(request, "list_of_assignments_to_grade.html", {
             "essays": essays
@@ -2467,7 +2467,7 @@ def prompts(request):
 
                 delete_prompt = KnowledgeManager().delete_prompt(prompt, parent)
 
-                return redirect("prompts.html")
+                return redirect("prompts")
 
             elif request.POST["prompts_action"] == "add_prompt":
 
@@ -2485,11 +2485,11 @@ def prompts(request):
                         )
 
                     messages.success(request, ("The prompt has been added!"))
-                    return redirect("prompts.html")
+                    return redirect("prompts")
 
                 else:
                     messages.error(request, ("The prompt already exists!"))
-                    return redirect("prompts.html")
+                    return redirect("prompts")
 
             else:
                 pass
@@ -2640,7 +2640,7 @@ def stream(request):
                 unique_id = request.POST["unique_id"]
                 delete = StreamManager().delete_from_stream(unique_id)
 
-                return redirect("stream.html")
+                return redirect("stream")
 
             elif request.POST["stream_action"] == "explore":
                 unique_id = request.POST["unique_id"]
@@ -2699,7 +2699,7 @@ def upload_stream(request):
                     )
 
             messages.success(request, ("The file has been uploaded!"))
-            return redirect("upload_stream.html")
+            return redirect("upload_stream")
 
         return render(request, "upload_stream.html", {})
 
@@ -2807,7 +2807,7 @@ def upload_sentence_stock(request):
                     )
 
             messages.success(request, ("The file has been uploaded!"))
-            return redirect("upload_sentence_stock.html")
+            return redirect("upload_sentence_stock")
 
         return render(request, "upload_sentence_stock.html", {})
 
