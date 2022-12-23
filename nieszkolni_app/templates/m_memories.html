@@ -1,15 +1,16 @@
 {% extends 'base.html' %}
 {% block 'content' %}
 
-<h1>NEWS</h1>
+<h1>MY MEMORIES</h1>
 
 <table class="m_table">
 
-	{% for announcement in announcements %}
+	{% for memory in memories %}
 
 		<tr class="font">
 
-			<td><a href="{% url 'announcement' notification_id=announcement.0 %}">{{ announcement.4 }}</a></td>
+			<td class="short_column">{{ forloop.counter }}</td>
+			<td class="td_sentences">{{ memory }}</td>
 
 		</tr>
 

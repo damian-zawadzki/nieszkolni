@@ -18,7 +18,9 @@
     {% if user.is_authenticated %}
     <nav class="m_navigation">
       <div class="m_navigation_box" id="main_links">
-
+        <div class="m_navigation_item">
+          <a class="m_navigation_link" href="{% url 'campus'%}">CAMPUS</a>
+        </div>
         <div class="m_navigation_item">
           <a class="m_navigation_link" href="{% url 'ranking'%}">RANKING</a>
         </div>
@@ -64,7 +66,7 @@
           <li class="m_navigation_item_inside">
             <a class="side_navigation_link_2" href="{% url 'options'%}">MY SETTINGS</a>
           </li>
-          <li class="m_navigation_item">
+          <li class="m_navigation_item_inside">
             <a class="m_navigation_link" href="{% url 'logout_user'%}">LOG OUT</a>
           </li>
 

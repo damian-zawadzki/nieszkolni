@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>MY PRONUNCIATION</h1>
+
+<table>
+
+	{% for entry in entries %}
+
+		<tr class="font">
+
+			<td>{{ entry }}</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+{% include 'footer.html' %}
+{% endblock %}

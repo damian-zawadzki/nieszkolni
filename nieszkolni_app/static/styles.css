@@ -824,8 +824,8 @@ task_card_content_list {
 
 h1 {
   color: #3c4043;
-  font-family: "Google Sans", Roboto, Arial, sans-serif;
-  font-size: 35px;
+  font-family: var(--font-family);
+  font-size: 6vmin;
   font-weight: 1000;
   letter-spacing: .25px;
   margin-bottom: 35px;
@@ -2254,4 +2254,11 @@ hr.line {
   width: fit-content;
   max-width: 100px; 
   text-align: center;
+}
+
+@media (max-width: 768px) {
+    .input_content {
+        min-width: 75vw;
+        width: 75vw;
+    }
 }

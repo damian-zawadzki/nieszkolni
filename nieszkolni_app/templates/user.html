@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>USER</h1>
+
+<form action="{% url 'list_current_users' %}" method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center"> 
+     <div class="input_container">
+      <label class="input_label">User type</label>
+      <input type="text" class="input_content input_prefilled" name="user_type" value="{{ details.user_type }}" readonly>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+     <div class="input_container">
+      <label class="input_label">Name</label>
+      <input type="text" class="input_content input_prefilled" name="client" value="{{ details.name }}" readonly>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Phone number</label>
+      <input type="tel" class="input_content input_prefilled" name="phone_number" value="{{ details.phone_number }}" readonly>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Contact email address</label>
+      <input type="email" class="input_content input_prefilled" name="contact_email_address" value="{{ details.contact_email_address }}" readonly>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Meeting duration</label>
+      <input type="number" class="input_content input_prefilled" name="meeting_duration" value="{{ details.meeting_duration }}" readonly>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Acquisition channel</label>
+      <input type="text" class="input_content input_prefilled" name="acquisition_channel" value="{{ details.acquisition_channel }}" readonly>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Recommenders</label>
+      <input type="text" class="input_content input_prefilled" name="recommenders" value="{{ details.recommenders }}" readonly>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Reasons for resignation</label>
+      <input type="text" class="input_content input_prefilled" name="reasons_for_resignation" value="{{ details.reasons_for_resignation }}" readonly>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Status</label>
+      <input type="text" class="input_content input_prefilled" name="status" value="{{ details.status }}" readonly>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Coach</label>
+      <input type="text" class="input_content input_prefilled" name="coach" value="{{ details.coach }}" readonly>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Level</label>
+      <input type="text" class="input_content input_prefilled" name="level" value="{{ details.level }}" readonly>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Daily limit of new vocabulary</label>
+      <input type="text" class="input_content input_prefilled" name="daily_limit_of_new_vocabulary" value="{{ details.daily_limit_of_new_vocabulary }}" readonly>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Maximum interval for vocabulary</label>
+      <input type="text" class="input_content input_prefilled" name="maximal_interval_vocabulary" value="{{ details.maximal_interval_vocabulary }}" readonly>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Daily limit of new sentences</label>
+      <input type="text" class="input_content input_prefilled" name="daily_limit_of_new_sentences" value="{{ details.daily_limit_of_new_sentences }}" readonly>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center"> 
+    <div class="input_container">
+      <label class="input_label">Maximum interval for sentences</label>
+      <input type="text" class="input_content input_prefilled" name="maximal_interval_sentences" value="{{ details.maximal_interval_sentences }}" readonly>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+  <button type="submit" class="button_main" name="action_on_user" value="edit">Edit</button>
+  </div>
+
+</form>
+
+{% endblock %}

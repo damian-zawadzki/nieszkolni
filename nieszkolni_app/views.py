@@ -52,6 +52,10 @@ import pandas as pd
 card_opening_time = 0
 
 
+def view_404(request, exception=None):
+    return redirect("/")
+
+
 def welcome(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
@@ -440,7 +444,7 @@ def register_client(request):
                 daily_limit_of_new_sentences = request.POST["daily_limit_of_new_sentences"]
                 maximal_interval_sentences = request.POST["maximal_interval_sentences"]
 
-                ClientsManager().edit_client(
+                ClientsManager().edit_user(
                     user_type,
                     name,
                     phone_number,
@@ -478,45 +482,60 @@ def list_current_users(request):
 
         if request.method == "POST":
             if request.POST["action_on_user"] == "more":
-                name = request.POST["client"]
+                client = request.POST["client"]
 
-                client_details = ClientsManager().load_client(name)
-                user_type = client_details[0]
-                phone_number = client_details[2]
-                contact_email_address = client_details[3]
-                internal_email_address = client_details[5]
-                meeting_duration = client_details[6]
-                price = client_details[7]
-                acquisition_channel = client_details[8]
-                recommenders = client_details[9]
-                reasons_for_resignation = client_details[10]
-                status = client_details[11]
-                coach = client_details[12]
-                level = client_details[13]
-                daily_limit_of_new_vocabulary = client_details[14]
-                maximal_interval_vocabulary = client_details[15]
-                daily_limit_of_new_sentences = client_details[16]
-                maximal_interval_sentences = client_details[17]
+                details = ClientsManager().load_user(client)
 
-                return render(request, "register_client.html", {
-                    "name": name,
-                    "user_type": user_type,
-                    "phone_number": phone_number,
-                    "contact_email_address": contact_email_address,
-                    "internal_email_address": internal_email_address,
-                    "meeting_duration": meeting_duration,
-                    "price": price,
-                    "acquisition_channel": acquisition_channel,
-                    "recommenders": recommenders,
-                    "reasons_for_resignation": reasons_for_resignation,
-                    "status": status,
-                    "coach": coach,
-                    "level": level,
-                    "daily_limit_of_new_vocabulary": daily_limit_of_new_vocabulary,
-                    "maximal_interval_vocabulary": maximal_interval_vocabulary,
-                    "daily_limit_of_new_sentences": daily_limit_of_new_sentences,
-                    "maximal_interval_sentences": maximal_interval_sentences
+                return render(request, "user.html", {
+                    "details": details
                     })
+
+            elif request.POST["action_on_user"] == "edit":
+                client = request.POST["client"]
+
+                details = ClientsManager().load_user(client)
+
+                return render(request, "edit_user.html", {
+                    "details": details
+                    })
+
+            elif request.POST["action_on_user"] == "update":
+                user_type = request.POST["user_type"]
+                client = request.POST["client"]
+                phone_number = request.POST["phone_number"]
+                contact_email_address = request.POST["contact_email_address"]
+                meeting_duration = request.POST["meeting_duration"]    
+                acquisition_channel = request.POST["acquisition_channel"]
+                recommenders = request.POST["recommenders"]
+                reasons_for_resignation = request.POST["reasons_for_resignation"]
+                status = request.POST["status"]
+                coach = request.POST["coach"]
+                level = request.POST["level"]
+                daily_limit_of_new_vocabulary = request.POST["daily_limit_of_new_vocabulary"]
+                maximal_interval_vocabulary = request.POST["maximal_interval_vocabulary"]
+                daily_limit_of_new_sentences = request.POST["daily_limit_of_new_sentences"]
+                maximal_interval_sentences = request.POST["maximal_interval_sentences"]
+
+                ClientsManager().edit_user(
+                    user_type,
+                    client,
+                    phone_number,
+                    contact_email_address,
+                    meeting_duration,
+                    acquisition_channel,
+                    recommenders,
+                    reasons_for_resignation,
+                    status,
+                    coach,
+                    level,
+                    daily_limit_of_new_vocabulary,
+                    maximal_interval_vocabulary,
+                    daily_limit_of_new_sentences,
+                    maximal_interval_sentences
+                    )
+
+                return redirect("list_current_users")
+
             else:
 
                 return render(request, "list_current_users.html", {
@@ -534,6 +553,8 @@ def options(request, template_name="404.html"):
         first_name = request.user.first_name
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
+
+        user_agent = get_user_agent(request)
 
         client = Client.objects.get(name=current_user)
         daily_limit_of_new__vocabulary = client.daily_limit_of_new_vocabulary
@@ -574,12 +595,21 @@ def options(request, template_name="404.html"):
 
                 return redirect("options")
 
-        return render(request, "options.html", {
-            "daily_limit_of_new_vocabulary": daily_limit_of_new__vocabulary,
-            "daily_limit_of_new_sentences": daily_limit_of_new_sentences,
-            "maximal_interval_vocabulary": maximal_interval_vocabulary,
-            "maximal_interval_sentences": maximal_interval_sentences
-            })
+        if user_agent.is_mobile:
+            return render(request, "m_options.html", {
+                    "daily_limit_of_new_vocabulary": daily_limit_of_new__vocabulary,
+                    "daily_limit_of_new_sentences": daily_limit_of_new_sentences,
+                    "maximal_interval_vocabulary": maximal_interval_vocabulary,
+                    "maximal_interval_sentences": maximal_interval_sentences
+                    })
+
+        else:
+            return render(request, "options.html", {
+                "daily_limit_of_new_vocabulary": daily_limit_of_new__vocabulary,
+                "daily_limit_of_new_sentences": daily_limit_of_new_sentences,
+                "maximal_interval_vocabulary": maximal_interval_vocabulary,
+                "maximal_interval_sentences": maximal_interval_sentences
+                })
 
 
 @staff_member_required
@@ -1005,7 +1035,7 @@ def submit_assignment(request):
                 StreamManager().add_to_stream(name, "T", 10, current_user)
 
                 messages.success(request, ("Your assignment has been submitted!"))
-                return redirect("assignments.html")
+                return redirect("assignments")
 
             else:
                 item = request.POST["item"]
@@ -1502,10 +1532,17 @@ def my_pronunciation(request):
         current_user = first_name + " " + last_name
 
         entries = KnowledgeManager().display_pronunciation(current_user)
+        user_agent = get_user_agent(request)
 
-        return render(request, "my_pronunciation.html", {
-            "entries": entries
-            })
+        if user_agent.is_mobile:
+            return render(request, "m_my_pronunciation.html", {
+                    "entries": entries
+                    })
+
+        else:
+            return render(request, "my_pronunciation.html", {
+                "entries": entries
+                })
 
 
 @staff_member_required
@@ -2469,11 +2506,17 @@ def memories(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        user_agent = get_user_agent(request)
         memories = KnowledgeManager().display_memories(current_user)
+        if user_agent.is_mobile:
+            return render(request, "m_memories.html", {
+                "memories": memories
+                })
 
-        return render(request, "memories.html", {
-            "memories": memories
-            })
+        else:
+            return render(request, "memories.html", {
+                "memories": memories
+                })
 
 
 @staff_member_required
@@ -4081,13 +4124,22 @@ def announcement(request, notification_id):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        user_agent = get_user_agent(request)
+
         announcement = BackOfficeManager().display_announcement(notification_id)
         stamp = TimeMachine().number_to_system_date_time(announcement[1])
 
-        return render(request, "announcement.html", {
-            "announcement": announcement,
-            "stamp": stamp
-            })
+        if user_agent.is_mobile:
+            return render(request, "m_announcement.html", {
+                "announcement": announcement,
+                "stamp": stamp
+                })
+
+        else:
+            return render(request, "announcement.html", {
+                "announcement": announcement,
+                "stamp": stamp
+                })
 
 
 @staff_member_required

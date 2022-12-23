@@ -121,7 +121,7 @@ class ClientsManager:
 
             return current_employees
 
-    def load_client(self, name):
+    def load_user(self, name):
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 SELECT
@@ -147,11 +147,32 @@ class ClientsManager:
                 WHERE name = '{name}'
                 ''')
 
-            client_details = cursor.fetchone()
+            details = cursor.fetchone()
 
-            return client_details
+            entry = {
+                "user_type": details[0],
+                "name": details[1],
+                "phone_number": details[2],
+                "contact_email_address": details[3],
+                "school": details[4],
+                "internal_email_address": details[5],
+                "meeting_duration": details[6],
+                "price": details[7],
+                "acquisition_channel": details[8],
+                "recommenders": details[9],
+                "reasons_for_resignation": details[10],
+                "status": details[11],
+                "coach": details[12],
+                "level": details[12],
+                "daily_limit_of_new_vocabulary": details[13],
+                "maximal_interval_vocabulary": details[14],
+                "daily_limit_of_new_sentences": details[15],
+                "maximal_interval_sentences": details[16]
+            }
 
-    def edit_client(
+            return entry
+
+    def edit_user(
             self,
             user_type,
             name,
