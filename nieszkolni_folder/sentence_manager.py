@@ -159,11 +159,24 @@ class SentenceManager:
 
             return next_set_id
 
-    def display_sets(self):
+    def display_all_sets(self):
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 SELECT set_id, set_name, set_type
                 FROM nieszkolni_app_set
+                ORDER BY set_id
+                ''')
+
+            sets = cursor.fetchall()
+
+            return sets
+
+    def display_sets_by_type(self, set_type):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT set_id, set_name, set_type
+                FROM nieszkolni_app_set
+                WHERE set_type = '{set_type}'
                 ORDER BY set_id
                 ''')
 

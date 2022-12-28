@@ -44,8 +44,6 @@
 			<form action="{% url 'submit_assignment' %}" method="POST">
 				{% csrf_token %}
 
-
-
 					<div class="flex-parent jc-center">
 						<input type="hidden" name="item" value="{{ assignment.0 }}">
 						<input type="hidden" name="client" value="{{ assignment.2 }}">
@@ -56,6 +54,10 @@
 							{% if assignment.6 == 'sentences' %}
 
 								<button type="submit" class="button_main" name="go_to" value="translation">Translate</button>
+
+							{% elif assignment.6 == 'translation' %}
+
+								<button type="submit" class="button_main" name="go_to" value="translate_text">Translate the text</button>
 
 							{% elif assignment.6 == 'reading' %}
 

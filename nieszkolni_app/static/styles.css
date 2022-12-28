@@ -1,6 +1,11 @@
 
 :root {
+  --small-font: 2vh;
+  --font-color: #3C4043;
   --font-family: "Google Sans", Roboto, Arial, sans-serif;
+  --backgroud-color: #FFF;
+  --container-color: #F9F9F9;
+  --border-color: #D3D3D3;
 }
 
 /*Body*/
@@ -74,7 +79,7 @@ a {
   border-style: none;
   box-shadow: rgba(0, 0, 0, .2) 0 3px 5px -1px,rgba(0, 0, 0, .14) 0 6px 10px 0,rgba(0, 0, 0, .12) 0 1px 18px 0;
   box-sizing: border-box;
-  color: #3c4043;
+  color: #3C4043;
   cursor: pointer;
   display: inline-flex;
   fill: currentcolor;
@@ -588,7 +593,7 @@ a {
 }
 
 .side_navigation {
-  background-color: #f9f9f9;
+  background-color: var(--container-color);
   height: 100%;
   right: 0;
   padding: 200px 35px 35px 35px;
@@ -779,15 +784,17 @@ task_card_content_list {
 }
 
 /*Footer*/
-/*.footer {
-  background-color: #F9F9F9;
+.footer {
+  background-color: #FFF;
   bottom: 0;
-  display: flex;
+  display: block;
   height: 10vh;
   left: 0;
-  position: relative;
-  width: 100%;
-}*/
+  max-width: 100%;
+  position: absolute;
+  width: auto;
+  z-index: 10;
+}
 
 /*Nagivation*/
 .navigation {
@@ -2205,6 +2212,7 @@ hr.line {
 .activity_target {
   display: flex;
   color: #3c4043;
+  font-color: var(--font-color);
   font-family: "Google Sans", Roboto, Arial, sans-serif;
   font-size: 50px;
   font-weight: 1000;
@@ -2255,6 +2263,64 @@ hr.line {
   max-width: 100px; 
   text-align: center;
 }
+
+/*challenge*/
+.milestones {
+  display: block;
+  left: 35vw;
+  max-width: 100%;
+  overflow: none;
+  position: absolute;
+  width: auto;
+}
+
+.milestone_frame {
+  position: relative;
+  display: block;
+  height: 25%;
+}
+
+.milestone_box {
+  display: block;
+  height: 25%;
+}
+
+.milestone_description {
+  display: inline-block;
+  font-family: var(--font-family);
+  font-size: var(--small-font);
+  font-weight: 750;
+  position: relative;
+  margin: 0vh 1vw;
+}
+
+.milestone_image {
+  border-color: var(--backgroud-color);
+  border-radius: 50%;
+  border-style:  solid;
+  border-width: 0.6vw;
+  display: inline-block;
+  height: 7vw;
+  margin: 0vh 0vw;
+  outline-color: var(--border-color);
+  outline-style: solid;
+  outline-width: 0.3vw;
+  position: relative;
+  width: 7vw;
+}
+
+.milestone_locked {
+  opacity: 0.4;
+}
+
+.path {
+  background-color: var(--border-color);
+  display: block;
+  height: 7vh;
+  left: 3.5vw;
+  position: relative;
+  width: 0.3vw;
+} 
 
 @media (max-width: 768px) {
     .input_content {

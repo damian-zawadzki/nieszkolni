@@ -1,6 +1,11 @@
 import os
 import django
+
 from django.db import connection
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+
 from nieszkolni_app.models import Client
 from nieszkolni_folder.time_machine import TimeMachine
 
@@ -64,6 +69,52 @@ class ClientsManager:
                 ON CONFLICT (name)
                 DO NOTHING
                 ''')
+
+    def add_client_and_user(self, f_name, l_name, password, user):
+        system_username = f_name.lower() + l_name.lower()
+        username = f_name + " " + l_name
+        internal_email_address = "-"
+
+        if user is None:
+            user = User.objects.create_user(
+                    system_username,
+                    internal_email_address,
+                    password
+                    )
+
+            user.first_name = f_name
+            user.last_name = l_name
+
+            is_client = ClientsManager().verify_client(username)
+            if is_client is False:
+
+                try:
+                    add = ClientsManager().add_client(
+                        username,
+                        internal_email_address
+                        )
+
+                    user.save()
+
+                except Exception as e:
+                    messages = "There has been a mistake. Contact the administration team."
+                    product = ("ERROR", message, "register_user")
+
+                    return product
+
+                message = "The user has been added to the database."
+                product = ("SUCCESS", message, "list_current_users")
+                return product
+
+            else:
+                message = "The student already exists."
+                product = ("WARNING", message, "register_user")
+                return product
+
+        else:
+            message = "The student already exists."
+            product = ("WARNING", message, "register_user")
+            return product
 
     def verify_client(self, name):
         with connection.cursor() as cursor:
@@ -163,11 +214,11 @@ class ClientsManager:
                 "reasons_for_resignation": details[10],
                 "status": details[11],
                 "coach": details[12],
-                "level": details[12],
-                "daily_limit_of_new_vocabulary": details[13],
-                "maximal_interval_vocabulary": details[14],
-                "daily_limit_of_new_sentences": details[15],
-                "maximal_interval_sentences": details[16]
+                "level": details[13],
+                "daily_limit_of_new_vocabulary": details[14],
+                "maximal_interval_vocabulary": details[15],
+                "daily_limit_of_new_sentences": details[16],
+                "maximal_interval_sentences": details[17]
             }
 
             return entry

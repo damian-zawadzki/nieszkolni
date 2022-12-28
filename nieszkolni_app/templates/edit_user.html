@@ -9,7 +9,14 @@
   <div class="flex-parent jc-center"> 
      <div class="input_container">
       <label class="input_label">User type</label>
-      <input type="text" class="input_content" name="user_type" value="{{ details.user_type }}" required>
+      <select required class="input_content" name="user_type">
+
+          <option selected value="{{ details.user_type }}">{{ details.user_type }}</option>
+          <option value="guest">guest</option>
+          <option value="client">client</option>
+          <option value="staff">staff</option>
+
+      </select>
     </div>
   </div>
 
@@ -37,14 +44,41 @@
   <div class="flex-parent jc-center"> 
     <div class="input_container">
       <label class="input_label">Meeting duration</label>
-      <input type="number" class="input_content" name="meeting_duration" value="{{ details.meeting_duration }}" required>
+      <select required class="input_content" name="meeting_duration">
+
+          <option selected value="{{ details.meeting_duration }}">{{ details.meeting_duration }}</option>
+          <option value="55">55</option>
+          <option value="60">60</option>
+
+      </select>
     </div>
   </div>
 
   <div class="flex-parent jc-center"> 
     <div class="input_container">
       <label class="input_label">Acquisition channel</label>
-      <input type="text" class="input_content" name="acquisition_channel" value="{{ details.acquisition_channel }}" required>
+      <select required class="input_content" name="acquisition_channel">
+
+          <option selected value="{{ details.acquisition_channel }}">{{ details.acquisition_channel }}</option>
+          <option value="again">again</option>
+          <option value="business cards">business cards</option>
+          <option value="cold calls">cold calls</option>
+          <option value="directly">directly</option>
+          <option value="events">events</option>
+          <option value="Facebook ads">Facebook ads</option>
+          <option value="Facebook fanpage">Facebook fanpage</option>
+          <option value="Facebook groups">Facebook groups</option>
+          <option value="instagram">instagram</option>
+          <option value="instagram ads">instagram ads</option>
+          <option value="newsletter">newsletter</option>
+          <option value="other">other</option>
+          <option value="recommendations">recommendations</option>
+          <option value="training">training</option>
+          <option value="unknown">unknown</option>
+          <option value="vouchers">vouchers</option>
+          <option value="website">website</option>
+
+      </select>
     </div>
   </div>
 
@@ -65,21 +99,40 @@
   <div class="flex-parent jc-center"> 
     <div class="input_container">
       <label class="input_label">Status</label>
-      <input type="text" class="input_content" name="status" value="{{ details.status }}" required>
+      <select required class="input_content" name="status">
+
+          <option selected value="{{ details.status }}">{{ details.status }}</option>
+          <option value="active">active</option>
+          <option value="inactive">inactive</option>
+
+      </select>
     </div>
   </div>
 
   <div class="flex-parent jc-center"> 
     <div class="input_container">
       <label class="input_label">Coach</label>
-      <input type="text" class="input_content" name="coach" value="{{ details.coach }}" required>
+      <select required class="input_content" name="coach">
+
+          <option selected value="{{ details.coach }}">{{ details.coach }}</option>
+          <option value="Marta Bańkowska">Marta Bańkowska</option>
+          <option value="Piotr Gmitrzak">Piotr Gmitrzak</option>
+
+      </select>
     </div>
   </div>
 
   <div class="flex-parent jc-center"> 
     <div class="input_container">
       <label class="input_label">Level</label>
-      <input type="text" class="input_content" name="level" value="{{ details.level }}" required>
+      <select required class="input_content" name="level">
+
+          <option selected value="{{ details.level }}">{{ details.level }}</option>
+          <option value="basic">basic</option>
+          <option value="communicative">communicative</option>
+          <option value="advanced">advanced</option>
+
+      </select>
     </div>
   </div>
 

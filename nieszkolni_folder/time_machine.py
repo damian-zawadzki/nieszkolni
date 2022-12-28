@@ -232,6 +232,24 @@ class TimeMachine:
 
         return week_sign
 
+    def number_to_week_number_sign(self, number):
+        date_string = self.number_to_system_date(number)
+        date = datetime.strptime(date_string, today_pattern)
+        year = date.isocalendar().year
+        week = date.isocalendar().week
+
+        year_short = str(year)[2:4]
+        week_sign = f"{year_short}W{week:02d}"
+
+        return week_sign
+
+    def number_to_week(self, number):
+        date_string = self.number_to_system_date(number)
+        date = datetime.strptime(date_string, today_pattern)
+        week = date.isocalendar().week
+
+        return week
+
     def time_number_to_date_number(self, time_number):
         date_number_raw = time_number/86400
         date_number = re.search(r"\d{1,}", str(date_number_raw)).group()
@@ -244,3 +262,11 @@ class TimeMachine:
         month_ago = self.number_to_system_date(month_ago_number)
 
         return month_ago
+
+    def list_dates(self, start, end):
+        start = TimeMachine().date_to_number(start)
+        end = TimeMachine().date_to_number(end)
+
+        dates = [TimeMachine().number_to_system_date(date) for date in range(start+1, end+1)]
+
+        return dates

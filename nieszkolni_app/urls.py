@@ -157,4 +157,6 @@ urlpatterns = [
     path('ratings/', views.ratings, name="ratings"),
     path('inspection/', views.inspection, name="inspection"),
     path('mychart/', views.mychart, name="mychart"),
+    path('challenge/', views.challenge, name="challenge"),
+    path('challenge/<int:unique_id>', views.challenge, name="challenge"), 
        ]

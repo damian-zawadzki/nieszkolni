@@ -730,6 +730,17 @@ class StreamManager:
 
             return total_po
 
+    def find_command_from_to(self, client, command, start, end):
+        dates = TimeMachine().list_dates(start, end)
+
+        rows = Stream.objects.filter(
+                name=client,
+                command=command,
+                date__in=dates
+                )
+
+        return rows
+
     def display_titles_per_client(self, client):
 
         # Theater

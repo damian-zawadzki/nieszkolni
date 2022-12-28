@@ -39,6 +39,13 @@ class ActivityManager:
 
         no_submissions = KnowledgeManager().display_list_of_prompts("no_submission")
         po = StreamManager().count_po_from_to(client, last_sunday, this_sunday)
+        homework = StreamManager().find_command_from_to(
+                client,
+                "Homework",
+                last_sunday,
+                this_sunday
+                )
+        homework_count = len([item.command for item in homework])
         stats = StreamManager().statistics(client)
         duration = stats["duration"]
         flashcards_check = stats["study_days_this_week"]
@@ -74,7 +81,9 @@ class ActivityManager:
                 else:
                     completed.append(assignment[0])
 
-        if len(uncompleted) == 0:
+        uncompleted_count = len(uncompleted)
+
+        if uncompleted_count == 0 and homework_count == 0:
             check.update({"maximum": True})
 
         if po > 30 and flashcards_check > 2:

@@ -377,43 +377,27 @@ def register_user(request):
         current_user = first_name + " " + last_name
 
         if request.method == "POST":
-            internal_email_address = request.POST["internal_email_address"]
-            first_name_variable = request.POST["first_name"]
-            last_name_variable = request.POST["last_name"]
+            f_name = request.POST["first_name"]
+            l_name = request.POST["last_name"]
             password = request.POST["password"]
-            system_username = first_name_variable.lower() + last_name_variable.lower()
-            username = first_name_variable + " " + last_name_variable
 
-            user = authenticate(request, username=system_username, password=password)
+            username = f_name.lower() + l_name.lower()
 
-            if user is None:
-                user = User.objects.create_user(system_username, internal_email_address, password)
-                user.first_name = first_name_variable
-                user.last_name = last_name_variable
+            user = authenticate(
+                    request,
+                    username=username,
+                    password=password
+                    )
 
-                is_client = ClientsManager().verify_client(username)
-                if is_client is False:
+            product = ClientsManager().add_client_and_user(
+                    f_name,
+                    l_name,
+                    password,
+                    user
+                    )
 
-                    try:
-                        add = ClientsManager().add_client(
-                            username,
-                            internal_email_address
-                            )
-
-                        user.save()
-
-                    except Exception as e:
-                        messages.error(request, ("There has been a mistake. Contact the administration team."))
-                        return redirect("register_user")
-
-                    messages.success(request, ("The user has been added to the database."))
-                    return redirect("list_current_users")
-
-                else:
-                    messages.success(request, ("The student already exists."))
-
-            else:
-                messages.success(request, ("The user already exists."))
+            messages.add_message(request, getattr(messages, product[0]), product[1])
+            return redirect(product[2])
 
         return render(request, "register_user.html", {})
 
@@ -632,6 +616,7 @@ def old_staff(request):
         current_user = first_name + " " + last_name
 
         return render(request, "old_staff.html", {})
+
 
 @staff_member_required
 def staff_menu(request):
@@ -992,6 +977,21 @@ def submit_assignment(request):
                 sentences = SentenceManager().display_sentence_list(list_number)
 
                 return render(request, "translate_sentences.html", {
+                    "item": item,
+                    "name": current_user,
+                    "assignment_type": assignment_type,
+                    "sentences": sentences,
+                    "title": title
+                    })
+
+            elif request.POST["go_to"] == "translate_text":
+                item = request.POST["item"]
+                assignment_type = request.POST["assignment_type"]
+                title = request.POST["title"]
+                list_number = SentenceManager().find_list_number_by_item(item)
+                sentences = SentenceManager().display_sentence_list(list_number)
+
+                return render(request, "translate_text.html", {
                     "item": item,
                     "name": current_user,
                     "assignment_type": assignment_type,
@@ -1630,6 +1630,7 @@ def choose_id_prefix(request, component):
             id_prefix = request.POST["id_prefix"]
 
             if (component == "sentences" or
+                component == "translation" or
                 component == "reading" or
                     component == "quiz"):
 
@@ -1659,10 +1660,14 @@ def choose_reference(request, component, id_prefix):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        print(component)
+
         if component == "reading":
             references = BackOfficeManager().display_library()
         elif component == "sentences":
-            references = SentenceManager().display_sets()
+            references = SentenceManager().display_sets_by_type("sentences")
+        elif component == "translation":
+            references = SentenceManager().display_sets_by_type("translation")
         elif component == "quiz":
             references = QuizManager().display_collection_ids()
 
@@ -2957,10 +2962,18 @@ def compose_set(request, set_type):
                 return redirect("display_sets")
 
             elif request.POST["action_on_set"] == "compose_text":
+                set_id = request.POST["set_id"]
+                set_name = request.POST["set_name"]
                 sentence_ids = request.POST["sentence_ids"]
-                sentence_ids = sentence_ids.split(",")
-                print(sentence_ids)
 
+                SentenceManager().add_set(
+                    set_id,
+                    set_name,
+                    sentence_ids,
+                    set_type
+                    )
+
+                messages.success(request, ("Set created!"))
                 return redirect("choose_set_type")
 
         if set_type == "translation":
@@ -2984,7 +2997,7 @@ def display_sets(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        items = SentenceManager().display_sets()
+        items = SentenceManager().display_all_sets()
 
         if request.method == "POST":
             if request.POST["action_on_set"] == "compose":
@@ -5478,6 +5491,17 @@ def mychart(request):
         return render(request, "mychart.html", {
             "labels": labels,
             "data": data
+            })
+
+
+@login_required
+def challenge(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        return render(request, "challenge.html", {
             })
 
 

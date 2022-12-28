@@ -342,21 +342,37 @@ class CurriculumManager:
     def display_expiration_date(self, client):
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                SELECT DISTINCT deadline_number
+                SELECT deadline_number
                 FROM nieszkolni_app_curriculum
                 WHERE name = '{client}'
                 AND status = 'uncompleted'
                 ORDER BY deadline_number DESC
-                LIMIT 1
+                LIMIT 50
                 ''')
 
-            date_raw = cursor.fetchone()
+            date_raw = cursor.fetchall()
 
-            if date_raw is not None:
-                date = TimeMachine().number_to_system_date(date_raw[0])
-                return (client, date_raw[0], date)
+            if date_raw is None:
+                result = (client, "expired", 0)
             else:
-                return (client, 0, "expired")
+                weeks = [
+                    TimeMachine().number_to_week_number_sign(date[0])
+                    for date in date_raw
+                    ]
+
+                results = {
+                    (week, weeks.count(week)) for week in weeks
+                    if weeks.count(week) > 2
+                    }
+
+                results = sorted(results, key=lambda week: week[0], reverse=True)
+
+                if len(results) == 0:
+                    result = (client, "expired", 0)
+                else:
+                    result = (client, results[0][0], results[0][1])
+
+            return result
 
     def check_position_in_library(self, item):
         with connection.cursor() as cursor:

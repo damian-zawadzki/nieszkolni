@@ -252,6 +252,9 @@ class CurriculumPlanner:
 
             dates.append(date)
 
-        dates.sort(key=lambda item: (item[1], item[0]))
+        dates.sort(key=lambda date: (date[1], date[0]))
+        expired = [date for date in dates if date[1] == "expired"]
+        valid = [date for date in dates if date[1] != "expired"]
+        results = expired + valid
 
-        return dates
+        return results

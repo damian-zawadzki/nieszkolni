@@ -27,7 +27,9 @@
         <div class="m_navigation_item">
           <a class="m_navigation_link" href="{% url 'profile'%}">MY PROFILE</a>
         </div>
-
+<!--         <div class="m_navigation_item">
+          <a class="m_navigation_link" href="{% url 'challenge'%}">START</a>
+        </div> -->
       </div>
     </nav>
 
@@ -134,6 +136,9 @@
     {% if user.is_staff %}
 
   <nav class="navigation flex-parent jc-center">
+<!--     <li class="navigation_item">
+      <a class="navigation_link" aria-current="page" href="{% url 'challenge'%}">START</a>
+    </li> -->
 
     <li class="navigation_item">
       <a class="navigation_link" aria-current="page" href="{% url 'welcome'%}">CAMPUS</a>
@@ -187,6 +192,9 @@
     {% elif user.is_authenticated %}
 
   <nav class="navigation flex-parent jc-center">
+<!--     <li class="navigation_item">
+      <a class="navigation_link" aria-current="page" href="{% url 'challenge'%}">START</a>
+    </li> -->
 
     <li class="navigation_item">
       <a class="navigation_link" aria-current="page" href="{% url 'campus'%}">CAMPUS</a>
