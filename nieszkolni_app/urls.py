@@ -177,4 +177,9 @@ urlpatterns = [
     path('add_survey_option/', views.add_survey_option, name="add_survey_option"),
     path('add_survey_question/', views.add_survey_question, name="add_survey_question"),
     path('display_survey_question/<int:question_id>', views.display_survey_question, name="display_survey_question"),
+    path('add_survey/', views.add_survey, name="add_survey"),
+    path('display_surveys/', views.display_surveys, name="display_surveys"),
+    path('display_survey/<int:survey_id>', views.display_survey, name="display_survey"),
+    path('add_question_to_survey/', views.add_question_to_survey, name="add_question_to_survey"),
+    path('survey/<int:item>', views.survey, name="survey"),
        ]

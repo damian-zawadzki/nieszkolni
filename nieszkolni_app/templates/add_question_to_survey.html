@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<h1>ADD A QUESTION TO A SURVEY</h1>
+
+<form action="{% url 'add_question_to_survey' %}"  method="POST">
+	{% csrf_token %}
+
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+            <label class="input_label">Survey</label>
+
+            <select required class="input_content" name="survey_id">
+            <option disabled selected value></option>
+
+            {% for survey in surveys %}
+                <option value="{{ survey.0 }}">{{ survey.1 }}</option>
+            {% endfor %}
+
+            </select>
+
+        </div>
+    </div>
+
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+            <label class="input_label">Question</label>
+
+            <select required class="input_content" name="question_id">
+            <option disabled selected value></option>
+
+            {% for question in questions %}
+                <option value="{{ question.0 }}">{{ question.1 }}</option>
+            {% endfor %}
+
+            </select>
+
+        </div>
+    </div>
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_survey" value="add">Add</button>
+  </div>
+
+</form>
+
+{% endblock %}

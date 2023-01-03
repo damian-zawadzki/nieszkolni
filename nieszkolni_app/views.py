@@ -1423,7 +1423,7 @@ def assignment(request, item):
                     action
                     )
 
-            if product[2] is not None:
+            if len(product) > 2:
                 messages.add_message(
                         request,
                         getattr(messages, product[2][0]),
@@ -1617,6 +1617,7 @@ def choose_id_prefix(request, component):
             if (component == "sentences" or
                 component == "translation" or
                 component == "reading" or
+                component == "survey" or
                     component == "quiz"):
 
                 return redirect(
@@ -1653,6 +1654,8 @@ def choose_reference(request, component, id_prefix):
             references = SentenceManager().display_sets_by_type("sentences")
         elif component == "translation":
             references = SentenceManager().display_sets_by_type("translation")
+        elif component == "survey":
+            references = SurveyManager().display_surveys()
         elif component == "quiz":
             references = QuizManager().display_collection_ids()
 
@@ -5823,6 +5826,112 @@ def display_survey_question(request, question_id):
             "question_id": question_id,
             "question": question,
             "options": options
+            })
+
+
+@staff_member_required
+def add_survey(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        if request.method == "POST":
+            if request.POST["action_on_survey"] == "add":
+                title = request.POST["title"]
+                content = request.POST["content"]
+
+                SurveyManager().add_survey(
+                    title,
+                    content
+                    )
+
+                messages.success(request, "Survey created")
+                return redirect("display_surveys")
+
+        return render(request, "add_survey.html", {})
+
+
+@staff_member_required
+def display_surveys(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        surveys = SurveyManager().display_surveys()
+
+        return render(request, "display_surveys.html", {
+            "surveys": surveys
+            })
+
+
+@staff_member_required
+def display_survey(request, survey_id):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        survey = SurveyManager().display_survey(survey_id)
+        questions = SurveyManager().display_questions_by_survey(survey_id)
+
+        return render(request, "display_survey.html", {
+            "survey_id": survey_id,
+            "survey": survey,
+            "questions": questions
+            })
+
+
+@staff_member_required
+def add_question_to_survey(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        surveys = SurveyManager().display_surveys()
+        questions = SurveyManager().display_questions()
+
+        if request.method == "POST":
+            if request.POST["action_on_survey"] == "add":
+                survey_id = request.POST["survey_id"]
+                question_id = request.POST["question_id"]
+
+                SurveyManager().add_question_to_survey(
+                    survey_id,
+                    question_id
+                    )
+
+                messages.success(request, "Question added to the survey")
+                return redirect("display_survey", survey_id=survey_id)
+
+        return render(request, "add_question_to_survey.html", {
+            "surveys": surveys,
+            "questions": questions
+            })
+
+
+@staff_member_required
+def survey(request, item):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        assignment = CurriculumManager().display_assignment(item)
+        client = assignment[3]
+        survey_id = assignment[16]
+        SurveyManager().plan_survey(survey_id)
+
+        if request.method == "POST":
+            if request.POST["action_on_survey"] == "add":
+
+                messages.success(request, "Question added to the survey")
+                return redirect("display_survey", survey_id=survey_id)
+
+        return render(request, "survey.html", {
+            "item": item
             })
 
 

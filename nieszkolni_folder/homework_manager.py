@@ -187,6 +187,10 @@ class HomeworkManager:
 
             product = ("take_quiz", item)
 
+        elif action == "take_part":
+
+            product = ("survey", item)
+
         elif action == "translate":
             product = ("translate_sentences", item)
 

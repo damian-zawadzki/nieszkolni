@@ -820,6 +820,10 @@ class CurriculumManager:
             action = "check_stats"
             call = "Check"
             info = "flashcards_sentences_7"
+        elif assignment_type == "survey":
+            action = "take_part"
+            call = "Take part"
+            info = ""
         elif assignment_type in no_submissions:
             action = "mark_as_done"
             call = "Mark as done"

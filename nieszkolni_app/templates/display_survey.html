@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<h1>{{ survey.0 }}. {{ survey.1 }}</h1>
+
+<div class="flex-parent jc-center section">{{ survey.2 }}</div>
+
+<table>
+
+      <tr>
+
+         <th>ID</th>
+         <th>Question</th>
+
+      </tr>
+
+   {% for question in questions %}
+
+      <tr class="tr_clickable" onclick="jump({{ question.0 }})">
+
+         <a id="{{ question.0 }}" href="{% url 'display_survey_question' question_id=question.0 %}"></a>
+
+         <td>{{ question.0 }}</td>
+         <td>{{ question.1 }}</td>
+
+      </tr>
+
+   {% endfor %}
+
+</table>
+
+<div class="white_space"></div>
+
+<script src="{% static 'functions.js' %}"></script>
+
+{% endblock %}

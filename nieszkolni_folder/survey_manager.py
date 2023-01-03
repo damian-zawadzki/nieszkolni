@@ -109,6 +109,46 @@ class SurveyManager:
 
             return questions
 
+    def display_questions_by_survey(self, survey_id):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT question_ids
+                FROM nieszkolni_app_survey
+                WHERE id = '{survey_id}'
+                ''')
+
+            question_ids_raw = cursor.fetchone()
+
+            questions = []
+            if question_ids_raw is not None:
+                if question_ids_raw[0] != "":
+                    question_ids = question_ids_raw[0].split(";")
+
+                    for question_id in question_ids:
+                        if question_id is not None:
+                            if question_id != "":
+                                question = self.display_question_simplified(question_id)
+                                questions.append(question)
+
+            return questions
+
+    def display_question_simplified(self, question_id):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                id,
+                question,
+                question_type,
+                option_ids,
+                action
+                FROM nieszkolni_app_surveyquestion
+                WHERE id = '{question_id}'
+                ''')
+
+            question = cursor.fetchone()
+
+            return question
+
     def display_question(self, question_id):
         with connection.cursor() as cursor:
             cursor.execute(f'''
@@ -134,3 +174,71 @@ class SurveyManager:
                         options.append(option)
 
             return (question, options)
+
+    def add_survey(
+            self,
+            title,
+            content
+            ):
+
+        title = Cleaner().clean_quotation_marks(title)
+        content = Cleaner().clean_quotation_marks(content)
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                INSERT INTO nieszkolni_app_survey (
+                title,
+                content,
+                question_ids
+                )
+                VALUES (
+                '{title}',
+                '{content}',
+                ''
+                )
+                ''')
+
+    def display_surveys(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                id,
+                title,
+                content,
+                question_ids
+                FROM nieszkolni_app_survey
+                ''')
+
+            surveys = cursor.fetchall()
+
+            return surveys
+
+    def display_survey(self, survey_id):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                id,
+                title,
+                content,
+                question_ids
+                FROM nieszkolni_app_survey
+                WHERE id = '{survey_id}'
+                ''')
+
+            survey = cursor.fetchone()
+
+            return survey
+
+    def add_question_to_survey(self, survey_id, question_id):
+        survey = Survey.objects.get(id=survey_id)
+        question_ids_entry = survey.question_ids
+        question_ids = question_ids_entry.split(";")
+        question_ids.append(question_id)
+        question_ids_new_entry = ";".join(question_ids)
+        survey.question_ids = question_ids_new_entry
+        survey.save()
+
+    def plan_survey(self, survey_id):
+        survey = Survey.objects.get(id=survey_id)
+
+        print(survey)

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<h1>SURVEYS</h1>
+
+<table>
+
+      <tr>
+
+         <th>ID</th>
+         <th>Title</th>
+
+      </tr>
+
+   {% for survey in surveys %}
+
+      <tr class="tr_clickable" onclick="jump({{ survey.0 }})">
+
+         <a id="{{ survey.0 }}" href="{% url 'display_survey' survey_id=survey.0 %}"></a>
+
+         <td>{{ survey.0 }}</td>
+         <td>{{ survey.1 }}</td>
+
+      </tr>
+
+   {% endfor %}
+
+</table>
+
+<div class="white_space"></div>
+
+<script src="{% static 'functions.js' %}"></script>
+
+{% endblock %}
