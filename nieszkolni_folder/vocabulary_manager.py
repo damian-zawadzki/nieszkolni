@@ -303,7 +303,7 @@ class VocabularyManager:
             limit = 10
 
         today_number = TimeMachine().today_number()
-        deadline = today_number + 14
+        deadline = today_number - 14
 
         with connection.cursor() as cursor:
             cursor.execute(f'''
@@ -316,7 +316,7 @@ class VocabularyManager:
                 FROM nieszkolni_app_card
                 WHERE client = '{client}'
                 AND number_of_reviews != 0
-                AND publication_date > '{deadline}'
+                AND publication_date <= '{deadline}'
                 AND deck = '{deck}'
                 LIMIT {limit}
                 ''')

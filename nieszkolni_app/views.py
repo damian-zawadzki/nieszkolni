@@ -5402,6 +5402,8 @@ def examination_mode(request):
                 "vocabulary"
                 )
 
+        print(phrases)
+
         sentences = VocabularyManager().display_test_cards(
                 current_client,
                 "sentences"
