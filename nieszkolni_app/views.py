@@ -613,10 +613,8 @@ def staff(request):
 
         # Automatic processes
         ChallengeManager().plan_challenges()
-        now_x = TimeMachine().now()
 
         return render(request, "staff.html", {
-            "now_x": now_x,
             "current_user": current_user
             })
 
