@@ -38,6 +38,7 @@ from nieszkolni_folder.audit_manager import AuditManager
 from nieszkolni_folder.onboarding_manager import OnboardingManager
 from nieszkolni_folder.back_office_planner import BackOfficePlanner
 from nieszkolni_folder.challenge_manager import ChallengeManager
+from nieszkolni_folder.survey_manager import SurveyManager
 
 from io import BytesIO
 
@@ -612,8 +613,10 @@ def staff(request):
 
         # Automatic processes
         ChallengeManager().plan_challenges()
+        now_x = TimeMachine().now()
 
         return render(request, "staff.html", {
+            "now_x": now_x,
             "current_user": current_user
             })
 
@@ -5746,6 +5749,82 @@ def display_challenge_set(request, process_number):
         return render(request, "display_challenge_set.html", {
             "process_number": process_number,
             "steps": steps
+            })
+
+
+@staff_member_required
+def add_survey_option(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        options = SurveyManager().display_options()
+
+        if request.method == "POST":
+            if request.POST["action_on_survey"] == "add":
+                option = request.POST["option"]
+                option_value = request.POST["option_value"]
+
+                SurveyManager().add_option(option, option_value)
+
+                messages.success(request, "Option added")
+                return redirect("add_survey_option")
+
+        return render(request, "add_survey_option.html", {
+            "options": options
+            })
+
+
+@staff_member_required
+def add_survey_question(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        options = SurveyManager().display_options()
+        questions = SurveyManager().display_questions()
+
+        if request.method == "POST":
+            if request.POST["action_on_survey"] == "add":
+                question = request.POST["question"]
+                question_type = request.POST["question_type"]
+                options = request.POST.getlist("option")
+                action = request.POST["action"]
+
+                option_ids = ";".join(options)
+
+                SurveyManager().add_question(
+                        question,
+                        question_type,
+                        option_ids,
+                        action
+                        )
+
+                messages.success(request, "Question added")
+                return redirect("add_survey_question")
+
+        return render(request, "add_survey_question.html", {
+            "options": options,
+            "questions": questions
+            })
+
+
+@staff_member_required
+def display_survey_question(request, question_id):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        question = SurveyManager().display_question(question_id)[0]
+        options = SurveyManager().display_question(question_id)[1]
+
+        return render(request, "display_survey_question.html", {
+            "question_id": question_id,
+            "question": question,
+            "options": options
             })
 
 

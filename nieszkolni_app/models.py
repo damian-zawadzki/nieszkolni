@@ -516,3 +516,31 @@ class Challenge(models.Model):
     image = models.CharField(max_length=200, default="")
     module = models.CharField(max_length=200, default="")
     item = models.IntegerField(default=0)
+
+
+class Survey(models.Model):
+    title = models.CharField(max_length=200, default="")
+    content = models.TextField(default="")
+    question_ids = models.CharField(max_length=200, default="")
+
+
+class SurveyQuestion(models.Model):
+    question = models.TextField(default="")
+    question_type = models.CharField(max_length=200, default="")
+    option_ids = models.CharField(max_length=200, default="")
+    action = models.CharField(max_length=200, default="")
+
+
+class SurveyOption(models.Model):
+    option = models.TextField(default="")
+    option_value = models.CharField(max_length=200, default="")
+
+
+class SurveyResponse(models.Model):
+    stamp = models.IntegerField(default=0)
+    client = models.CharField(max_length=200, default="")
+    response = models.TextField(default="")
+    survey_id = models.IntegerField(default=0)
+    question_id = models.IntegerField(default=0)
+    response_id = models.IntegerField(default=0)
+    item = models.IntegerField(default=0)

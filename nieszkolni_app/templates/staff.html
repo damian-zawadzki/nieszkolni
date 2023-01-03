@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% block 'content' %}
 
+<h1>{{ now_x }}</h1>
+
 <form action="{% url 'staff' %}" method="POST">
 	{% csrf_token %}
 

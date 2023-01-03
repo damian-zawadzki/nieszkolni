@@ -2415,6 +2415,14 @@ hr.line {
   color: #FFF;
 }
 
+.white_space {
+  display: block;
+  height: 20%;
+  left: 0;
+  position: relative;
+  width: 100%;
+}
+
 .fade_in {
 -webkit-animation: fadein 2s;
    -moz-animation: fadein 2s;

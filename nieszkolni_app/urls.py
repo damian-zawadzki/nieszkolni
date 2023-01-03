@@ -174,4 +174,7 @@ urlpatterns = [
     path('display_challenge_set/<int:process_number>', views.display_challenge_set, name="display_challenge_set"),
     path('translate_sentences/<int:item>', views.translate_sentences, name="translate_sentences"),
     path('applause/', views.applause, name="applause"),
+    path('add_survey_option/', views.add_survey_option, name="add_survey_option"),
+    path('add_survey_question/', views.add_survey_question, name="add_survey_question"),
+    path('display_survey_question/<int:question_id>', views.display_survey_question, name="display_survey_question"),
        ]
