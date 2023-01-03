@@ -1,5 +1,6 @@
 from datetime import datetime
 from datetime import timedelta
+from zoneinfo import ZoneInfo
 import re
 
 
@@ -11,10 +12,12 @@ class TimeMachine:
     global now_pattern_colons
     global now_pattern_colons_2
     global today_pattern
+    global timezone
     now_pattern = "%Y-%m-%d %H-%M-%S-%f"
     now_pattern_colons = "%Y-%m-%d %H:%M:%S"
     now_pattern_colons_2 = "%Y-%m-%dT%H:%M"
     today_pattern = "%Y-%m-%d"
+    timezone = ZoneInfo("Europe/Warsaw")
 
     def show_now_pattern(self):
         return now_pattern
@@ -23,13 +26,13 @@ class TimeMachine:
         return today_pattern
 
     def now(self):
-        return datetime.now().strftime(now_pattern)
+        return datetime.now(timezone).strftime(now_pattern)
 
     def now_colons(self):
-        return datetime.now().strftime(now_pattern_colons)
+        return datetime.now(timezone).strftime(now_pattern_colons)
 
     def today(self):
-        return datetime.now().strftime(today_pattern)
+        return datetime.now(timezone).strftime(today_pattern)
 
     def mondays(self):
 
