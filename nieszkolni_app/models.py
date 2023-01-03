@@ -487,3 +487,32 @@ class Paper(models.Model):
     stamp = models.IntegerField(default=0)
     title = models.CharField(max_length=200, default="")
     content = models.FileField()
+
+
+class ChallengeMatrix(models.Model):
+    matrix = models.CharField(max_length=200, default="")
+    step_type = models.CharField(max_length=200, default="")
+    step_number = models.IntegerField(default=0)
+    title = models.CharField(max_length=200, default="")
+    text = models.TextField(default="")
+    image = models.CharField(max_length=200, default="")
+    module = models.CharField(max_length=200, default="")
+
+
+class Challenge(models.Model):
+    stamp = models.IntegerField(default=0)
+    matrix = models.CharField(max_length=200, default="")
+    process_number = models.IntegerField(default=0)
+    process_status = models.CharField(max_length=200, default="")
+    process_completion_stamp = models.IntegerField(default=0)
+    step_type = models.CharField(max_length=200, default="")
+    step_id = models.IntegerField(default=0)
+    step_number = models.IntegerField(default=0)
+    step_status = models.CharField(max_length=200, default="")
+    step_completion_stamp = models.IntegerField(default=0)
+    client = models.CharField(max_length=200, default="")
+    title = models.CharField(max_length=200, default="")
+    text = models.TextField(default="")
+    image = models.CharField(max_length=200, default="")
+    module = models.CharField(max_length=200, default="")
+    item = models.IntegerField(default=0)

@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>CREATE A CHALLENGE</h1>
+
+<form action="{% url 'add_challenge' %}"  method="POST">
+	{% csrf_token %}
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Matrix</label>
+         <input type="text" class="input_content" name="matrix" list="matrices" required>
+         <datalist id="matrices">
+            {% for matrix in matrices %}
+               <option value="{{ matrix.1 }}"></option>
+            {% endfor %}
+         </datalist>
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Type</label>
+         <select required class="input_content" name="step_type" required>
+            <option disabled selected value></option>
+
+            <option value="assignment">assignment</option>
+            <option value="information">information</option>
+
+         </select>
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Step</label>
+         <input type="number" class="input_content" name="step_number" required>
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Title</label>
+         <input type="text" class="input_content" name="title" required>
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Text</label>
+         <textarea type="text" class="input_content input_paragraph" name="text" required></textarea>
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Image</label>
+         <input type="url" class="input_content" name="image" required>
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">Module</label>
+         <select required class="input_content" name="module" required>
+            <option disabled selected value></option>
+            <option value="not applicable">not applicable</option>
+
+            {% for module in modules %}
+               <option value="{{ module.0 }}">{{ module.0 }}</option>
+            {% endfor %}
+
+         </select>
+      </div>
+   </div>
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_challenge" value="add">Add</button>
+  </div>
+
+</form>
+
+{% endblock %}

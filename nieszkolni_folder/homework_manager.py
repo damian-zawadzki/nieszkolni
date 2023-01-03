@@ -14,6 +14,7 @@ import re
 
 from nieszkolni_folder.curriculum_manager import CurriculumManager
 from nieszkolni_folder.stream_manager import StreamManager
+from nieszkolni_folder.quiz_manager import QuizManager
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
@@ -46,9 +47,9 @@ class HomeworkManager:
 
             else:
                 difference = target - result
-                product = ("WARNING", f"{difference} days still left! Keep up the good work!")
+                output = ("WARNING", f"{difference} days still left! Keep up the good work!")
 
-            return product
+            return output
 
         elif command == "flashcards_sentences_7":
             assignment = CurriculumManager().display_assignment(item)
@@ -122,4 +123,77 @@ class HomeworkManager:
             )
 
         product = ("SUCCESS", "Marked as read!")
+        return product
+
+    def choose_action(self, item, current_user, action=None):
+        assignment = CurriculumManager().display_assignment(item)
+
+        if action is None:
+            action = assignment[18]
+
+        client = assignment[3]
+        assignment_type = assignment[6]
+        command = assignment[19]
+        output = None
+
+        if action == "remove":
+
+            CurriculumManager().remove_curriculum(item)
+
+            product = ("check_homework", current_user)
+
+        elif action == "submit":
+
+            product = ("submit_assignment_automatically", item)
+
+        elif action == "uncheck":
+
+            CurriculumManager().change_status_to_fake_completed(
+                    item,
+                    current_user
+                    )
+
+            product = ("assignments", client)
+
+        elif action == "mark_as_read":
+
+            self.check_assignment(
+                item,
+                current_user
+                )
+
+            product = ("assignments", client)
+
+        elif action == "mark_as_done":
+
+            self.mark_as_done(
+                item,
+                current_user
+                )
+
+            product = ("assignments", client)
+
+        elif action == "check_stats":
+
+            output = HomeworkManager().check_stats(
+                    item,
+                    current_user,
+                    command
+                    )
+
+            product = ("assignments", item, output)
+
+        elif action == "take_quiz":
+
+            product = ("take_quiz", item)
+
+        elif action == "translate":
+            product = ("translate_sentences", item)
+
+        elif action == "translate_text":
+
+            list_number = SentenceManager().find_list_number_by_item(item)
+            sentences = SentenceManager().display_sentence_list(list_number)
+            product = ("translate_text", item)
+
         return product

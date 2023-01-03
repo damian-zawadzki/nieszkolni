@@ -37,6 +37,7 @@ from nieszkolni_folder.rating_manager import RatingManager
 from nieszkolni_folder.audit_manager import AuditManager
 from nieszkolni_folder.onboarding_manager import OnboardingManager
 from nieszkolni_folder.back_office_planner import BackOfficePlanner
+from nieszkolni_folder.challenge_manager import ChallengeManager
 
 from io import BytesIO
 
@@ -84,6 +85,12 @@ def campus(request):
 
         announcements = BackOfficeManager().display_latest_announcements()
         user_agent = get_user_agent(request)
+
+        challenges = ChallengeManager().display_planned_challenges(current_user)
+        challenge_status = ChallengeManager().refresh_process(challenges)
+
+        if not challenge_status:
+            return redirect("challenges")
 
         if user_agent.is_mobile:
             return render(request, 'm_campus.html', {
@@ -389,14 +396,14 @@ def register_user(request):
                     password=password
                     )
 
-            product = ClientsManager().add_client_and_user(
+            output = ClientsManager().add_client_and_user(
                     f_name,
                     l_name,
                     password,
                     user
                     )
 
-            messages.add_message(request, getattr(messages, product[0]), product[1])
+            messages.add_message(request, getattr(messages, output[0]), output[1])
             return redirect(product[2])
 
         return render(request, "register_user.html", {})
@@ -602,6 +609,9 @@ def staff(request):
         first_name = request.user.first_name
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
+
+        # Automatic processes
+        ChallengeManager().plan_challenges()
 
         return render(request, "staff.html", {
             "current_user": current_user
@@ -892,116 +902,108 @@ def profile_introduction(request):
 
 
 @login_required
-def submit_assignment(request):
+def submit_assignment(request, item):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        assignment = CurriculumManager().display_assignment(item)
+        client = assignment[3]
+        assignment_type = assignment[6]
+
         if request.method == "POST":
-            if request.POST["go_to"] == "removal":
-                item = request.POST["item"]
+            item = request.POST["item"]
+            client = request.POST["client"]
+            assignment_type = request.POST["assignment_type"]
+            title = request.POST["title"]
+            content = request.POST["content"]
 
-                CurriculumManager().remove_curriculum(item)
+            print(assignment_type)
 
-                return redirect("display_curricula")
-
-            if request.POST["go_to"] == "submission":
-                item = request.POST["item"]
-                assignment_type = request.POST["assignment_type"]
-
-                return render(request, "submit_assignment_automatically.html", {
-                    "item": item,
-                    "name": current_user,
-                    "assignment_type": assignment_type
-                    })
-
-            if request.POST["go_to"] == "uncheck":
-                item = request.POST["item"]
-
-                CurriculumManager().change_status_to_fake_completed(
-                        item,
-                        current_user
-                        )
-
-                return redirect("assignments")
-
-            elif request.POST["go_to"] == "mark_as_read":
-                item = request.POST["item"]
-
-                product = HomeworkManager().check_assignment(
+            output = SubmissionManager().run_submission(
                     item,
+                    client,
+                    assignment_type,
+                    title,
+                    content,
                     current_user
                     )
 
-                messages.add_message(request, getattr(messages, product[0]), product[1])
-                return redirect("assignments")
+            if output[2] != "applause":
+                messages.add_message(
+                        request,
+                        getattr(messages, output[0]),
+                        output[1]
+                        )
 
-            elif request.POST["go_to"] == "mark_as_done":
-                item = request.POST["item"]
+            return redirect(output[2])
 
-                product = HomeworkManager().mark_as_done(
+        return render(request, "submit_assignment.html", {
+                "item": item,
+                "client": client,
+                "assignment_type": assignment_type
+                })
+
+
+@login_required
+def submit_assignment_automatically(request, item):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        assignment = CurriculumManager().display_assignment(item)
+        client = assignment[3]
+        assignment_type = assignment[6]
+
+        if request.method == "POST":
+            item = request.POST["item"]
+            client = request.POST["client"]
+            assignment_type = request.POST["assignment_type"]
+            title = request.POST["title"]
+            content = request.POST["content"]
+
+            output = SubmissionManager().run_submission(
                     item,
+                    client,
+                    assignment_type,
+                    title,
+                    content,
                     current_user
                     )
 
-                messages.add_message(request, getattr(messages, product[0]), product[1])
-                return redirect("assignments")
+            messages.add_message(
+                    request,
+                    getattr(messages, output[0]),
+                    output[1]
+                    )
 
-            elif request.POST["go_to"] == "check_stats":
-                command = request.POST["command"]
+            return redirect(output[2])
+
+        return render(request, "submit_assignment_automatically.html", {
+                "item": item,
+                "client": client,
+                "assignment_type": assignment_type
+                })
+
+
+@login_required
+def translate_sentences(request, item):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        list_number = SentenceManager().find_list_number_by_item(item)
+        sentences = SentenceManager().display_sentence_list(list_number)
+        assignment = CurriculumManager().display_assignment(item)
+        client = assignment[3]
+
+        if request.method == "POST":
+            if request.POST["action_on_submission"] == "translate":
                 item = request.POST["item"]
-
-                product = HomeworkManager().check_stats(
-                        item,
-                        current_user,
-                        command
-                        )
-
-                messages.add_message(request, getattr(messages, product[0]), product[1])
-                return redirect("assignments")
-
-            elif request.POST["go_to"] == "take_quiz":
-                item = request.POST["item"]
-                title = request.POST["title"]
-                quiz_id = QuizManager().find_quiz_id_by_item(item)
-                quiz_question_id = QuizManager().display_next_generated_question(quiz_id)
-
-                return redirect(f"take_quiz/{quiz_question_id}/{item}")
-
-            elif request.POST["go_to"] == "translation":
-                item = request.POST["item"]
-                assignment_type = request.POST["assignment_type"]
-                title = request.POST["title"]
-                list_number = SentenceManager().find_list_number_by_item(item)
-                sentences = SentenceManager().display_sentence_list(list_number)
-
-                return render(request, "translate_sentences.html", {
-                    "item": item,
-                    "name": current_user,
-                    "assignment_type": assignment_type,
-                    "sentences": sentences,
-                    "title": title
-                    })
-
-            elif request.POST["go_to"] == "translate_text":
-                item = request.POST["item"]
-                assignment_type = request.POST["assignment_type"]
-                title = request.POST["title"]
-                list_number = SentenceManager().find_list_number_by_item(item)
-                sentences = SentenceManager().display_sentence_list(list_number)
-
-                return render(request, "translate_text.html", {
-                    "item": item,
-                    "name": current_user,
-                    "assignment_type": assignment_type,
-                    "sentences": sentences,
-                    "title": title
-                    })
-
-            elif request.POST["go_to"] == "translated_sentences":
-                item = request.POST["item"]
-                name = request.POST["name"]
+                client = request.POST["client"]
                 assignment_type = request.POST["assignment_type"]
                 title = request.POST["title"]
 
@@ -1018,11 +1020,12 @@ def submit_assignment(request):
 
                 content = "\n".join(content_raw)
 
+                # # Move this to the logic
                 # Submitting sentence translations
                 SentenceManager().submit_sentence_translation(translations)
                 SubmissionManager().add_submission(
                     item,
-                    name,
+                    client,
                     assignment_type,
                     title,
                     content
@@ -1032,51 +1035,16 @@ def submit_assignment(request):
                 CurriculumManager().change_status_to_completed(item, current_user)
 
                 # Add information to stream to count Effort Hours
-                StreamManager().add_to_stream(name, "T", 10, current_user)
+                StreamManager().add_to_stream(client, "T", 10, current_user)
 
                 messages.success(request, ("Your assignment has been submitted!"))
                 return redirect("assignments")
 
-            else:
-                item = request.POST["item"]
-                name = request.POST["client"]
-                assignment_type = request.POST["assignment_type"]
-                title = request.POST["title"]
-                content = request.POST["content"]
-
-                SubmissionManager().add_submission(
-                        item,
-                        name,
-                        assignment_type,
-                        title,
-                        content
-                        )
-
-                # Tick off the task in student's to-do list
-                CurriculumManager().change_status_to_completed(item, current_user)
-
-                # Add information to stream to count Effort Hours
-                commands = {
-                    "essay": "AV",
-                    "assignment": "AV",
-                    "wordfinder": "WF"
-                    }
-
-                wordcount = Wordcounter(content).counter()
-                linecount = Wordcounter(content).linecounter()
-                command = commands.get(assignment_type)
-
-                if command == "AV":
-                    value = wordcount
-                else:
-                    value = linecount
-
-                StreamManager().add_to_stream(name, command, value, current_user)
-
-                messages.success(request, ("Your assignment has been submitted!"))
-                return redirect("assignments")
-        else:
-            return render(request, "submit_assignment.html", {})
+        return render(request, "translate_sentences.html", {
+                "item": item,
+                "client": client,
+                "sentences": sentences
+                })
 
 
 @login_required
@@ -1395,7 +1363,7 @@ def remove_multiple_curricula(request):
 
 
 @login_required
-def assignments(request):
+def assignments(request, client=''):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
@@ -1445,18 +1413,34 @@ def assignment(request, item):
         no_submissions = KnowledgeManager().display_list_of_prompts("no_submission")
         assignment = CurriculumManager().display_assignment(item)
 
+        if request.method == "POST":
+            action = request.POST["action_on_assignment"]
+
+            product = HomeworkManager().choose_action(
+                    item,
+                    current_user,
+                    action
+                    )
+
+            if product[2] is not None:
+                messages.add_message(
+                        request,
+                        getattr(messages, product[2][0]),
+                        product[2][1]
+                        )
+
+            return redirect(product[0], product[1])
+
         if user_agent.is_mobile:
             return render(request, "m_assignment.html", {
-                    "assignment": assignment,
-                    "current_user": current_user,
-                    "no_submissions": no_submissions
-                    })
+                "item": item,
+                "assignment": assignment
+                })
 
         else:
             return render(request, "assignment.html", {
-                "assignment": assignment,
-                "current_user": current_user,
-                "no_submissions": no_submissions
+                "item": item,
+                "assignment": assignment
                 })
 
 
@@ -2227,6 +2211,7 @@ def translate_wordbook(request):
         current_user = first_name + " " + last_name
 
         entries = KnowledgeManager().display_open_book("vocabulary")
+        counter = KnowledgeManager().count_open_book("vocabulary")
 
         if entries is None:
             messages.success(request, ("You've translated all the wordbook entries!"))
@@ -2235,8 +2220,8 @@ def translate_wordbook(request):
         else:
             if request.method == "POST":
                 if request.POST["wordbook_action"] == "delete":
-                    unique_id = request.POST["unique_id"]
-                    delete_entry = KnowledgeManager().delete_book_entry(unique_id)
+                    english = request.POST["english"]
+                    KnowledgeManager().delete_book_entries_by_english(english)
 
                     return redirect("translate_wordbook")
 
@@ -2248,7 +2233,10 @@ def translate_wordbook(request):
 
                     return redirect("translate_wordbook")
 
-            return render(request, "translate_wordbook.html", {"entries": entries})
+            return render(request, "translate_wordbook.html", {
+                    "entries": entries,
+                    "counter": counter
+                    })
 
 
 @staff_member_required
@@ -2259,6 +2247,7 @@ def approve_wordbook(request):
         current_user = first_name + " " + last_name
 
         entries = KnowledgeManager().display_translated_book("vocabulary")
+        counter = KnowledgeManager().count_translated_book("vocabulary")
 
         if entries is None:
             messages.success(request, ("You've translated all the wordbook entries!"))
@@ -2280,7 +2269,10 @@ def approve_wordbook(request):
 
                     return redirect("approve_wordbook")
 
-            return render(request, "approve_wordbook.html", {"entries": entries})
+            return render(request, "approve_wordbook.html", {
+                    "entries": entries,
+                    "counter": counter
+                    })
 
 
 @staff_member_required
@@ -2291,6 +2283,7 @@ def translate_sentencebook(request):
         current_user = first_name + " " + last_name
 
         entries = KnowledgeManager().display_open_book("sentences")
+        counter = KnowledgeManager().count_open_book("sentences")
 
         if entries is None:
             messages.success(request, ("You've translated all the sentencebook entries!"))
@@ -2299,8 +2292,8 @@ def translate_sentencebook(request):
         else:
             if request.method == "POST":
                 if request.POST["sentencebook_action"] == "delete":
-                    unique_id = request.POST["unique_id"]
-                    KnowledgeManager().delete_book_entry(unique_id)
+                    english = request.POST["english"]
+                    KnowledgeManager().delete_book_entries_by_english(english)
 
                     return redirect("translate_sentencebook")
 
@@ -2312,7 +2305,10 @@ def translate_sentencebook(request):
 
                     return redirect("translate_sentencebook")
 
-            return render(request, "translate_sentencebook.html", {"entries": entries})
+            return render(request, "translate_sentencebook.html", {
+                    "entries": entries,
+                    "counter": counter
+                    })
 
 
 @staff_member_required
@@ -2323,6 +2319,8 @@ def approve_sentencebook(request):
         current_user = first_name + " " + last_name
 
         entries = KnowledgeManager().display_translated_book("sentences")
+        counter = KnowledgeManager().count_translated_book("vocabulary")
+
         if entries is None:
             messages.success(request, ("You've translated all the sentencebook entries!"))
             return render(request, "approve_sentencebook.html", {})
@@ -2343,7 +2341,10 @@ def approve_sentencebook(request):
 
                     return redirect("approve_sentencebook")
 
-            return render(request, "approve_sentencebook.html", {"entries": entries})
+            return render(request, "approve_sentencebook.html", {
+                    "entries": entries,
+                    "counter": counter
+                    })
 
 
 @staff_member_required
@@ -2635,6 +2636,7 @@ def stream(request):
             if request.POST["stream_action"] == "filter":
                 start = request.POST["start"]
                 end = request.POST["end"]
+
                 rows = StreamManager().display_stream_range(start, end)
 
                 return render(request, "stream.html", {
@@ -2643,6 +2645,7 @@ def stream(request):
 
             elif request.POST["stream_action"] == "delete":
                 unique_id = request.POST["unique_id"]
+
                 delete = StreamManager().delete_from_stream(unique_id)
 
                 return redirect("stream")
@@ -2742,7 +2745,7 @@ def agenda(request):
 
 
 @staff_member_required
-def check_homework(request):
+def check_homework(request, current_user=''):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
@@ -2755,12 +2758,18 @@ def check_homework(request):
         if request.method == "POST":
             if request.POST["action_on_check"] == "check":
                 item = request.POST["item"]
-                product = HomeworkManager().check_assignment(
+
+                output = HomeworkManager().check_assignment(
                         item,
                         current_user
                         )
 
-                messages.add_message(request, getattr(messages, product[0]), product[1])
+                messages.add_message(
+                        request,
+                        getattr(messages, output[0]),
+                        output[1]
+                        )
+
                 return redirect("check_homework")
 
             elif request.POST["action_on_check"] == "uncheck":
@@ -4427,14 +4436,15 @@ def display_quizzes(request):
 
 
 @login_required
-def take_quiz(request, quiz_question_id, item):
+def take_quiz(request, item):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        quiz_id = QuizManager().find_quiz_id_by_item(item)
+        quiz_question_id = QuizManager().display_next_generated_question(quiz_id)
         quiz = QuizManager().display_quiz(quiz_question_id)
-        quiz_id = str(quiz_question_id)[:-2]
 
         number_of_questions = QuizManager().display_number_of_questions(quiz_id)
 
@@ -4471,7 +4481,7 @@ def take_quiz(request, quiz_question_id, item):
                         })
 
                 else:
-                    return redirect(f"/take_quiz/{next_quiz_question_id}/{item}")
+                    return redirect("take_quiz", item=item)
 
             elif request.POST["answer"] == "leave":
 
@@ -5494,14 +5504,246 @@ def mychart(request):
             })
 
 
-@login_required
-def challenge(request):
+@staff_member_required
+def add_challenge(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        matrices = ChallengeManager().display_matrices()
+        modules = CurriculumManager().display_modules()
+
+        if request.method == "POST":
+            if request.POST["action_on_challenge"] == "add":
+                matrix = request.POST["matrix"]
+                step_type = request.POST["step_type"]
+                step_number = request.POST["step_number"]
+                title = request.POST["title"]
+                text = request.POST["text"]
+                image = request.POST["image"]
+                module = request.POST["module"]
+
+                ChallengeManager().add_challenge(
+                    matrix,
+                    step_type,
+                    step_number,
+                    title,
+                    text,
+                    image,
+                    module
+                    )
+
+                messages.success(request, ("Challenge added!"))
+                return redirect("add_challenge")
+
+        return render(request, "add_challenge.html", {
+            "matrices": matrices,
+            "modules": modules
+            })
+
+
+@staff_member_required
+def display_challenge_matrices(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        matrices = ChallengeManager().display_matrices()
+
+        return render(request, "display_challenge_matrices.html", {
+            "matrices": matrices
+            })
+
+
+@staff_member_required
+def display_challenges(request, matrix_id):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        matrix = ChallengeManager().display_matrix_by_id(matrix_id)
+        challenges = ChallengeManager().display_challenges(matrix)
+
+        return render(request, "display_challenges.html", {
+            "matrix": matrix,
+            "challenges": challenges
+            })
+
+
+@staff_member_required
+def display_challenge(request, challenge_id):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        challenge = ChallengeManager().display_challenge(challenge_id)
+
+        if request.method == "POST":
+            if request.POST["action_on_challenge"] == "update":
+
+                return redirect("update_challenge", challenge_id=challenge_id)
+
+        return render(request, "display_challenge.html", {
+            "challenge": challenge
+            })
+
+
+@staff_member_required
+def update_challenge(request, challenge_id):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        challenge = ChallengeManager().display_challenge(challenge_id)
+        matrices = ChallengeManager().display_matrices()
+        modules = CurriculumManager().display_modules()
+
+        if request.method == "POST":
+            if request.POST["action_on_challenge"] == "update":
+                matrix = request.POST["matrix"]
+                step_type = request.POST["step_type"]
+                step_number = request.POST["step_number"]
+                title = request.POST["title"]
+                text = request.POST["text"]
+                image = request.POST["image"]
+                module = request.POST["module"]
+
+                ChallengeManager().update_challenge(
+                    matrix,
+                    step_type,
+                    step_number,
+                    title,
+                    text,
+                    image,
+                    module,
+                    challenge_id
+                    )
+
+                messages.success(request, ("Challenge updated"))
+                return redirect("display_challenge", challenge_id=challenge_id)
+
+        return render(request, "update_challenge.html", {
+            "challenge": challenge,
+            "matrices": matrices,
+            "modules": modules
+            })
+
+
+@login_required
+def challenges(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        challenges = ChallengeManager().display_planned_challenges(current_user)
+        status = ChallengeManager().refresh_process(challenges)
+
+        if status is True:
+            return redirect("profile")
+
+        return render(request, "challenges.html", {
+            "challenges": challenges
+            })
+
+
+@login_required
+def challenge(request, challenge_id):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        challenge = ChallengeManager().display_planned_challenge(challenge_id)
+        cta = ChallengeManager().find_challenge(challenge)
+
+        if request.method == "POST":
+            if request.POST["action_on_challenge"] == "back":
+
+                return redirect("challenges")
+
+            elif request.POST["action_on_challenge"] == "complete":
+
+                result = ChallengeManager().complete_challenge(challenge_id)
+
+                return redirect("applause")
+
+            elif request.POST["action_on_challenge"] == "submit":
+
+                product = HomeworkManager().choose_action(
+                        challenge[16],
+                        current_user
+                        )
+
+                return redirect(
+                        product[0],
+                        product[1]
+                        )
+
         return render(request, "challenge.html", {
+            "challenge_id": challenge_id,
+            "challenge": challenge,
+            "cta": cta
+            })
+
+
+@login_required
+def applause(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        if request.method == "POST":
+            if request.POST["action_on_applause"] == "leave":
+
+                return redirect("challenges")
+
+        return render(request, "applause.html", {
+            "first_name": first_name
+            })
+
+
+@staff_member_required
+def display_challenge_sets(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        processes = ChallengeManager().display_processes()
+
+        return render(request, "display_challenge_sets.html", {
+            "processes": processes
+            })
+
+
+@staff_member_required
+def display_challenge_set(request, process_number):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        ChallengeManager().check_if_process_completed(process_number)
+        steps = ChallengeManager().display_steps(process_number)
+
+        if request.method == "POST":
+            if request.POST["action_on_challenge"] == "remove":
+
+                ChallengeManager().remove_process(process_number)
+
+                messages.success(request, "Process removed")
+                return redirect("display_challenge_sets")
+
+        return render(request, "display_challenge_set.html", {
+            "process_number": process_number,
+            "steps": steps
             })
 
 

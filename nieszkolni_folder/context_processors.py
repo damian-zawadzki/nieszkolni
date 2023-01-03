@@ -1,4 +1,5 @@
 from nieszkolni_folder.audit_manager import AuditManager
+from nieszkolni_folder.challenge_manager import ChallengeManager
 
 
 def sections_processor(request):
@@ -14,7 +15,14 @@ def sections_processor(request):
 
         status = AuditManager().check_if_clocked_in(current_user)
 
-        return {"status": status, "superuser_status": superuser_status}
+        challenges = ChallengeManager().display_planned_challenges(current_user)
+        challenge_status = ChallengeManager().refresh_process(challenges)
+
+        return {
+            "status": status,
+            "superuser_status": superuser_status,
+            "challenge_status": challenge_status
+            }
 
     else:
         return {}

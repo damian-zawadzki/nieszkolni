@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %} 
+
+<h1>CHALLENGE SETS</h1>
+
+<table>
+
+	<tr>
+
+		<th class="short_column">Step</th>
+		<th>Challenge</th>
+
+	</tr>
+
+	{% for process in processes %}
+
+		<tr class="tr_clickable" onclick="jump({{ process.3 }})">
+
+			<a id="{{ process.3 }}" href="{% url 'display_challenge_set' process_number=process.3 %}"></a>
+			<td class="short_column">{{ process.3 }}</td>
+			<td>{{ process.4 }}</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+<script src="{% static 'functions.js' %}"></script>  
+
+{% endblock %}

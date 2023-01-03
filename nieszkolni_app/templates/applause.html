@@ -1,0 +1,27 @@
+{% extends 'no_navigation.html' %}
+{% block 'content' %}
+{% load static %}
+
+<div class="applause_box">
+  <div class="applause_title fade_in">CONGRATULATIONS</div>
+  <div class="applause_subtitle fade_in">{{ first_name|title }}</div>
+
+  <form action="{% url 'applause' %}"  method="POST">
+    {% csrf_token %}
+
+    <div class="flex-parent jc-center">
+      <button class="applause_button fade_in" name="action_on_applause" value="leave">Leave</button>
+    </div>
+
+  </form>
+
+</div>
+
+<!-- <script type="text/javascript">
+    window.setTimeout( function() {
+      var link = "{% url 'campus' %}";
+      window.location.href = link;
+    }, 3000);
+</script> -->
+
+{% endblock %}

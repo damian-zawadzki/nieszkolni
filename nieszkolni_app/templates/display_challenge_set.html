@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %} 
+
+<h1>CHALLENGES</h1>
+
+<table>
+
+	<tr>
+
+		<th class="short_column">Step</th>
+		<th>Challenge</th>
+
+	</tr>
+
+	{% for step in steps %}
+
+		<tr class="tr_clickable">
+
+			<td class="short_column">{{ step.8 }}</td>
+			<td>{{ step.12 }}</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+<form action="{% url 'display_challenge_set' process_number=process_number %}"  method="POST">
+	{% csrf_token %}
+	<div class="flex-parent jc-center">
+		<button type="submit" class="button_main" name="action_on_challenge" value="remove">Remove</button>
+	</div>
+</form>
+
+<script src="{% static 'functions.js' %}"></script>  
+
+{% endblock %}

@@ -274,11 +274,44 @@ class KnowledgeManager:
             else:
                 return None
 
-    def delete_book_entry(self, unique_id):
+    def count_open_book(self, deck):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT COUNT(DISTINCT english)
+                FROM nieszkolni_app_book
+                WHERE deck = '{deck}'
+                AND (status = 'open'
+                OR status = 'rejected')
+                ''')
+
+            entry = cursor.fetchone()
+            if entry is not None:
+                return entry[0]
+
+            else:
+                return 0
+
+    def count_translated_book(self, deck):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT COUNT(DISTINCT english)
+                FROM nieszkolni_app_book
+                WHERE deck = '{deck}'
+                AND status = 'translated'
+                ''')
+
+            entry = cursor.fetchone()
+            if entry is not None:
+                return entry[0]
+
+            else:
+                return 0
+
+    def delete_book_entries_by_english(self, english):
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 DELETE FROM nieszkolni_app_book
-                WHERE id = {unique_id}
+                WHERE english = '{english}'
                 ''')
 
     def translate_book_entry(self, english, polish):

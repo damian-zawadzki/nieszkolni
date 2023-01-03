@@ -74,6 +74,8 @@ class CurriculumPlanner:
         elif assignment_type == "quiz":
             QuizManager().plan_quiz(client, item, reference)
 
+        return item
+
     def plan_curricula(
             self,
             client,

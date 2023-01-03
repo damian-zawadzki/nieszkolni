@@ -4,18 +4,20 @@
 
 <h1>SUBMIT AN ASSIGNMENT</h1>
 
-<form action="{% url 'submit_assignment' %}" method="POST">
+<form action="{% url 'submit_assignment' item=item %}" method="POST">
   {% csrf_token %}
+
   <div class="flex-parent jc-center"> 
     <div class="input_container">
       <label class="input_label">Item</label>
       <input type="number" class="input_content input_prefilled" name="item" value="{{ item }}" readonly required>
     </div>
   </div>
+
   <div class="flex-parent jc-center"> 
      <div class="input_container">
-      <label class="input_label">Name</label>
-      <input type="text" class="input_content input_prefilled" name="client" value="{{ name }}" readonly required>
+      <label class="input_label">Client</label>
+      <input type="text" class="input_content input_prefilled" name="client" value="{{ client }}" readonly required>
     </div>
   </div>
 
@@ -36,15 +38,18 @@
       <input type="text" class="input_content" name="title" required>
     </div>
   </div>
+
   <div class="flex-parent jc-center">
     <div class="input_container">
       <label class="input_label">Content</label>
       <textarea type="text" class="input_content input_paragraph" name="content" required></textarea>
     </div>
   </div>
+
   <div class="flex-parent jc-center">
-  <button type="submit" class="button_main" name="go_to" value="database" id="submit_b" onclick="disableButton(this.id)">Submit</button>
+    <button type="submit" class="button_main" name="action_on_submission" id="submit_button" value="submit" onclick="disableButton(this.id)">Submit</button>
   </div>
+
 </form>
 
 <script src="{% static 'functions.js' %}"></script>

@@ -4,20 +4,20 @@
 
 <h1>SUBMIT AN ASSIGNMENT</h1>
 
-<form action="{% url 'submit_assignment' %}" method="POST">
+<form action="{% url 'submit_assignment' item=item %}" method="POST">
   {% csrf_token %}
 
   <div class="flex-parent jc-center"> 
     <div class="input_container">
       <label class="input_label">Item</label>
-      <input type="number" class="input_content" name="item" required>
+      <input type="number" class="input_content" name="item" value="{{ item }}" required>
     </div>
   </div>
   
   <div class="flex-parent jc-center"> 
      <div class="input_container">
-      <label class="input_label">Name</label>
-      <input type="text" class="input_content" name="client" required>
+      <label class="input_label">Client</label>
+      <input type="text" class="input_content" name="client" value="{{ client }}" required>
     </div>
   </div>
 
@@ -26,6 +26,7 @@
       <label for="assignment_type" class="input_label">Type</label>
 
       <select class="input_content" name="assignment_type" id="assignment_type">
+        <option selected value="{{ assignment_type }}">{{ assignment_type }}</option>
         <option value="essay" required>essay</option>
         <option value="assignment" required>other assignment</option>
         <option value="wordfinder" required>wordfinder</option>
@@ -49,7 +50,7 @@
   </div>
   
   <div class="flex-parent jc-center">
-  <button type="submit" class="button_main" name="go_to" value="database" id="submit_b" onclick="disableButton(this.id)">Submit</button>
+  <button type="submit" class="button_main" name="action_on_submission" value="submit" id="submit_button" onclick="disableButton(this.id)">Submit</button>
   </div>
 </form>
 

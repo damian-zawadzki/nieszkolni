@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %} 
+
+<h1>CHALLENGES</h1>
+
+<table>
+
+	{% for matrix in matrices %}
+
+		<tr class="tr_clickable" onclick="jump({{ matrix.0 }})">
+
+			<a id="{{ matrix.0 }}" href="{% url 'display_challenges' matrix_id=matrix.0 %}"></a>
+			<td>{{ matrix.1 }}</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+<script src="{% static 'functions.js' %}"></script>  
+
+{% endblock %}

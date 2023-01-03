@@ -41,63 +41,17 @@
       {% endif %}
 
 
-			<form action="{% url 'submit_assignment' %}" method="POST">
+			<form action="{% url 'assignment' item=item %}" method="POST">
 				{% csrf_token %}
 
 					<div class="flex-parent jc-center">
-						<input type="hidden" name="item" value="{{ assignment.0 }}">
-						<input type="hidden" name="client" value="{{ assignment.2 }}">
-						<input type="hidden" name="assignment_type" value="{{ assignment.6 }}">
-						<input type="hidden" name="title" value="{{ assignment.7 }}">
 
-		    			{% if assignment.11 != 'completed' %}
-							{% if assignment.6 == 'sentences' %}
-
-								<button type="submit" class="button_main" name="go_to" value="translation">Translate</button>
-
-							{% elif assignment.6 == 'translation' %}
-
-								<button type="submit" class="button_main" name="go_to" value="translate_text">Translate the text</button>
-
-							{% elif assignment.6 == 'reading' %}
-
-								<button type="submit" class="button_main" name="go_to" value="mark_as_read">Mark as read</button>
-
-							{% elif assignment.6 == 'quiz' %}
-
-								<button type="submit" class="button_main" name="go_to" value="take_quiz">Take the quiz</button>
-
-							{% elif assignment.6 == 'flashcards' %}
-
-								<input type="hidden" name="command" value="flashcards_7">
-								<button type="submit" class="button_main" name="go_to" value="check_stats">Check</button>
-
-							{% elif assignment.6 == 'flashcardssentences' %}
-
-								<input type="hidden" name="command" value="flashcards_sentences_7">
-								<button type="submit" class="button_main" name="go_to" value="check_stats">Check</button>
-
-							{% elif assignment.6 in no_submissions %}
-
-								<button type="submit" class="button_main" name="go_to" value="mark_as_done">Mark as done</button>
-
-							{% else %}
-
-								<button type="submit" class="button_main" name="go_to" value="submission">Submit</button>
-
-							{% endif %}
-
-							{% else %}
-
-								<button type="submit" class="button_main" name="go_to" value="uncheck">Uncheck</button>
-
-							{% endif %}
+						<button type="submit" class="button_main" name="action_on_assignment" value="{{ assignment.18 }}">{{ assignment.17 }}</button>
 
 						{% if user.is_staff %}
 
-							<button type="submit" class="button_main" name="go_to" value="removal">Remove</button>
+							<button type="submit" class="button_main" name="action_on_assignment" value="remove">Remove</button>
 
-						{% else %}
 						{% endif %}
 
 					</div>

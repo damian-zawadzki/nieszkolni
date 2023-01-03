@@ -2296,7 +2296,7 @@ hr.line {
 
 .milestone_image {
   border-color: var(--backgroud-color);
-  border-radius: 50%;
+  border-radius: 100%;
   border-style:  solid;
   border-width: 0.6vw;
   display: inline-block;
@@ -2310,21 +2310,127 @@ hr.line {
 }
 
 .milestone_locked {
-  opacity: 0.4;
+  opacity: 0.2;
+}
+
+.milestone_completed {
+  outline-color: #D4AF37;
 }
 
 .path {
-  background-color: var(--border-color);
+  background-color: inherit;
   display: block;
   height: 7vh;
   left: 3.5vw;
   position: relative;
   width: 0.3vw;
-} 
+}
+
+.path_completed {
+  background-color: #D4AF37;
+  display: block;
+  height: 7vh;
+  left: 3.5vw;
+  position: relative;
+  width: 0.3vw;
+}
+
+.applause_box {
+  height: 50vh;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 50vw;
+}
+
+.applause_title {
+  align-content: center;
+  color: #D4AF37;
+  display: flex;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 7.5vmin;
+  font-weight: 1000;
+  justify-content: center;
+}
+
+.applause_subtitle {
+  align-content: center;
+  color: var(--font-color);
+  display: flex;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 10vmin;
+  font-weight: 1000;
+  justify-content: center;
+}
+
+.applause_message {
+  align-content: center;
+  color: #D4AF37;
+  display: flex;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 2vmin;
+  font-weight: 750;
+  justify-content: center;
+}
+
+.applause_button {
+  align-items: center;
+  appearance: none;
+  background-color: #FFF;
+  border-radius: 24px;
+  border-style: none;
+  box-shadow: rgba(0, 0, 0, .2) 0 3px 5px -1px,rgba(0, 0, 0, .14) 0 6px 10px 0,rgba(0, 0, 0, .12) 0 1px 18px 0;
+  box-sizing: border-box;
+  color: #D4AF37;
+  cursor: pointer;
+  display: inline-flex;
+  fill: currentcolor;
+  font-family: var(--font-family);
+  font-size: 2vmin;
+  font-weight: 1000;
+  height: 48px;
+  justify-content: center;
+  letter-spacing: .25px;
+  line-height: normal;
+  margin: 5vmin;
+  max-width: 100%;
+  overflow: visible;
+  padding: 2px 24px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  text-transform: none;
+  transition: box-shadow 280ms cubic-bezier(.4, 0, .2, 1),opacity 15ms linear 30ms,transform 270ms cubic-bezier(0, 0, .2, 1) 0ms;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  width: auto;
+  will-change: transform, opacity;
+  z-index: 0;
+}
+
+.applause_button:hover {
+  background-color: #D4AF37;
+  color: #FFF;
+}
+
+.fade_in {
+-webkit-animation: fadein 2s;
+   -moz-animation: fadein 2s;
+    -ms-animation: fadein 2s;
+     -o-animation: fadein 2s;
+        animation: fadein 2s;
+}
 
 @media (max-width: 768px) {
     .input_content {
         min-width: 75vw;
         width: 75vw;
     }
+}
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }

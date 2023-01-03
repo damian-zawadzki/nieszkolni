@@ -8,6 +8,8 @@ from nieszkolni_app.models import Library
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
 
+from nieszkolni_folder.knowledge_manager import KnowledgeManager
+
 import re
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
@@ -114,6 +116,7 @@ class CurriculumManager:
                 FROM nieszkolni_app_curriculum
                 WHERE name = '{name}'
                 AND status != 'completed'
+                AND status != 'invisible_uncompleted'
                 AND status != 'removed'
                 AND deadline_number <= '{display_limit}'
                 ORDER BY deadline_number ASC
@@ -181,7 +184,32 @@ class CurriculumManager:
                 AND status != 'removed'
                 ''')
 
-            assignment = cursor.fetchone()
+            thing = cursor.fetchone()
+
+            cta = self.find_action(thing[6], thing[11])
+
+            assignment = (
+                thing[0],
+                thing[1],
+                thing[2],
+                thing[3],
+                thing[4],
+                thing[5],
+                thing[6],
+                thing[7],
+                thing[8],
+                thing[9],
+                thing[10],
+                thing[11],
+                thing[12],
+                thing[13],
+                thing[14],
+                thing[15],
+                thing[16],
+                cta[0],
+                cta[1],
+                cta[2]
+                )
 
         return assignment
 
@@ -249,6 +277,17 @@ class CurriculumManager:
             cursor.execute(f'''
                 UPDATE nieszkolni_app_curriculum
                 SET status = 'uncompleted',
+                completion_stamp = 0,
+                completion_date = 0,
+                submitting_user = '{submitting_user}'
+                WHERE item = '{item}'
+                ''')
+
+    def change_to_invisible_uncompleted(self, item, submitting_user):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                UPDATE nieszkolni_app_curriculum
+                SET status = 'invisible_uncompleted',
                 completion_stamp = 0,
                 completion_date = 0,
                 submitting_user = '{submitting_user}'
@@ -747,3 +786,48 @@ class CurriculumManager:
                 next_id_suffix = f"{data:02d}"
 
             return next_id_suffix
+
+    def find_action(self, assignment_type, status):
+        no_submissions = KnowledgeManager().display_list_of_prompts(
+                "no_submission"
+                )
+
+        if status == "completed":
+            action = "uncheck"
+            call = "Uncheck"
+            info = ""
+        elif assignment_type == "sentences":
+            action = "translate"
+            call = "Translate"
+            info = ""
+        elif assignment_type == "translation":
+            action = "translate_text"
+            call = "Translate"
+            info = ""
+        elif assignment_type == "reading":
+            action = "mark_as_read"
+            call = "Mark as read"
+            info = ""
+        elif assignment_type == "quiz":
+            action = "take_quiz"
+            call = "Take the quiz"
+            info = ""
+        elif assignment_type == "flashcards":
+            action = "check_stats"
+            call = "Check"
+            info = "flashcards_7"
+        elif assignment_type == "flashcards_sentences":
+            action = "check_stats"
+            call = "Check"
+            info = "flashcards_sentences_7"
+        elif assignment_type in no_submissions:
+            action = "mark_as_done"
+            call = "Mark as done"
+            info = ""
+        else:
+            action = "submit"
+            call = "Submit"
+            info = ""
+
+        return (call, action, info)
+

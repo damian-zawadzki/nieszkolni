@@ -2,12 +2,17 @@ import os
 import django
 import re
 from django.db import connection
+
 from nieszkolni_app.models import Submission
+
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.wordcounter import Wordcounter
 from nieszkolni_folder.cleaner import Cleaner
 from nieszkolni_folder.text_analysis import TextAnalysis
 
+from nieszkolni_folder.curriculum_manager import CurriculumManager
+from nieszkolni_folder.stream_manager import StreamManager
+from nieszkolni_folder.challenge_manager import ChallengeManager
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
@@ -16,6 +21,62 @@ django.setup()
 class SubmissionManager:
     def __init__(self):
         pass
+
+    def run_submission(
+            self,
+            item,
+            client,
+            assignment_type,
+            title,
+            content,
+            current_user
+            ):
+
+        status = CurriculumManager().display_assignment_status(item)
+
+        if status == "invisible_uncompleted":
+            page = "applause"
+
+        else:
+            page = "assignments"
+
+        try:
+            commands = {
+                "essay": "AV",
+                "assignment": "AV",
+                "wordfinder": "WF"
+                }
+
+            self.add_submission(
+                        item,
+                        client,
+                        assignment_type,
+                        title,
+                        content
+                        )
+
+            CurriculumManager().change_status_to_completed(item, current_user)
+
+            wordcount = Wordcounter(content).counter()
+            linecount = Wordcounter(content).linecounter()
+            command = commands.get(assignment_type)
+
+            if command == "AV":
+                value = wordcount
+            else:
+                value = linecount
+
+            StreamManager().add_to_stream(client, command, value, current_user)
+
+            output = ("SUCCESS", "Assignment submitted", page)
+
+            return output
+
+        except Exception as e:
+
+            output = ("ERROR", "Assignment could not be submitted", page)
+
+            return output
 
     def add_submission(
             self,

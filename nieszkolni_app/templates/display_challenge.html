@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %} 
+
+<div class="program_box flex-parent jc-center">
+	<div class="program_container">
+    	<div class="task_card_container">
+   			
+			<div class="program_photo_container">
+				<img src="{{ challenge.6 }}" alt="" class="program_photo">
+				<div class="program_name">{{ challenge.4 }}</div>
+
+			</div>
+
+			<div class="program_photo_container">
+	      		<div class="program_description">{{ challenge.5 }}</div>
+	      		<hr class="line"></div>
+	      		<div class="program_description"><b>Step:</b> {{ challenge.3 }}</div>
+	      		<div class="program_description"><b>Type:</b> {{ challenge.2 }}</div>
+	      		<div class="program_description"><b>Module:</b> {{ challenge.7 }}</div>
+	      		
+	      	</div>
+
+			<form action="{% url 'display_challenge' challenge_id=challenge.0 %}"  method="POST">
+				{% csrf_token %}
+
+				<div class="flex-parent jc-center">
+				  <button type="submit" class="button_main" name="action_on_challenge" value="update">Update</button>
+				</div>
+
+			</form>
+
+    	</div>
+  	</div>
+</div>
+
+
+
+{% endblock %}

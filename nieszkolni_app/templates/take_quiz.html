@@ -5,7 +5,7 @@
 {% if number_of_questions == 0 %}
 {% else %}
   <div class="flex-parent jc-center">
-    <form action="{% url 'take_quiz' quiz_question_id=quiz_question_id item=item %}" method="POST">
+    <form action="{% url 'take_quiz' item=item %}" method="POST">
     {% csrf_token %}
 
       <div class="phrase_card">

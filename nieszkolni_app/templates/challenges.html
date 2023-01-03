@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<div class="milestones">
+	{% for challenge in challenges|slice:"0:1" %}
+		<div class="milestone_frame">
+			<div class="milestone_box" id="{{ challenge.0 }}" name="{{ challenge.9 }}">
+				<img class="milestone_image" src="{{ challenge.14 }}">
+				<a class="milestone_description" href="{% url 'challenge' challenge_id=challenge.0 %}">{{ challenge.12 }}</a>
+			</div>
+		</div>
+	{% endfor %}
+
+	{% for challenge in challenges|slice:"1:" %}
+		<div><div class="path" name="{{ challenge.9 }}" id="{{ challenge.0|add:100 }}"></div></div>
+
+		<div class="milestone_frame">
+			<div class="milestone_box" id="{{ challenge.0 }}" name="{{ challenge.9 }}">
+				<img class="milestone_image" src="{{ challenge.14 }}">
+				<a class="milestone_description" href="{% url 'challenge' challenge_id=challenge.0 %}">{{ challenge.12 }}</a>
+			</div>
+		</div>
+	{% endfor %}
+
+</div>
+
+<script type="text/javascript">
+	function displayStatus() {
+		var boxes = document.getElementsByClassName('milestone_box');
+
+		for (let i = 0; i < boxes.length; i++) {
+			var box = boxes[i];
+			var value =  box.getAttribute('name');
+			var link = box.firstElementChild.nextElementSibling;
+			var image = box.firstElementChild;
+
+			if (value == 'locked') {
+				box.classList.add('milestone_locked');
+				link.onclick = function () {return false;};
+				link.style.cursor = 'default';
+				link.style.color = 'inherit';
+				image.classList.remove('milestone_completed');
+			} else if (value == 'completed') {
+				image.classList.add('milestone_completed');
+				box.classList.remove('milestone_locked');
+			} else {
+				image.classList.remove('milestone_completed');
+				box.classList.remove('milestone_locked');
+			}
+		};
+	};
+
+	function arrangePaths() {
+		var paths = document.querySelectorAll('.path');
+
+		for (let j = 0; j < paths.length; j++) {
+			var path = paths[j];
+			var value =  path.getAttribute('name');
+
+			if (value == 'locked') {
+			} else if (value == 'completed') {
+				path.className = 'path_completed';
+			} else {
+			};
+		};
+	}
+
+	window.addEventListener('load', () => displayStatus())
+	window.addEventListener('load', () => arrangePaths())
+</script>
+
+{% endblock %}

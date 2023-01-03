@@ -120,3 +120,7 @@ function monitorClock() {
     english_form.value = english;
     glossary_form.value = glossary;
  }
+
+ function redirectToCampus(time) {
+
+ }

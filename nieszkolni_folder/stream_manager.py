@@ -969,7 +969,6 @@ class StreamManager:
                 except Exception as e:
                     pass
 
-
             table = pd.DataFrame(data, columns=["client", "activity"])
             table_2 = table.groupby("client").sum()
             table_3 = table_2.sort_values(by="activity", ascending=False)
@@ -992,6 +991,8 @@ class StreamManager:
                 ranking.append(item)
 
             return ranking
+
+    # Spins and stories
 
     def display_planned_stories(self, client):
         with connection.cursor() as cursor:
@@ -1027,3 +1028,36 @@ class StreamManager:
 
             return stories
 
+    def display_planned_challenges(self, client):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT value
+                FROM nieszkolni_app_stream
+                WHERE command = 'Planned challenge'
+                AND name = '{client}'
+                ''')
+
+            rows = cursor.fetchall()
+            challenges = [row[0] for row in rows]
+
+            return challenges
+
+    def display_challenges(self, client):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT value
+                FROM nieszkolni_app_stream
+                WHERE command = 'Covered challenge'
+                AND name = '{client}'
+                ''')
+
+            rows = cursor.fetchall()
+            covered_challenges = [row[0] for row in rows]
+            planned_challenges = self.display_planned_challenges(client)
+
+            challenges = planned_challenges.copy()
+            for challenge in covered_challenges:
+                if challenge in challenges:
+                    challenges.remove(challenge)
+
+            return challenges
