@@ -920,8 +920,6 @@ def submit_assignment(request, item):
             title = request.POST["title"]
             content = request.POST["content"]
 
-            print(assignment_type)
-
             output = SubmissionManager().run_submission(
                     item,
                     client,
@@ -1618,6 +1616,7 @@ def choose_id_prefix(request, component):
                 component == "translation" or
                 component == "reading" or
                 component == "survey" or
+                component == "catalogue" or
                     component == "quiz"):
 
                 return redirect(
@@ -1656,6 +1655,8 @@ def choose_reference(request, component, id_prefix):
             references = SentenceManager().display_sets_by_type("translation")
         elif component == "survey":
             references = SurveyManager().display_surveys()
+        elif component == "catalogue":
+            references = KnowledgeManager().display_all_catalogues()
         elif component == "quiz":
             references = QuizManager().display_collection_ids()
 
@@ -2032,7 +2033,7 @@ def session_mode(request):
         memories = KnowledgeManager().display_all_memories()
         wordbook = KnowledgeManager().display_wordbook()
         sentencebook = KnowledgeManager().display_sentencebook()
-        catalogues = KnowledgeManager().display_catalogues()
+        catalogues = KnowledgeManager().display_all_catalogues()
         pronunciation = KnowledgeManager().display_all_pronunciation()
 
         if request.method == "POST":
@@ -2125,32 +2126,20 @@ def session_mode(request):
             elif request.POST["add_knowledge"] == "add_catalogues":
                 entry = request.POST["catalogues_entry"]
 
-                if entry != "0":
-                    entry = tuple(entry.split(","))
-                    catalogue_title = entry[0]
+                output = KnowledgeManager().add_catalogue_to_book(
+                    current_client,
+                    entry,
+                    current_user,
+                    "vocabulary"
+                    )
 
-                    phrases = KnowledgeManager().display_list_of_phrases_in_catalogue(entry[1])
+                messages.add_message(
+                    request,
+                    getattr(messages, output[0]),
+                    output[1]
+                    )
 
-                    for phrase in phrases:
-                        add_phrase = KnowledgeManager().add_to_book(
-                            current_client,
-                            phrase,
-                            current_user,
-                            "vocabulary")
-
-                    messages.success(request, (f"{catalogue_title} added!"))
-                    return render(request, "session_mode.html", {
-                            "current_client": current_client,
-                            "last_form": last_form,
-                            "catalogues": catalogues,
-                            "pronunciation": pronunciation,
-                            "sentencebook": sentencebook,
-                            "wordbook": wordbook,
-                            "prompts": prompts,
-                            "memories": memories
-                            })
-                else:
-                    pass
+                return redirect("session_mode")
 
             else:
                 pass
@@ -5912,26 +5901,78 @@ def add_question_to_survey(request):
             })
 
 
-@staff_member_required
+@login_required
 def survey(request, item):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        assignment = CurriculumManager().display_assignment(item)
-        client = assignment[3]
-        survey_id = assignment[16]
-        SurveyManager().plan_survey(survey_id)
+        data = SurveyManager().take_survey(item)
+
+        if data is None:
+            CurriculumManager().change_status_to_completed(item, current_user)
+
+            return redirect("completed")
+
+        response_id = data[0]
+        question = data[1]
+        options = data[2]
+        count = data[3]
+        total = data[4]
 
         if request.method == "POST":
-            if request.POST["action_on_survey"] == "add":
+            response = request.POST["response"]
 
-                messages.success(request, "Question added to the survey")
-                return redirect("display_survey", survey_id=survey_id)
+            SurveyManager().respond(response, response_id)
+
+            return redirect("survey", item=item)
 
         return render(request, "survey.html", {
-            "item": item
+            "item": item,
+            "question": question,
+            "options": options,
+            "count": count,
+            "total": total
+            })
+
+
+@login_required
+def completed(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        if request.method == "POST":
+            if request.POST["action_on_completed"] == "leave":
+                return redirect("assignments")
+
+        return render(request, "completed.html", {})
+
+
+@staff_member_required
+def responses(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        questions = SurveyManager().display_questions()
+
+        if request.method == "POST":
+            if request.POST["action_on_responses"] == "filter":
+                question_id = request.POST["question_id"]
+
+                responses = SurveyManager().display_responses(question_id)
+
+                return render(request, "responses.html", {
+                    "questions": questions,
+                    "responses": responses
+                    })
+
+        return render(request, "responses.html", {
+            "questions": questions,
             })
 
 

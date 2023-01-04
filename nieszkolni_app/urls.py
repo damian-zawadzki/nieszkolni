@@ -182,4 +182,6 @@ urlpatterns = [
     path('display_survey/<int:survey_id>', views.display_survey, name="display_survey"),
     path('add_question_to_survey/', views.add_question_to_survey, name="add_question_to_survey"),
     path('survey/<int:item>', views.survey, name="survey"),
+    path('completed/', views.completed, name="completed"),
+    path('responses/', views.responses, name="responses"),
        ]

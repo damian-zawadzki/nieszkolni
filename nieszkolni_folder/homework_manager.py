@@ -15,6 +15,7 @@ import re
 from nieszkolni_folder.curriculum_manager import CurriculumManager
 from nieszkolni_folder.stream_manager import StreamManager
 from nieszkolni_folder.quiz_manager import QuizManager
+from nieszkolni_folder.knowledge_manager import KnowledgeManager
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
@@ -43,7 +44,7 @@ class HomeworkManager:
                     current_user
                     )
 
-                product = ("SUCCESS", "Task completed!")
+                output = ("SUCCESS", "Task completed!")
 
             else:
                 difference = target - result
@@ -133,6 +134,7 @@ class HomeworkManager:
 
         client = assignment[3]
         assignment_type = assignment[6]
+        reference = assignment[16]
         command = assignment[19]
         output = None
 
@@ -190,6 +192,24 @@ class HomeworkManager:
         elif action == "take_part":
 
             product = ("survey", item)
+
+        elif action == "add_vocabulary":
+
+            print(reference)
+
+            output = KnowledgeManager().add_catalogue_to_book_by_no(
+                client,
+                reference,
+                current_user,
+                "vocabulary"
+                )
+
+            CurriculumManager().change_status_to_completed(
+                    item,
+                    current_user
+                    )
+
+            product = ("assignments", item, output)
 
         elif action == "translate":
             product = ("translate_sentences", item)

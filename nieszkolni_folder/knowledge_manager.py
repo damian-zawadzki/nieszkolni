@@ -1,6 +1,7 @@
 import os
 import django
 from django.db import connection
+
 from nieszkolni_app.models import Pronunciation
 from nieszkolni_app.models import Dictionary
 from nieszkolni_app.models import Prompt
@@ -8,6 +9,9 @@ from nieszkolni_app.models import Question
 from nieszkolni_app.models import Quiz
 from nieszkolni_app.models import Assessment
 from nieszkolni_app.models import Collection
+from nieszkolni_app.models import Catalogue
+from nieszkolni_app.models import Card
+
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.vocabulary_manager import VocabularyManager
 from nieszkolni_folder.cleaner import Cleaner
@@ -465,6 +469,17 @@ class KnowledgeManager:
 
             return catalogues
 
+    def display_all_catalogues(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT DISTINCT catalogue_number, catalogue_name
+                FROM nieszkolni_app_catalogue
+                ''')
+
+            catalogues = cursor.fetchall()
+
+            return catalogues
+
     def display_list_of_phrases_in_catalogue(self, catalogue_number):
         with connection.cursor() as cursor:
             cursor.execute(f'''
@@ -716,3 +731,78 @@ class KnowledgeManager:
                     parsed_memories.append(step_1)
 
             return parsed_memories
+
+    def add_catalogue_to_book(
+            self,
+            client,
+            entry,
+            current_user,
+            deck
+            ):
+
+        try:
+            entries = entry.split(": ")
+            catalogue_number = entries[0]
+
+            output = self.add_catalogue_to_book_by_no(
+                client,
+                catalogue_number,
+                current_user,
+                deck
+                )
+
+            return output
+
+        except Exception as e:
+            output = ("ERROR", "Catalogue could not be added")
+            print(e)
+
+            return output
+
+    def add_catalogue_to_book_by_no(
+            self,
+            client,
+            catalogue_number,
+            current_user,
+            deck
+            ):
+
+        check = Catalogue.objects.filter(catalogue_number=catalogue_number).exists()
+
+        if check:
+
+            phrases = self.display_list_of_phrases_in_catalogue(catalogue_number)
+
+            cards = Card.objects.filter(
+                    client=client,
+                    deck=deck
+                    )
+
+            phrases_set = set(phrases)
+            cards_set = set(card.english for card in cards)
+            coverage_set = phrases_set.difference(cards_set)
+            coverage = len(coverage_set) / len(phrases_set)
+            coverage = round(1-coverage, 2)
+            new_phrases = len(coverage_set)
+
+            if coverage > 0.9:
+                output = ("ERROR", "Catalogue has been added before")
+
+                return output
+
+            for phrase in phrases:
+                add_phrase = self.add_to_book(
+                    client,
+                    phrase,
+                    current_user,
+                    deck
+                    )
+
+            output = ("SUCCESS", f"{new_phrases} new phrases added.")
+
+        else:
+            output = ("ERROR", "Catalogue does not exist")
+
+        return output
+
+

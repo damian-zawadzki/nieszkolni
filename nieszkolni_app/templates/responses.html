@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<h1>RESPONSES</h1>
+
+<form action="{% url 'responses' %}"  method="POST">
+   {% csrf_token %}
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Question</label>
+
+        <select required class="input_content" name="question_id">
+            <option selected disabled value=""></option>
+
+            {% for question in questions %}
+               <option value="{{ question.0 }}">{{ question.1 }}</option>
+            {% endfor %}
+
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_responses" value="filter">Filter</button>
+  </div>
+
+</form>
+
+<table>
+
+      <tr>
+
+         <th>Client</th>
+         <th>Response</th>
+
+      </tr>
+
+   {% for response in responses %}
+
+      <tr>
+
+         <td>{{ response.client }}</td>
+         <td>{{ response.response }}</td>
+
+      </tr>
+
+   {% endfor %}
+
+</table>
+
+<div class="white_space"></div>
+
+{% endblock %}

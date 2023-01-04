@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<h1>SURVEY COMPLETED</h1>
+
+<form action="{% url 'completed' %}" method="POST"> 
+{% csrf_token %}
+
+    <div class="flex-parent jc-center">                    
+         <button type="submit" class="button_main" name="action_on_completed" value="leave">Leave</button>
+    </div>
+
+</form>
+
+{% endblock %}

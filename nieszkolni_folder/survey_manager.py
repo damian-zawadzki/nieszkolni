@@ -12,7 +12,7 @@ from nieszkolni_folder.cleaner import Cleaner
 
 import re
 
-from nieszkolni_folder.sentence_manager import SentenceManager
+from nieszkolni_folder.curriculum_manager import CurriculumManager
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
@@ -229,16 +229,81 @@ class SurveyManager:
 
             return survey
 
+    def convert_ids(self, question_ids):
+        results = []
+        things = question_ids.split(";")
+        for thing in things:
+            if thing != "":
+                results.append(thing)
+
+        return results
+
     def add_question_to_survey(self, survey_id, question_id):
         survey = Survey.objects.get(id=survey_id)
         question_ids_entry = survey.question_ids
-        question_ids = question_ids_entry.split(";")
+        question_ids = self.convert_ids(question_ids_entry)
         question_ids.append(question_id)
         question_ids_new_entry = ";".join(question_ids)
         survey.question_ids = question_ids_new_entry
         survey.save()
 
-    def plan_survey(self, survey_id):
-        survey = Survey.objects.get(id=survey_id)
+    def plan_survey(self, item):
+        assignment = CurriculumManager().display_assignment(item)
+        client = assignment[3]
+        survey_id = assignment[16]
 
-        print(survey)
+        survey = Survey.objects.get(id=survey_id)
+        check = SurveyResponse.objects.filter(item=item).exists()
+
+        if not check:
+            question_ids_raw = survey.question_ids
+            question_ids = self.convert_ids(question_ids_raw)
+
+            for question_id in question_ids:
+
+                response = SurveyResponse()
+                response.stamp = TimeMachine().now_number()
+                response.client = client
+                response.response = ""
+                response.survey_id = survey_id
+                response.question_id = question_id
+                response.response_id = 0
+                response.item = item
+                response.save()
+
+    def take_survey(self, item):
+        self.plan_survey(item)
+
+        check = SurveyResponse.objects.filter(item=item, response="").exists()
+
+        if check:
+            survey = SurveyResponse.objects.filter(item=item, response="")
+            question_reference = survey[0]
+            question_id = question_reference.question_id
+            question = SurveyQuestion.objects.get(id=question_id)
+
+            option_ids_raw = question.option_ids
+            option_ids = self.convert_ids(option_ids_raw)
+            options = [SurveyOption.objects.get(id=uid) for uid in option_ids]
+
+            total = SurveyResponse.objects.filter(item=item).count()
+            awaiting = survey.count()
+            count = total - awaiting + 1
+
+            response_id = question_reference.id
+
+            return (response_id, question, options, count, total)
+
+    def respond(self, response, response_id):
+        response = Cleaner().clean_quotation_marks(response)
+
+        question = SurveyResponse.objects.get(id=response_id)
+        question.response = response
+        question.save()
+
+    def display_responses(self, question_id):
+        check = SurveyResponse.objects.filter(question_id=question_id).exists()
+
+        if check:
+            responses = SurveyResponse.objects.filter(question_id=question_id)
+            return responses

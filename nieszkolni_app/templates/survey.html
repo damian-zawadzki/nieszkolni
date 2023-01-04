@@ -2,22 +2,42 @@
 {% block 'content' %}
 {% load static %}
 
-<form action="{% url 'survey' item=item %}"  method="POST">
-   {% csrf_token %}
+<h1>QUESTION: {{ count }} OF {{ total }}</h1>
 
-   <h1>{{ question }}</h1>
+<div class="flex-parent jc-center">
+   <div class="phrase_card">
+      <div class="phrase_card_container">
+         <h5 class="phrase_card_question">{{ question.question }}</h5>
 
-   <div class="flex-parent jc-center">
-      <div class="input_container">
-         <label class="input_label">Content</label>
-         <textarea type="text" class="input_content input_paragraph" name="content" required></textarea>
+         <form action="{% url 'survey' item=item %}" method="POST">
+         {% csrf_token %}
+
+         {% if question.question_type == 'open' %}
+
+            <div class="flex-parent jc-center">
+               <div class="input_container">
+                  <input type="text" class="input_content_solo" name="response" required>
+               </div>
+            </div>
+
+            <div class="flex-parent jc-center">
+
+               <button type="submit" class="button_main" name="action_on_survey" value="submit">Submit</button>
+
+            </div>
+
+         {% else %}
+
+            {% for option in options %}
+               <button type="submit" class="button_main" name="response" value="{{ option.option_value }}">{{ option.option }}</button>
+            {% endfor %}
+
+         {% endif %}
+
+         </form>
+
       </div>
    </div>
-
-  <div class="flex-parent jc-center">
-      <button type="submit" class="button_main" name="action_on_survey" value="submit">Submit</button>
-  </div>
-
-</form>
+ </div>
 
 {% endblock %}

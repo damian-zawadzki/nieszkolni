@@ -113,14 +113,24 @@
               </datalist>
           </div>
 
-          <div class="input_container" id="catalogues_options" name="main_entry" style="display: none;">
+<!--           <div class="input_container" id="catalogues_options" name="main_entry" style="display: none;">
               <label class="input_label">Entry</label>  
               <select name="catalogues_entry" class="input_content">
                   <option></option>
                   {% for catalogue in catalogues %}
-                  <option value="{{ catalogue.0 }},{{ catalogue.1 }}">{{ catalogue.0 }}</option>
+                  <option value="{{ catalogue.0 }}">{{ catalogue.1 }}</option>
                   {% endfor %}
               </select>
+          </div> -->
+
+          <div class="input_container" id="catalogues_options" name="main_entry" style="display: none;">
+            <label for="datalist_catalogues" class="input_label">Entry</label>  
+            <input id="datalist_catalogues" name="catalogues_entry" type="text" class="input_content" list="list_of_catalogues">
+              <datalist name="pronunciation_entry" id="list_of_catalogues">
+                  {% for catalogue in catalogues %}
+                  <option value="{{ catalogue.0 }}: {{ catalogue.1 }}"></option>
+                  {% endfor %}
+              </datalist>
           </div>
 
           <div class="input_container" id="pronunciation_options" name="main_entry" style="display: none;">

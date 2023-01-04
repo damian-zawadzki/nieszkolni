@@ -824,6 +824,10 @@ class CurriculumManager:
             action = "take_part"
             call = "Take part"
             info = ""
+        elif assignment_type == "catalogue":
+            action = "add_vocabulary"
+            call = "Add to your vocabulary"
+            info = ""
         elif assignment_type in no_submissions:
             action = "mark_as_done"
             call = "Mark as done"
