@@ -1372,12 +1372,10 @@ def assignments(request, client=''):
         score = ActivityManager().calculate_points_this_week(current_user)
 
         if current_user == "Anette Braden":
-            messages.success(request, (f"Your homework will appear here on Jan. 6, 1 pm!"))
+            messages.warning(request, (f"Your homework will appear here on Jan. 6, 1 pm!"))
 
         ratings = RatingManager().display_unrated(current_user)
-
-        messages.success(request, ("Now, it's possible to uncheck a task if you did it by mistake!"))
-
+        
         if request.method == "POST":
             item = request.POST["item"]
 
