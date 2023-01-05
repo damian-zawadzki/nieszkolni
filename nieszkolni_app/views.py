@@ -1371,6 +1371,9 @@ def assignments(request, client=''):
         user_agent = get_user_agent(request)
         score = ActivityManager().calculate_points_this_week(current_user)
 
+        if current_user == "anettebraden":
+            messages.success(request, (f"Your homework will appear here on Jan. 6, 1 pm!"))
+
         ratings = RatingManager().display_unrated(current_user)
 
         messages.success(request, ("Now, it's possible to uncheck a task if you did it by mistake!"))
@@ -4182,6 +4185,7 @@ def add_grade(request):
                 examiner
                 )
 
+        messages.add_message(request, getattr(messages, output[0]), output[1])
         return render(request, "add_grade.html", {
             "courses": courses
             })

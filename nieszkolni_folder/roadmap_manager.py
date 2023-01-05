@@ -406,13 +406,20 @@ class RoadmapManager:
 
             return stuff
 
-    def display_current_courses(self, name):
-        current_semester = 0
+    def display_current_courses(self, client):
+        things = self.display_profiles()
+        profiles = [thing[0] for thing in things]
+
+        if client not in profiles:
+            output = ("ERROR", "The client has no profile")
+            
+            return output
+
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 SELECT current_semester
                 FROM nieszkolni_app_profile
-                WHERE name = '{name}'
+                WHERE name = '{client}'
                 ''')
 
             data = cursor.fetchone()
@@ -423,7 +430,7 @@ class RoadmapManager:
                 SELECT
                 course
                 FROM nieszkolni_app_roadmap
-                WHERE name = '{name}'
+                WHERE name = '{client}'
                 AND semester = '{current_semester}'
                 ''')
 

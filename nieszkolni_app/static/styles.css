@@ -837,6 +837,7 @@ h1 {
   letter-spacing: .25px;
   margin-bottom: 35px;
   text-align: center;
+  word-wrap: break-word;
 }
 
 h2 {
@@ -1181,6 +1182,8 @@ table.m_table {
   margin-left: 0%;
   margin-right: 0%;
   margin-bottom: 1%;
+  max-width: 100%;
+  overflow: hidden;
   width: 100%;
   table-layout: auto;
 }
