@@ -474,6 +474,7 @@ class KnowledgeManager:
             cursor.execute(f'''
                 SELECT DISTINCT catalogue_number, catalogue_name
                 FROM nieszkolni_app_catalogue
+                ORDER BY catalogue_name ASC
                 ''')
 
             catalogues = cursor.fetchall()

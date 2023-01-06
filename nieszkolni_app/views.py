@@ -1375,7 +1375,7 @@ def assignments(request, client=''):
             messages.warning(request, (f"Your homework will appear here on Jan. 6, 1 pm!"))
 
         ratings = RatingManager().display_unrated(current_user)
-        
+
         if request.method == "POST":
             item = request.POST["item"]
 
@@ -1645,8 +1645,6 @@ def choose_reference(request, component, id_prefix):
         first_name = request.user.first_name
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
-
-        print(component)
 
         if component == "reading":
             references = BackOfficeManager().display_library()

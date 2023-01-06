@@ -595,9 +595,9 @@ class CurriculumManager:
     def display_components(self):
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                SELECT
-                component_id
+                SELECT component_id
                 FROM nieszkolni_app_module
+                ORDER BY component_id ASC
                 ''')
 
             components = cursor.fetchall()
@@ -719,7 +719,7 @@ class CurriculumManager:
             cursor.execute(f'''
                 SELECT matrix, id_prefix
                 FROM nieszkolni_app_prefix
-                ORDER BY id_prefix ASC
+                ORDER BY matrix ASC
                 ''')
 
             prefixes = cursor.fetchall()
