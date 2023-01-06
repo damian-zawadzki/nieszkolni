@@ -103,6 +103,7 @@ def campus(request):
                 })
 
 
+
 @login_required(login_url='login_user.html')
 def vocabulary(request):
     if request.user.is_authenticated:
@@ -1370,7 +1371,6 @@ def assignments(request, client=''):
 
         user_agent = get_user_agent(request)
         score = ActivityManager().calculate_points_this_week(current_user)
-
         ratings = RatingManager().display_unrated(current_user)
 
         if request.method == "POST":
@@ -1387,7 +1387,8 @@ def assignments(request, client=''):
                 return render(request, "m_my_to_do_list.html", {
                     "uncomplated_assignments": uncomplated_assignments,
                     "complated_assignments": complated_assignments,
-                    "score": score
+                    "score": score,
+                    "ratings": ratings
                     })
 
             else:
