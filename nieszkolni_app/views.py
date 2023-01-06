@@ -1371,9 +1371,6 @@ def assignments(request, client=''):
         user_agent = get_user_agent(request)
         score = ActivityManager().calculate_points_this_week(current_user)
 
-        if current_user == "Anette Braden":
-            messages.warning(request, (f"Your homework will appear here on Jan. 6, 1 pm!"))
-
         ratings = RatingManager().display_unrated(current_user)
 
         if request.method == "POST":
@@ -1749,7 +1746,7 @@ def add_module(request, component, id_prefix, reference, resources):
                 )
 
             messages.success(request, ("You have added a module!"))
-            return redirect("display_modules")
+            return redirect("choose_component")
 
         return render(request, "add_module.html", {
             "component": component,
