@@ -22,6 +22,18 @@ class SubmissionManager:
     def __init__(self):
         pass
 
+    def find_landing_page(self, item):
+        conditions = CurriculumManager().display_assignment_conditions(item)
+        activity_points = ChallengeManager().display_reward_by_item(item)
+
+        if conditions == "challenge":
+            page = "applause"
+
+        else:
+            page = "assignments"
+
+        return (page, activity_points)
+
     def run_submission(
             self,
             item,
@@ -32,13 +44,9 @@ class SubmissionManager:
             current_user
             ):
 
-        status = CurriculumManager().display_assignment_status(item)
-
-        if status == "invisible_uncompleted":
-            page = "applause"
-
-        else:
-            page = "assignments"
+        page_object = self.find_landing_page(item)
+        page = page_object[0]
+        activity_points = page_object[1]
 
         try:
             commands = {
@@ -68,13 +76,39 @@ class SubmissionManager:
 
             StreamManager().add_to_stream(client, command, value, current_user)
 
-            output = ("SUCCESS", "Assignment submitted", page)
+            if page == "applause":
+                output = (
+                        "SUCCESS",
+                        "Assignment submitted",
+                        page,
+                        activity_points
+                        )
+            else:
+                output = (
+                        "SUCCESS",
+                        "Assignment submitted",
+                        page,
+                        activity_points
+                        )
 
             return output
 
         except Exception as e:
 
-            output = ("ERROR", "Assignment could not be submitted", page)
+            if page == "applause":
+                output = (
+                        "ERROR",
+                        "Assignment could not be submitted",
+                        page,
+                        activity_points
+                        )
+            else:
+                output = (
+                        "ERROR",
+                        "Assignment could not be submitted",
+                        page,
+                        activity_points
+                        )
 
             return output
 
@@ -143,11 +177,16 @@ class SubmissionManager:
                 ''')
 
     def display_students_assignments_limited(self, name):
+        today_number = TimeMachine().today_number()
+        limit = today_number - 30
+
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 SELECT date, title, content, wordcount, unique_id
                 FROM nieszkolni_app_submission
                 WHERE name = '{name}'
+                AND date_number > '{limit}'
+                ORDER BY date DESC
                 ''')
 
             submissions = cursor.fetchall()

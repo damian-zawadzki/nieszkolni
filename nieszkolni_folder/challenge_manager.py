@@ -30,7 +30,8 @@ class ChallengeManager:
             title,
             text,
             image,
-            module
+            module,
+            activity_points
             ):
 
         title = Cleaner().clean_quotation_marks(title)
@@ -54,7 +55,8 @@ class ChallengeManager:
                 '{title}',
                 '{text}',
                 '{image}',
-                '{module}'
+                '{module}',
+                '{activity_points}'
                 )
                 ''')
 
@@ -138,7 +140,8 @@ class ChallengeManager:
             text,
             image,
             module,
-            challenge_id
+            challenge_id,
+            activity_points
             ):
 
         title = Cleaner().clean_quotation_marks(title)
@@ -154,7 +157,8 @@ class ChallengeManager:
                 title = '{title}',
                 text = '{text}',
                 image = '{image}',
-                module = '{module}'
+                module = '{module}',
+                activity_points = '{activity_points}'
                 WHERE id = '{challenge_id}'
                 ''')
 
@@ -212,6 +216,7 @@ class ChallengeManager:
                 text = challenge[5]
                 image = challenge[6]
                 module = challenge[7]
+                activity_points = 1
 
                 if module == "not applicable":
                     item = 0
@@ -238,8 +243,6 @@ class ChallengeManager:
                         "automatic"
                         )
 
-                print(client)
-
                 self.plan_challenge(
                     stamp,
                     matrix,
@@ -256,7 +259,8 @@ class ChallengeManager:
                     text,
                     image,
                     module,
-                    item
+                    item,
+                    activity_points
                     )
 
             StreamManager().add_to_stream(
@@ -283,7 +287,8 @@ class ChallengeManager:
             text,
             image,
             module,
-            item
+            item,
+            activity_points
             ):
 
         title = Cleaner().clean_quotation_marks(title)
@@ -307,7 +312,8 @@ class ChallengeManager:
                 text,
                 image,
                 module,
-                item
+                item,
+                activity_points
                 )
                 VALUES (
                 '{stamp}',
@@ -325,7 +331,8 @@ class ChallengeManager:
                 '{text}',
                 '{image}',
                 '{module}',
-                '{item}'
+                '{item}',
+                '{activity_points}'
                 )
                 ''')
 
@@ -349,7 +356,8 @@ class ChallengeManager:
                 text,
                 image,
                 module,
-                item
+                item,
+                activity_points
                 FROM nieszkolni_app_challenge
                 WHERE client = '{client}'
                 AND process_status = 'uncompleted'
@@ -387,7 +395,8 @@ class ChallengeManager:
                 text,
                 image,
                 module,
-                item
+                item,
+                activity_points
                 FROM nieszkolni_app_challenge
                 WHERE id = '{challenge_id}'
                 AND process_status != 'removed'
@@ -417,7 +426,8 @@ class ChallengeManager:
                 text,
                 image,
                 module,
-                item
+                item,
+                activity_points
                 FROM nieszkolni_app_challenge
                 WHERE process_status != 'removed'
                 GROUP BY process_number
@@ -447,7 +457,8 @@ class ChallengeManager:
                 text,
                 image,
                 module,
-                item
+                item,
+                activity_points
                 FROM nieszkolni_app_challenge
                 WHERE process_number = '{process_number}'
                 ''')
@@ -611,7 +622,82 @@ class ChallengeManager:
                 WHERE step_number = '{step_number}'
                 ''')
 
+    def check_step_status(self, process_number, step_number):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT step_status
+                FROM nieszkolni_app_challenge
+                WHERE process_number = '{process_number}'
+                AND step_number = '{step_number}'
+                ''')
+
+            status = cursor.fetchone()
+
+            if status is not None:
+                status = status[0]
+
+            return status
+
+    def check_challenge_status(self, challenge_id):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT step_status
+                FROM nieszkolni_app_challenge
+                WHERE id = '{challenge_id}'
+                ''')
+
+            status = cursor.fetchone()
+
+            if status is not None:
+                status = status[0]
+
+            return status
+
+    def display_reward_by_item(self, item):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT activity_points
+                FROM nieszkolni_app_challenge
+                WHERE item = '{item}'
+                ''')
+
+            activity_points = cursor.fetchone()
+
+            if activity_points is not None:
+                activity_points = activity_points[0]
+
+                return activity_points
+            else:
+                return None
+
+    def assign_reward(self, challenge_id):
+        check = self.check_challenge_status(challenge_id)
+
+        if check != "completed":
+            with connection.cursor() as cursor:
+                cursor.execute(f'''
+                    SELECT process_number, step_number, activity_points, client
+                    FROM nieszkolni_app_challenge
+                    WHERE id = '{challenge_id}'
+                    ''')
+
+                thing = cursor.fetchone()
+
+                process_number = thing[0]
+                step_number = thing[1]
+                points = thing[2]
+                client = thing[3]
+
+                StreamManager().add_to_stream(
+                    client,
+                    "Activity",
+                    f"challenge {process_number}{step_number};{points}",
+                    "automatic"
+                    )
+
     def complete_challenge(self, challenge_id):
+        self.assign_reward(challenge_id)
+
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 UPDATE nieszkolni_app_challenge
@@ -629,18 +715,25 @@ class ChallengeManager:
                 if process_status is False:
                     step_number = thing[1]
                     next_step_number = step_number + 1
-                    self.unlock_next_step(next_step_number)
+                    next_step_status = self.check_step_status(
+                            process_number,
+                            next_step_number
+                            )
+
+                    print(next_step_status)
+                    if next_step_status == "locked":
+                        self.unlock_next_step(next_step_number)
 
                 return process_status
 
     def refresh_process(self, challenges):
+        # problematic because it's looping through
         if challenges is not None:
 
             for challenge in challenges:
                 challenge_id = challenge[0]
                 process_number = challenge[3]
                 item = challenge[16]
-                process_number
 
                 if item != 0:
                     item_status = self.check_if_item_completed(challenge[0])
@@ -649,6 +742,7 @@ class ChallengeManager:
                         self.complete_challenge(challenge[0])
 
                 process_status = self.check_if_process_completed(process_number)
+
             return process_status
 
         else:

@@ -1,5 +1,6 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, re_path, include
+
 from . import views
 
 urlpatterns = [
@@ -173,7 +174,7 @@ urlpatterns = [
     path('display_challenge_sets/', views.display_challenge_sets, name="display_challenge_sets"),
     path('display_challenge_set/<int:process_number>', views.display_challenge_set, name="display_challenge_set"),
     path('translate_sentences/<int:item>', views.translate_sentences, name="translate_sentences"),
-    path('applause/', views.applause, name="applause"),
+    path('applause/<int:activity_points>', views.applause, name="applause"),
     path('add_survey_option/', views.add_survey_option, name="add_survey_option"),
     path('add_survey_question/', views.add_survey_question, name="add_survey_question"),
     path('display_survey_question/<int:question_id>', views.display_survey_question, name="display_survey_question"),
@@ -184,4 +185,7 @@ urlpatterns = [
     path('survey/<int:item>', views.survey, name="survey"),
     path('completed/', views.completed, name="completed"),
     path('responses/', views.responses, name="responses"),
+    path('flashcard/<str:username>/<str:deck>', views.flashcard, name="flashcard"),
+    re_path(r'^flashcard_question/$', views.flashcard_question, name='flashcard_question'),
+    re_path(r'^flashcard_answer/$', views.flashcard_answer, name='flashcard_answer'),
        ]

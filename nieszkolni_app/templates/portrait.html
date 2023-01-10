@@ -94,7 +94,13 @@
 
 	var activity = parseInt({{ activity_points|safe }});
 	var target = parseInt({{ target|safe }});
-	var advancement = activity / target * 15;
+	var check = activity / target * 15;
+
+	if (check < 1) {
+		var advancement = 1.1;
+	} else {
+		var advancement = check;
+	}
 
 	function progress() {
 	  var element = document.getElementById("activity_stats");

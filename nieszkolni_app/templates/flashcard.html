@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<div class="flex-parent jc-center" id="question_card">
+  <form action="{% url 'flashcard' username=current_user deck=deck %}" method="POST">
+    {% csrf_token %}
+
+    <div class="phrase_card">
+      <div class="phrase_card_container">
+      <h5 class="phrase_card_question" id="polish_question"></h5>
+
+        <button type="button" class="button_main" name="action_on_flashcard" value="show" id="show_b" onclick="disableButton(this.id); showAnswer()">Show</button>
+
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<div class="flex-parent jc-center" id="answer_card" style="display: none;">
+  <form action="{% url 'flashcard' username=current_user deck=deck %}" method="POST">
+    {% csrf_token %}
+
+    <div class="phrase_card">
+      <div class="phrase_card_container">
+      <h5 class="phrase_card_question" id="polish_answer"></h5>
+      <p class="phrase_card_answer" id="english_answer"><span class="section"></span></p>
+
+        <button type="button" class="button_main" id="incorrect_b_2" name="answer" value="incorrect" onclick="disableButton(this.id)">Incorrect</button>
+        <button type="button" class="button_main" id="correct_b" name="answer" value="hard" onclick="disableButton(this.id)">Correct</button>
+
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<div class="flex-parent jc-center keep_distance">
+  <div class="counter old_counter" id="old_count"></div>
+  <div class="counter new_counter" id="new_count"></div>
+  <div class="counter problematic_counter" id="problematic_count"></div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="{% static 'functions.js' %}"></script>
+
+<script type="text/javascript">
+  function loadQuestion() {
+    $.ajax(
+    {
+        type:"GET",
+        url: {% url 'flashcard_question' %},
+        data: {
+          'deck': '{{ deck }}'
+        },
+        success: function(flashcard) 
+        {
+            var question_card = document.getElementById('question_card');
+            var answer_card = document.getElementById('answer_card');
+            var polish_question = document.getElementById('polish_question');
+            var polish_answer = document.getElementById('polish_answer');
+            var old_count = document.getElementById('old_count');
+            var new_count = document.getElementById('new_count');
+            var problematic_count = document.getElementById('problematic_count');
+            var object = flashcard.split("<>");
+
+            question_card.style.display = 'flex';
+            answer_card.style.display = 'none';
+            localStorage.setItem('card_id', object[0]);
+            localStorage.setItem('english', object[2]);
+            polish_question.innerHTML = object[1];
+            polish_answer.innerHTML = object[1];
+            old_count.innerHTML = object[5];
+            new_count.innerHTML = object[6];
+            problematic_count.innerHTML = object[7];
+            localStorage.setItem('total', object[8]);
+            localStorage.setItem('card_opening_time', Date.now());
+        }
+     })
+  }
+
+  function showAnswer() {
+    var question_card = document.getElementById('question_card');
+    var answer_card = document.getElementById('answer_card');
+    var english_answer = document.getElementById('english_answer');
+    var english = localStorage.getItem('english');
+
+    question_card.style.display = 'none';
+    answer_card.style.display = 'flex';
+    english_answer.innerHTML = english;
+  }
+
+  $(window).on("load", loadQuestion());
+
+  $("button[name*='answer']").click(function() {
+  var card_id = localStorage.getItem('card_id');
+  var answer;
+  var card_opening_time = localStorage.getItem('card_opening_time');
+  var total = localStorage.getItem('total');
+  answer = $(this).attr("value");
+  $.ajax(
+  {
+      type:"GET",
+      url: {% url 'flashcard_answer' %},
+      data:{
+              card_id: card_id,
+              answer: answer,
+              card_opening_time: card_opening_time
+      },
+      success: function(data) 
+      {
+          if (total > 1) {
+            loadQuestion();
+          } else {
+            window.location.replace("{% url 'congratulations' %}");
+          }
+      }
+  })
+  });
+
+</script>
+
+{% endblock %}

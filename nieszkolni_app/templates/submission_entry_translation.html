@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<div class="flex-parent jc-center">
+  <div class="assignment_card">
+    <div class="task_card_container">
+      <div class="task_card_title">{{ title }}</div>
+      <div class="task_card_details"><b>Date:</b> {{ date }}</div>
+        
+        <div class="flex-parent jc-center">
+          {% for sentence in sentences %}
+            <div class="task_card_content task_card_content_line"><span><b> ({{ sentence.0 }})</b> {{ sentence.2 }} </span></div>
+          {% endfor %}
+        </div>
+
+    
+    </div>
+  </div>
+</div>
+
+
+{% include 'footer.html' %}
+{% endblock %}

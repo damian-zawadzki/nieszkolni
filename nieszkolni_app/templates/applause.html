@@ -5,8 +5,9 @@
 <div class="applause_box">
   <div class="applause_title fade_in">CONGRATULATIONS</div>
   <div class="applause_subtitle fade_in">{{ first_name|title }}</div>
+  <div class="applause_message fade_in">+{{ activity_points }} activity point{{ activity_points|pluralize }}</div>
 
-  <form action="{% url 'applause' %}"  method="POST">
+  <form action="{% url 'applause' activity_points=activity_points %}"  method="POST">
     {% csrf_token %}
 
     <div class="flex-parent jc-center">

@@ -59,7 +59,7 @@ class CurriculumPlanner:
             reference
             )
 
-        if assignment_type == "sentences":
+        if assignment_type == "sentences" or assignment_type == "translation":
             set_details = SentenceManager().display_set(reference)
             set_id = set_details[0]
             sentence_ids = set_details[2]

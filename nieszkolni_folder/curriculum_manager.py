@@ -225,6 +225,18 @@ class CurriculumManager:
 
         return assignment_status[0]
 
+    def display_assignment_conditions(self, item):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT conditions
+                FROM nieszkolni_app_curriculum
+                WHERE item = '{item}'
+                ''')
+
+            conditions = cursor.fetchone()
+
+        return conditions[0]
+
     def display_assignment_status_by_component_id(self, component_id):
         with connection.cursor() as cursor:
             cursor.execute(f'''
@@ -816,7 +828,7 @@ class CurriculumManager:
             action = "check_stats"
             call = "Check"
             info = "flashcards_7"
-        elif assignment_type == "flashcards_sentences":
+        elif assignment_type == "flashcardssentences":
             action = "check_stats"
             call = "Check"
             info = "flashcards_sentences_7"

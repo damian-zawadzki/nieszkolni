@@ -103,6 +103,66 @@ def campus(request):
                 })
 
 
+@login_required(login_url='login_user.html')
+def flashcard(request, username, deck):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        flashcard = VocabularyManager().display_due_entries_json(
+                current_user,
+                deck
+                )
+
+        if flashcard is None:
+            return redirect("congratulations")
+
+        else:
+            return render(request, 'flashcard.html', {
+                "deck": deck,
+                "flashcard": flashcard
+                })
+
+
+@login_required(login_url='login_user.html')
+def flashcard_question(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        if request.method == "GET":
+            deck = request.GET["deck"]
+            flashcard = VocabularyManager().display_due_entries_json(
+                    current_user,
+                    deck
+                    )
+
+            return HttpResponse(flashcard)
+
+
+@login_required(login_url='login_user.html')
+def flashcard_answer(request):
+    if request.method == 'GET':
+        card_id = request.GET['card_id']
+        answer = request.GET['answer']
+        js_time = request.GET['card_opening_time']
+
+        card_opening_time = TimeMachine().parse_js_time_to_system_time(
+            js_time
+            )
+
+        VocabularyManager().update_card(
+            card_id,
+            answer,
+            card_opening_time
+            )
+
+        return HttpResponse("Success!")
+    else:
+        return HttpResponse("Request method is not a GET")
+
 
 @login_required(login_url='login_user.html')
 def vocabulary(request):
@@ -406,7 +466,7 @@ def register_user(request):
                     )
 
             messages.add_message(request, getattr(messages, output[0]), output[1])
-            return redirect(product[2])
+            return redirect(output[2])
 
         return render(request, "register_user.html", {})
 
@@ -937,7 +997,10 @@ def submit_assignment(request, item):
                         output[1]
                         )
 
-            return redirect(output[2])
+                return redirect(output[2])
+
+            else:
+                return redirect(output[2], activity_points=output[3])
 
         return render(request, "submit_assignment.html", {
                 "item": item,
@@ -999,30 +1062,38 @@ def translate_sentences(request, item):
         sentences = SentenceManager().display_sentence_list(list_number)
         assignment = CurriculumManager().display_assignment(item)
         client = assignment[3]
+        assignment_type = assignment[6]
+        title = assignment[7]
 
         if request.method == "POST":
             if request.POST["action_on_submission"] == "translate":
-                item = request.POST["item"]
-                client = request.POST["client"]
-                assignment_type = request.POST["assignment_type"]
-                title = request.POST["title"]
+                originals = request.POST.getlist("polish")
+                translations = request.POST.getlist("english")
+                sentence_numbers = request.POST.getlist("sentence_number")
 
-                content_raw = []
-                translations = []
-                for index in range(0, 10):
-                    sentence_number = request.POST[f"sentence_number_{index}"]
-                    polish = request.POST[f"polish_{index}"]
-                    translation = request.POST[f"translation_{index}"]
-                    entry = (sentence_number, translation)
-                    translations.append(entry)
-                    content_raw.append(f"{polish}\n")
-                    content_raw.append(f"{translation}\n")
+                entries = [
+                    (sentence_number, translation)
+                    for sentence_number, translation
+                    in zip(sentence_numbers, translations)
+                    ]
 
-                content = "\n".join(content_raw)
+                if assignment_type == "translation":
+                    polish = " ".join(originals)
+                    translation = " ".join(translations)
+                    content = f"{polish}\n\n{translation}"
+
+                else:
+                    content_raw = [
+                        f"{original}\n{translation}\n"
+                        for original, translation
+                        in zip(originals, translations)
+                        ]
+
+                    content = "\n".join(content_raw)
 
                 # # Move this to the logic
                 # Submitting sentence translations
-                SentenceManager().submit_sentence_translation(translations)
+                SentenceManager().submit_sentence_translation(entries)
                 SubmissionManager().add_submission(
                     item,
                     client,
@@ -1040,11 +1111,18 @@ def translate_sentences(request, item):
                 messages.success(request, ("Your assignment has been submitted!"))
                 return redirect("assignments")
 
-        return render(request, "translate_sentences.html", {
-                "item": item,
-                "client": client,
-                "sentences": sentences
-                })
+        if assignment_type == "translation":
+            return render(request, "translate_text.html", {
+                    "item": item,
+                    "client": client,
+                    "sentences": sentences
+                    })
+        else:
+            return render(request, "translate_sentences.html", {
+                    "item": item,
+                    "client": client,
+                    "sentences": sentences
+                    })
 
 
 @login_required
@@ -1055,16 +1133,35 @@ def list_of_submissions(request):
         current_user = first_name + " " + last_name
 
         user_agent = get_user_agent(request)
-        submissions = SubmissionManager().display_students_assignments_limited(current_user)
+        submissions = SubmissionManager().display_students_assignments_limited(
+                current_user
+                )
         tags = BackOfficeManager().display_tags()
 
         if request.method == "POST":
             unique_id = request.POST["unique_id"]
 
-            submission = SubmissionManager().display_students_assignment(unique_id)
-            assignment_type = submission[10]
+            submission = SubmissionManager().display_students_assignment(
+                    unique_id
+                    )
 
-            if assignment_type != "sentences":
+            date = submission[0]
+            title = submission[1]
+            status = submission[9]
+            assignment_type = submission[10]
+            item = submission[11]
+
+            # Move it to the logic
+            if assignment_type == "translation":
+                list_number = SentenceManager().find_list_number_by_item(item)
+                sentences = SentenceManager().display_graded_list(list_number)
+
+                return render(request, "submission_entry_translation.html", {
+                        "status": status,
+                        "sentences": sentences
+                        })
+
+            elif assignment_type != "sentences":
 
                 return render(request, "submission_entry.html", {
                         "submission": submission,
@@ -1072,10 +1169,6 @@ def list_of_submissions(request):
                         })
 
             else:
-                date = submission[0]
-                title = submission[1]
-                status = submission[9]
-                item = submission[11]
                 list_number = SentenceManager().find_list_number_by_item(item)
                 sentences = SentenceManager().display_graded_list(list_number)
 
@@ -2207,26 +2300,25 @@ def translate_wordbook(request):
             messages.success(request, ("You've translated all the wordbook entries!"))
             return render(request, "translate_wordbook.html", {})
 
-        else:
-            if request.method == "POST":
-                if request.POST["wordbook_action"] == "delete":
-                    english = request.POST["english"]
-                    KnowledgeManager().delete_book_entries_by_english(english)
+        if request.method == "POST":
+            if request.POST["wordbook_action"] == "delete":
+                english = request.POST["english"]
+                KnowledgeManager().delete_book_entries_by_english(english)
 
-                    return redirect("translate_wordbook")
+                return redirect("translate_wordbook")
 
-                elif request.POST["wordbook_action"] == "save":
-                    english = request.POST["english"]
-                    polish = request.POST["polish"]
+            elif request.POST["wordbook_action"] == "save":
+                english = request.POST["english"]
+                polish = request.POST["polish"]
 
-                    translate_entry = KnowledgeManager().translate_book_entry(english, polish)
+                translate_entry = KnowledgeManager().translate_book_entry(english, polish)
 
-                    return redirect("translate_wordbook")
+                return redirect("translate_wordbook")
 
-            return render(request, "translate_wordbook.html", {
-                    "entries": entries,
-                    "counter": counter
-                    })
+        return render(request, "translate_wordbook.html", {
+                "entries": entries,
+                "counter": counter
+                })
 
 
 @staff_member_required
@@ -2243,26 +2335,25 @@ def approve_wordbook(request):
             messages.success(request, ("You've translated all the wordbook entries!"))
             return render(request, "approve_wordbook.html", {})
 
-        else:
-            if request.method == "POST":
-                if request.POST["wordbook_action"] == "reject":
-                    english = request.POST["english"]
-                    KnowledgeManager().reject_book_entry(english)
+        if request.method == "POST":
+            if request.POST["wordbook_action"] == "reject":
+                english = request.POST["english"]
+                KnowledgeManager().reject_book_entry(english)
 
-                    return redirect("approve_wordbook")
+                return redirect("approve_wordbook")
 
-                elif request.POST["wordbook_action"] == "approve":
-                    unique_id = request.POST["unique_id"]
-                    english = request.POST["english"]
+            elif request.POST["wordbook_action"] == "approve":
+                unique_id = request.POST["unique_id"]
+                english = request.POST["english"]
 
-                    KnowledgeManager().approve_book_entry(unique_id, english, current_user)
+                KnowledgeManager().approve_book_entry(unique_id, english, current_user)
 
-                    return redirect("approve_wordbook")
+                return redirect("approve_wordbook")
 
-            return render(request, "approve_wordbook.html", {
-                    "entries": entries,
-                    "counter": counter
-                    })
+        return render(request, "approve_wordbook.html", {
+                "entries": entries,
+                "counter": counter
+                })
 
 
 @staff_member_required
@@ -2279,26 +2370,25 @@ def translate_sentencebook(request):
             messages.success(request, ("You've translated all the sentencebook entries!"))
             return render(request, "translate_sentencebook.html", {})
 
-        else:
-            if request.method == "POST":
-                if request.POST["sentencebook_action"] == "delete":
-                    english = request.POST["english"]
-                    KnowledgeManager().delete_book_entries_by_english(english)
+        if request.method == "POST":
+            if request.POST["sentencebook_action"] == "delete":
+                english = request.POST["english"]
+                KnowledgeManager().delete_book_entries_by_english(english)
 
-                    return redirect("translate_sentencebook")
+                return redirect("translate_sentencebook")
 
-                elif request.POST["sentencebook_action"] == "save":
-                    english = request.POST["english"]
-                    polish = request.POST["polish"]
+            elif request.POST["sentencebook_action"] == "save":
+                english = request.POST["english"]
+                polish = request.POST["polish"]
 
-                    translate_entry = KnowledgeManager().translate_book_entry(english, polish)
+                translate_entry = KnowledgeManager().translate_book_entry(english, polish)
 
-                    return redirect("translate_sentencebook")
+                return redirect("translate_sentencebook")
 
-            return render(request, "translate_sentencebook.html", {
-                    "entries": entries,
-                    "counter": counter
-                    })
+        return render(request, "translate_sentencebook.html", {
+                "entries": entries,
+                "counter": counter
+                })
 
 
 @staff_member_required
@@ -2309,32 +2399,35 @@ def approve_sentencebook(request):
         current_user = first_name + " " + last_name
 
         entries = KnowledgeManager().display_translated_book("sentences")
-        counter = KnowledgeManager().count_translated_book("vocabulary")
+        counter = KnowledgeManager().count_translated_book("sentences")
 
         if entries is None:
             messages.success(request, ("You've translated all the sentencebook entries!"))
             return render(request, "approve_sentencebook.html", {})
 
-        else:
-            if request.method == "POST":
-                if request.POST["sentencebook_action"] == "reject":
-                    english = request.POST["english"]
-                    KnowledgeManager().reject_book_entry(english)
+        if request.method == "POST":
+            if request.POST["sentencebook_action"] == "reject":
+                english = request.POST["english"]
+                KnowledgeManager().reject_book_entry(english)
 
-                    return redirect("approve_sentencebook")
+                return redirect("approve_sentencebook")
 
-                elif request.POST["sentencebook_action"] == "approve":
-                    unique_id = request.POST["unique_id"]
-                    english = request.POST["english"]
+            elif request.POST["sentencebook_action"] == "approve":
+                unique_id = request.POST["unique_id"]
+                english = request.POST["english"]
 
-                    KnowledgeManager().approve_book_entry(unique_id, english, current_user)
+                KnowledgeManager().approve_book_entry(
+                        unique_id,
+                        english,
+                        current_user
+                        )
 
-                    return redirect("approve_sentencebook")
+                return redirect("approve_sentencebook")
 
-            return render(request, "approve_sentencebook.html", {
-                    "entries": entries,
-                    "counter": counter
-                    })
+        return render(request, "approve_sentencebook.html", {
+                "entries": entries,
+                "counter": counter
+                })
 
 
 @staff_member_required
@@ -2350,20 +2443,22 @@ def upload_anki(request):
             client = request.POST["client"]
             deck = request.POST["deck"]
             txt_file = request.FILES["txt_file"]
-            file = txt_file.read().decode("utf8")
-            rows = file.splitlines()
+            chunks = txt_file.chunks()
+            for chunk in chunks:
+                file = chunk.decode("utf8")
+                rows = file.splitlines()
 
-            for row in rows:
-                entry = row.split("\t")
-                polish = entry[0]
-                english = entry[1]
+                for row in rows:
+                    entry = row.split("\t")
+                    polish = entry[0]
+                    english = entry[1]
 
-                VocabularyManager().add_entry(
-                    client,
-                    deck,
-                    english,
-                    polish,
-                    current_user)
+                    VocabularyManager().add_entry(
+                        client,
+                        deck,
+                        english,
+                        polish,
+                        current_user)
 
             messages.success(request, ("The file has been uploaded!"))
             return render(request, "upload_anki.html", {
@@ -2373,6 +2468,7 @@ def upload_anki(request):
         return render(request, "upload_anki.html", {
             "clients": clients
             })
+
 
 @staff_member_required
 def upload_catalogues(request):
@@ -2780,7 +2876,7 @@ def check_homework(request, current_user=''):
         return render(request, "check_homework.html", {
                 "uncompleted_assignments": uncompleted_assignments,
                 "completed_assignments": completed_assignments,
-                "first_name": first_name
+                "current_client": current_client
                 })
 
 
@@ -3100,6 +3196,7 @@ def grade_sentences(request):
         current_user = first_name + " " + last_name
 
         entry = SentenceManager().display_sentences_to_grade()
+        counter = SentenceManager().count_sentences_to_grade()
 
         if request.method == "POST":
             sentence_number = request.POST["sentence_number"]
@@ -3110,7 +3207,8 @@ def grade_sentences(request):
             return redirect("grade_sentences")
 
         return render(request, "grade_sentences.html", {
-            "entry": entry
+            "entry": entry,
+            "counter": counter
             })
 
 
@@ -4476,7 +4574,13 @@ def take_quiz(request, item):
 
             elif request.POST["answer"] == "leave":
 
-                return redirect("assignments")
+                page = SubmissionManager().find_landing_page(item)
+
+                if page[0] == "applause":
+
+                    return redirect("applause", activity_points=page[1])
+                else:
+                    return redirect("assignments")
 
             else:
                 answer_raw = request.POST["answer"]
@@ -5393,8 +5497,6 @@ def examination_mode(request):
                 "vocabulary"
                 )
 
-        print(phrases)
-
         sentences = VocabularyManager().display_test_cards(
                 current_client,
                 "sentences"
@@ -5636,12 +5738,16 @@ def challenges(request):
 
         challenges = ChallengeManager().display_planned_challenges(current_user)
         status = ChallengeManager().refresh_process(challenges)
+        activity_points = StreamManager().display_activity(current_user)
+        target = StreamManager().display_activity_target(current_user)
 
         if status is True:
             return redirect("profile")
 
         return render(request, "challenges.html", {
-            "challenges": challenges
+            "challenges": challenges,
+            "activity_points": activity_points,
+            "target": target
             })
 
 
@@ -5653,7 +5759,14 @@ def challenge(request, challenge_id):
         current_user = first_name + " " + last_name
 
         challenge = ChallengeManager().display_planned_challenge(challenge_id)
+        activity_points = challenge[17]
         cta = ChallengeManager().find_challenge(challenge)
+
+        if challenge[4] == "completed":
+            return redirect("challenges")
+
+        if challenge[9] == "locked":
+            return redirect("challenges")
 
         if request.method == "POST":
             if request.POST["action_on_challenge"] == "back":
@@ -5664,7 +5777,7 @@ def challenge(request, challenge_id):
 
                 result = ChallengeManager().complete_challenge(challenge_id)
 
-                return redirect("applause")
+                return redirect("applause", activity_points=activity_points)
 
             elif request.POST["action_on_challenge"] == "submit":
 
@@ -5686,7 +5799,7 @@ def challenge(request, challenge_id):
 
 
 @login_required
-def applause(request):
+def applause(request, activity_points):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
@@ -5698,6 +5811,7 @@ def applause(request):
                 return redirect("challenges")
 
         return render(request, "applause.html", {
+            "activity_points": activity_points,
             "first_name": first_name
             })
 
@@ -5891,7 +6005,7 @@ def add_question_to_survey(request):
                     )
 
                 messages.success(request, "Question added to the survey")
-                return redirect("display_survey", survey_id=survey_id)
+                return redirect("add_question_to_survey")
 
         return render(request, "add_question_to_survey.html", {
             "surveys": surveys,
@@ -5910,8 +6024,12 @@ def survey(request, item):
 
         if data is None:
             CurriculumManager().change_status_to_completed(item, current_user)
+            page = SubmissionManager().find_landing_page(item)
 
-            return redirect("completed")
+            if page[0] == "applause":
+                return redirect("applause", activity_points=page[1])
+            else:
+                return redirect("completed")
 
         response_id = data[0]
         question = data[1]

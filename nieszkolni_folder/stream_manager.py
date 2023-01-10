@@ -974,6 +974,11 @@ class StreamManager:
             table_3 = table_2.sort_values(by="activity", ascending=False)
             table_4 = table_3.reset_index()
             table_4.index = table_4.index + 1
+            table_4["rank"] = table_4["activity"].rank(
+                    method="dense",
+                    na_option="bottom",
+                    ascending=False
+                    ).astype(int)
             table_5 = list(table_4.itertuples(index=True, name=None))
             entries = table_5
 
@@ -986,7 +991,7 @@ class StreamManager:
                 else:
                     display_name = display_names.get(entry[1])
 
-                item = (entry[0], display_name, entry[2])
+                item = (entry[3], display_name, entry[2])
 
                 ranking.append(item)
 

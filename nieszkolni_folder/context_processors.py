@@ -19,6 +19,7 @@ def sections_processor(request):
         challenge_status = ChallengeManager().refresh_process(challenges)
 
         return {
+            "current_user": current_user,
             "status": status,
             "superuser_status": superuser_status,
             "challenge_status": challenge_status

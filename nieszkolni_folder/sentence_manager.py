@@ -451,6 +451,22 @@ class SentenceManager:
                 entry = entries[0]
                 return entry
 
+    def count_sentences_to_grade(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT COUNT(english)
+                FROM nieszkolni_app_composer
+                WHERE status = 'translated'
+                ''')
+
+            counter = cursor.fetchone()
+            if counter is not None:
+                counter = counter[0]
+            else:
+                counter = 0
+
+            return counter
+
     def grade_sentence(self, sentence_number, result, reviewing_user):
         with connection.cursor() as cursor:
             cursor.execute(f'''

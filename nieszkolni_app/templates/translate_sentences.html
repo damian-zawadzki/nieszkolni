@@ -25,15 +25,12 @@
   <div class="flex-parent jc-center"> 
      <div class="input_long_container">
       <label class="input_label input_long_label">{{ sentence.1 }}</label>
-      <input type="hidden" name="polish_{{ forloop.counter0 }}" value="{{ sentence.1 }}">
-      <input type="hidden" name="sentence_number_{{ forloop.counter0 }}" value="{{ sentence.0 }}">
-      <textarea type="text" class="input_content input_paragraph" name="translation_{{ forloop.counter0 }}" required></textarea>
+      <input type="hidden" name="polish" value="{{ sentence.1 }}">
+      <input type="hidden" name="sentence_number" value="{{ sentence.0 }}">
+      <textarea type="text" class="input_content input_paragraph" name="english" required></textarea>
     </div>
   </div>
 {% endfor %}
-
-  <input type="hidden" name="assignment_type" value="sentences">
-  <input type="hidden" name="title" value="{{ title }}">
 
   <div class="flex-parent jc-center">
     <button type="submit" class="button_main" id="submit_button" name="action_on_submission" value="translate" onclick="disableButton(this.id)">Submit</button>

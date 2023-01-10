@@ -6,6 +6,7 @@
   --backgroud-color: #FFF;
   --container-color: #F9F9F9;
   --border-color: #D3D3D3;
+  --success-color: #D4AF37;
 }
 
 /*Body*/
@@ -193,6 +194,10 @@ a {
 
 .margins {
   margin-bottom: 7vh;
+}
+
+.margin_top {
+  margin-top: 10vh;
 }
 
 /*Flashcards*/
@@ -799,8 +804,14 @@ task_card_content_list {
 /*Nagivation*/
 .navigation {
   background-color: #F9F9F9;
+  display: flex;
+  left: 0;
   padding: 5vh 0vw;
+  position: static;
   margin-bottom: 5vh;
+  max-width: 100%;
+  width: 100%;
+  top: 0;
 }
 
 .navigation_item {
@@ -1106,7 +1117,7 @@ h3 {
   height: 10vh;
   left: 0;
   margin-bottom: 5vh;
-  position: static;
+  position: fixed;
   right: 0;
   top: 0;
   z-index: -1;
@@ -1790,9 +1801,64 @@ hr.line {
 }
 
 .break {
-  display: flex;
+  background-color: var(--backgroud-color);
+  display: block;
   width: 100%;
   height: 10vh;
+  position: relative;
+}
+
+/*Translation*/
+.translation_box {
+  align-content: flex-start;
+  align-items: flex-start;
+  display: flex;
+  background-color: #fff;
+  border-radius: 2vmin;
+  border-style: none;
+  box-shadow: rgba(0, 0, 0, .2) 0 3px 5px -1px,rgba(0, 0, 0, .14) 0 6px 10px 0,rgba(0, 0, 0, .12) 0 1px 18px 0;
+  box-sizing: border-box;
+  border-radius: 2vmin;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  height: auto;
+  width: 75vw;
+  padding: 5vmin;
+  position: relative;
+  margin: 3vh auto;
+}
+
+.translation_clip {
+  align-items: center;
+  background-color: #fff;
+  border-radius: 2vmin;
+  border-style: none;
+  box-sizing: border-box;
+  color: #3c4043;
+  cursor: none;
+  display: flex;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 2vh;
+  font-weight: 500;
+  height: 3vh;
+  justify-content: center;
+  margin: 0.5vh 0.5vw;
+  overflow: visible;
+  padding: 0vh 0vw;
+  position: relative;
+  width: fit-content;
+}
+
+.translation_current {
+  background-color: var(--container-color);
+  font-weight: 750;
+  padding: 0vh 2vw;
+}
+
+.input_translation {
+  max-width: 75%;
+  width: 75%;
 }
 
 /*Square menu*/
@@ -2075,10 +2141,11 @@ hr.line {
 }
 
 .activity_progress_bar {
-  background-color: #FF6384;
+  background-color: var(--success-color);
   border-radius: 2vmin;
   height: 2vh;
   width: 0vw;
+  z-index: 101;
 }
 
 .activity_description{
@@ -2268,12 +2335,66 @@ hr.line {
 }
 
 /*challenge*/
+.milestones_container {
+  background-color: var(--backgroud-color);
+  display: block;
+  height: 20vh;
+  left: 0;
+  max-width: 100%;
+  overflow: hidden;
+  position: relative;
+  top: 0;
+  width: 100%;
+}
+
+.milestones_header {
+  background-color: var(--backgroud-color);
+  display: block;
+  left: 35vw;
+  max-width: 100%;
+  overflow: none;
+  position: relative;
+  top: 3vh;
+  width: auto;
+  z-index: 100;
+}
+
+.milestones_bar {
+  background-color: var(--backgroud-color);
+  display: inline-block;
+  left: 35vw;
+  max-width: 100%;
+  overflow: none;
+  position: relative;
+  top: 4vh;
+  width: auto;
+  z-index: 100;
+}
+
+
+.milestone_figure {
+  color: #333538;
+  display: inline-block;
+  font-family: var(--font-family);
+  font-size: 2.5vh;
+  font-weight: 750;
+}
+
+.milestone_figure_success {
+  color: var(--success-color);
+  display: inline-block;
+  font-family: var(--font-family);
+  font-size: 2.5vh;
+  font-weight: 750;
+}
+
 .milestones {
   display: block;
   left: 35vw;
   max-width: 100%;
   overflow: none;
   position: absolute;
+  top: 25vh;
   width: auto;
 }
 
@@ -2372,8 +2493,8 @@ hr.line {
   color: #D4AF37;
   display: flex;
   font-family: "Google Sans", Roboto, Arial, sans-serif;
-  font-size: 2vmin;
-  font-weight: 750;
+  font-size: 4vmin;
+  font-weight: 1000;
   justify-content: center;
 }
 

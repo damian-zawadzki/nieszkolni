@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'no_navigation.html' %}
 {% block 'content' %}
 {% load static %} 
 
@@ -12,20 +12,25 @@
 
 			</div>
 
+			
 			<div class="program_photo_container">
 	      		<div class="program_description">{{ challenge.13 }}</div>
-	      		<hr class="line"></div>
-	      		<div class="program_description"><b>Item:</b> {{ challenge.16 }}</div>
+	      		
+	      		{% if not user.is_staff %}
+	      			<hr class="line"></div>
+	      			<div class="program_description"><b>Item:</b> {{ challenge.16 }}</div>
+	      		{% endif %}
 	      	</div>
+	      	
 
 			<form action="{% url 'challenge' challenge_id=challenge.0 %}"  method="POST">
 				{% csrf_token %}
 
 				<div class="flex-parent jc-center">
 					{% if cta.0 %}
-						<button type="submit" class="button_main" name="action_on_challenge" value="{{ cta.1 }}">{{ cta.0 }}</button>
+						<button type="submit" class="button_main margin_top" name="action_on_challenge" value="{{ cta.1 }}">{{ cta.0 }}</button>
 					{% endif %}
-				  <button type="submit" class="button_main" name="action_on_challenge" value="back">Back</button>
+				  <button type="submit" class="button_main margin_top" name="action_on_challenge" value="back">Back</button>
 				</div>
 
 			</form>

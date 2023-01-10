@@ -16,6 +16,7 @@ from nieszkolni_folder.curriculum_manager import CurriculumManager
 from nieszkolni_folder.stream_manager import StreamManager
 from nieszkolni_folder.quiz_manager import QuizManager
 from nieszkolni_folder.knowledge_manager import KnowledgeManager
+from nieszkolni_folder.sentence_manager import SentenceManager
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
@@ -215,9 +216,6 @@ class HomeworkManager:
             product = ("translate_sentences", item)
 
         elif action == "translate_text":
-
-            list_number = SentenceManager().find_list_number_by_item(item)
-            sentences = SentenceManager().display_sentence_list(list_number)
-            product = ("translate_text", item)
+            product = ("translate_sentences", item)
 
         return product

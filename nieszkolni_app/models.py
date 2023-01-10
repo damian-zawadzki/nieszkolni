@@ -516,6 +516,7 @@ class Challenge(models.Model):
     image = models.CharField(max_length=200, default="")
     module = models.CharField(max_length=200, default="")
     item = models.IntegerField(default=0)
+    activity_points = models.IntegerField(default=1)
 
 
 class Survey(models.Model):

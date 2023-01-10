@@ -273,3 +273,34 @@ class TimeMachine:
         dates = [TimeMachine().number_to_system_date(date) for date in range(start+1, end+1)]
 
         return dates
+
+    def epoche_to_system_time(self):
+        end = "2000-01-01 00:00:00"
+        end = datetime.strptime(end, now_pattern_colons)
+
+        start = "1970-01-01 00:00:00"
+        start = datetime.strptime(start, now_pattern_colons)
+
+        difference_days = end - start
+        difference_seconds = int(difference_days.days) * 86400
+
+        return difference_seconds
+
+    def parse_js_time_to_system_time(self, js_time):
+        offset = datetime.now(timezone).strftime("%z")
+        if offset[0] == "+":
+            offset = offset.replace("+", "").lstrip("0")
+            offset = int(offset) / 100
+        else:
+            offset = offset.replace("-", "").lstrip("0")
+            offset = int(offset) / 100 * -1
+
+        js_time = int(js_time)
+        js_time_seconds = round(js_time / 1000)
+
+        difference = self.epoche_to_system_time()
+
+        time = js_time_seconds - difference + (offset * 3600)
+        time = round(time)
+
+        return time

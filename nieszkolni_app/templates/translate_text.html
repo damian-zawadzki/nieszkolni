@@ -2,47 +2,146 @@
 {% block 'content' %}
 {% load static %} 
 
-<h1>{{ title.upper }}</h1>
-
-<form action="{% url 'submit_assignment' %}" method="POST">
+<form action="{% url 'translate_sentences' item=item %}" method="POST">
   {% csrf_token %}
 
-  <div class="flex-parent jc-center"> 
-    <div class="input_container">
-      <label class="input_label">Item</label>
-      <input type="number" class="input_content input_prefilled" name="item" value="{{ item }}" readonly required>
+  <div class="flex-parent jc-center">
+    <div class="translation_box noselect">
+
+      {% for sentence in sentences %}
+         <div class="translation_clip" id="p{{ sentence.0 }}" name="polish_div">{{ sentence.1 }}</div>
+         <input type="hidden" name="polish" value="{{ sentence.1 }}">
+      {% endfor %}
+
     </div>
   </div>
 
-  <div class="flex-parent jc-center"> 
-     <div class="input_container">
-      <label class="input_label">Name</label>
-      <input type="text" class="input_content input_prefilled" name="name" value="{{ name }}" readonly required>
-    </div>
+  <div class="flex-parent jc-center" id="label">
+    <label class="input_label">Translate the highlighted sentences and hit the button.</label>
   </div>
-
-{% for sentence in sentences %}
-  <div class="flex-parent jc-center"> 
-     <div class="input_long_container">
-      <label class="input_label input_long_label">{{ sentence.1 }}</label>
-      <input type="hidden" name="polish_{{ forloop.counter0 }}" value="{{ sentence.1 }}">
-      <input type="hidden" name="sentence_number_{{ forloop.counter0 }}" value="{{ sentence.0 }}">
-      <textarea type="text" class="input_content input_paragraph" name="translation_{{ forloop.counter0 }}" required></textarea>
-    </div>
+  <div class="flex-parent jc-center">
+    <input type="text" class="input_content input_translation" id="translation_input">
   </div>
-{% endfor %}
-
-
-
-  <input type="hidden" name="assignment_type" value="sentences">
-  <input type="hidden" name="title" value="{{ title }}">
 
   <div class="flex-parent jc-center">
-    <button type="submit" class="button_main" id="final_button" name="go_to" value="translated_sentences" onclick="disableButton(this.id)">Submit</button>
+    <button type="button" class="button_main" id="previous_b" value="previous" onclick="previousSentence(this)" style="display: none">Previous</button>
+    <button type="button" class="button_main" id="next_b" value="next" onclick="translateSentence(this)">Next</button>
+    <button type="submit" class="button_main" id="submit_b" name="action_on_submission" value="translate"  style="display: none">Submit</button>
+  </div>
+
+  <div class="flex-parent jc-center">
+    <div class="translation_box noselect">
+
+      {% for sentence in sentences %}
+         <input class="translation_clip noselect" id="{{ sentence.0 }}" name="english" readonly required>
+         <input type="hidden" name="sentence_number" value="{{ sentence.0 }}">
+      {% endfor %}
+
+    </div>
   </div>
 
 </form>
 
 <script src="{% static 'functions.js' %}"></script>
+
+<script type="text/javascript">
+  function loadSentences(i) {
+    var previous = document.getElementById('previous_b');
+    var next = document.getElementById('next_b');
+    var sentences = document.querySelectorAll('div[name="polish_div"]');
+    var sentence = sentences[i];
+
+    for (let k=0; k<sentences.length; k++) {
+      sentences[k].className = "translation_clip noselect";
+    };
+
+    sentence.className = "translation_clip noselect translation_current";
+    previous.value = sentence.id
+    next.value = sentence.id;
+    localStorage.setItem('i', i);
+
+  }
+
+  function displayButtons(i) {
+    var sentences = document.querySelectorAll('div[name="polish_div"]');
+    var previous = document.getElementById('previous_b');
+    var submit = document.getElementById('submit_b');
+    var next = document.getElementById('next_b');
+    var input = document.getElementById('translation_input');
+    var label = document.getElementById('label');
+
+    if (i < sentences.length - 1) {
+      submit.style.display = "none";
+    } else {
+      submit.style.display = "block";
+    };
+
+    if (i == 0) {
+      previous.style.display = "none";
+    } else {
+      previous.style.display = "block";
+    };
+    
+    if (i == sentences.length) {
+      submit.style.display = "block";
+      next.style.display = "none";
+      input.style.display = "none";
+      label.style.display = "none";
+    } else {
+      submit.style.display = "none";
+      next.style.display = "flex";
+      input.style.display = "flex";
+      label.style.display = "flex";
+    };
+  }
+
+  function translateSentence(button) {
+    var input = document.getElementById('translation_input');
+    var translation = input.value;
+
+
+    if (translation == null || translation == '') {
+      return false;
+    } else {
+      var id_raw = button.value;
+      var id = id_raw.replace('p', '');
+      var english = document.getElementById(id);
+      var i = localStorage.getItem('i');
+      var j = parseInt(i) + 1
+      var sentences = document.querySelectorAll('div[name="polish_div"]');
+      var sentence = sentences[i];
+
+      localStorage.setItem('i', j);
+      sentence.className = "translation_clip noselect";
+      english.value = translation;
+      english.style.width = (translation.length) + 'ch';
+      input.value = "";
+      displayButtons(j);
+      loadSentences(j);
+      loadTranslation(j);
+    };
+  }
+
+  function previousSentence(button) {
+    var i = localStorage.getItem('i');
+    var h = parseInt(i) - 1;
+    // var sentences = document.querySelectorAll('div[name="polish"]');
+    // var sentence = sentences[i];   
+    
+    // sentence.className = "translation_clip noselect";
+    displayButtons(h);
+    loadSentences(h);
+    loadTranslation(h);
+  }
+
+  function loadTranslation(i) {
+    var translations = document.querySelectorAll('input[name="english"]');
+    var input = document.getElementById('translation_input');
+
+    input.value = translations[i].value;
+  }
+
+  window.addEventListener('load', () => loadSentences(0))
+</script>
 
 {% endblock %}

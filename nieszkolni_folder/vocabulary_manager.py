@@ -1,9 +1,13 @@
 import os
 import django
 from django.db import connection
+
 from nieszkolni_app.models import Card
 from nieszkolni_app.models import Client
+
 from nieszkolni_folder.time_machine import TimeMachine
+
+import json
 
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
@@ -74,6 +78,33 @@ class VocabularyManager:
         entries = sorted(entries_raw, key=lambda tup: tup[4], reverse=False)
 
         return entries
+
+    def display_counts(self, client, deck):
+        old = len(self.display_old_due_entries(client, deck))
+        new = len(self.display_new_due_entries(client, deck))
+        problematic = len(self.display_problematic_due_entries(client, deck))
+
+        counts = [old, new, problematic]
+
+        return counts
+
+    def display_due_entries_json(self, client, deck):
+        entries = self.display_due_entries(client, deck)
+        counts = self.display_counts(client, deck)
+        total = sum(counts)
+
+        if len(entries) != 0:
+            things = list(entries[0])
+            things.extend(counts)
+            things.append(total)
+
+            result = [str(thing) for thing in things]
+            result = "<>".join(result)
+
+            return result
+
+        else:
+            return None
 
     def display_old_due_entries(self, client, deck):
         today_number = TimeMachine().today_number()
