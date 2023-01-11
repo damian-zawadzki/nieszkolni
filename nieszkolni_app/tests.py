@@ -10,43 +10,190 @@ from .views import *
 
 class YourTestClass(TestCase):
     def setUp(self):
-        global userfullname
         global username
         global password
+        global current_user
 
-        userfullname = "Joe Doe"
         username = "joedoe"
         password = "1234"
-        self.user = User.objects.create_user(username, 'joedoe@dummy.com', password)
+        first_name = "Joe"
+        last_name = "Doe"
+        current_user = first_name + " " + last_name
+
+        self.user = User.objects.create_user(
+                username,
+                'joedoe@dummy.com',
+                password,
+                first_name=first_name,
+                last_name=last_name
+                )
+
+        self.customer = Client.objects.create(name="Joe Doe")
 
     def test_campus_deny_anonymous(self):
-        response = self.client.get('/campus', follow=True)
-        self.assertRedirects(response, '/login_user?next=/campus')
+        response = self.client.get("/campus/", follow=True)
+        self.assertRedirects(response, "/login_user/?next=/campus/")
 
-    # def test_flashcard(self):
-    #     global userfullname
-    #     global username
-    #     global password
-    #     self.client.login(username="joedoe", password="1234")
+    def test_campus_login(self):
+        self.client.login(username=username, password=password)
+        response = self.client.get("/campus/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "campus.html")
 
-    #     klient = Client()
-    #     self.klient = Client.objects.create(name="Joe Doe")
+    def test_challenges_deny_anonymous(self):
+        response = self.client.get("/challenges/")
+        self.assertRedirects(response, "/login_user/?next=/challenges/")
 
-    #     userfullname1 = "Damien%20Bunny"
-    #     url = reverse("flashcard", kwargs={"username":userfullname1, "deck":"vocabulary"})
+    def test_challenges_login(self):
+        self.client.login(username=username, password=password)
+        response = self.client.get("/challenges/")
+        self.assertEqual(response.status_code, 302)
 
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'flashcard.html')
+    def test_profile_deny_anonymous(self):
+        response = self.client.get("/profile/")
+        self.assertRedirects(response, "/login_user/?next=/profile/")
 
-    # def test_call_view_load(self):
-    #     self.client.login(username='joedoe', password='1234')
-    #     response = self.client.get('/campus')
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'campus.html')
+    def test_profile_login(self):
+        self.client.login(username=username, password=password)
+        response = self.client.get("/profile/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "profile.html")
 
-    # def test_random_test(self):
-    #     self.client.login(username='joedoe', password='1234')
-    #     response = self.client.get('/applause/1')
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'applause.html')
+    def test_ranking_deny_anonymous(self):
+        response = self.client.get("/ranking/")
+        self.assertRedirects(response, "/login_user/?next=/ranking/")
+
+    def test_ranking_login(self):
+        self.client.login(username=username, password=password)
+        response = self.client.get("/ranking/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "ranking.html")
+
+    def test_coach_deny_anonymous(self):
+        response = self.client.get("/coach/")
+        self.assertRedirects(response, "/admin/login/?next=/coach/")
+
+    def test_coach_login(self):
+        self.client.login(username=username, password=password)
+        response = self.client.get("/coach/")
+        self.assertEqual(response.status_code, 302)
+
+    def test_coach_login_staff(self):
+        self.client.login(username=username, password=password)
+        self.user.is_staff = True
+        self.user.save()
+        response = self.client.get("/coach/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_staff_deny_anonymous(self):
+        response = self.client.get("/staff/")
+        self.assertRedirects(response, "/admin/login/?next=/staff/")
+
+    def test_staff_login(self):
+        self.client.login(username=username, password=password)
+        response = self.client.get("/staff/")
+        self.assertEqual(response.status_code, 302)
+
+    def test_staff_login_staff(self):
+        self.client.login(username=username, password=password)
+        self.user.is_staff = True
+        self.user.save()
+        response = self.client.get("/staff/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_assignments_deny_anonymous(self):
+        response = self.client.get("/assignments/")
+        self.assertRedirects(response, "/login_user/?next=/assignments/")
+
+    def test_assignments_login(self):
+        self.client.login(username=username, password=password)
+        response = self.client.get("/assignments/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "assignments.html")
+
+    def test_statistics_deny_anonymous(self):
+        response = self.client.get("/statistics/")
+        self.assertRedirects(response, "/login_user/?next=/statistics/")
+
+    def test_statistics_login(self):
+        self.client.login(username=username, password=password)
+        response = self.client.get("/statistics/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "statistics.html")
+
+    def test_memories_deny_anonymous(self):
+        response = self.client.get("/memories/")
+        self.assertRedirects(response, "/login_user/?next=/memories/")
+
+    def test_memories_login(self):
+        self.client.login(username=username, password=password)
+        response = self.client.get("/memories/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "memories.html")
+
+    def test_list_of_submissions_deny_anonymous(self):
+        response = self.client.get("/list_of_submissions/")
+        self.assertRedirects(response, "/login_user/?next=/list_of_submissions/")
+
+    def test_list_of_submissions_login(self):
+        self.client.login(username=username, password=password)
+        response = self.client.get("/list_of_submissions/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "list_of_submissions.html")
+
+    def test_options_deny_anonymous(self):
+        response = self.client.get("/options/")
+        self.assertRedirects(response, "/login_user/?next=/options/")
+
+    def test_options_login(self):
+        self.client.login(username=username, password=password)
+        response = self.client.get("/options/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "options.html")
+
+    def test_vocabulary_deny_anonymous(self):
+        response = self.client.get("/vocabulary/")
+        self.assertRedirects(response, "/login_user/?next=/vocabulary/")
+
+    def test_vocabulary_login(self):
+        self.client.login(username=username, password=password)
+        response = self.client.get("/vocabulary/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "congratulations.html")
+
+    def test_sentences_deny_anonymous(self):
+        response = self.client.get("/sentences/")
+        self.assertRedirects(response, "/login_user/?next=/sentences/")
+
+    def test_sentences_login(self):
+        self.client.login(username=username, password=password)
+        response = self.client.get("/sentences/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "congratulations.html")
+
+    def test_sentences_deny_anonymous(self):
+        response = self.client.get("/my_pronunciation/")
+        self.assertRedirects(response, "/login_user/?next=/my_pronunciation/")
+
+    def test_sentences_login(self):
+        self.client.login(username=username, password=password)
+        response = self.client.get("/my_pronunciation/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "my_pronunciation.html")
+
+    def test_flashcard_deny_anonymous(self):
+        response = self.client.get("/flashcard/")
+        self.assertRedirects(response, "/login_user/?next=/flashcard/")
+
+    def test_flashcard_login(self):
+        self.client.login(username=username, password=password)
+        response = self.client.post("/flashcard/", {"username": "Joe%20Doe", "deck": "vocabulary"})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "flashcard.html")
+
+
+'''
+vocabulary with flashcards in it
+sentences with flashcards in it
+detailed assignment views
+'''

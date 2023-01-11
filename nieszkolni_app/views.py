@@ -103,7 +103,7 @@ def campus(request):
                 })
 
 
-@login_required(login_url='login_user.html')
+@login_required
 def flashcard(request, username, deck):
     if request.user.is_authenticated:
         first_name = request.user.first_name
@@ -125,7 +125,7 @@ def flashcard(request, username, deck):
                 })
 
 
-@login_required(login_url='login_user.html')
+@login_required
 def flashcard_question(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
@@ -142,7 +142,7 @@ def flashcard_question(request):
             return HttpResponse(flashcard)
 
 
-@login_required(login_url='login_user.html')
+@login_required
 def flashcard_answer(request):
     if request.method == 'GET':
         card_id = request.GET['card_id']
@@ -164,7 +164,7 @@ def flashcard_answer(request):
         return HttpResponse("Request method is not a GET")
 
 
-@login_required(login_url='login_user.html')
+@login_required
 def vocabulary(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
@@ -231,7 +231,7 @@ def vocabulary(request):
                 })
 
 
-@login_required(login_url='login_user.html')
+@login_required
 def sentences(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
@@ -297,7 +297,7 @@ def sentences(request):
                 })
 
 
-@login_required(login_url='login_user.html')
+@login_required
 def view_answer(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
@@ -601,7 +601,7 @@ def list_current_users(request):
 
 
 @login_required
-def options(request, template_name="404.html"):
+def options(request, template_name="404"):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
@@ -1466,31 +1466,24 @@ def assignments(request, client=''):
         score = ActivityManager().calculate_points_this_week(current_user)
         ratings = RatingManager().display_unrated(current_user)
 
-        if request.method == "POST":
-            item = request.POST["item"]
+        uncomplated_assignments = CurriculumManager().display_uncompleted_assignments(current_user)
+        complated_assignments = CurriculumManager().display_completed_assignments(current_user)
 
-            return render(request, "assignments.html", {"item": item})
+        if user_agent.is_mobile:
+            return render(request, "m_my_to_do_list.html", {
+                "uncomplated_assignments": uncomplated_assignments,
+                "complated_assignments": complated_assignments,
+                "score": score,
+                "ratings": ratings
+                })
 
         else:
-
-            uncomplated_assignments = CurriculumManager().display_uncompleted_assignments(current_user)
-            complated_assignments = CurriculumManager().display_completed_assignments(current_user)
-
-            if user_agent.is_mobile:
-                return render(request, "m_my_to_do_list.html", {
-                    "uncomplated_assignments": uncomplated_assignments,
-                    "complated_assignments": complated_assignments,
-                    "score": score,
-                    "ratings": ratings
-                    })
-
-            else:
-                return render(request, "assignments.html", {
-                    "uncomplated_assignments": uncomplated_assignments,
-                    "complated_assignments": complated_assignments,
-                    "score": score,
-                    "ratings": ratings
-                    })
+            return render(request, "assignments.html", {
+                "uncomplated_assignments": uncomplated_assignments,
+                "complated_assignments": complated_assignments,
+                "score": score,
+                "ratings": ratings
+                })
 
 
 @login_required
@@ -4277,7 +4270,6 @@ def add_grade(request):
                 examiner
                 )
 
-        messages.add_message(request, getattr(messages, output[0]), output[1])
         return render(request, "add_grade.html", {
             "courses": courses
             })

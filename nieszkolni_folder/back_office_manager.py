@@ -749,6 +749,9 @@ class BackOfficeManager:
 
             data = cursor.fetchone()
 
+            if data is not None:
+                data = data[0]
+
             return data
 
     def display_tags(self):

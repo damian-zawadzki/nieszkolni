@@ -54,10 +54,6 @@ class ActivityManager:
         full_homework = BackOfficeManager().display_option_by_command("full_homework_ap")
         main_homework = BackOfficeManager().display_option_by_command("main_homework_ap")
 
-        no_homework = no_homework[0]
-        full_homework = full_homework[0]
-        main_homework = main_homework[0]
-
         check = {
             "minimum": False,
             "maximum": False,
