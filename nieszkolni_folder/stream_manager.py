@@ -852,8 +852,7 @@ class StreamManager:
         # Activity
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                SELECT
-                value
+                SELECT value
                 FROM nieszkolni_app_stream
                 WHERE date_number >= {activity_start}
                 AND date_number <= {activity_stop}
@@ -869,7 +868,7 @@ class StreamManager:
                 entry = row[0]
 
                 try:
-                    point_raw = re.search(r";\d+$", entry).group()
+                    point_raw = re.search(r";\d+$|;-\d+$", entry).group()
                     point = re.sub(";", "", point_raw)
                     point = int(point)
                     activity.append(point)
@@ -879,7 +878,7 @@ class StreamManager:
                     history = (description, point)
                     activity_history.append(history)
 
-                except:
+                except Exception as e:
                     pass
 
             activity_points = sum(activity)
@@ -1012,7 +1011,7 @@ class StreamManager:
                 position = row[0]
                 return position
 
-            return 0
+        return 0
 
     # Spins and stories
 
