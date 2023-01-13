@@ -311,6 +311,7 @@ class Roadmap(models.Model):
     status = models.CharField(max_length=200, default="")
     item = models.IntegerField(default=0)
     status_type = models.CharField(max_length=200, default="")
+    program = models.CharField(max_length=200, default="Custom Program")
 
 
 class Course(models.Model):

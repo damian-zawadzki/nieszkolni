@@ -187,7 +187,8 @@ class YourTestClass(TestCase):
 
     def test_flashcard_login(self):
         self.client.login(username=username, password=password)
-        response = self.client.post("/flashcard/", {"username": "Joe%20Doe", "deck": "vocabulary"})
+        context = {"username": "Joe Doe", "deck": "vocabulary"}
+        response = self.client.post("/flashcard/", context)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "flashcard.html")
 

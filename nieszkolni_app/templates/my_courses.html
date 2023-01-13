@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+{% if courses %}
+	<h1>{{ courses.0.0.upper }}</h1>
+{% else %}
+	<h1>MY COURSES</h1>
+{% endif %}
+
+<table>
+
+	{% for course in courses %}
+
+		<tr class="font">
+
+			<td>{{ course.1 }}</td>
+			<td>{{ course.2 }}</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+{% endblock %}

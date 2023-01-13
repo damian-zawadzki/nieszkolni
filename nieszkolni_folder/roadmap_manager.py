@@ -1,16 +1,22 @@
 import os
 import django
+
 from django.db import connection
+
 from nieszkolni_app.models import Roadmap
 from nieszkolni_app.models import Course
 from nieszkolni_app.models import Program
 from nieszkolni_app.models import Grade
 from nieszkolni_app.models import Profile
 from nieszkolni_app.models import Spin
+
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
 
 from nieszkolni_folder.curriculum_manager import CurriculumManager
+
+import pandas as pd
+import numpy as np
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
@@ -218,6 +224,40 @@ class RoadmapManager:
 
             return courses
 
+    def display_current_courses_by_client(self, client):
+
+        current_semester = self.display_current_semester(client)
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                program,
+                course,
+                status
+                FROM nieszkolni_app_roadmap
+                WHERE name = '{client}'
+                AND semester = '{current_semester}'
+                ''')
+
+            courses = cursor.fetchall()
+
+            return courses
+
+    def display_current_semester(self, client):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT current_semester
+                FROM nieszkolni_app_profile
+                WHERE name = '{client}'
+                ''')
+
+            current_semester = cursor.fetchone()
+
+            if current_semester is not None:
+                current_semester = current_semester[0]
+
+            return current_semester
+
     def display_courses_to_plan(self):
 
         matrices = CurriculumManager().display_matrices()
@@ -279,7 +319,8 @@ class RoadmapManager:
             deadline,
             planning_user,
             item,
-            status_type
+            status_type,
+            program
             ):
 
         deadline_number = TimeMachine().date_to_number(TimeMachine().american_to_system_date(deadline))
@@ -295,7 +336,8 @@ class RoadmapManager:
                 planning_user,
                 status,
                 item,
-                status_type
+                status_type,
+                program
                 )
                 VALUES (
                 '{course}',
@@ -306,7 +348,8 @@ class RoadmapManager:
                 '{planning_user}',
                 'ongoing',
                 '{item}',
-                '{status_type}'
+                '{status_type}',
+                '{program}'
                 )
                 ''')
 
@@ -412,7 +455,7 @@ class RoadmapManager:
 
         if client not in profiles:
             output = ("ERROR", "The client has no profile")
-            
+
             return output
 
         with connection.cursor() as cursor:
@@ -427,8 +470,7 @@ class RoadmapManager:
 
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                SELECT
-                course
+                SELECT course
                 FROM nieszkolni_app_roadmap
                 WHERE name = '{client}'
                 AND semester = '{current_semester}'
@@ -815,6 +857,7 @@ class RoadmapManager:
                 result,
                 grade_type,
                 examiner,
+                course,
                 stamp
                 FROM nieszkolni_app_grade
                 WHERE student = '{student}'
@@ -827,10 +870,95 @@ class RoadmapManager:
             grades = []
             for row in rows:
                 date = TimeMachine().number_to_system_date(row[0])
-                grade = (date, row[1], row[2], row[3])
+                grade = (date, row[1], row[2], row[3], row[4], row[5])
                 grades.append(grade)
 
             return grades
+
+    def display_current_grades_by_client(self, client):
+        courses = self.display_current_courses(client)
+
+        all_grades = []
+        for course in courses:
+            grades = self.display_grades(client, course)
+            all_grades.extend(grades)
+
+        return all_grades
+
+    def display_current_results_by_client(self, client):
+        grades = self.display_current_grades_by_client(client)
+        midterm_grades = [grade for grade in grades if grade[2] == "midterm"]
+        final_grades = [grade for grade in grades if grade[2] == "final"]
+
+        date_m = [grade[0] for grade in midterm_grades]
+        grade_m = [grade[1] for grade in midterm_grades]
+        grade_type_m = [grade[2] for grade in midterm_grades]
+        course_m = [grade[4] for grade in midterm_grades]
+
+        stamp_f = [grade[5] for grade in final_grades]
+        date_f = [grade[0] for grade in final_grades]
+        grade_f = [grade[1] for grade in final_grades]
+        course_f = [grade[4] for grade in final_grades]
+
+        midterms = ({
+                "date": date_m,
+                "grade": grade_m,
+                "course": course_m
+                })
+
+        table_m = pd.DataFrame(midterms, columns=[
+                "date",
+                "grade",
+                "course"
+                ])
+
+        table_m_2 = table_m.groupby(["course"]).mean(numeric_only=True).reset_index()
+
+        midterm_results = list(table_m_2.itertuples(
+                index=False,
+                name=None
+                ))
+
+        finals = ({
+                "stamp": stamp_f,
+                "date": date_f,
+                "grade": grade_f,
+                "course": course_f
+                })
+
+        table_f = pd.DataFrame(finals, columns=[
+                "stamp",
+                "date",
+                "grade",
+                "course"
+                ])
+
+        table_f_2 = table_f.drop_duplicates()
+        table_f_3 = table_f_2.groupby(["course"])["stamp"].max().reset_index()
+        # table_f_3["grade"] = np.nan
+        table_f_4 = table_f_2.groupby(["course", "stamp"])["grade"].max().reset_index()
+        table_f_5 = table_f_3.merge(
+                table_f_4,
+                on="stamp",
+                how="left",
+                suffixes=("", "_y")
+                )
+
+        final_results = list(table_f_5[["course", "grade"]].itertuples(
+                index=False,
+                name=None
+                ))
+
+        midterm_results = [
+            result for result in midterm_results
+            if result[0] not in course_f
+            ]
+
+        final_results.extend(midterm_results)
+
+        results = [(result[0], round(result[1])) for result in final_results]
+
+        return results
 
     def display_last_final_grade(
             self,

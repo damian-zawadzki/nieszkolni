@@ -552,11 +552,49 @@ class CurriculumManager:
             reference
             ):
 
+        title = Cleaner().clean_quotation_marks(title)
+        content = Cleaner().clean_quotation_marks(content)
+        resources = Cleaner().clean_quotation_marks(resources)
+        conditions = Cleaner().clean_quotation_marks(conditions)
+
+        self.update_module_in_curriculum(
+            component_id,
+            component_type,
+            title,
+            content,
+            resources,
+            conditions,
+            reference
+            )
+
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 UPDATE nieszkolni_app_module
                 SET
                 component_type = '{component_type}',
+                title = '{title}',
+                content = '{content}',
+                resources = '{resources}',
+                conditions = '{conditions}',
+                reference = '{reference}'
+                WHERE component_id = '{component_id}'
+                ''')
+
+    def update_module_in_curriculum(
+            self,
+            component_id,
+            component_type,
+            title,
+            content,
+            resources,
+            conditions,
+            reference
+            ):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                UPDATE nieszkolni_app_curriculum
+                SET component_type = '{component_type}',
                 title = '{title}',
                 content = '{content}',
                 resources = '{resources}',

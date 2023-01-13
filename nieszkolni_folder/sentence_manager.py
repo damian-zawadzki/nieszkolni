@@ -512,12 +512,21 @@ class SentenceManager:
                 WHERE status = 'graded'
                 AND submission_date >= {start}
                 AND submission_date <= {end}
+                ORDER BY list_number ASC, sentence_number ASC
+
                 ''')
 
             items = cursor.fetchall()
-            sentence_lists = [items[i*10:(i+1)*10] for i in range(int(len(items)/10))]
 
-            return sentence_lists
+            # # sentence_lists = [items[i*10:(i+1)*10] for i in range(int(len(items)/10))]
+            # listings = {item[3]: [] for item in items}
+
+            # for key, value in listings:
+            #     for item in items:
+            #         if key == item[3]:
+            #             listing = listings.get(item[3])
+            #             listing.append(item)
+            #             listings.update({item[3]: listing})
 
     def display_list_status(self, list_number):
         with connection.cursor() as cursor:

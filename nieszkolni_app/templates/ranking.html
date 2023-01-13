@@ -16,10 +16,15 @@
 
 	{% for row in rows %}
 
-		<tr class="font">
+		<tr class="font tr_clickable" onclick="jump({{ row.0 }})">
+
+			<a id="{{ row.0 }}" href="{% url 'portrait' client=row.3 %}"></a>
 
 			<td>{{ row.0 }}</td>
-			<td id="{{ row.0 }}" onmouseover="showOnHover(this.id)">{{ row.1 }}</td>
+			<td id="{{ row.0 }}" onmouseover="showOnHover(this.id)">
+				<img class="avatar_image" src="{{ row.4 }}" width="50" height="50">
+				{{ row.1 }}
+			</td>
 			<td>{{ row.2 }}</td>
 
 		</tr>
@@ -30,23 +35,6 @@
 
 <div class="break"></div>
 
-<div class="visit_card" id="card">Hello</div>
-
-<!-- <script type="text/javascript">
-	function showOnHover(element) {
-		var area = document.getElementById(element);
-		var card = document.getElementById('card');
-		area.addEventListener('mouseover', function(e) {
-			// let left = e.pageX + 10;
-			let top = e.pageY + 10;
-			// card.style.left = left + 'px';
-			card.style.top = top + 'px';
-			card.style.display = 'block';
-			card.textContent = 'Damien Bunny';
-			}
-			);
-		area.addEventListener('mouseout', () => card.style.display = 'none');
-	}
-</script> -->
+<script src="{% static 'functions.js' %}"></script>  
 
 {% endblock %}

@@ -104,6 +104,35 @@ def campus(request):
 
 
 @login_required
+def summary(request, client):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+        user_agent = get_user_agent(request)
+
+        end_of_semester = BackOfficeManager().display_end_of_semester()
+        activity_points = StreamManager().display_activity(current_user)
+        ranking = StreamManager().display_ranking_by_client(current_user)
+        countdown = BackOfficeManager().countdown_end_of_semester()
+        context = {
+                    "client": client,
+                    "activity_points": activity_points,
+                    "ranking": ranking,
+                    "countdown": countdown
+                    }
+
+        if request.method == "POST":
+            if request.POST["action_on_summary"] == "enter":
+                return redirect("campus")
+
+        if user_agent.is_mobile:
+            return render(request, 'm_summary.html', context)
+        else:
+            return render(request, 'summary.html', context)
+
+
+@login_required
 def flashcard(request, username, deck):
     if request.user.is_authenticated:
         first_name = request.user.first_name
@@ -404,6 +433,7 @@ def congratulations(request):
         first_name = request.user.first_name
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
+
         reset_line = VocabularyManager().reset_line(current_user)
         messages.success(request, ("You're done for today!"))
 
@@ -418,8 +448,17 @@ def login_user(request):
 
         if user is not None:
             login(request, user)
-            messages.success(request, ("You have successfully logged in."))
-            return redirect("campus")
+
+            first_name = request.user.first_name
+            last_name = request.user.last_name
+            current_user = first_name + " " + last_name
+
+            if user.is_staff:
+                messages.success(request, ("You have successfully logged in."))
+                return redirect("campus")
+
+            else:
+                return redirect("summary", client=current_user)
 
         else:
             messages.error(request, ("Wrong password or username. Try again."))
@@ -4915,6 +4954,41 @@ def update_program(request, program_id):
             })
 
 
+@staff_member_required
+def manage_programs_and_courses(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        clients = ClientsManager().list_current_clients()
+        courses = RoadmapManager().display_courses()
+
+        if request.method == "POST":
+            if request.POST["action"] == "assign_course":
+                client = request.POST["client"]
+                course = request.POST["course"]
+                semester = request.POST["semester"]
+                program = "custom"
+
+                CurriculumPlanner().assign_course(
+                    client,
+                    current_user,
+                    course,
+                    semester,
+                    program
+                    )
+
+                return redirect("manage_programs_and_courses")
+
+        context = {
+            "clients": clients,
+            "courses": courses
+            }
+
+        return render(request, "manage_programs_and_courses.html", context)
+
+
 @login_required
 def programs(request):
     if request.user.is_authenticated:
@@ -5008,6 +5082,52 @@ def courses(request):
         return render(request, "courses.html", {
             "courses": courses
             })
+
+
+@login_required
+def my_courses(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        courses = RoadmapManager().display_current_courses_by_client(
+                current_user
+                )
+
+        context = {"courses": courses}
+
+        user_agent = get_user_agent(request)
+
+        if user_agent.is_mobile:
+            return render(request, "m_my_courses.html", context)
+        else:
+            return render(request, "my_courses.html", context)
+
+
+@login_required
+def my_grades(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        grades = RoadmapManager().display_current_grades_by_client(
+                current_user
+                )
+
+        results = RoadmapManager().display_current_results_by_client(
+                current_user
+                )
+
+        context = {"grades": grades, "results": results}
+
+        user_agent = get_user_agent(request)
+
+        if user_agent.is_mobile:
+            return render(request, "m_my_grades.html", context)
+        else:
+            return render(request, "my_grades.html", context)
 
 
 @login_required

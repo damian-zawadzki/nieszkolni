@@ -11,13 +11,11 @@
 
 	<div class="avatar_name_box">
 		<div class="avatar_name">
-			<div class="info">
-				<div>{{ display_name }}</div>
-				<a class="" href="{% url 'announcement' tags.degrees_tag %}"><img src="{% static '/images/information.png' %}" width="10" height="10"></a>
-
-			</div>
+			<div>{{ display_name }}</div>
 		</div>
 		<div class="avatar_subname">Linguistics for Business</div>
+		<div class="avatar_description">High School Senior</div>
+		<div class="avatar_subdescription">Semester 1/1</div>
 	</div>
 
 	<div class="activity_description">Activity Points</div>
@@ -29,16 +27,15 @@
 		<div class="activity_figure">{{ target }}</div>
 	</div>
 
-
 </div>
 
-<div class="bio">
-	<div class="bio_title">Bio</div>
+<div class="bio" id="bio">
+	<div class="box_title">Bio</div>
 	<div class="bio_text">{% lorem %}</div>
 </div>
 
 <div class="courses custom_hover pointer" id="courses_container" onclick="displayCourses()">
-	<div class="course_title noselect">
+	<div class="box_title noselect">
 		{{ first_name }}'s Courses
 		<img src="{% static '/images/arrow_down.png' %}" width="10" height="10" id="arrow_down">
 		<img class="invisible" src="{% static '/images/arrow_up.png' %}" width="10" height="10" id="arrow_up">
@@ -53,8 +50,34 @@
 </div>
 
 
+<div class="stats" id="stats">
+	<div class="box_title">Stats</div>
+	<div class="ranking_box">
+		<div>Ranking</div>
+		<div class="ranking_position">6</div>	
+	</div>
+	<!-- <div class="stats_text"></div> -->
+</div>
 
+<div class="badges" id="badges">
+	<div class="box_title">Achievements</div>
+	<div class="badges_text">{% lorem %}</div>
+</div>
 
+<div class="resume custom_hover pointer" id="resume_container" onclick="displayResume()">
+	<div class="box_title noselect">
+		Resume
+		<img src="{% static '/images/arrow_down.png' %}" width="10" height="10" id="arrow_down">
+		<img class="invisible" src="{% static '/images/arrow_up.png' %}" width="10" height="10" id="arrow_up">
+	</div>
+	<div class="resume_box" id="resume_box">
+	{% for course in courses %}
+		<div class="course">
+			<a class="course" href="{% url 'display_roadmap_details' %}">{{ course.1 }}</a>
+		</div>
+	{% endfor %}
+	</div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -62,6 +85,11 @@
 	function displayCourses() {
 		var object = document.getElementById('courses_container');
 		var course_box = document.getElementById('course_box');
+		var bio = document.getElementById('bio');
+		var stats = document.getElementById('stats');
+		var badges = document.getElementById('badges');
+		var resume = document.getElementById('resume_container');
+		var arrow_up = document.getElementById('arrow_up');
 		var arrow_down = document.getElementById('arrow_down');
 		var arrow_up = document.getElementById('arrow_up');
 
@@ -74,16 +102,64 @@
 			object.classList.remove('custom_hover');
 			arrow_down.classList.add('invisible');
 			arrow_up.classList.remove('invisible');
-
+			bio.classList.add('invisible');
+			stats.classList.add('invisible');
+			badges.classList.add('invisible');
+			resume.classList.add('invisible');
 		} else {
 			course_box.style.display = 'none';
-			object.style.top = 58 + 'vh';
+			object.style.top = 56 + 'vh';
 			object.style.left = 27 + 'vw';
 			object.style.height = 8 + 'vh';
 			object.style.width = 30 + 'vw';
 			object.classList.remove('custom_hover');
 			arrow_down.classList.remove('invisible');
 			arrow_up.classList.add('invisible');
+			bio.classList.remove('invisible');
+			stats.classList.remove('invisible');
+			badges.classList.remove('invisible');
+			resume.classList.remove('invisible');
+		}
+
+	}
+
+	function displayResume() {
+		var object = document.getElementById('resume_container');
+		var resume_box = document.getElementById('resume_box');
+		var bio = document.getElementById('bio');
+		var stats = document.getElementById('stats');
+		var badges = document.getElementById('badges');
+		var courses = document.getElementById('courses_container');
+		var arrow_up = document.getElementById('arrow_up');
+		var arrow_down = document.getElementById('arrow_down');
+		var arrow_up = document.getElementById('arrow_up');
+
+		if (!resume_box.style.display || resume_box.style.display == 'none') {
+			resume_box.style.display = 'block';
+			object.style.top = 20 + 'vh';
+			object.style.left = 27 + 'vw';
+			object.style.height = 75 + 'vh';
+			object.style.width = 68 + 'vw';
+			object.classList.remove('custom_hover');
+			arrow_down.classList.add('invisible');
+			arrow_up.classList.remove('invisible');
+			bio.classList.add('invisible');
+			stats.classList.add('invisible');
+			badges.classList.add('invisible');
+			courses.classList.add('invisible');
+		} else {
+			resume_box.style.display = 'none';
+			object.style.top = 66 + 'vh';
+			object.style.left = 27 + 'vw';
+			object.style.height = 8 + 'vh';
+			object.style.width = 30 + 'vw';
+			object.classList.remove('custom_hover');
+			arrow_down.classList.remove('invisible');
+			arrow_up.classList.add('invisible');
+			bio.classList.remove('invisible');
+			stats.classList.remove('invisible');
+			badges.classList.remove('invisible');
+			courses.classList.remove('invisible');
 		}
 
 	}

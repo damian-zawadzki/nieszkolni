@@ -720,6 +720,17 @@ class BackOfficeManager:
 
             return end_of_semester
 
+    def countdown_end_of_semester(self):
+        end = self.display_end_of_semester()
+        end_number = TimeMachine().date_to_number(end)
+        today_number = TimeMachine().today_number()
+
+        end_week = TimeMachine().number_to_week(end_number)
+        today_week = TimeMachine().number_to_week(today_number)
+        countdown = end_week - today_week
+
+        return countdown
+
     def display_start_of_semester(self):
         with connection.cursor() as cursor:
             cursor.execute(f'''

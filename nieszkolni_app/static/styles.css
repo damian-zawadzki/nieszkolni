@@ -1,12 +1,14 @@
 
 :root {
   --small-font: 2vh;
+  --huge-font: 10vh;
   --font-color: #3C4043;
   --font-family: "Google Sans", Roboto, Arial, sans-serif;
   --backgroud-color: #FFF;
   --container-color: #F9F9F9;
   --border-color: #D3D3D3;
   --success-color: #D4AF37;
+  --transition-time: 2s;
 }
 
 /*Body*/
@@ -2082,6 +2084,16 @@ hr.line {
 }
 
 /*new profile*/
+.box_title {
+  display: block;
+  font-family: var(--font-family);
+  font-size: 2.5vh;
+  font-weight: 1000;  
+  padding: 2vh 0vw 1vh 0vw;
+  position: relative;
+  text-align: left;
+}
+
 .avatar {
   border: 1px solid #D3D3D3;
   border-radius: 2vmin;
@@ -2106,6 +2118,7 @@ hr.line {
 
 .avatar_name_box {
   display: block;
+  margin: 0vh 1vw;
   position: relative;
   text-align: center;
   top: 10vh;
@@ -2121,6 +2134,20 @@ hr.line {
   font-family: var(--font-family);
   font-size: 2vh;
   font-weight: 750;
+}
+
+.avatar_description {
+  font-family: var(--font-family);
+  font-size: 1.5vh;
+  font-weight: 750;
+  opacity: 0.8;
+}
+
+.avatar_subdescription {
+  font-family: var(--font-family);
+  font-size: 1.5vh;
+  font-weight: 500;
+  opacity: 0.8;
 }
 
 .activity_chart {
@@ -2187,22 +2214,12 @@ hr.line {
   width: 30vw;
 }
 
-.bio_title {
-  display: block;
-  font-family: var(--font-family);
-  font-size: 2.5vh;
-  font-weight: 1000;  
-  padding: 4vh 0vw 3vh 0vw;
-  position: relative;
-  text-align: left;
-}
-
 .bio_text {
   display: inline-block;
   font-family: var(--font-family);
   font-size: 2vh;
   font-weight: 500;
-  height: 15vh;
+  height: 21vh;
   overflow: hidden;
   position: relative;
   text-align: left;
@@ -2211,6 +2228,107 @@ hr.line {
 .bio:hover {
   transform: scale(1.05); 
 }
+
+.stats {
+  border: 1px solid #D3D3D3;
+  border-radius: 2vmin;
+  left: 59vw;
+  height: 54vh;
+  padding: 0vh 3vw 0vh 3vw;
+  position: absolute;
+  top: 20vh;
+  width: 36vw;
+}
+
+.stats_text {
+  display: inline-block;
+  font-family: var(--font-family);
+  font-size: 2vh;
+  font-weight: 500;
+  height: 42vh;
+  overflow: hidden;
+  position: relative;
+  text-align: left;
+}
+
+.stats:hover {
+  transform: scale(1.05); 
+}
+
+.ranking_box {
+  background-color: #000;
+  align-items: center;
+  display: inline-flex;
+  height: 16vh;
+  justify-content: center;
+  left: 0vw;
+  position: relative;
+  top: 0;
+  width: 16vw;
+}
+
+.ranking_position {
+  color: #333538;
+  font-family: var(--font-family);
+  font-size: 10vh;
+  font-weight: 1000;
+}
+
+.resume {
+  background-color: #FFF;
+  border: 1px solid #D3D3D3;
+  border-radius: 2vmin;
+  left: 27vw;
+  height: 8vh;
+  overflow: hidden;
+  padding: 0vh 3vw 2vh 3vw;
+  position: absolute;
+  top: 66vh;
+  transition: 0.3s;
+  width: 30vw;
+}
+
+.resume_box {
+  display: none;
+  position: relative;
+  height: 90%;
+  list-style: none;
+  overflow-y: auto;
+}
+
+.resume:hover {
+  transform: scale(1.05); 
+}
+
+.badges {
+  background-color: #FFF;
+  border: 1px solid #D3D3D3;
+  border-radius: 2vmin;
+  left: 27vw;
+  height: 18vh;
+  overflow: hidden;
+  padding: 0vh 3vw 2vh 3vw;
+  position: absolute;
+  top: 77vh;
+  transition: 0.3s;
+  width: 68vw;
+}
+
+.badges_text {
+  display: inline-block;
+  font-family: var(--font-family);
+  font-size: 2vh;
+  font-weight: 500;
+  height: 6vh;
+  overflow: hidden;
+  position: relative;
+  text-align: left;
+}
+
+.badges:hover {
+  transform: scale(1.05); 
+}
+
 
 .courses {
   background-color: #FFF;
@@ -2221,19 +2339,9 @@ hr.line {
   overflow: hidden;
   padding: 0vh 3vw 2vh 3vw;
   position: absolute;
-  top: 58vh;
+  top: 56vh;
   transition: 0.3s;
   width: 30vw;
-}
-
-.course_title {
-  display: block;
-  font-family: var(--font-family);
-  font-size: 2.5vh;
-  font-weight: 1000;  
-  padding: 2vh 0vw 1vh 0vw;
-  position: relative;
-  text-align: left;
 }
 
 .custom_hover:hover {
@@ -2262,6 +2370,21 @@ hr.line {
 .course:hover {
   font-weight: 1000; 
 }
+
+.box {
+  display: block;
+  font-family: var(--font-family);
+  font-size: 2.5vh;
+  font-weight: 1000;  
+  padding: 2vh 0vw 1vh 0vw;
+  position: relative;
+  text-align: left;
+}
+
+.custom_hover:hover {
+  transform: scale(1.05); 
+}
+
 
 .avatar_description_box {
 }
@@ -2544,6 +2667,118 @@ hr.line {
   height: 20%;
   left: 0;
   position: relative;
+  width: 100%;
+}
+
+/*Summary*/
+.top_tabs {
+  display: block;
+  height: 20vh;
+  left: 5vw;
+  position: absolute;
+  text-align: center;
+  top: 10vh;
+  width: 90vw;
+}
+
+.m_top_tabs {
+  display: block;
+  height: 75vh;
+  margin-left:auto;
+  margin-right:auto;
+  position: absolute;
+  text-align: center;
+  top: 5vh;
+  width: 100%;
+}
+
+.tab {
+  border-radius: 5px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  display: inline-block;
+  height: 30vh;
+  margin: 0vh 3vw;
+  padding: 3vh 2vw;
+  text-align: center;
+  transition: 0.3s;
+  width: 15vw;
+}
+
+.m_tab {
+  border-radius: 5px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  display: block;
+  height: 23vh;
+  margin: 1vh auto;
+  padding: 2vh 0vw;
+  text-align: center;
+  transition: 0.3s;
+  width: 60vw;
+}
+
+
+.tab:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+
+.tab_icon {
+  display: inline-block;
+  height: 30px;
+  margin-bottom: 1vh;
+  opacity: 0.5;
+  position: relative;
+  width: 30px;
+}
+
+.tab_title {
+  font-family: var(--font-family);
+  font-size: var(--small-font);
+  font-weight: 1000;
+  opacity: 0.5;
+}
+
+.tab_content {
+  font-family: var(--font-family);
+  font-size: var(--huge-font);
+  font-weight: 1000;
+}
+
+.m_tab_content {
+  font-family: var(--font-family);
+  font-size: var(--huge-font);
+  font-weight: 1000;
+  line-height: var(--huge-font);
+}
+
+.middle_tabs {
+  background-color: #FFF;
+  display: block;
+  height: 30vh;
+  left: 5vw;
+  position: absolute;
+  text-align: center;
+  top: 30vh;
+  width: 90vw;
+}
+
+.bottom_tabs {
+  display: block;
+  height: 10vh;
+  left: 5vw;
+  position: absolute;
+  text-align: center;
+  top: 70vh;
+  width: 90vw;
+}
+
+.m_bottom_tabs {
+  display: block;
+  height: 10vh;
+  margin-left:auto;
+  margin-right:auto;
+  position: absolute;
+  text-align: center;
+  top: 85vh;
   width: 100%;
 }
 

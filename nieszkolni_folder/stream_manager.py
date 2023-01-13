@@ -912,7 +912,8 @@ class StreamManager:
             cursor.execute(f'''
                 SELECT
                 name,
-                display_name
+                display_name,
+                avatar
                 FROM nieszkolni_app_profile
                 ''')
 
@@ -920,7 +921,7 @@ class StreamManager:
 
             names = dict()
             for row in rows:
-                names.update({row[0]: row[1]})
+                names.update({row[0]: (row[1], row[2])})
 
             return names
 
@@ -982,20 +983,36 @@ class StreamManager:
             table_5 = list(table_4.itertuples(index=True, name=None))
             entries = table_5
 
-            display_names = self.display_display_names()
+            profiles = self.display_display_names()
             ranking = []
             for entry in entries:
 
-                if display_names.get(entry[1]) is None:
-                    display_name = entry[1]
-                else:
-                    display_name = display_names.get(entry[1])
+                position = entry[0]
+                client = entry[1]
+                activity_points = entry[2]
 
-                item = (entry[3], display_name, entry[2])
+                if profiles.get(entry[1]) is None:
+                    display_name = entry[1]
+                    avatar = ""
+                else:
+                    display_name = profiles.get(entry[1])[0]
+                    avatar = profiles.get(entry[1])[1]
+
+                item = (position, display_name, activity_points, client, avatar)
 
                 ranking.append(item)
 
             return ranking
+
+    def display_ranking_by_client(self, client):
+        rows = self.display_ranking()
+
+        for row in rows:
+            if row[3] == client:
+                position = row[0]
+                return position
+
+            return 0
 
     # Spins and stories
 

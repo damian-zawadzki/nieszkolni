@@ -142,7 +142,13 @@ class CurriculumPlanner:
                 reference
                 )
 
-    def plan_program(self, client, current_user, program_id, semester):
+    def plan_program(
+            self,
+            client,
+            current_user,
+            program_id,
+            semester
+            ):
 
         program = RoadmapManager().display_program(program_id)
 
@@ -167,7 +173,13 @@ class CurriculumPlanner:
                 course_ids_list = []
                 course_ids_list.append(program[3])
 
-            self.plan_courses(client, current_user, course_ids_list, semester)
+            self.plan_courses(
+                    client,
+                    current_user,
+                    course_ids_list,
+                    semester,
+                    program[0]
+                    )
 
             StreamManager().add_to_stream(
                 client,
@@ -178,7 +190,15 @@ class CurriculumPlanner:
 
             return "Program assigned!"
 
-    def plan_courses(self, client, current_user, course_ids_list, semester):
+    def plan_courses(
+            self,
+            client,
+            current_user,
+            course_ids_list,
+            semester,
+            program
+            ):
+
         if len(course_ids_list) > 1:
             course_ids = tuple(course_ids_list)
         else:
@@ -198,7 +218,8 @@ class CurriculumPlanner:
                 deadline_roadmap,
                 current_user,
                 -1,
-                "automatic"
+                "automatic",
+                program
                 )
 
             self.plan_curricula(
@@ -260,3 +281,28 @@ class CurriculumPlanner:
         results = expired + valid
 
         return results
+
+    def assign_course(
+            self,
+            client,
+            current_user,
+            course,
+            semester,
+            program
+            ):
+
+        deadline_roadmap = BackOfficeManager().display_end_of_semester()
+
+
+        # Check if the client has the course, if not display a message
+
+        RoadmapManager().add_roadmap(
+            client,
+            semester,
+            course,
+            deadline_roadmap,
+            current_user,
+            -1,
+            "automatic",
+            program
+            )

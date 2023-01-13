@@ -56,7 +56,7 @@ class DocumentManager:
         run = paragraph_0.add_run(
             f'''
             Written by: {name}
-            Submitten on: {date}
+            Submitted on: {date}
             Reviewed by: {reviewing_user}
             Item: {item}
             Number of words: {wordcount}
@@ -137,7 +137,7 @@ class DocumentManager:
         run = paragraph_0.add_run(
             f'''
             Translated by: {name}
-            Submitten on: {date}
+            Submitted on: {date}
             Reviewed on: {today}
             Reviewed by: {reviewing_user}
             Item: {item}
