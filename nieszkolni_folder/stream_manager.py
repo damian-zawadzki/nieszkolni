@@ -986,7 +986,7 @@ class StreamManager:
             ranking = []
             for entry in entries:
 
-                position = entry[0]
+                position = entry[3]
                 client = entry[1]
                 activity_points = entry[2]
 
