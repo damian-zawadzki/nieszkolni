@@ -231,12 +231,15 @@ class RoadmapManager:
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 SELECT
-                program,
-                course,
-                status
-                FROM nieszkolni_app_roadmap
-                WHERE name = '{client}'
-                AND semester = '{current_semester}'
+                r.program,
+                r.course,
+                r.status,
+                c.course_id
+                FROM nieszkolni_app_roadmap AS r
+                LEFT JOIN nieszkolni_app_course AS c
+                ON r.course = c.course
+                WHERE r.name = '{client}'
+                AND r.semester = '{current_semester}'
                 ''')
 
             courses = cursor.fetchall()
@@ -844,6 +847,13 @@ class RoadmapManager:
                 )
                 ''')
 
+    def remove_grade(self, grade_id):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                DELETE FROM nieszkolni_app_grade
+                WHERE id = '{grade_id}'
+                ''')
+
     def display_grades(
             self,
             student,
@@ -858,7 +868,8 @@ class RoadmapManager:
                 grade_type,
                 examiner,
                 course,
-                stamp
+                stamp,
+                id
                 FROM nieszkolni_app_grade
                 WHERE student = '{student}'
                 AND course = '{course}'
@@ -870,10 +881,40 @@ class RoadmapManager:
             grades = []
             for row in rows:
                 date = TimeMachine().number_to_system_date(row[0])
-                grade = (date, row[1], row[2], row[3], row[4], row[5])
+                grade = (date, row[1], row[2], row[3], row[4], row[5], row[6])
                 grades.append(grade)
 
             return grades
+
+    def display_grade(self, grade_id):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                date_number,
+                result,
+                grade_type,
+                examiner,
+                course,
+                stamp,
+                id
+                FROM nieszkolni_app_grade
+                WHERE id = '{grade_id}'
+                ''')
+
+            grade = cursor.fetchone()
+
+            date = TimeMachine().number_to_system_date(grade[0])
+            grade = (
+                    date,
+                    grade[1],
+                    grade[2],
+                    grade[3],
+                    grade[4],
+                    grade[5],
+                    grade[6]
+                    )
+
+            return grade
 
     def display_current_grades_by_client(self, client):
         courses = self.display_current_courses(client)

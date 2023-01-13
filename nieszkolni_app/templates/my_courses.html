@@ -11,7 +11,9 @@
 
 	{% for course in courses %}
 
-		<tr class="font">
+		<tr class="font tr_clickable" onclick="jump({{ course.3 }})">
+
+			<a id="{{ course.3 }}" href="{% url 'course' course_id=course.3 %}"></a>
 
 			<td>{{ course.1 }}</td>
 			<td>{{ course.2 }}</td>
@@ -21,5 +23,7 @@
 	{% endfor %}
 
 </table>
+
+<div class="break"></div>
 
 {% endblock %}

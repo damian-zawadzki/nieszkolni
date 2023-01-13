@@ -4315,6 +4315,55 @@ def add_grade(request):
 
 
 @staff_member_required
+def grades(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        current_client = CurrentClientsManager().current_client(current_user)
+        grades = RoadmapManager().display_current_grades_by_client(
+                current_client
+                )
+
+        results = RoadmapManager().display_current_results_by_client(
+                current_client
+                )
+
+        context = {
+            "current_client": current_client,
+            "grades": grades,
+            "results": results
+            }
+
+        return render(request, "grades.html", context)
+
+
+@login_required
+def grade(request, grade_id):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        grade = RoadmapManager().display_grade(grade_id)
+
+        if request.method == "POST":
+            if request.POST["action_on_grade"] == "remove":
+
+                RoadmapManager().remove_grade(grade_id)
+
+                return redirect("grades")
+
+        context = {
+            "grade_id": grade_id,
+            "grade": grade
+            }
+
+        return render(request, "grade.html", context)
+
+
+@staff_member_required
 def add_option(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name

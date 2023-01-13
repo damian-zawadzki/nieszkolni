@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<div class="flex-parent jc-center">
+	<div class="phrase_card">
+    	<div class="phrase_card_container">
+	    	
+	      	<div class="phrase_card_question">{{ grade.4 }}</div>
+      		<div class="phrase_card_description"><b>Type:</b> {{ grade.2 }} <b>Examiner:</b> {{ grade.3 }} <b></div>
+      		<div class="flex-parent jc-center">
+	      		<div class="phrase_card_answer"><b>{{ grade.1 }}%</b></div>
+	      	</div>
+
+	      	{% if user.is_staff %}
+	      		<form action="{% url 'grade' grade_id=grade_id %}" method="POST">
+	      		 	{% csrf_token %}
+		      		<button type="submit" class="button_main" name="action_on_grade" value="remove">Remove</button>
+		      	</form>
+	      	{% endif %}
+	      	
+    	</div>
+  	</div>
+</div>
+
+{% endblock %}

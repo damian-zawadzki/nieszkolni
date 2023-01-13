@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<h1>{{ current_client.upper }}'S GRADES</h1>
+
+<div class="flex-parent jc-center">
+	<button type="button" class="button_main" onclick="showHideTable('history_view')">History</button>
+	<button type="button" class="button_main" onclick="showHideTable('results_view')">Results</button>
+</div>
+
+<table id="history_view" style="display: none;">
+
+	<tr class="font">
+
+		<th>Date</th>
+		<th class="td_sentences">Course</th>
+		<th>Grade</th>
+		<th>Type</th>
+		<th>Examiner</th>
+
+	</tr>
+
+	{% for grade in grades %}
+
+		<tr class="font tr_clickable" onclick="jump({{ grade.6 }})">
+
+			<a id="{{ grade.6 }}" href="{% url 'grade' grade_id=grade.6 %}"></a>
+
+			<td>{{ grade.0 }}</td>
+			<td class="td_sentences">{{ grade.4 }}</td>
+			<td>{{ grade.1 }}%</td>
+			<td>{{ grade.2 }}</td>
+			<td>{{ grade.3 }}</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+<table id="results_view" style="display: none;">
+
+	<tr class="font">
+
+		<th class="td_sentences">Course</th>
+		<th>Final grade</th>
+
+	</tr>
+
+	{% for result in results %}
+
+		<tr class="font">
+
+			<td class="td_sentences">{{ result.0 }}</td>
+			<td>{{ result.1 }}%</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+<div class="break"></div>
+
+<script src="{% static 'functions.js' %}"></script>  
+
+{% endblock %}
