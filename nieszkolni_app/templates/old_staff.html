@@ -144,6 +144,11 @@
 	<li class="side_navigation_item">
 	  <a class="side_navigation_link" href="{% url 'stream'%}">STREAM</a>
 	</li>
+	{% if user.is_superuser %}
+		<li class="side_navigation_item">
+		  <a class="side_navigation_link" href="{% url 'remove_multiple_from_stream'%}">REMOVE MULTIPLE ENTRIES FROM STREAM</a>
+		</li>
+	{% endif %}
 	<li class="side_navigation_item">
 	  <a class="side_navigation_link" href="{% url 'upload_stream'%}">UPLOAD STREAM</a>
 	</li>

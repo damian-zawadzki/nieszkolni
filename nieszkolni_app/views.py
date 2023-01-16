@@ -2872,7 +2872,7 @@ def stream(request):
             elif request.POST["stream_action"] == "delete":
                 unique_id = request.POST["unique_id"]
 
-                delete = StreamManager().delete_from_stream(unique_id)
+                StreamManager().delete_from_stream(unique_id)
 
                 return redirect("stream")
 
@@ -6386,6 +6386,33 @@ def responses(request):
         return render(request, "responses.html", {
             "questions": questions,
             })
+
+
+@staff_member_required
+def remove_multiple_from_stream(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        commands = KnowledgeManager().display_prompts("stream")
+
+        if request.method == "POST":
+            if request.POST["action_on_stream"] == "remove_multiple":
+                date = request.POST["date"]
+                command = request.POST["command"]
+
+                StreamManager().delete_multiple_from_stream(date, command)
+
+                messages.success(request, ("Entries removed from stream"))
+                return redirect("stream")
+
+        return render(request, "remove_multiple_from_stream.html", {
+            "commands": commands,
+            })
+
+
+# Analytics
 
 
 @staff_member_required

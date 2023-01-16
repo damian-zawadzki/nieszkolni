@@ -164,7 +164,15 @@ class StreamManager:
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 DELETE FROM nieszkolni_app_stream
-                WHERE id = {unique_id}
+                WHERE id = '{unique_id}'
+                ''')
+
+    def delete_multiple_from_stream(self, date, command):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                DELETE FROM nieszkolni_app_stream
+                WHERE date = '{date}'
+                AND command = '{command}'
                 ''')
 
     def display_stream_entry(self, unique_id):

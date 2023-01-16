@@ -242,8 +242,7 @@ class ActivityManager:
 
         if uncompleted_count == 0 and homework_count == 0:
             check.update({"maximum": True})
-        print(po)
-        print(flashcards_check)
+
         if po > 30 and flashcards_check > 2:
             check.update({"minimum": True})
 
@@ -255,14 +254,14 @@ class ActivityManager:
         attendance = check["attendance"]
 
         score = 0
-        print(check)
+
         if minimum is False:
-            score = no_homework
+            score = int(no_homework) if no_homework is not None else 0
         else:
             if maximum is True:
-                score = full_homework
+                score = int(full_homework) if full_homework is not None else 0
             else:
-                score = main_homework
+                score = int(main_homework) if main_homework is not None else 0
 
         if attendance is True and minimum is not False:
             score *= 2

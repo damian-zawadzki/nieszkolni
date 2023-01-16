@@ -195,6 +195,7 @@ urlpatterns = [
     path('flashcard/<str:username>/<str:deck>/', views.flashcard, name="flashcard"),
     path('analytics_new_entries_per_student/<str:coach>/', views.analytics_new_entries_per_student, name="analytics_new_entries_per_student"),
     path('analytics_new_entries/', views.analytics_new_entries, name="analytics_new_entries"),
+    path('remove_multiple_from_stream/', views.remove_multiple_from_stream, name="remove_multiple_from_stream"),
     re_path(r'^flashcard_question/$', views.flashcard_question, name='flashcard_question'),
     re_path(r'^flashcard_answer/$', views.flashcard_answer, name='flashcard_answer'),
        ]
