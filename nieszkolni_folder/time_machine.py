@@ -291,8 +291,8 @@ class TimeMachine:
         if end is None:
             end = self.today()
 
-        start_date = self.previous_sunday(start)
-        end_date = self.previous_sunday(end)
+        start_date = self.following_sunday(start)
+        end_date = self.following_sunday(end)
         start_number = self.date_to_number(start_date)
         end_number = self.date_to_number(end_date)
 
