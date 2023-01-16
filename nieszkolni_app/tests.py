@@ -8,7 +8,7 @@ from nieszkolni_app.models import *
 from .views import *
 
 
-class YourTestClass(TestCase):
+class Front(TestCase):
     def setUp(self):
         global username
         global password
@@ -111,15 +111,15 @@ class YourTestClass(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "assignments.html")
 
-    def test_statistics_deny_anonymous(self):
-        response = self.client.get("/statistics/")
-        self.assertRedirects(response, "/login_user/?next=/statistics/")
+    def test_my_statistics_deny_anonymous(self):
+        response = self.client.get("/my_statistics/")
+        self.assertRedirects(response, "/login_user/?next=/my_statistics/")
 
-    def test_statistics_login(self):
+    def test_my_statistics_login(self):
         self.client.login(username=username, password=password)
-        response = self.client.get("/statistics/")
+        response = self.client.get("/my_statistics/")
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "statistics.html")
+        self.assertTemplateUsed(response, "my_statistics.html")
 
     def test_memories_deny_anonymous(self):
         response = self.client.get("/memories/")
@@ -182,15 +182,45 @@ class YourTestClass(TestCase):
         self.assertTemplateUsed(response, "my_pronunciation.html")
 
     def test_flashcard_deny_anonymous(self):
-        response = self.client.get("/flashcard/")
-        self.assertRedirects(response, "/login_user/?next=/flashcard/")
+        url = reverse("flashcard", args=["Joe Doe", "vocabulary"])
+        response = self.client.post(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "login_user.html")
+
+    def test_flashcard_login_no_object(self):
+        self.client.login(username=username, password=password)
+        url = reverse("flashcard", args=["Joe Doe", "vocabulary"])
+        response = self.client.post(url, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "congratulations.html")
 
     def test_flashcard_login(self):
         self.client.login(username=username, password=password)
-        context = {"username": "Joe Doe", "deck": "vocabulary"}
-        response = self.client.post("/flashcard/", context)
+        Card.objects.create(client=current_user)
+        url = reverse("flashcard", args=["Joe Doe", "vocabulary"])
+        response = self.client.post(url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "flashcard.html")
+
+    def test_my_courses_deny_anonymous(self):
+        response = self.client.get("/my_courses/")
+        self.assertRedirects(response, "/login_user/?next=/my_courses/")
+
+    def test_my_courses_login(self):
+        self.client.login(username=username, password=password)
+        response = self.client.get("/my_courses/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "my_courses.html")
+
+    def test_my_result_deny_anonymous(self):
+        response = self.client.get("/my_results/")
+        self.assertRedirects(response, "/login_user/?next=/my_results/")
+
+    def test_my_result_login(self):
+        self.client.login(username=username, password=password)
+        response = self.client.get("/my_results/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "my_results.html")
 
 
 '''

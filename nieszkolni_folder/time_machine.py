@@ -123,6 +123,47 @@ class TimeMachine:
 
             return f"{error}"
 
+    def american_to_system_date_time(self, date):
+        try:
+            if re.search(r"\d{1,2}\/\d{1,2}\/\d{4}", date) is not None:
+                american = datetime.strptime(date, "%m/%d/%YT%H:%M:%S")
+                system = datetime.strftime(american, today_pattern)
+
+                return system
+
+            elif re.search(r"\d{4}-\d{2}-\d{2}", date) is not None:
+
+                return date
+
+            else:
+                pass
+
+        except ValueError as error:
+
+            return f"{error}"
+
+    def undefined_date_to_number(self, date):
+        try:
+            date_number = self.date_to_number(date)
+            return date_number
+
+        except Exception as e:
+            system_date = self.american_to_system_date(date)
+            date_number = self.date_to_number(system_date)
+
+            return date_number
+
+    def undefined_date_time_to_number(self, date_time):
+        try:
+            date_time_number = self.date_time_to_number(date_time)
+            return date_time_number
+
+        except Exception as e:
+            system_date_time = self.american_to_system_date_time(date_time)
+            date_time_number = self.date_time_to_number(system_date_time)
+
+            return date_time_number
+
     def today_number(self):
         today = self.today()
         today_number = self.date_to_number(today)
@@ -182,6 +223,26 @@ class TimeMachine:
 
         return next_sunday
 
+    def previous_sunday(self, date_entry):
+        date = datetime.strptime(date_entry, today_pattern)
+        weekday = datetime.strptime(date_entry, today_pattern).weekday()
+        pattern = weekday + 1
+        difference = timedelta(days=pattern)
+        previous_sunday_raw = date - difference
+        previous_sunday = datetime.strftime(previous_sunday_raw, today_pattern)
+
+        return previous_sunday
+
+    def following_sunday(self, date_entry):
+        date = datetime.strptime(date_entry, today_pattern)
+        weekday = datetime.strptime(date_entry, today_pattern).weekday()
+        pattern = 7 - weekday - 1
+        difference = timedelta(days=pattern)
+        following_sunday_raw = date + difference
+        following_sunday = datetime.strftime(following_sunday_raw, today_pattern)
+
+        return following_sunday
+
     def academic_week_start(self):
         weekday = datetime.today().isoweekday()
 
@@ -218,6 +279,32 @@ class TimeMachine:
 
             sunday = (today + last_day) - difference
             sunday = datetime.strftime(sunday, today_pattern)
+
+            sunday_number = self.date_to_number(sunday)
+            entry = (sunday_number, sunday)
+
+            sundays.append(entry)
+
+        return sundays
+
+    def display_sundays_range(self, start, end=None):
+        if end is None:
+            end = self.today()
+
+        start_date = self.previous_sunday(start)
+        end_date = self.previous_sunday(end)
+        start_number = self.date_to_number(start_date)
+        end_number = self.date_to_number(end_date)
+
+        no_of_weeks = round((end_number - start_number)/7) + 1
+        sundays = []
+
+        for week in range(0, no_of_weeks):
+
+            difference = week * 7
+
+            sunday = end_number - difference
+            sunday = self.number_to_system_date(sunday)
 
             sunday_number = self.date_to_number(sunday)
             entry = (sunday_number, sunday)
@@ -304,3 +391,16 @@ class TimeMachine:
         time = round(time)
 
         return time
+
+    def get_start_end_number(self, start=None, end=None):
+        if start is None:
+            start_number = 0
+        else:
+            start_number = TimeMachine().date_to_number(start)
+
+        if end is None:
+            end_number = TimeMachine().today_number()
+        else:
+            end_number = TimeMachine().date_to_number(end)
+
+        return {"start": start_number, "end": end_number}

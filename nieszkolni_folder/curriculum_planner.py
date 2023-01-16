@@ -1,10 +1,14 @@
 import os
 import django
+
 from django.db import connection
+
 from nieszkolni_app.models import Curriculum
 from nieszkolni_app.models import Module
 from nieszkolni_app.models import Matrix
 from nieszkolni_app.models import Library
+from nieszkolni_app.models import Roadmap
+
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
 
@@ -291,10 +295,22 @@ class CurriculumPlanner:
             program
             ):
 
+        check = Roadmap.objects.filter(
+            name=client,
+            course=course,
+            semester=semester
+            ).exists()
+
+        if check is True:
+            output = ("ERROR", "Course already assigned")
+            return output
+
         deadline_roadmap = BackOfficeManager().display_end_of_semester()
-
-
-        # Check if the client has the course, if not display a message
+        roadmaps = Roadmap.objects.filter(
+                name=client,
+                semester=semester
+                )
+        program = roadmaps[0].program
 
         RoadmapManager().add_roadmap(
             client,
@@ -306,3 +322,23 @@ class CurriculumPlanner:
             "automatic",
             program
             )
+
+        output = ("SUCCESS", "Course assigned")
+
+        return output
+
+    def assign_program(
+            self,
+            client,
+            program,
+            semester
+            ):
+
+        roadmaps = Roadmap.objects.filter(
+                name=client,
+                semester=semester
+                )
+
+        for roadmap in roadmaps:
+            roadmap.program = program
+            roadmap.save()

@@ -1,10 +1,13 @@
 import os
 import django
+
 from django.db import connection
+
 from nieszkolni_app.models import Curriculum
 from nieszkolni_app.models import Module
 from nieszkolni_app.models import Matrix
 from nieszkolni_app.models import Library
+
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
 

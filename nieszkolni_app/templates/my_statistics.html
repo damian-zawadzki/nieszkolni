@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>MY STATS</h1>
+
+<table>
+		<tr class="font">
+			<th class="td_sentences">Factor</th>
+			<th>Value</th>
+			<th>Unit</th>
+			<th>Period</th>
+		</tr>
+
+		<tr class="font">
+			<td class="td_sentences">Speaking (in class)</td>
+			<td>{{ stats.duration_hours }}</td>
+			<td>hours</td>
+			<td>lifetime</td>
+		</tr>
+
+		<tr class="font">
+			<td class="td_sentences">Speaking (with other students)</td>
+			<td>{{ stats.ao_hours }}</td>
+			<td>hours</td>
+			<td>lifetime</td>
+		</tr>
+
+		<tr class="font">
+			<td class="td_sentences">Watching and listening</td>
+			<td>{{ stats.po_hours }}</td>
+			<td>hours</td>
+			<td>lifetime</td>
+		</tr>
+
+		<tr class="font">
+			<td class="td_sentences">Reading</td>
+			<td>{{ stats.pv_pages }}</td>
+			<td>pages (250 words)</td>
+			<td>lifetime</td>
+		</tr>
+
+		<tr class="font">
+			<td class="td_sentences">Writing</td>
+			<td>{{ stats.av_pages }}</td>
+			<td>pages (250 words)</td>
+			<td>lifetime</td>
+		</tr>
+
+		<tr class="font">
+			<td class="td_sentences">Learned vocabulary</td>
+			<td>{{ stats.vocabulary }}</td>
+			<td>cards</td>
+			<td>lifetime</td>
+		</tr>
+
+		<tr class="font">
+			<td class="td_sentences">Learned sentences</td>
+			<td>{{ stats.sentences }}</td>
+			<td>cards</td>
+			<td>lifetime</td>
+		</tr>
+
+		<tr class="font">
+			<td class="td_sentences">New vocabulary</td>
+			<td>{{ stats.new_vocabulary }}</td>
+			<td>cards</td>
+			<td>at the moment</td>
+		</tr>
+
+		<tr class="font">
+			<td class="td_sentences">New sentences</td>
+			<td>{{ stats.new_sentences }}</td>
+			<td>cards</td>
+			<td>at the moment</td>
+		</tr>
+
+		<tr class="font">
+			<td class="td_sentences">Days you studied sentences and vocabulary</td>
+			<td>{{ stats.study_days }}</td>
+			<td>day(s)</td>
+			<td>this Monday - this Sunday</td>
+		</tr>
+
+</table>
+
+<div class="break"></div>
+
+{% include 'footer.html' %}
+{% endblock %}

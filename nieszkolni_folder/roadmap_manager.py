@@ -14,6 +14,7 @@ from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
 
 from nieszkolni_folder.curriculum_manager import CurriculumManager
+from nieszkolni_folder.clients_manager import ClientsManager
 
 import pandas as pd
 import numpy as np
@@ -261,6 +262,25 @@ class RoadmapManager:
 
             return current_semester
 
+    def display_profile_names(self):
+        clients = ClientsManager().list_current_clients()
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT name
+                FROM nieszkolni_app_profile
+                ''')
+
+            profiles = cursor.fetchall()
+            profiles = [profile[0] for profile in profiles]
+
+        no_profile_clients = [
+            client for client in clients
+            if client not in profiles
+            ]
+
+        return no_profile_clients
+
     def display_courses_to_plan(self):
 
         matrices = CurriculumManager().display_matrices()
@@ -357,6 +377,37 @@ class RoadmapManager:
                 ''')
 
     def update_roadmap_details(
+            self,
+            name,
+            semester,
+            course,
+            deadline,
+            planning_user,
+            item,
+            status,
+            status_type,
+            roadmap_id_number
+            ):
+
+        deadline_number = TimeMachine().date_to_number(TimeMachine().american_to_system_date(deadline))
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                UPDATE nieszkolni_app_roadmap
+                SET
+                roadmap_matrix = 'custom',
+                semester = {semester},
+                course = '{course}',
+                name = '{name}',
+                deadline_number = {deadline_number},
+                planning_user = '{planning_user}',
+                status = '{status}',
+                status_type = '{status_type}',
+                item = {item}
+                WHERE roadmap_id_number = {roadmap_id_number}
+                ''')
+
+    def update_program_in_roadmap(
             self,
             name,
             semester,

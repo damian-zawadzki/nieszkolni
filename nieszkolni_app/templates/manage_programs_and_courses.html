@@ -4,7 +4,8 @@
 <h1>MANAGE PROGRAMS AND COURSES</h1>
 
 <div class="flex-parent jc-center">
-    <button type="button" class="button_main" onclick="showHide('assign_course')">Assign a course</button>
+    <button type="button" class="button_main" onclick="showHideWidgets('assign_course', 'assign_program', '')">Assign a course</button>
+    <button type="button" class="button_main" onclick="showHideWidgets('assign_program', 'assign_course', '')">Assign a program</button>
 </div>
 
 <form action="{% url 'manage_programs_and_courses' %}"  method="POST" id="assign_course" style="display: none">
@@ -51,6 +52,54 @@
 
   <div class="flex-parent jc-center">
       <button type="submit" class="button_main" name="action" value="assign_course">Assign</button>
+  </div>
+
+</form>
+
+<form action="{% url 'manage_programs_and_courses' %}"  method="POST" id="assign_program" style="display: none">
+    {% csrf_token %}
+
+   <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Client</label>
+
+        <select required class="input_content" name="client">
+            <option disabled selected value></option>
+
+            {% for client in clients %}
+               <option value="{{ client }}">{{ client }}</option>
+            {% endfor %}
+            
+        </select>
+
+    </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+     <div class="input_container">
+        <label class="input_label">Program</label>
+
+        <select required class="input_content" name="program">
+            <option disabled selected value></option>
+
+            {% for program in programs %}
+               <option value="{{ program.1 }}">{{ program.1 }}</option>
+            {% endfor %}
+            
+        </select>
+
+    </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+        <label class="input_label">Semester</label>
+        <input type="number" class="input_content" min="1" max="16" name="semester">
+      </div>
+   </div>
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action" value="assign_program">Assign</button>
   </div>
 
 </form>

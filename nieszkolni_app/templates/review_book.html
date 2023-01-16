@@ -4,7 +4,7 @@
 {% if entry == None %}
 {% else %}
 
-  <h1>WORDBOOK: {{ counter }}</h1>
+  <h1>REVIEW WORDBOOK AND SENTENCEBOOK: {{ counter }}</h1>
 
     <div class="flex-parent jc-center">
 
@@ -22,22 +22,18 @@
 
           <div class="flex-parent jc-center">
             <div class="input_container">
-              <input type="text" class="input_content_solo" name="polish" value="{{ entry.1 }}">
+              <input type="text" class="input_content_solo input_content_solo_long" name="english_new" value="{{ entry.1 }}" required>
               {% if entry.6 %}
-                <input type="text" class="input_content" name="comment" value="{{ entry.6 }}">
+                <input type="text" class="input_content input_prefilled" name="comment" value="{{ entry.6 }}">
               {% endif %}
-              <input type="hidden" name="english" value="{{ entry.1 }}">
-              <input type="hidden" name="unique_id" value="{{ entry.0 }}">
+              <input type="hidden" name="english_old" value="{{ entry.1 }}">
             </div>
           </div>
 
           <div class="flex-parent jc-center">
 
-            {% if not entry.4 == 'automatic' %}
-              <button type="submit" class="button_main" name="wordbook_action" value="return">Return</button>
-            {% endif %}
-            <button type="submit" class="button_main" name="wordbook_action" value="save">Save</button>
-            <button type="submit" class="button_main" name="wordbook_action" value="delete">Delete</button>
+            <button type="submit" class="button_main" name="book_action" value="correct">Correct</button>
+            <button type="submit" class="button_main" name="book_action" value="delete">Delete</button>
 
           </div>
         </form>

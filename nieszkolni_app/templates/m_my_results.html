@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<h1>MY RESULTS</h1>
+
+<div class="flex-parent jc-center">
+	<button type="button" class="button_main" onclick="showHideTable('grades_view')">Grades</button>
+	<button type="button" class="button_main" onclick="showHideTable('finals_view')">Final Grades</button>
+	<button type="button" class="button_main" onclick="showHideTable('activity_view')">Activity Points</button>
+</div>
+
+<table class="m_table" id="grades_view" style="display: none;">
+
+	<tr class="font">
+
+		<th>Date</th>
+		<th class="td_sentences">Course</th>
+		<th>Grade</th>
+		<th>Type</th>
+
+	</tr>
+
+	{% for grade in grades %}
+
+		<tr class="font">
+
+			<td>{{ grade.0 }}</td>
+			<td class="td_sentences">{{ grade.4 }}</td>
+			<td>{{ grade.1 }}%</td>
+			<td>{{ grade.2 }}</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+<table class="m_table" id="finals_view" style="display: none;">
+
+	<tr class="font">
+
+		<th class="td_sentences">Course</th>
+		<th>Final grade</th>
+
+	</tr>
+
+	{% for result in results %}
+
+		<tr class="font">
+
+			<td class="td_sentences">{{ result.0 }}</td>
+			<td>{{ result.1 }}%</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+<table class="m_table" id="activity_view" style="display: none;">
+
+	<tr class="font">
+
+		<th>Week</th>
+		<th>No of uncompleted assignments</th>
+		<th>Uncompleted assignments marked by the coach</th>
+		<th>Watching and listening minutes</th>
+		<th>Days of studying flashcards</th>
+		<th>Minutes of lessons</th>
+
+	</tr>
+
+	{% for activity in activities %}
+
+		<tr class="font">
+
+			<td>{{ activity.week }}</td>
+			<td>{{ activity.uncompleted_count }}</td>
+			<td>{{ activity.homework_count }}</td>
+			<td>{{ activity.po }}</td>
+			<td>{{ activity.flashcards_check }}</td>
+			<td>{{ activity.duration }}</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+<div class="break"></div>
+
+<script src="{% static 'functions.js' %}"></script>  
+
+{% endblock %}

@@ -1529,14 +1529,18 @@ table {
 }
 
 th {
+  background-color: var(--backgroud-color);
   border-bottom: 1pt solid;
   border-bottom-color: #D3D3D3;
-  font-size: 18px;
+  font-size: var(--small-font);
   font-weight: 1000;
   margin-bottom: 20px;
-  padding: 20px 20px;
+  padding: 1vh 1vw;
+  position: sticky;
   text-align: center;
-  vertical-align: middle;
+  vertical-align: top;
+  word-break: break-word;
+  top: 0;
 }
 
 td {

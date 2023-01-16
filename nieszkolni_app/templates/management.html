@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% if user.is_superuser %}
+
+<form action="{% url 'management' %}" method="POST">
+	{% csrf_token %}
+
+	<div class="flex-parent jc-center">
+		<ul class="square_menu">
+
+			<a class="square_menu_link" href="{% url 'analytics_new_entries' %}">NEW ENTRIES</a>
+
+		</ul>
+	</div>
+	
+</form>
+
+{% endif %}
+{% endblock %}

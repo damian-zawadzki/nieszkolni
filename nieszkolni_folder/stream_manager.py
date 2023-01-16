@@ -55,9 +55,10 @@ class StreamManager:
                 ''')
 
     def import_old_stream(self, stamp, name, date, command, value, email_address):
-        stamp = TimeMachine().date_time_to_number(stamp)
-        date_number = TimeMachine().date_to_number(date)
+        stamp = TimeMachine().undefined_date_time_to_number(stamp)
+        date_number = TimeMachine().undefined_date_to_number(date)
         value = Cleaner().clean_quotation_marks(value)
+
         if value is None:
             value = ""
         status = "active"
@@ -337,7 +338,48 @@ class StreamManager:
             else:
                 return True
 
-    def new_cards(self, client, deck):
+    def activity_points_by_client_week(
+            self,
+            client,
+            description,
+            start=None,
+            end=None
+            ):
+
+        start_number = TimeMachine().get_start_end_number(start, end)["start"]
+        end_number = TimeMachine().get_start_end_number(start, end)["end"]
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT value
+                FROM nieszkolni_app_stream
+                WHERE name = '{client}'
+                AND command = "Activity"
+                AND date_number > '{start_number}'
+                AND date_number <= '{end_number}'
+                AND value LIKE '{description}%'
+                ''')
+
+            rows = cursor.fetchall()
+
+            points = []
+            for row in rows:
+                try:
+                    point_raw = re.search(r";\d+$|;-\d+$", row[0]).group()
+                    point = re.sub(";", "", point_raw)
+                    point = int(point)
+
+                except Exception as e:
+                    point = 0
+
+                points.append(point)
+
+            return points
+
+    def new_cards(self, client, deck, start=None, end=None):
+        start_number = TimeMachine().get_start_end_number(start, end)["start"]
+        end_number = TimeMachine().get_start_end_number(start, end)["end"]
+
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 SELECT COUNT (english)
@@ -345,13 +387,18 @@ class StreamManager:
                 WHERE client = '{client}'
                 AND deck = '{deck}'
                 AND number_of_reviews = 0
+                AND publication_date > '{start_number}'
+                AND publication_date <= '{end_number}'
                 ''')
 
             new_cards = cursor.fetchone()
 
             return new_cards[0]
 
-    def total_cards(self, client, deck):
+    def total_cards(self, client, deck, start=None, end=None):
+        start_number = TimeMachine().get_start_end_number(start, end)["start"]
+        end_number = TimeMachine().get_start_end_number(start, end)["end"]
+
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 SELECT COUNT (english)
@@ -359,15 +406,17 @@ class StreamManager:
                 WHERE client = '{client}'
                 AND deck = '{deck}'
                 AND number_of_reviews != 0
+                AND publication_date > '{start_number}'
+                AND publication_date <= '{end_number}'
                 ''')
 
             total_cards = cursor.fetchone()
 
             return total_cards[0]
 
-    def studied_days(self, client, start, end):
-        start = TimeMachine().date_to_number(start)
-        end = TimeMachine().date_to_number(end)
+    def studied_days(self, client, start=None, end=None):
+        start_number = TimeMachine().get_start_end_number(start, end)["start"]
+        end_number = TimeMachine().get_start_end_number(start, end)["end"]
 
         rows = Card.objects.filter(client=client)
 
@@ -377,7 +426,7 @@ class StreamManager:
             for item in items:
                 if item != "":
                     item = int(item)
-                    if item > start and item <= end:
+                    if item > start_number and item <= end_number:
                         result.add(item)
 
         return len(result)
@@ -398,6 +447,18 @@ class StreamManager:
                         result.add(item)
 
         return len(result)
+
+    def statistics_converter(self, value, unit, decimals):
+        if unit == "page":
+            result = round(value/250, decimals)
+        elif unit == "hour":
+            result = round(value/60, decimals)
+        elif unit == "hour_minute":
+            hours = value // 60
+            minutes = value % 60
+            result = f"{hours} h {minutes} min"
+
+        return result
 
     def statistics(self, name):
         client = name
@@ -577,7 +638,13 @@ class StreamManager:
             last_sunday = TimeMachine().last_sunday()
             this_sunday = TimeMachine().this_sunday()
 
-            study_days_this_week = self.studied_days(name, last_sunday, this_sunday)
+            study_days = self.studied_days(name, last_sunday, this_sunday)
+
+            pv_pages = self.statistics_converter(total_PV, "page", 1)
+            av_pages = self.statistics_converter(total_AV, "page", 1)
+            ao_hours = self.statistics_converter(total_AO, "hour_minute", 1)
+            duration_hours = self.statistics_converter(total_duration, "hour_minute", 1)
+            po_hours = self.statistics_converter(total_po, "hour_minute", 1)
 
             stats = {
                 "pv": total_PV,
@@ -589,14 +656,86 @@ class StreamManager:
                 "sentences": sentences,
                 "new_vocabulary": new_vocabulary,
                 "new_sentences": new_sentences,
-                "study_days_this_week": study_days_this_week
+                "study_days": study_days,
+                "pv_pages": pv_pages,
+                "av_pages": av_pages,
+                "ao_hours": ao_hours,
+                "duration_hours": duration_hours,
+                "po_hours": po_hours,
             }
 
             return stats
 
-    def count_po(self, name, title_type):
-        client = name
-        today_number = TimeMachine().today_number()
+    def get_stream_statistics(self, client, command, start=None, end=None):
+        start_number = TimeMachine().get_start_end_number(start, end)["start"]
+        end_number = TimeMachine().get_start_end_number(start, end)["end"]
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                stamp,
+                date_number,
+                date,
+                name,
+                command,
+                value,
+                stream_user,
+                status
+                FROM nieszkolni_app_stream
+                WHERE name = '{client}'
+                AND command = '{command}'
+                AND date_number > '{start_number}'
+                AND date_number <= '{end_number}'
+                ''')
+
+            rows = cursor.fetchall()
+
+            total = 0
+            for row in rows:
+                try:
+                    value = int(row[5])
+
+                except Exception as e:
+                    value = 0
+
+                total += value
+
+            return total
+
+    def statistics_range(self, client, start=None, end=None):
+        start_number = TimeMachine().get_start_end_number(start, end)["start"]
+        end_number = TimeMachine().get_start_end_number(start, end)["end"]
+
+        total_PV = self.get_stream_statistics(client, "PV", start, end)
+        total_AV = self.get_stream_statistics(client, "AV", start, end)
+        total_AO = self.get_stream_statistics(client, "AO", start, end)
+        total_duration = self.get_stream_statistics(client, "Duration", start, end)
+        total_PO = self.count_po_from_to(client, start, end)
+        vocabulary = self.total_cards(client, "vocabulary")
+        sentences = self.total_cards(client, "sentences")
+        new_vocabulary = self.new_cards(client, "vocabulary")
+        new_sentences = self.new_cards(client, "sentences")
+
+        study_days = self.studied_days(client, start, end)
+
+        stats = {
+            "pv": total_PV,
+            "av": total_AV,
+            "ao": total_AO,
+            "duration": total_duration,
+            "po": total_PO,
+            "vocabulary": vocabulary,
+            "sentences": sentences,
+            "new_vocabulary": new_vocabulary,
+            "new_sentences": new_sentences,
+            "study_days": study_days
+            }
+
+        return stats
+
+    def count_po(self, client, title_type, start=None, end=None):
+        start_number = TimeMachine().get_start_end_number(start, end)["start"]
+        end_number = TimeMachine().get_start_end_number(start, end)["end"]
 
         # Repertoire
         with connection.cursor() as cursor:
@@ -631,6 +770,8 @@ class StreamManager:
                 FROM nieszkolni_app_stream
                 WHERE name = '{client}'
                 AND command = 'PO'
+                AND date_number > '{start_number}'
+                AND date_number <= '{end_number}'
                 ''')
 
             po_rows = cursor.fetchall()
@@ -661,10 +802,9 @@ class StreamManager:
 
             return total_po
 
-    def count_po_from_to(self, name, start, end):
-        client = name
-        start_number = TimeMachine().date_to_number(start)
-        end_number = TimeMachine().date_to_number(end)
+    def count_po_from_to(self, client, start=None, end=None):
+        start_number = TimeMachine().get_start_end_number(start, end)["start"]
+        end_number = TimeMachine().get_start_end_number(start, end)["end"]
 
         # Repertoire
         with connection.cursor() as cursor:

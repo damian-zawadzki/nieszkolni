@@ -11,6 +11,7 @@ from nieszkolni_app.models import Assessment
 from nieszkolni_app.models import Collection
 from nieszkolni_app.models import Catalogue
 from nieszkolni_app.models import Card
+from nieszkolni_app.models import Book
 
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.vocabulary_manager import VocabularyManager
@@ -227,7 +228,8 @@ class KnowledgeManager:
                     revision_date,
                     reviewing_user,
                     status,
-                    deck
+                    deck,
+                    comment
                     ) VALUES (
                     '{name}',
                     '{english}',
@@ -239,7 +241,8 @@ class KnowledgeManager:
                     0,
                     '',
                     'open',
-                    '{deck}'
+                    '{deck}',
+                    ''
                     ) ON CONFLICT
                     DO NOTHING
                     ''')
@@ -247,7 +250,14 @@ class KnowledgeManager:
     def display_open_book(self, deck):
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                SELECT id, english, status, deck, publicating_user, name
+                SELECT
+                id,
+                english,
+                status,
+                deck,
+                publicating_user,
+                name,
+                comment
                 FROM nieszkolni_app_book
                 WHERE deck = '{deck}'
                 AND (status = 'open'
@@ -318,21 +328,38 @@ class KnowledgeManager:
                 WHERE english = '{english}'
                 ''')
 
-    def translate_book_entry(self, english, polish):
+    def translate_book_entry(self, english, polish, current_user):
+        today_number = TimeMachine().today_number()
+
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 UPDATE nieszkolni_app_book
                 SET
                 polish = '{polish}',
-                status = 'translated'
+                status = 'translated',
+                translation_date = '{today_number}',
+                translating_user = '{current_user}'
                 WHERE english = '{english}'
                 ''')
 
-    def approve_book_entry(self, unique_id, english, publicating_user):
+    def comment_on_book_entry(self, english, comment):
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 UPDATE nieszkolni_app_book
-                SET status = 'approved'
+                SET comment = '{comment}'
+                WHERE english = '{english}'
+                ''')
+
+    def approve_book_entry(self, unique_id, english, reviewing_user):
+        today_number = TimeMachine().today_number()
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                UPDATE nieszkolni_app_book
+                SET
+                status = 'approved',
+                revision_date = '{today_number}',
+                reviewing_user = '{reviewing_user}'
                 WHERE english = '{english}'
                 ''')
 
@@ -341,7 +368,13 @@ class KnowledgeManager:
     def add_from_book_to_dictionary(self, english):
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                SELECT id, polish, deck, name, publicating_user
+                SELECT
+                id,
+                polish,
+                deck,
+                name,
+                publicating_user,
+                publication_date
                 FROM nieszkolni_app_book
                 WHERE english = '{english}'
                 ''')
@@ -355,6 +388,7 @@ class KnowledgeManager:
                 deck = entry[2]
                 client = entry[3]
                 coach = entry[4]
+                initiation_date = entry[5]
 
                 check_if_in = self.translate(english)
                 if check_if_in is None:
@@ -371,7 +405,8 @@ class KnowledgeManager:
                     deck,
                     english,
                     polish,
-                    coach
+                    coach,
+                    initiation_date
                     )
 
                 with connection.cursor() as cursor:
@@ -383,7 +418,14 @@ class KnowledgeManager:
     def display_translated_book(self, deck):
         with connection.cursor() as cursor:
             cursor.execute(f'''
-                SELECT id, english, polish, deck, publicating_user, name
+                SELECT
+                id,
+                english,
+                polish,
+                deck,
+                publicating_user,
+                name,
+                comment
                 FROM nieszkolni_app_book
                 WHERE status = 'translated'
                 AND deck = '{deck}'
@@ -422,6 +464,66 @@ class KnowledgeManager:
                 SET status = 'rejected'
                 WHERE english = '{english}'
                 ''')
+
+    def return_book_entry(self, current_user, english):
+        entries = Book.objects.filter(english=english)
+        entry = entries[0]
+        coach = entry.publicating_user
+
+        if coach != "automatic":
+            for entry in entries:
+                entry.status = "returned"
+                entry.reviewing_user = current_user
+                entry.save()
+
+    def display_returned_book(self, current_user):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                id,
+                english,
+                status,
+                deck,
+                publicating_user,
+                name,
+                comment
+                FROM nieszkolni_app_book
+                WHERE status = 'returned'
+                AND publicating_user = '{current_user}'
+                ORDER BY english ASC
+                LIMIT 1
+                ''')
+
+            entry = cursor.fetchone()
+
+            return entry
+
+    def correct_book_entry(self, english_old, english_new):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                UPDATE nieszkolni_app_book
+                SET
+                english = '{english_new}',
+                status = 'open'
+                WHERE english = '{english_old}'
+                ''')
+
+    def count_returned_book(self, current_user):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT COUNT(id)
+                FROM nieszkolni_app_book
+                WHERE status = 'returned'
+                AND publicating_user = '{current_user}'
+                ORDER BY english ASC
+                LIMIT 1
+                ''')
+
+            entry = cursor.fetchone()
+
+            if entry is not None:
+                entry = entry[0]
+                return entry
 
     def upload_catalogues(
             self,

@@ -162,7 +162,23 @@ class ClientsManager:
                 SELECT name
                 FROM nieszkolni_app_client
                 WHERE status = 'active'
-                AND user_type = 'staff'
+                AND (user_type = 'staff' OR user_type = 'coach')
+                ORDER BY name ASC
+                ''')
+
+            employees = cursor.fetchall()
+
+            current_employees = [employee[0] for employee in employees]
+
+            return current_employees
+
+    def list_current_coaches(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT name
+                FROM nieszkolni_app_client
+                WHERE status = 'active'
+                AND user_type = 'coach'
                 ORDER BY name ASC
                 ''')
 

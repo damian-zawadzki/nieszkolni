@@ -71,16 +71,16 @@
                 <a class="side_navigation_link_2" href="{% url 'my_courses' %}">MY COURSES</a>
               </li>
               <li class="m_navigation_item_inside">
-                <a class="side_navigation_link_2" href="{% url 'my_grades' %}">MY GRADES</a>
+                <a class="side_navigation_link_2" href="{% url 'my_results' %}">MY RESULTS</a>
               </li>
               <li class="m_navigation_item_inside">
-                <a class="side_navigation_link_2" href="{% url 'statistics' %}">MY STATS</a>
+                <a class="side_navigation_link_2" href="{% url 'my_statistics' %}">MY STATS</a>
               </li>
               <li class="m_navigation_item_inside">
-                <a class="side_navigation_link_2" href="{% url 'vocabulary' %}">MY VOCABULARY</a>
+                <a class="side_navigation_link_2" href="{% url 'flashcard' username=current_user deck='vocabulary' %}">MY VOCABULARY</a>
               </li>
               <li class="m_navigation_item_inside">
-                <a class="side_navigation_link_2" href="{% url 'sentences' %}">MY SENTENCES</a>
+                <a class="side_navigation_link_2" href="{% url 'flashcard' username=current_user deck='sentences' %}">MY SENTENCES</a>
               </li>
               <li class="m_navigation_item_inside">
                 <a class="side_navigation_link_2" href="{% url 'my_pronunciation' %}">MY PRONUNCIATION</a>
@@ -93,12 +93,6 @@
               </li>
               <li class="m_navigation_item_inside">
                 <a class="side_navigation_link_2" href="{% url 'options' %}">MY SETTINGS</a>
-              </li>
-              <li class="m_navigation_item_inside">
-                <a class="side_navigation_link_2" href="{% url 'flashcard' username=current_user deck='vocabulary' %}">(beta) MY FLASHCARDS: VOCAB</a>
-              </li>
-              <li class="m_navigation_item_inside">
-                <a class="side_navigation_link_2" href="{% url 'flashcard' username=current_user deck='sentences' %}">(beta) MY FLASHCARDS: SENTENCES</a>
               </li>
               <li class="m_navigation_item_inside">
                 <a class="m_navigation_link" href="{% url 'logout_user' %}">LOG OUT</a>
@@ -191,6 +185,12 @@
       <a class="navigation_link" href="{% url 'staff' %}">STAFF</a>
     </li>
 
+    {% if user.is_superuser %}
+      <li class="navigation_item">
+        <a class="navigation_link" href="{% url 'management' %}">MANAGEMENT</a>
+      </li>
+    {% endif %}
+
     <input type="hidden" name="status" id="status_info" value="{{ status }}">
     <li class="navigation_item">
       <a class="navigation_link" href="{% url 'clock' %}"><span class="clock_dot" id="clock_info"></span></a>
@@ -212,13 +212,6 @@
       <div class="side_menu">
         <div class="side_menu_box">
           <a class="side_menu_link side_menu_link_first">{{ user.first_name.upper }} {{ user.last_name.upper }}</a>
-        </div>
-
-        <div class="side_menu_box">
-          <a class="side_menu_link" href="{% url 'flashcard' username=current_user deck='vocabulary' %}">MY FLASHCARDS</a>
-        </div>
-        <div class="side_menu_box">
-          <a class="side_menu_link" href="{% url 'flashcard' username=current_user deck='sentences' %}">MY FLASHCARDS</a>
         </div>
 
         <div class="side_menu_box">
@@ -306,19 +299,19 @@
               </div>
 
               <div class="side_menu_box">
-                <a class="side_menu_link" href="{% url 'my_grades' %}">MY GRADES</a>
+                <a class="side_menu_link" href="{% url 'my_results' %}">MY RESULTS</a>
               </div>
 
               <div class="side_menu_box">
-                <a class="side_menu_link" href="{% url 'statistics' %}">MY STATS</a>
+                <a class="side_menu_link" href="{% url 'my_statistics' %}">MY STATS</a>
               </div>
 
               <div class="side_menu_box">
-                <a class="side_menu_link" href="{% url 'vocabulary' %}">MY VOCABULARY</a>
+                <a class="side_menu_link" href="{% url 'flashcard' username=current_user deck='vocabulary' %}">MY VOCABULARY</a>
               </div>
 
               <div class="side_menu_box">
-                <a class="side_menu_link" href="{% url 'sentences' %}">MY SENTENCES</a>
+                <a class="side_menu_link" href="{% url 'flashcard' username=current_user deck='sentences' %}">MY SENTENCES</a>
               </div>
 
               <div class="side_menu_box">
@@ -335,13 +328,6 @@
 
               <div class="side_menu_box">
                 <a class="side_menu_link" href="{% url 'options' %}">MY SETTINGS</a>
-              </div>
-
-              <div class="side_menu_box">
-                <a class="side_menu_link" href="{% url 'flashcard' username=current_user deck='vocabulary' %}">(beta) MY FLASHCARDS: V</a>
-              </div>
-              <div class="side_menu_box">
-                <a class="side_menu_link" href="{% url 'flashcard' username=current_user deck='sentences' %}">(beta) MY FLASHCARDS: S</a>
               </div>
 
               <div class="side_menu_box">

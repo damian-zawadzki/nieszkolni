@@ -19,10 +19,22 @@ class VocabularyManager:
         pass
 
     # User specific functions
-    def add_entry(self, client, deck, english, polish, coach):
+    def add_entry(
+            self,
+            client,
+            deck,
+            english,
+            polish,
+            coach,
+            initiation_date=None
+            ):
+
         entry = Card()
         today = TimeMachine().today()
         today_number = TimeMachine().date_to_number(today)
+
+        if initiation_date is None:
+            initiation_date = today_number
 
         unique_id_list = Card.objects.values_list("card_id", flat=True)
         if len(unique_id_list) == 0:
@@ -50,6 +62,7 @@ class VocabularyManager:
             entry.card_revision_days = ""
             entry.line = 1
             entry.coach = coach
+            entry.initiation_date = initiation_date
             entry.save()
 
     def display_all_entries(self, client, deck):
@@ -89,6 +102,11 @@ class VocabularyManager:
         return counts
 
     def display_due_entries_json(self, client, deck):
+        check = Card.objects.filter(client=client).exists()
+
+        if not check:
+            return None
+
         entries = self.display_due_entries(client, deck)
         counts = self.display_counts(client, deck)
         total = sum(counts)

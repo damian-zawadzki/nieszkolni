@@ -3,21 +3,22 @@ from django.db import models
 
 class Card(models.Model):
     card_id = models.IntegerField(primary_key=True)
-    client = models.CharField(max_length=200)
-    deck = models.CharField(max_length=200)
-    english = models.CharField(max_length=200)
-    polish = models.CharField(max_length=200)
-    publication_date = models.IntegerField()
-    due_date = models.IntegerField()
-    interval = models.IntegerField()
-    number_of_reviews = models.IntegerField()
+    client = models.CharField(max_length=200, default="")
+    deck = models.CharField(max_length=200, default="vocabulary")
+    english = models.CharField(max_length=200, default="")
+    polish = models.CharField(max_length=200, default="")
+    publication_date = models.IntegerField(default=0)
+    due_date = models.IntegerField(default=0)
+    interval = models.IntegerField(default=0)
+    number_of_reviews = models.IntegerField(default=0)
     answers = models.TextField(default="")
     card_opening_times = models.TextField(default="")
     card_closing_times = models.TextField(default="")
     durations = models.TextField(default="")
     card_revision_days = models.TextField(default="")
-    line = models.IntegerField()
+    line = models.IntegerField(default=0)
     coach = models.CharField(max_length=200)
+    initiation_date = models.IntegerField(default=0)
 
 
 class Client(models.Model):
@@ -120,13 +121,13 @@ class Pronunciation(models.Model):
     class Meta:
         unique_together = (("name", "entry"),)
 
-    publication_stamp = models.IntegerField()
-    publication_date = models.IntegerField()
+    publication_stamp = models.IntegerField(default=0)
+    publication_date = models.IntegerField(default=0)
     coach = models.CharField(max_length=200, default="")
     name = models.CharField(max_length=200, default="")
     entry = models.CharField(max_length=200, default="")
-    due_date = models.IntegerField()
-    number_of_reviews = models.IntegerField()
+    due_date = models.IntegerField(default=0)
+    number_of_reviews = models.IntegerField(default=0)
     answers = models.TextField(default="")
     revision_days = models.TextField(default="")
 
@@ -146,22 +147,23 @@ class Book(models.Model):
     name = models.CharField(max_length=200, default="")
     english = models.CharField(max_length=200, default="")
     polish = models.CharField(max_length=200, default="")
-    publication_date = models.IntegerField()
+    publication_date = models.IntegerField(default=0)
     publicating_user = models.CharField(max_length=200, default="")
-    translation_date = models.IntegerField()
+    translation_date = models.IntegerField(default=0)
     translating_user = models.CharField(max_length=200, default="")
-    revision_date = models.IntegerField()
+    revision_date = models.IntegerField(default=0)
     reviewing_user = models.CharField(max_length=200, default="")
     status = models.CharField(max_length=200, default="")
     deck = models.CharField(max_length=200, default="")
+    comment = models.CharField(max_length=200, default="")
 
 
 class Catalogue(models.Model):
-    publication_date = models.IntegerField()
+    publication_date = models.IntegerField(default=0)
     publicating_user = models.CharField(max_length=200, default="")
     entry = models.CharField(max_length=200, default="")
-    entry_number = models.IntegerField()
-    catalogue_number = models.IntegerField()
+    entry_number = models.IntegerField(default=0)
+    catalogue_number = models.IntegerField(default=0)
     catalogue_name = models.CharField(max_length=200, default="")
 
 
@@ -175,22 +177,22 @@ class Prompt(models.Model):
 
 
 class Memory(models.Model):
-    publication_stamp = models.IntegerField()
-    publication_date = models.IntegerField()
+    publication_stamp = models.IntegerField(default=0)
+    publication_date = models.IntegerField(default=0)
     coach = models.CharField(max_length=200, default="")
     name = models.CharField(max_length=200, default="")
     prompt = models.CharField(max_length=200, default="")
     left_option = models.CharField(max_length=200, default="")
     right_option = models.CharField(max_length=200, default="")
-    due_date = models.IntegerField()
-    number_of_reviews = models.IntegerField()
+    due_date = models.IntegerField(default=0)
+    number_of_reviews = models.IntegerField(default=0)
     answers = models.TextField(default="")
     revision_days = models.TextField(default="")
 
 
 class Stream(models.Model):
-    stamp = models.IntegerField()
-    date_number = models.IntegerField()
+    stamp = models.IntegerField(default=0)
+    date_number = models.IntegerField(default=0)
     date = models.CharField(max_length=200, default="")
     name = models.CharField(max_length=200, default="")
     command = models.CharField(max_length=200, default="")
@@ -207,9 +209,9 @@ class SentenceStock(models.Model):
 
 
 class Composer(models.Model):
-    list_number = models.IntegerField()
+    list_number = models.IntegerField(default=0)
     sentence_number = models.IntegerField(primary_key=True)
-    sentence_id = models.IntegerField()
+    sentence_id = models.IntegerField(default=0)
     name = models.CharField(max_length=200, default="")
     polish = models.TextField(default="")
     english = models.TextField(default="")
@@ -249,7 +251,7 @@ class LibraryLine(models.Model):
 
 class Repertoire(models.Model):
     title = models.CharField(max_length=200, default="", primary_key=True)
-    duration = models.IntegerField()
+    duration = models.IntegerField(default=0)
     title_type = models.CharField(max_length=200, default="")
 
 
@@ -260,8 +262,8 @@ class Theater(models.Model):
 
 
 class RepertoireLine(models.Model):
-    stamp = models.IntegerField()
-    date = models.IntegerField()
+    stamp = models.IntegerField(default=0)
+    date = models.IntegerField(default=0)
     name = models.CharField(max_length=200, default="")
     title = models.CharField(max_length=200, default="")
     number_of_episodes = models.IntegerField()

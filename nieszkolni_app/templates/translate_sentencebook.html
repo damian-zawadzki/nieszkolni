@@ -1,37 +1,43 @@
 {% extends 'base.html' %}
 {% block 'content' %}
 
-{% if entries == None %}
+{% if entry == None %}
 {% else %}
 
   <h1>SENTENCEBOOK: {{ counter }}</h1>
 
     <div class="flex-parent jc-center">
 
-      {% if entries.2 == 'rejected' %}
+      {% if entry.2 == 'rejected' %}
       <div class="phrase_card phrase_card_wrong">
       {% else %}
       <div class="phrase_card">
       {% endif %}
 
         <div class="phrase_card_container">
-          <h5 class="phrase_card_question">{{ entries.1 }}</h5>
+          <h5 class="phrase_card_question">{{ entry.1 }}</h5>
           
         <form method="POST">
           {% csrf_token %}
 
           <div class="flex-parent jc-center">
             <div class="input_container">
-              <input type="text" class="input_content_solo input_content_solo_long" name="polish">
-              <input type="hidden" name="unique_id" value="{{ entries.0 }}">
-              <input type="hidden" name="english" value="{{ entries.1 }}">
+              <input type="text" class="input_content_solo input_content_solo_long" name="polish" value="{{ entry.1 }}">
+              {% if entry.6 %}
+                <input type="text" class="input_content" name="comment" value="{{ entry.6 }}">
+              {% endif %}
+              <input type="hidden" name="unique_id" value="{{ entry.0 }}">
+              <input type="hidden" name="english" value="{{ entry.1 }}">
             </div>
           </div>
 
           <div class="flex-parent jc-center">
 
-          <button type="submit" class="button_main" name="sentencebook_action" value="save">Save</button>
-          <button type="submit" class="button_main" name="sentencebook_action" value="delete">Delete</button>
+            {% if not entry.4 == 'automatic' %}
+              <button type="submit" class="button_main" name="sentencebook_action" value="return">Return</button>
+            {% endif %}
+            <button type="submit" class="button_main" name="sentencebook_action" value="save">Save</button>
+            <button type="submit" class="button_main" name="sentencebook_action" value="delete">Delete</button>
 
           </div>
         </form>

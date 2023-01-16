@@ -39,6 +39,7 @@ from nieszkolni_folder.onboarding_manager import OnboardingManager
 from nieszkolni_folder.back_office_planner import BackOfficePlanner
 from nieszkolni_folder.challenge_manager import ChallengeManager
 from nieszkolni_folder.survey_manager import SurveyManager
+from nieszkolni_folder.analytics_manager import AnalyticsManager
 
 from io import BytesIO
 
@@ -586,9 +587,11 @@ def list_current_users(request):
                 client = request.POST["client"]
 
                 details = ClientsManager().load_user(client)
+                coaches = ClientsManager().list_current_coaches()
 
                 return render(request, "edit_user.html", {
-                    "details": details
+                    "details": details,
+                    "coaches": coaches
                     })
 
             elif request.POST["action_on_user"] == "update":
@@ -730,13 +733,15 @@ def old_staff(request):
 
 
 @staff_member_required
-def staff_menu(request):
+def management(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        return render(request, "staff_menu.html", {})
+        return render(request, "management.html", {
+            "current_user": current_user
+            })
 
 
 @login_required
@@ -2109,7 +2114,9 @@ def coach(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        return render(request, "coach.html", {})
+        context = {"current_user": current_user}
+
+        return render(request, "coach.html", context)
 
 
 @staff_member_required
@@ -2325,16 +2332,17 @@ def translate_wordbook(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        entries = KnowledgeManager().display_open_book("vocabulary")
+        entry = KnowledgeManager().display_open_book("vocabulary")
         counter = KnowledgeManager().count_open_book("vocabulary")
 
-        if entries is None:
+        if entry is None:
             messages.success(request, ("You've translated all the wordbook entries!"))
             return render(request, "translate_wordbook.html", {})
 
         if request.method == "POST":
             if request.POST["wordbook_action"] == "delete":
                 english = request.POST["english"]
+
                 KnowledgeManager().delete_book_entries_by_english(english)
 
                 return redirect("translate_wordbook")
@@ -2342,13 +2350,29 @@ def translate_wordbook(request):
             elif request.POST["wordbook_action"] == "save":
                 english = request.POST["english"]
                 polish = request.POST["polish"]
+                comment = request.POST["comment"]
 
-                translate_entry = KnowledgeManager().translate_book_entry(english, polish)
+                KnowledgeManager().translate_book_entry(
+                        english,
+                        polish,
+                        current_user
+                        )
+
+                KnowledgeManager().comment_on_book_entry(english, comment)
+
+                return redirect("translate_wordbook")
+
+            elif request.POST["wordbook_action"] == "return":
+                english = request.POST["english"]
+                comment = request.POST["comment"]
+
+                KnowledgeManager().return_book_entry(current_user, english)
+                KnowledgeManager().comment_on_book_entry(english, comment)
 
                 return redirect("translate_wordbook")
 
         return render(request, "translate_wordbook.html", {
-                "entries": entries,
+                "entry": entry,
                 "counter": counter
                 })
 
@@ -2360,17 +2384,20 @@ def approve_wordbook(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        entries = KnowledgeManager().display_translated_book("vocabulary")
+        entry = KnowledgeManager().display_translated_book("vocabulary")
         counter = KnowledgeManager().count_translated_book("vocabulary")
 
-        if entries is None:
+        if entry is None:
             messages.success(request, ("You've translated all the wordbook entries!"))
             return render(request, "approve_wordbook.html", {})
 
         if request.method == "POST":
             if request.POST["wordbook_action"] == "reject":
                 english = request.POST["english"]
+                comment = request.POST["comment"]
+
                 KnowledgeManager().reject_book_entry(english)
+                KnowledgeManager().comment_on_book_entry(english, comment)
 
                 return redirect("approve_wordbook")
 
@@ -2382,8 +2409,17 @@ def approve_wordbook(request):
 
                 return redirect("approve_wordbook")
 
+            elif request.POST["wordbook_action"] == "return":
+                english = request.POST["english"]
+                comment = request.POST["comment"]
+
+                KnowledgeManager().return_book_entry(current_user, english)
+                KnowledgeManager().comment_on_book_entry(english, comment)
+
+                return redirect("approve_wordbook")
+
         return render(request, "approve_wordbook.html", {
-                "entries": entries,
+                "entry": entry,
                 "counter": counter
                 })
 
@@ -2395,16 +2431,17 @@ def translate_sentencebook(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        entries = KnowledgeManager().display_open_book("sentences")
+        entry = KnowledgeManager().display_open_book("sentences")
         counter = KnowledgeManager().count_open_book("sentences")
 
-        if entries is None:
+        if entry is None:
             messages.success(request, ("You've translated all the sentencebook entries!"))
             return render(request, "translate_sentencebook.html", {})
 
         if request.method == "POST":
             if request.POST["sentencebook_action"] == "delete":
                 english = request.POST["english"]
+
                 KnowledgeManager().delete_book_entries_by_english(english)
 
                 return redirect("translate_sentencebook")
@@ -2412,13 +2449,29 @@ def translate_sentencebook(request):
             elif request.POST["sentencebook_action"] == "save":
                 english = request.POST["english"]
                 polish = request.POST["polish"]
+                comment = request.POST["comment"]
 
-                translate_entry = KnowledgeManager().translate_book_entry(english, polish)
+                KnowledgeManager().translate_book_entry(
+                        english,
+                        polish,
+                        current_user
+                        )
+
+                KnowledgeManager().comment_on_book_entry(english, comment)
+
+                return redirect("translate_sentencebook")
+
+            elif request.POST["sentencebook_action"] == "return":
+                english = request.POST["english"]
+                comment = request.POST["comment"]
+
+                KnowledgeManager().return_book_entry(current_user, english)
+                KnowledgeManager().comment_on_book_entry(english, comment)
 
                 return redirect("translate_sentencebook")
 
         return render(request, "translate_sentencebook.html", {
-                "entries": entries,
+                "entry": entry,
                 "counter": counter
                 })
 
@@ -2430,17 +2483,20 @@ def approve_sentencebook(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        entries = KnowledgeManager().display_translated_book("sentences")
+        entry = KnowledgeManager().display_translated_book("sentences")
         counter = KnowledgeManager().count_translated_book("sentences")
 
-        if entries is None:
+        if entry is None:
             messages.success(request, ("You've translated all the sentencebook entries!"))
             return render(request, "approve_sentencebook.html", {})
 
         if request.method == "POST":
             if request.POST["sentencebook_action"] == "reject":
                 english = request.POST["english"]
+                comment = request.POST["comment"]
+
                 KnowledgeManager().reject_book_entry(english)
+                KnowledgeManager().comment_on_book_entry(english, comment)
 
                 return redirect("approve_sentencebook")
 
@@ -2456,8 +2512,60 @@ def approve_sentencebook(request):
 
                 return redirect("approve_sentencebook")
 
+            elif request.POST["sentencebook_action"] == "return":
+                english = request.POST["english"]
+                comment = request.POST["comment"]
+
+                KnowledgeManager().return_book_entry(current_user, english)
+                KnowledgeManager().comment_on_book_entry(english, comment)
+
+                return redirect("approve_sentencebook")
+
         return render(request, "approve_sentencebook.html", {
-                "entries": entries,
+                "entry": entry,
+                "counter": counter
+                })
+
+
+@staff_member_required
+def review_book(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        entry = KnowledgeManager().display_returned_book(
+                current_user
+                )
+        counter = KnowledgeManager().count_returned_book(
+                current_user
+                )
+
+        if entry is None:
+            messages.success(request, ("You've reviewed all the wordbook entries!"))
+            return render(request, "review_book.html", {})
+
+        if request.method == "POST":
+            if request.POST["book_action"] == "delete":
+                english = request.POST["english_old"]
+
+                KnowledgeManager().delete_book_entries_by_english(english)
+
+                return redirect("review_book")
+
+            elif request.POST["book_action"] == "correct":
+                english_old = request.POST["english_old"]
+                english_new = request.POST["english_new"]
+
+                KnowledgeManager().correct_book_entry(
+                        english_old,
+                        english_new
+                        )
+
+                return redirect("review_book")
+
+        return render(request, "review_book.html", {
+                "entry": entry,
                 "counter": counter
                 })
 
@@ -3747,7 +3855,7 @@ def add_profile(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        client_names = ClientsManager().list_current_clients()
+        client_names = RoadmapManager().display_profile_names()
 
         if request.method == "POST":
             if request.POST["action_on_profile"] == "add":
@@ -4175,23 +4283,20 @@ def ranking(request):
 
 
 @login_required
-def statistics(request):
+def my_statistics(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        user_agent = get_user_agent(request)
         stats = StreamManager().statistics(current_user)
+        user_agent = get_user_agent(request)
+        context = {"stats": stats}
 
         if user_agent.is_mobile:
-            return render(request, "m_my_stats.html", {
-                "stats": stats
-                })
+            return render(request, "m_my_statistics.html", context)
         else:
-            return render(request, "statistics.html", {
-                "stats": stats
-                })
+            return render(request, "my_statistics.html", context)
 
 
 @login_required
@@ -4315,7 +4420,7 @@ def add_grade(request):
 
 
 @staff_member_required
-def grades(request):
+def results(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
@@ -4330,13 +4435,16 @@ def grades(request):
                 current_client
                 )
 
+        activities = ActivityManager().get_points_over_lifetime(current_client)
+
         context = {
             "current_client": current_client,
             "grades": grades,
-            "results": results
+            "results": results,
+            "activities": activities
             }
 
-        return render(request, "grades.html", context)
+        return render(request, "results.html", context)
 
 
 @login_required
@@ -5012,6 +5120,7 @@ def manage_programs_and_courses(request):
 
         clients = ClientsManager().list_current_clients()
         courses = RoadmapManager().display_courses()
+        programs = RoadmapManager().display_programs()
 
         if request.method == "POST":
             if request.POST["action"] == "assign_course":
@@ -5020,7 +5129,7 @@ def manage_programs_and_courses(request):
                 semester = request.POST["semester"]
                 program = "custom"
 
-                CurriculumPlanner().assign_course(
+                output = CurriculumPlanner().assign_course(
                     client,
                     current_user,
                     course,
@@ -5028,11 +5137,31 @@ def manage_programs_and_courses(request):
                     program
                     )
 
+                messages.add_message(
+                        request,
+                        getattr(messages, output[0]),
+                        output[1]
+                        )
+                return redirect("manage_programs_and_courses")
+
+            if request.POST["action"] == "assign_program":
+                client = request.POST["client"]
+                program = request.POST["program"]
+                semester = request.POST["semester"]
+
+                CurriculumPlanner().assign_program(
+                    client,
+                    program,
+                    semester
+                    )
+
+                messages.success(request, ("Program assigned"))
                 return redirect("manage_programs_and_courses")
 
         context = {
             "clients": clients,
-            "courses": courses
+            "courses": courses,
+            "programs": programs
             }
 
         return render(request, "manage_programs_and_courses.html", context)
@@ -5155,7 +5284,7 @@ def my_courses(request):
 
 
 @login_required
-def my_grades(request):
+def my_results(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
@@ -5169,14 +5298,20 @@ def my_grades(request):
                 current_user
                 )
 
-        context = {"grades": grades, "results": results}
+        activities = ActivityManager().get_points_over_lifetime(current_user)
+
+        context = {
+            "grades": grades,
+            "results": results,
+            "activities": activities
+            }
 
         user_agent = get_user_agent(request)
 
         if user_agent.is_mobile:
-            return render(request, "m_my_grades.html", context)
+            return render(request, "m_my_results.html", context)
         else:
-            return render(request, "my_grades.html", context)
+            return render(request, "my_results.html", context)
 
 
 @login_required
@@ -6250,6 +6385,36 @@ def responses(request):
 
         return render(request, "responses.html", {
             "questions": questions,
+            })
+
+
+@staff_member_required
+def analytics_new_entries_per_student(request, coach):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        rows = AnalyticsManager().count_new_entries_per_student_last_week(
+                current_user
+                )
+
+        return render(request, "analytics_new_entries_per_student.html", {
+            "rows": rows,
+            })
+
+
+@staff_member_required
+def analytics_new_entries(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        rows = AnalyticsManager().count_all_new_entries_per_student_last_week()
+
+        return render(request, "analytics_new_entries.html", {
+            "rows": rows
             })
 
 

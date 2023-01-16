@@ -9,10 +9,11 @@
 		  <a class="square_menu_link" href="{% url 'session_mode' %}">SESSION MODE</a>
 		  <a class="square_menu_link" href="{% url 'examination_mode' %}">EXAMINATION MODE</a>
 		  <a class="square_menu_link" href="{% url 'add_grade' %}">GRADE THE STUDENT</a>
-		  <a class="square_menu_link" href="{% url 'grades' %}">STUDENTS' GRADES</a>
+		  <a class="square_menu_link" href="{% url 'results' %}">STUDENTS' RESULTS</a>
 		  <a class="square_menu_link" href="{% url 'report_listening' %}">REPORT LISTENING</a>
 		  <a class="square_menu_link" href="{% url 'report_reading' %}">REPORT READING</a>
 		  <a class="square_menu_link" href="{% url 'client_stream' %}">CLIENT'S STREAM ENTRIES</a>
+		  <a class="square_menu_link" href="{% url 'analytics_new_entries_per_student' coach=current_user %}">ANALYTICS: NEW ENTRIES LAST WEEK</a>
 	</ul>
 </div>
 

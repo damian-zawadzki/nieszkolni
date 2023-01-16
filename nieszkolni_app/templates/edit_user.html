@@ -12,8 +12,9 @@
       <select required class="input_content" name="user_type">
 
           <option selected value="{{ details.user_type }}">{{ details.user_type }}</option>
-          <option value="guest">guest</option>
+          <option value="coach">coach</option>
           <option value="client">client</option>
+          <option value="guest">guest</option>
           <option value="staff">staff</option>
 
       </select>
@@ -115,8 +116,10 @@
       <select required class="input_content" name="coach">
 
           <option selected value="{{ details.coach }}">{{ details.coach }}</option>
-          <option value="Marta Bańkowska">Marta Bańkowska</option>
-          <option value="Piotr Gmitrzak">Piotr Gmitrzak</option>
+
+          {% for coach in coaches %}
+            <option value="{{ coach }}">{{ coach }}</option>
+          {% endfor %}
 
       </select>
     </div>
