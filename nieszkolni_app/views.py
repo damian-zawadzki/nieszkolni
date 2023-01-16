@@ -4405,24 +4405,27 @@ def add_grade(request):
 
         current_client = CurrentClientsManager().current_client(current_user)
         courses = RoadmapManager().display_current_courses(current_client)
+        tests = KnowledgeManager().display_prompts("tests")
 
         if request.method == "POST":
             student = current_client
             course = request.POST["course"]
             result = request.POST["result"]
             grade_type = request.POST["grade_type"]
-            examiner = current_user
+            test = request.POST["test"]
 
             RoadmapManager().add_grade(
                 student,
                 course,
                 result,
                 grade_type,
-                examiner
+                current_user,
+                test
                 )
 
         return render(request, "add_grade.html", {
-            "courses": courses
+            "courses": courses,
+            "tests": tests
             })
 
 
@@ -4445,7 +4448,6 @@ def results(request):
         activities = ActivityManager().get_points_over_lifetime(current_client)
 
         assignments = ActivityManager().get_uncompleted_assignments_list(current_client)
-        print(assignments)
 
         context = {
             "current_client": current_client,

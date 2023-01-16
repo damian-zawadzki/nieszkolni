@@ -257,7 +257,8 @@ class KnowledgeManager:
                 deck,
                 publicating_user,
                 name,
-                comment
+                comment,
+                polish
                 FROM nieszkolni_app_book
                 WHERE deck = '{deck}'
                 AND (status = 'open'

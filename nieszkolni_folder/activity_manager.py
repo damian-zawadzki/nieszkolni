@@ -270,7 +270,7 @@ class ActivityManager:
 
     def get_uncompleted_assignments_list(self, client, date=None):
         if date is None:
-            date = TimeMachine().this_sunday()  # Change to today
+            date = TimeMachine().today()
         date_number = TimeMachine().date_to_number(date)
         previous_sunday = TimeMachine().previous_sunday(date)
         following_sunday = TimeMachine().following_sunday(date)

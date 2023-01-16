@@ -23,9 +23,7 @@
           <div class="flex-parent jc-center">
             <div class="input_container">
               <input type="text" class="input_content_solo input_content_solo_long" name="english_new" value="{{ entry.1 }}" required>
-              {% if entry.6 %}
-                <input type="text" class="input_content input_prefilled" name="comment" value="{{ entry.6 }}">
-              {% endif %}
+              <input type="text" class="input_content input_prefilled" name="comment" value="{{ entry.6 }}">
               <input type="hidden" name="english_old" value="{{ entry.1 }}">
             </div>
           </div>

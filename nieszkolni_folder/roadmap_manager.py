@@ -864,13 +864,16 @@ class RoadmapManager:
 
             return degrees
 
+    # Grades
+
     def add_grade(
             self,
             student,
             course,
             result,
             grade_type,
-            examiner
+            examiner,
+            test
             ):
 
         stamp = TimeMachine().now_number()
@@ -885,16 +888,18 @@ class RoadmapManager:
                 course,
                 result,
                 grade_type,
-                examiner
+                examiner,
+                test
                 )
                 VALUES (
-                {stamp},
-                {today_number},
+                '{stamp}',
+                '{today_number}',
                 '{student}',
                 '{course}',
-                {result},
+                '{result}',
                 '{grade_type}',
-                '{examiner}'
+                '{examiner}',
+                '{test}'
                 )
                 ''')
 
@@ -920,7 +925,8 @@ class RoadmapManager:
                 examiner,
                 course,
                 stamp,
-                id
+                id,
+                test
                 FROM nieszkolni_app_grade
                 WHERE student = '{student}'
                 AND course = '{course}'
@@ -932,7 +938,7 @@ class RoadmapManager:
             grades = []
             for row in rows:
                 date = TimeMachine().number_to_system_date(row[0])
-                grade = (date, row[1], row[2], row[3], row[4], row[5], row[6])
+                grade = (date, row[1], row[2], row[3], row[4], row[5], row[6], row[7])
                 grades.append(grade)
 
             return grades
@@ -947,7 +953,8 @@ class RoadmapManager:
                 examiner,
                 course,
                 stamp,
-                id
+                id,
+                test
                 FROM nieszkolni_app_grade
                 WHERE id = '{grade_id}'
                 ''')

@@ -31,12 +31,28 @@
 
   <div class="flex-parent jc-center">
      <div class="input_container">
-      <label class="input_label">Grade type</label>
+      <label class="input_label">Grade Type</label>
 
         <select required class="input_content" name="grade_type">
             <option disabled selected value></option>
             <option value="midterm">midterm</option>
             <option value="final">final</option>
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Test</label>
+
+        <select required class="input_content" name="test">
+            <option disabled selected value></option>
+
+            {% for test in tests %}
+            <option value="{{ test.0 }}">{{ test.0 }}</option>
+            {% endfor %}
+
         </select>
 
     </div>

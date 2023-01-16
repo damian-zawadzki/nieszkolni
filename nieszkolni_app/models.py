@@ -338,6 +338,7 @@ class Grade(models.Model):
     result = models.IntegerField(default=0)
     grade_type = models.CharField(max_length=200, default="")
     examiner = models.CharField(max_length=200, default="")
+    test = models.CharField(max_length=200, default="")
 
 
 class Material(models.Model):
