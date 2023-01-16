@@ -344,6 +344,8 @@ class KnowledgeManager:
                 ''')
 
     def comment_on_book_entry(self, english, comment):
+        comment = Cleaner().clean_quotation_marks(comment)
+
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 UPDATE nieszkolni_app_book
