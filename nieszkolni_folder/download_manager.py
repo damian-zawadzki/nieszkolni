@@ -66,10 +66,12 @@ class DownloadManager:
             file_paths.append((path, file_path))
 
         # Sentences
-        sentence_lists = SentenceManager().download_graded_sentence_lists(
+        sentence_lists_raw = SentenceManager().download_graded_sentence_lists(
             start_date,
             end_date
             )
+
+        sentence_lists = list(sentence_lists_raw.values())
 
         for sentence_list in sentence_lists:
             path = DocumentManager().create_sentences_doc(sentence_list)

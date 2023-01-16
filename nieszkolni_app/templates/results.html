@@ -8,6 +8,7 @@
 	<button type="button" class="button_main" onclick="showHideTable('grades_view')">Grades</button>
 	<button type="button" class="button_main" onclick="showHideTable('finals_view')">Final Grades</button>
 	<button type="button" class="button_main" onclick="showHideTable('activity_view')">Activity Points</button>
+	<button type="button" class="button_main" onclick="showHideTable('assignments_view')">Uncompleted Assignments</button>
 </div>
 
 <table id="grades_view" style="display: none;">
@@ -86,6 +87,31 @@
 			<td>{{ activity.duration }}</td>
 			<td>{{ activity.activity_points }}</td>
 
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+<table id="assignments_view" style="display: none;">
+
+	<tr class="font">
+
+		<th>Item</th>
+		<th>Component</th>
+		<th>Deadline</th>
+		<th>Completion date</th>
+
+	</tr>
+
+	{% for assignment in assignments %}
+
+		<tr class="font">
+
+			<td>{{ assignment.0 }}</td>
+			<td>{{ assignment.2 }}</td>
+			<td>{{ assignment.5 }}</td>
+			<td>{{ assignment.4 }}</td>
 		</tr>
 
 	{% endfor %}

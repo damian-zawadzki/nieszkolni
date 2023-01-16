@@ -133,12 +133,12 @@ class ActivityManager:
         score = 0
 
         if minimum is False:
-            score = no_homework
+            score = int(no_homework) if no_homework is not None else 0
         else:
             if maximum is True:
-                score = full_homework
+                score = int(full_homework) if full_homework is not None else 0
             else:
-                score = main_homework
+                score = int(main_homework) if main_homework is not None else 0
 
         if attendance is True and minimum is not False:
             score *= 2
@@ -267,6 +267,42 @@ class ActivityManager:
             score *= 2
 
         return score
+
+    def get_uncompleted_assignments_list(self, client, date=None):
+        if date is None:
+            date = TimeMachine().today()
+        date_number = TimeMachine().date_to_number(date)
+        previous_sunday = TimeMachine().previous_sunday(date)
+        following_sunday = TimeMachine().following_sunday(date)
+
+        assignments = CurriculumManager().assignments_and_status_from_to(
+                client,
+                previous_sunday,
+                following_sunday
+                )
+
+        no_submissions = KnowledgeManager().display_list_of_prompts("no_submission")
+
+        completed = []
+        uncompleted = []
+
+        for assignment in assignments:
+            if assignment[2] not in no_submissions:
+                deadline = assignment[1]
+                completion_date = assignment[4]
+
+                if completion_date > deadline:
+                    uncompleted.append(assignment[0])
+
+                elif completion_date == 0 and deadline < date_number:
+                    uncompleted.append(assignment[0])
+
+                else:
+                    completed.append(assignment[0])
+
+        uncompleted = [x for x in assignments if x[0] in uncompleted]
+
+        return uncompleted
 
     def check_if_settle_this_week(self):
         week_sign = TimeMachine().this_week_number_sign()

@@ -489,7 +489,8 @@ class CurriculumManager:
                 deadline_number,
                 assignment_type,
                 status,
-                completion_date
+                completion_date,
+                deadline_text
                 FROM nieszkolni_app_curriculum
                 WHERE name = '{client}'
                 AND deadline_number > '{start_number}'

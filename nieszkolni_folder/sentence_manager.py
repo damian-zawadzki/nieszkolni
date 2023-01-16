@@ -507,7 +507,8 @@ class SentenceManager:
                 name,
                 submission_date,
                 reviewing_user,
-                item
+                item,
+                sentence_number
                 FROM nieszkolni_app_composer
                 WHERE status = 'graded'
                 AND submission_date >= {start}
@@ -518,15 +519,16 @@ class SentenceManager:
 
             items = cursor.fetchall()
 
-            # # sentence_lists = [items[i*10:(i+1)*10] for i in range(int(len(items)/10))]
-            # listings = {item[3]: [] for item in items}
+            listings = {item[3]: [] for item in items}
 
-            # for key, value in listings:
-            #     for item in items:
-            #         if key == item[3]:
-            #             listing = listings.get(item[3])
-            #             listing.append(item)
-            #             listings.update({item[3]: listing})
+            for key, value in listings.items():
+                for item in items:
+                    if key == item[3]:
+                        listing = listings.get(key)
+                        listing.append(item)
+                        listings.update({key: listing})
+
+            return listings
 
     def display_list_status(self, list_number):
         with connection.cursor() as cursor:

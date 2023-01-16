@@ -739,6 +739,13 @@ def management(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        x = SentenceManager().download_graded_sentence_lists(
+                "2023-01-05",
+                "2023-01-16"
+                )
+
+        print(list(x.values()))
+
         return render(request, "management.html", {
             "current_user": current_user
             })
@@ -4437,11 +4444,15 @@ def results(request):
 
         activities = ActivityManager().get_points_over_lifetime(current_client)
 
+        assignments = ActivityManager().get_uncompleted_assignments_list(current_client)
+        print(assignments)
+
         context = {
             "current_client": current_client,
             "grades": grades,
             "results": results,
-            "activities": activities
+            "activities": activities,
+            "assignments": assignments
             }
 
         return render(request, "results.html", context)
