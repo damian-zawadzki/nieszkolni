@@ -186,26 +186,30 @@ class ActivityManager:
     def calculate_points_this_week(self, client):
         today = TimeMachine().today_number()
         last_sunday = TimeMachine().last_sunday()
-        this_sunday = TimeMachine().this_sunday()
+        previous_sunday = TimeMachine().previous_sunday(last_sunday)
 
         assignments = CurriculumManager().assignments_and_status_from_to(
                 client,
-                last_sunday,
-                this_sunday
+                previous_sunday,
+                last_sunday
                 )
 
         no_submissions = KnowledgeManager().display_list_of_prompts("no_submission")
-        po = StreamManager().count_po_from_to(client, last_sunday, this_sunday)
+        po = StreamManager().count_po_from_to(client, previous_sunday, last_sunday)
         homework = StreamManager().find_command_from_to(
                 client,
                 "Homework",
-                last_sunday,
-                this_sunday
+                previous_sunday,
+                last_sunday
                 )
         homework_count = len([item.command for item in homework])
-        stats = StreamManager().statistics(client)
-        duration = stats["duration"]
-        flashcards_check = stats["study_days"]
+        stats = StreamManager().statistics_range(
+                client,
+                previous_sunday,
+                last_sunday
+                )
+        duration = stats["duration"]  # only specified time
+        flashcards_check = stats["study_days"]  # only specified time
 
         no_homework = BackOfficeManager().display_option_by_command("no_homework_ap")
         full_homework = BackOfficeManager().display_option_by_command("full_homework_ap")
@@ -238,7 +242,8 @@ class ActivityManager:
 
         if uncompleted_count == 0 and homework_count == 0:
             check.update({"maximum": True})
-
+        print(po)
+        print(flashcards_check)
         if po > 30 and flashcards_check > 2:
             check.update({"minimum": True})
 
@@ -250,7 +255,7 @@ class ActivityManager:
         attendance = check["attendance"]
 
         score = 0
-
+        print(check)
         if minimum is False:
             score = no_homework
         else:

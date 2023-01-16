@@ -14,7 +14,7 @@
 			{% csrf_token %}
 				<div class="flex-parent jc-center">
 					<ul class="square_menu">
-						<button type="submit" class="square_menu_link" name="action_on_system" value="settle_last_week">SETTLE LAST WEEK</button>
+						<button type="submit" class="square_menu_link" id="settle_b" name="action_on_system" value="settle_last_week" onclick="disableButton(this.id)">SETTLE LAST WEEK</button>
 					</ul>
 				</div>
 			</form>
