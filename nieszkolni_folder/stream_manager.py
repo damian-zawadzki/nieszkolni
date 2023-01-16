@@ -354,7 +354,7 @@ class StreamManager:
                 SELECT value
                 FROM nieszkolni_app_stream
                 WHERE name = '{client}'
-                AND command = "Activity"
+                AND command = 'Activity'
                 AND date_number > '{start_number}'
                 AND date_number <= '{end_number}'
                 AND value LIKE '{description}%'

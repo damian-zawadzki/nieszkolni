@@ -6395,8 +6395,9 @@ def analytics_new_entries_per_student(request, coach):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        current_client = CurrentClientsManager().current_client(current_user)
         rows = AnalyticsManager().count_new_entries_per_student_last_week(
-                current_user
+                current_client
                 )
 
         return render(request, "analytics_new_entries_per_student.html", {

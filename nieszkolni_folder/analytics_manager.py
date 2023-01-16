@@ -128,7 +128,7 @@ class AnalyticsManager:
                     )
             entries.append(entry)
 
-        entries.sort(key=lambda entry: entry["total_new_entries"], reverse=True)
+        entries.sort(key=lambda entry: entry["total_new_entries"])
 
         return entries
 
@@ -151,6 +151,6 @@ class AnalyticsManager:
             entries = self.count_new_entries_per_student_last_week(coach.name)
             data.extend(entries)
 
-        data.sort(key=lambda entry: entry["total_new_entries"], reverse=True)
+        data.sort(key=lambda entry: entry["total_new_entries"])
 
         return data
