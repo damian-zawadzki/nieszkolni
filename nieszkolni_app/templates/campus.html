@@ -6,8 +6,8 @@
 	<div class="feed_container pointer" id="todo_container" onclick="displayWidget(this)">
 		<div class="title noselect" id="todo_title">
 			My Todo List
-			<img class="invisible" src="{% static 'images/arrow_down.png' %}" width="10" height="10" id="arrow_down">
-			<img src="{% static 'images/arrow_up.png' %}" width="10" height="10" id="arrow_up">
+			<img src="{% static 'images/arrow_down.png' %}" width="10" height="10" id="arrow_down">
+			<img  class="invisible" src="{% static 'images/arrow_up.png' %}" width="10" height="10" id="arrow_up">
 		</div>
 		<div class="list" id="todo_list">
 
@@ -133,16 +133,16 @@
 			container.style.position = 'absolute';
 			container.style.height = 'auto';
 			title.style.fontSize = 6 + 'vh';
-			arrow_down.classList.remove('invisible');
-			arrow_up.classList.add('invisible');
+			arrow_up.classList.remove('invisible');
+			arrow_down.classList.add('invisible');
 		} else {
 			box.style.display = 'none';
 			container.style.zIndex = 0;
 			container.style.position = 'relative';
 			container.style.height = 10 + 'vh';
 			title.style.fontSize = 2.5 + 'vh';
-			arrow_down.classList.add('invisible');
-			arrow_up.classList.remove('invisible');
+			arrow_up.classList.add('invisible');
+			arrow_down.classList.remove('invisible');
 		}
 	}
 </script>

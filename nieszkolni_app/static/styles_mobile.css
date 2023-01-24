@@ -26,4 +26,8 @@
     .tab_icon_container.feedy {
         width: 25%;
     }
+
+    .navigation_counter {
+        width: 15vw;
+    }
 }
