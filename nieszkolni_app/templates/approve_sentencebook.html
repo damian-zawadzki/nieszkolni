@@ -7,10 +7,10 @@
   <h1>APPROVE SENTENCEBOOK: {{ counter }}</h1>
 
     <div class="flex-parent jc-center">
-      <div class="phrase_card">
-        <div class="phrase_card_container">
-          <h5 class="phrase_card_question">{{ entry.1 }}</h5>
-          <p class="phrase_card_answer"><span class="section">{{ entry.2 }}</span></p>
+      <div class="tab">
+        <div class="">
+          <div class="tab_title">{{ entry.1 }}</div>
+          <div class="tab_content">{{ entry.2 }}</div>
           
         <form method="POST">
           {% csrf_token %}

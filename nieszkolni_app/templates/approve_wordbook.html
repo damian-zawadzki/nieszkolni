@@ -7,10 +7,10 @@
   <h1>APPROVE WORDBOOK: {{ counter }}</h1>
 
     <div class="flex-parent jc-center">
-      <div class="phrase_card">
-        <div class="phrase_card_container">
-          <h5 class="phrase_card_question">{{ entry.1 }}</h5>
-          <p class="phrase_card_answer"><span class="section">{{ entry.2 }}</span></p>
+      <div class="tab flashcard">
+        <div class="">
+          <div class="tab_title flashcard">{{ entry.1 }}</div>
+          <div class="tab_content flashcard">{{ entry.2 }}</div>
           
         <form method="POST">
           {% csrf_token %}
