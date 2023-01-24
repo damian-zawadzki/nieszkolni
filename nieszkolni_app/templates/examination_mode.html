@@ -12,6 +12,10 @@
   <link rel="stylesheet" type="text/css" href="{% static 'styles_buttons.css' %}">
   <link rel="stylesheet" type="text/css" href="{% static 'styles_profile.css' %}">
   <link rel="stylesheet" type="text/css" href="{% static 'styles_cards.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'styles_menu.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'styles_mobile.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'styles_feed.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'styles_tables.css' %}">
 </head>
 
 <body>
@@ -33,6 +37,10 @@
 
       <li class="navigation_link session_navigation_item">
         <button type="button" class="button_main examination_button" name="session_form" onclick="showHideTable('memories')">MEMORIES</button>
+      </li>
+
+      <li class="navigation_link session_navigation_item">
+        <button type="button" class="button_main examination_button" name="session_form" onclick="showHideTable('pronunciation')">PRONUNCIATION</button>
       </li>
 
       <li class="navigation_link session_navigation_item_right">
@@ -102,6 +110,20 @@
     <tr class="font">
 
       <td class="td_sentences">{{ memory }}</td>
+
+    </tr>
+
+  {% endfor %}
+
+</table>
+
+<table id="pronunciation" style="display: none;">
+
+  {% for entry in entries %}
+
+    <tr class="font">
+
+      <td class="td_sentences">{{ entry }}</td>
 
     </tr>
 

@@ -367,7 +367,7 @@ class VocabularyManager:
                 AND number_of_reviews != 0
                 AND publication_date <= '{deadline}'
                 AND deck = '{deck}'
-                LIMIT {limit}
+                ORDER BY RANDOM() LIMIT {limit}
                 ''')
 
             cards = cursor.fetchall()

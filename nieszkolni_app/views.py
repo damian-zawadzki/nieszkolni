@@ -2681,6 +2681,7 @@ def upload_anki(request):
                     print(last_card_id.card_id)
 
                     for entry in entries:
+                        print(int(entry[0]) + last_card_id.card_id)
                         new_card = Card(
                             card_id=int(entry[0]) + last_card_id.card_id,
                             client=entry[1],
@@ -5964,11 +5965,13 @@ def examination_mode(request):
                 )
 
         memories = KnowledgeManager().display_memories(current_client)
+        entries = KnowledgeManager().display_pronunciation(current_client)
 
         return render(request, "examination_mode.html", {
             "phrases": phrases,
             "sentences": sentences,
             "memories": memories,
+            "entries": entries,
             "current_client": current_client
             })
 
