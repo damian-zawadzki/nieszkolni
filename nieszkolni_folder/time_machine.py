@@ -421,4 +421,6 @@ class TimeMachine:
         difference_days = end_number - start_number
         difference_weeks = difference_days / 7
 
+        difference_weeks = difference_weeks if difference_weeks > 0 else 1
+
         return difference_weeks
