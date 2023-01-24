@@ -16,6 +16,8 @@ from nltk.corpus import words, wordnet, stopwords
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.neural_network import MLPRegressor
 
+nltk.download('stopwords')
+
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
 
