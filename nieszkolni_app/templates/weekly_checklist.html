@@ -52,6 +52,18 @@
 	</ul>
 </div>
 
+<div class="flex-parent jc-center">
+	<ul class="square_menu">
+
+			{% if not settlement %}
+				<form action="{% url 'weekly_checklist' %}" method="POST">
+					{% csrf_token %}
+					<button type="submit" class="square_menu_link" id="settle_b" name="action_on_system" value="settle_last_week" onclick="disableButton(this.id)">SETTLE LAST WEEK</button>
+				</form>
+			{% endif %}
+	</ul>
+</div>
+
 <script src="{% static 'functions.js' %}"></script>  
 
 {% include 'footer.html' %}

@@ -378,14 +378,23 @@ class ActivityManager:
         clients = ClientsManager().list_current_clients()
 
         for client in clients:
-            points = self.calculate_points_this_week(client)
+            last_sunday = TimeMachine().last_sunday()
+            last_sunday_number = TimeMachine().date_to_number(last_sunday)
 
-            StreamManager().add_to_stream(
-                client,
-                "Activity",
-                f"homework {week_sign};{points}",
-                current_user
-                )
+            lessons = Stream.objects.filter(
+                    name=client,
+                    command="Duration",
+                    date_number__lte=last_sunday_number)
+
+            if lessons.exists():
+                points = self.calculate_points_this_week(client)
+
+                StreamManager().add_to_stream(
+                    client,
+                    "Activity",
+                    f"homework {week_sign};{points}",
+                    current_user
+                    )
 
         StreamManager().add_to_stream(
             "system",
