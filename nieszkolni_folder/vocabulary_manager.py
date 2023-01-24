@@ -373,3 +373,6 @@ class VocabularyManager:
             cards = cursor.fetchall()
 
         return cards
+
+    def remove_all_new_cards(self, client):
+        Card.objects.filter(client=client, number_of_reviews=0).delete()

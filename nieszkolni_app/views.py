@@ -2710,6 +2710,31 @@ def upload_anki(request):
 
 
 @staff_member_required
+def remove_all_new_cards(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        clients = ClientsManager().list_current_clients()
+
+        if request.method == "POST":
+            if request.POST["action_on_cards"] == "remove":
+                client = request.POST["client"]
+
+                VocabularyManager().remove_all_new_cards(client)
+
+                messages.success(request, (f"Flashcards removed"))
+                return redirect("remove_all_new_cards")
+
+        return render(request, "remove_all_new_cards.html", {
+            "clients": clients
+            })
+
+
+
+
+@staff_member_required
 def upload_catalogues(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
