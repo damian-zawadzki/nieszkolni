@@ -433,7 +433,7 @@ class QuizManager:
                 ''')
 
             data = cursor.fetchone()
-            print(data)
+
             if data is None:
                 quiz_question_id = f"{quiz_id}00"
             else:

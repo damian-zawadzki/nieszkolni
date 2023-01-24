@@ -1,0 +1,438 @@
+{% load user_agents %}
+{% load static %}
+
+{% if request|is_mobile %}
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <title>Zawadzky College</title>
+    <!-- CSS CUSTOM -->
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+
+
+    {% if user.is_authenticated %}
+      {% if not challenge_status %}
+
+        <nav class="m_navigation">
+          <div class="m_navigation_box" id="main_links">
+
+          </div>
+        </nav>
+
+        <div>
+          <button type="button" class="m_hamburger_menu" onclick="showHideHamburgerMenu()"><img src="{% static 'images/hamburger.png' %}" width="15" height="15"></button>
+      </div>
+
+        <div class="m_menu" id="main_side_menu" style="display: none;">
+          <div>
+            <ul>
+              
+              <li class="m_navigation_item_inside">
+                <a class="m_navigation_link" href="{% url 'logout_user' %}">LOG OUT</a>
+              </li>
+
+            </ul>
+          </div>
+        </div>
+
+      {% else %}
+
+        <nav class="m_navigation">
+          <div class="m_navigation_box" id="main_links">
+            <div class="m_navigation_item">
+              <a class="m_navigation_link" href="{% url 'campus' %}">CAMPUS</a>
+            </div>
+            <div class="m_navigation_item">
+              <a class="m_navigation_link" href="{% url 'ranking' %}">RANKING</a>
+            </div>
+            <div class="m_navigation_item">
+              <a class="m_navigation_link" href="{% url 'portrait' client=current_user %}">MY PROFILE</a>
+            </div>
+          </div>
+        </nav>
+
+        <div>
+          <button type="button" class="m_hamburger_menu" onclick="showHideHamburgerMenu()"><img src="{% static 'images/hamburger.png' %}" width="15" height="15"></button>
+      </div>
+
+        <div class="m_menu" id="main_side_menu" style="display: none;">
+          <div>
+            <ul>
+              
+              <li class="m_navigation_item_inside">
+                <a class="side_navigation_link_2" href="{% url 'assignments' %}">MY TO-DO LIST</a>
+              </li>
+              <li class="m_navigation_item_inside">
+                <a class="side_navigation_link_2" href="{% url 'my_courses' %}">MY COURSES</a>
+              </li>
+              <li class="m_navigation_item_inside">
+                <a class="side_navigation_link_2" href="{% url 'my_results' %}">MY RESULTS</a>
+              </li>
+              <li class="m_navigation_item_inside">
+                <a class="side_navigation_link_2" href="{% url 'my_statistics' %}">MY STATS</a>
+              </li>
+              <li class="m_navigation_item_inside">
+                <a class="side_navigation_link_2" href="{% url 'flashcard' username=current_user deck='vocabulary' %}">MY VOCABULARY</a>
+              </li>
+              <li class="m_navigation_item_inside">
+                <a class="side_navigation_link_2" href="{% url 'flashcard' username=current_user deck='sentences' %}">MY SENTENCES</a>
+              </li>
+              <li class="m_navigation_item_inside">
+                <a class="side_navigation_link_2" href="{% url 'my_pronunciation' %}">MY PRONUNCIATION</a>
+              </li>
+              <li class="m_navigation_item_inside">
+                <a class="side_navigation_link_2" href="{% url 'memories' %}">MY MEMORIES</a>
+              </li>
+              <li class="m_navigation_item_inside">
+                <a class="side_navigation_link_2" href="{% url 'list_of_submissions' %}">MY ASSIGNMENTS</a>
+              </li>
+              <li class="m_navigation_item_inside">
+                <a class="side_navigation_link_2" href="{% url 'options' %}">MY SETTINGS</a>
+              </li>
+              <li class="m_navigation_item_inside">
+                <a class="m_navigation_link" href="{% url 'logout_user' %}">LOG OUT</a>
+              </li>
+
+            </ul>
+          </div>
+        </div>
+
+      {% endif %}
+    {% else %}
+
+  <nav class="m_navigation">
+    <div class="m_side_menu" id="main_links">
+    </div>
+  </nav>
+
+    {% endif %}
+
+  </nav>
+
+  <div class="container">
+    {% if messages %}
+      {% for message in messages %}
+
+          {% if message.tags == 'success' %}
+
+            <div class="alert alert-success alert-dmissable" role="alert">
+
+          {% elif message.tags == 'info' %}
+
+            <div class="alert alert-info alert-dmissable" role="alert">
+
+          {% elif message.tags == 'warning' %}
+
+            <div class="alert alert-warning alert-dmissable" role="alert">
+
+          {% else %}
+
+            <div class="alert alert-danger alert-dmissable" role="alert">
+
+          {% endif %}
+
+          {{ message }}
+          <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+</head>
+
+{% else %}
+<head>
+<!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <title>Zawadzky College</title>
+    <!-- CSS CUSTOM -->
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+
+    {% if user.is_staff %}
+
+  <nav class="navigation flex-parent jc-center">
+
+    <li class="navigation_item">
+      <a class="navigation_link" aria-current="page" href="{% url 'challenges' %}">CHALLENGES</a>
+    </li>
+
+    <li class="navigation_item">
+      <a class="navigation_link" aria-current="page" href="{% url 'welcome' %}">CAMPUS</a>
+    </li>
+
+    <li class="navigation_item">
+      <a class="navigation_link" href="{% url 'ranking' %}">RANKING</a>
+    </li>
+
+    <li class="navigation_item">
+      <a class="navigation_link" href="{% url 'portrait' client=current_user %}">MY PROFILE</a>
+    </li>
+
+    <li class="navigation_item">
+      <a class="navigation_link" href="{% url 'coach' %}">COACH</a>
+    </li>
+
+    <li class="navigation_item">
+      <a class="navigation_link" href="{% url 'staff' %}">STAFF</a>
+    </li>
+
+    {% if user.is_superuser %}
+      <li class="navigation_item">
+        <a class="navigation_link" href="{% url 'management' %}">MANAGEMENT</a>
+      </li>
+    {% endif %}
+
+    <input type="hidden" name="status" id="status_info" value="{{ status }}">
+    <li class="navigation_item">
+      <a class="navigation_link" href="{% url 'clock' %}"><span class="clock_dot" id="clock_info"></span></a>
+    </li>
+
+    <div>
+        <button type="button" class="hamburger_menu_pc" onclick="showHideSideMenu()"><img src="{% static 'images/hamburger.png' %}" width="15" height="15"></button>
+    </div>
+
+  </nav>
+
+  <!-- Side menu -->
+    <div>
+        <button type="button" class="hamburger_menu_pc" onclick="showHideSideMenu()"><img src="{% static 'images/hamburger.png' %}" width="15" height="15"></button>
+    </div>
+    
+    <div class="side_menu_container" id="side_menu" style="display: none;">
+
+      <div class="side_menu">
+        <div class="side_menu_box">
+          <a class="side_menu_link side_menu_link_first">{{ user.first_name.upper }} {{ user.last_name.upper }}</a>
+        </div>
+
+        <div class="side_menu_box">
+          <a class="side_menu_link" href="{% url 'logout_user' %}">LOG OUT</a>
+        </div>
+      </div>
+
+    </div>
+
+    {% elif user.is_authenticated %}
+        {% if not challenge_status %}
+
+          <nav class="navigation flex-parent jc-center">
+
+            <li class="navigation_item">
+              <a class="navigation_link" href="{% url 'challenges' %}">CHALLENGES</a>
+            </li>
+
+            <div>
+                <button type="button" class="hamburger_menu_pc" onclick="showHide('side_menu')"><img src="{% static 'images/hamburger.png' %}" width="15" height="15"></button>
+            </div>
+
+          </nav>
+
+          <!-- Side menu -->
+            <div>
+                <button type="button" class="hamburger_menu_pc" onclick="showHideSideMenu()"><img src="{% static 'images/hamburger.png' %}" width="15" height="15" id="client_side_menu"></button>
+              </div>
+            <div class="side_menu_container" id="side_menu" style="display: none;">
+
+            <div class="side_menu">
+
+              <div class="side_menu_box">
+                <a class="side_menu_link side_menu_link_first">{{ user.first_name.upper }} {{ user.last_name.upper }}</a>
+              </div>
+
+              <div class="side_menu_box">
+                <a class="side_menu_link" href="{% url 'logout_user' %}">LOG OUT</a>
+              </div>
+
+            </div>
+
+          </div>
+
+        {% else %}
+
+          <nav class="navigation flex-parent jc-center">
+
+            <li class="navigation_item">
+              <a class="navigation_link" aria-current="page" href="{% url 'campus' %}">CAMPUS</a>
+            </li>
+
+            <li class="navigation_item">
+              <a class="navigation_link" href="{% url 'ranking' %}">RANKING</a>
+            </li>
+
+            <li class="navigation_item">
+              <a class="navigation_link" href="{% url 'portrait' client=current_user %}">MY PROFILE</a>
+            </li>
+
+            <div>
+                <button type="button" class="hamburger_menu_pc" onclick="showHide('side_menu')"><img src="{% static 'images/hamburger.png' %}" width="15" height="15"></button>
+            </div>
+
+          </nav>
+
+          <!-- Side menu -->
+            <div>
+                <button type="button" class="hamburger_menu_pc" onclick="showHideSideMenu()"><img src="{% static 'images/hamburger.png' %}" width="15" height="15" id="client_side_menu"></button>
+              </div>
+            <div class="side_menu_container" id="side_menu" style="display: none;">
+
+            <div class="side_menu">
+
+              <div class="side_menu_box">
+                <a class="side_menu_link side_menu_link_first">{{ user.first_name.upper }} {{ user.last_name.upper }}</a>
+              </div>
+
+              <div class="side_menu_box">
+                <a class="side_menu_link" href="{% url 'assignments' %}">MY TO-DO LIST</a>
+              </div>
+
+              <div class="side_menu_box">
+                <a class="side_menu_link" href="{% url 'my_courses' %}">MY COURSES</a>
+              </div>
+
+              <div class="side_menu_box">
+                <a class="side_menu_link" href="{% url 'my_results' %}">MY RESULTS</a>
+              </div>
+
+              <div class="side_menu_box">
+                <a class="side_menu_link" href="{% url 'my_statistics' %}">MY STATS</a>
+              </div>
+
+              <div class="side_menu_box">
+                <a class="side_menu_link" href="{% url 'flashcard' username=current_user deck='vocabulary' %}">MY VOCABULARY</a>
+              </div>
+
+              <div class="side_menu_box">
+                <a class="side_menu_link" href="{% url 'flashcard' username=current_user deck='sentences' %}">MY SENTENCES</a>
+              </div>
+
+              <div class="side_menu_box">
+                <a class="side_menu_link" href="{% url 'my_pronunciation' %}">MY PRONUNCIATION</a>
+              </div>
+
+              <div class="side_menu_box">
+                <a class="side_menu_link" href="{% url 'memories' %}">MY MEMORIES</a>
+              </div>
+
+              <div class="side_menu_box">
+                <a class="side_menu_link" href="{% url 'list_of_submissions' %}">MY ASSIGNMENTS</a>
+              </div>
+
+              <div class="side_menu_box">
+                <a class="side_menu_link" href="{% url 'options' %}">MY SETTINGS</a>
+              </div>
+
+              <div class="side_menu_box">
+                <a class="side_menu_link" href="{% url 'logout_user'%}">LOG OUT</a>
+              </div>
+
+            </div>
+
+          </div>
+
+      {% endif %}
+    {% else %}
+
+  <nav class="navigation flex-parent jc-center">
+  </nav>
+
+    {% endif %}
+
+
+
+  <div class="container">
+    {% if messages %}
+      {% for message in messages %}
+
+          {% if message.tags == 'success' %}
+
+            <div class="alert alert-success alert-dmissable" role="alert">
+
+          {% elif message.tags == 'info' %}
+
+            <div class="alert alert-info alert-dmissable" role="alert">
+
+          {% elif message.tags == 'warning' %}
+
+            <div class="alert alert-warning alert-dmissable" role="alert">
+
+          {% else %}
+
+            <div class="alert alert-danger alert-dmissable" role="alert">
+
+          {% endif %}
+
+          {{ message }}
+          <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+{% endif %}
+
+
+</head>
+
+<body>
+<div id="main_content">
+
+  {% block 'content' %}
+
+
+  {% endblock %}
+
+</div>
+
+<script src="{% static 'functions.js' %}"></script> 
+<script type="text/javascript">
+  window.addEventListener('load', monitorClock());
+
+  function showHideHamburgerMenu() {
+  var main_side_menu = document.getElementById("main_side_menu");
+  var main_links = document.getElementById("main_links");
+  var main_content = document.getElementById("main_content");
+  if (main_side_menu.style.display === "none") {
+    main_side_menu.style.display = "block";
+    main_links.style.display = "none";
+    main_content.style.display = "none";
+    } else {
+      main_side_menu.style.display = "none";
+      main_links.style.display = "block"; 
+      main_content.style.display = "block";  
+    };
+  };
+
+  function showHideSideMenu() {
+    var menu = document.getElementById("side_menu");
+
+    if (menu.style.display == "none") {
+      menu.style.display = "block";
+    } else {
+      menu.style.display = "none";
+    };
+  }
+
+</script>
+
+
+ <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+    <!-- Option 2: Separate Popper and Bootstrap JS -->
+    <!--
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+    -->
+  </body>
+</html>

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<h1>ANALYTICS: INDICATORS</h1>
+
+<table>
+
+	<tr>
+
+		<th>Indicator</th>
+		<th>Value</th>
+
+	</tr>
+
+
+	<tr>
+		<td>Automatic Translation Efficiency Rate</td>
+		<td>{{ indicators.ater }}</td>
+	</tr>
+	<tr>
+		<td>Automatic Translation Efficiency Sample Size</td>
+		<td>{{ indicators.atess }}</td>
+	</tr>
+	<tr>
+		<td>Automatic Translation Occurances</td>
+		<td>{{ indicators.ato }}</td>
+	</tr>
+
+</table>
+
+<div class="break"></div>
+
+<script src="{% static 'functions.js' %}"></script>  
+
+{% endblock %}

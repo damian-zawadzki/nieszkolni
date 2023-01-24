@@ -1,28 +1,22 @@
 {% extends 'base.html' %}
 {% block 'content' %}
+
 <h1>PROFILES</h1>
 
-<div class="list_container">
-	<ul class="list">
-		
-		{% for profile in profiles %}
+<table>
 
-			<form action="{% url 'profiles' %}" method="POST">
-				{% csrf_token %}
-				<li class="list_item">
+	{% for profile in profiles %}
 
-					<div class="list_content">{{ profile.0 }}</div>
+		<tr class="tr_clickable" onclick="jump('{{ profile.0 }}')">
 
-					<input type="hidden" name="client_name" value="{{ profile.0 }}">
-					<button type="submit" class="list_button button_main" name="action_on_profile" value="more">More</button>
+			<td>{{ profile.0 }}</td>
+			<a id="{{ profile.0 }}" href="{% url 'display_profile' client=profile.0 %}"></a>
 
-				</li>
-			</form>
+		</tr>
 
-		{% endfor %}
+	{% endfor %}
 
-	</ul>
-</div>
+</table>
 
 {% include 'footer.html' %}
 {% endblock %}

@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<h3 id="heading">{{ display_name }}</h3>
+<h4>{{ courses.0.0 }}</h4>
+<h5>{{ current_degree.title }}, semester {{ current_semester }}</h5>
+
+<div class="activity_figure">{{ last_week_points }}/{{ target }}</div>
+<div class="acivity_container" id="activity_box">
+	
+	<div class="m_activity_progress_box">
+		<div class="activity_progress_bar" id="activity_stats"></div>
+	</div>
+
+</div>
+
+<div class="m_profile_container pointer" id="activity_container" onclick="displayWidget(this)">
+	<div class="profile_title noselect" id="activity_title">
+		Activity Points
+		<img class="invisible" src="{% static 'images/arrow_down.png' %}" width="10" height="10" id="arrow_d_a">
+		<img src="{% static 'images/arrow_up.png' %}" width="10" height="10" id="arrow_u_a">
+	</div>
+
+	<div class="tabs profile">
+
+		<div class="m_tab profile">
+			<div class="m_tab_icon_container profile"><div class="tab_icon_box"><img class="tab_icon" src="{% static 'images/calendar_7.png' %}"></div></div>
+			<div class="m_tab_content_container">
+				<div class="m_tab_title_box tab_title">Points Last Week</div>
+				<div class="m_tab_content_box tab_content profile">-10</div>
+			</div>
+		</div>
+
+		<div class="m_tab profile">
+			<div class="m_tab_icon_container profile"><div class="tab_icon_box"><img class="tab_icon" src="{% static 'images/diploma.png' %}"></div></div>
+			<div class="m_tab_content_container">
+				<div class="m_tab_title_box tab_title">Points This Quarter</div>
+				<div class="m_tab_content_box tab_content profile">12</div>
+			</div>
+		</div>
+
+		<div class="m_tab profile">
+			<div class="m_tab_icon_container profile"><div class="tab_icon_box"><img class="tab_icon" src="{% static 'images/hourglass.png' %}"></div></div>
+			<div class="m_tab_content_container">
+				<div class="m_tab_title_box tab_title">Total Points</div>
+				<div class="m_tab_content_box tab_content profile">220</div>
+			</div>
+		</div>
+
+	</div>
+
+</div>
+
+<div class="m_profile_container pointer" id="courses_container" onclick="displayWidget(this)">
+	<div class="profile_title noselect" id="courses_title">
+		{{ first_name }}'s Courses
+		<img class="invisible" src="{% static 'images/arrow_down.png' %}" width="10" height="10" id="arrow_down">
+		<img src="{% static 'images/arrow_up.png' %}" width="10" height="10" id="arrow_up">
+	</div>
+	<div class="course_box" id="course_box">
+	{% for course in courses %}
+		<div class="course">
+			<a class="course" href="{% url 'course' course_id=course.3 %}">({{ course.2 }}) {{ course.1 }}</a>
+		</div>
+	{% endfor %}
+	</div>
+</div>
+
+<script type="text/javascript">
+	function displayWidget(element) {
+		var container = document.getElementById(element.id);
+		var box = container.firstElementChild.nextElementSibling;
+		var title = container.firstElementChild;
+		var arrow_down = container.firstElementChild.firstElementChild;
+		var arrow_up = container.firstElementChild.firstElementChild.nextElementSibling;
+		var heading = document.getElementById('heading');
+
+		if (!box.style.display || box.style.display == 'none') {
+			box.style.display = 'block';
+			container.style.zIndex = 10;
+			container.style.position = 'absolute';
+			container.style.top = 12 + 'vh';
+			container.style.left = 5 + 'vw';
+			container.style.height = 100 + 'vh';
+			title.style.fontSize = 6 + 'vh';
+			arrow_down.classList.remove('invisible');
+			arrow_up.classList.add('invisible');
+			heading.style.display = 'none';
+		} else {
+			box.style.display = 'none';
+			container.style.zIndex = 0;
+			container.style.position = 'relative';
+			container.style.top = 5 + 'vh';
+			container.style.left = 5 + 'vw';
+			container.style.height = 8 + 'vh';
+			title.style.fontSize = 2.5 + 'vh';
+			arrow_down.classList.add('invisible');
+			arrow_up.classList.remove('invisible');
+			heading.style.display = 'block';
+		}
+
+	}
+</script>
+
+<script>
+	window.addEventListener('load', () => progress());
+
+	var activity = parseInt({{ last_week_points|safe }});
+	var target = parseInt({{ target|safe }});
+	var check = activity / target * 90;
+
+	if (check < 0) {
+		var advancement = 0;
+	} else if (check < 1) {
+		var advancement = 1.1;
+	} else if (check > 1) {
+		var advancement = check;
+	} else if (check == 90) {
+		var advancement = 90;
+	};
+
+	function progress() {
+	  var element = document.getElementById("activity_stats");
+	  var width = 1;
+	  var interval = setInterval(frame, 50);
+	  function frame() {
+	    if (width >= advancement) {
+	      clearInterval(interval);
+	    } else {
+	      width++;
+	      element.style.width = width + 'vw';
+	    }
+	  }
+	}
+</script>
+
+{% endblock %}

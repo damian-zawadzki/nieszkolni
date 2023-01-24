@@ -1,5 +1,6 @@
 from nieszkolni_folder.audit_manager import AuditManager
 from nieszkolni_folder.challenge_manager import ChallengeManager
+from nieszkolni_folder.roadmap_manager import RoadmapManager
 
 
 def sections_processor(request):
@@ -18,11 +19,17 @@ def sections_processor(request):
         challenges = ChallengeManager().display_planned_challenges(current_user)
         challenge_status = ChallengeManager().refresh_process(challenges)
 
+        try:
+            avatar = RoadmapManager().display_profile(current_user)[2]
+        except Exception as e:
+            avatar = ""
+
         return {
             "current_user": current_user,
             "status": status,
             "superuser_status": superuser_status,
-            "challenge_status": challenge_status
+            "challenge_status": challenge_status,
+            "avatar": avatar
             }
 
     else:

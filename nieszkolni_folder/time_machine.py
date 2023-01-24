@@ -125,9 +125,15 @@ class TimeMachine:
 
     def american_to_system_date_time(self, date):
         try:
-            if re.search(r"\d{1,2}\/\d{1,2}\/\d{4}", date) is not None:
+            if re.search(r"\d{1,2}\/\d{1,2}\/\d{4}T", date) is not None:
                 american = datetime.strptime(date, "%m/%d/%YT%H:%M:%S")
-                system = datetime.strftime(american, today_pattern)
+                system = datetime.strftime(american, now_pattern_colons)
+
+                return system
+
+            elif re.search(r"\d{1,2}\/\d{1,2}\/\d{4}", date) is not None:
+                american = datetime.strptime(date, "%m/%d/%Y %H:%M:%S")
+                system = datetime.strftime(american, now_pattern_colons)
 
                 return system
 
@@ -404,3 +410,15 @@ class TimeMachine:
             end_number = TimeMachine().date_to_number(end)
 
         return {"start": start_number, "end": end_number}
+
+    def count_seniority(self, start, end):
+        first_sunday = self.previous_sunday(start)
+        last_sunday = self.previous_sunday(end)
+
+        start_number = self.date_to_number(first_sunday)
+        end_number = self.date_to_number(last_sunday)
+
+        difference_days = end_number - start_number
+        difference_weeks = difference_days / 7
+
+        return difference_weeks

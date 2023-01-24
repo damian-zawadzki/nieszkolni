@@ -720,7 +720,6 @@ class ChallengeManager:
                             next_step_number
                             )
 
-                    print(next_step_status)
                     if next_step_status == "locked":
                         self.unlock_next_step(next_step_number)
 

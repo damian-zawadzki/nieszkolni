@@ -2,7 +2,7 @@
 {% block 'content' %}
 
 
-<h1>Update a profile</h1>
+<h1>UPDATE THE PROFILE</h1>
 
 <form action="{% url 'profiles' %}"  method="POST">
 	{% csrf_token %}
@@ -60,8 +60,8 @@
 
         <select required class="input_content" name="early_admission">
             <option selected value="{{ profile.7 }}">{{ profile.7 }}</option>
-            <option value="no">No</option>
-            <option value="yes">Yes</option>
+            <option value="0">No</option>
+            <option value="1">Yes</option>
         </select>
 
     </div>
@@ -80,6 +80,8 @@
 
         <select required class="input_content" name="current_degree">
             <option selected value="{{ profile.6 }}">{{ profile.6 }}</option>
+            <option value="junior">Junior</option>
+            <option value="senior">Senior</option>
             <option value="associate">Associate</option>
             <option value="bachelor">Bachelor</option>
             <option value="master">Master</option>
@@ -430,5 +432,7 @@
   </div>
 
 </form>
+
+<div class="break"></div>
 
 {% endblock %}

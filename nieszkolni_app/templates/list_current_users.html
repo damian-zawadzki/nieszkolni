@@ -3,10 +3,10 @@
 
 <h1>USERS</h1>
 
-<div class="list_container">
+<!-- <div class="list_container">
 	<ul class="list">
 
-		{% for client in current_clients %}
+		{% for client in clients %}
 		<form action="{% url 'list_current_users' %}" method="POST">
 			{% csrf_token %}
 			<li class="list_item">
@@ -22,6 +22,21 @@
 
 	</ul>
 </div>
+ -->
+<table>
+
+	{% for client in clients %}
+
+		<tr class="tr_clickable" onclick="jump('{{ client }}')">
+
+			<td>{{ client }}</td>
+			<a id="{{ client }}" href="{% url 'display_user' client=client %}"></a>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
 
 {% include 'footer.html' %}
 {% endblock %}

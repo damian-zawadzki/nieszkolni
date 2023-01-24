@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>PROGRAMS</h1>
+
+<table class="m_table">
+
+		<tr>
+			<th class="td_sentences">Program</th>
+			<th>Degree</th>
+		</tr>
+
+	{% for program in programs %}
+
+		<tr class="font">
+
+			<td class="td_sentences"><a href="{% url 'program' program_id=program.0 %}">{{ program.1 }}</a></td>
+			<td>{{ program.2 }}</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+{% include 'footer.html' %}
+{% endblock %}

@@ -35,7 +35,7 @@ class Client(models.Model):
     recommenders = models.CharField(max_length=200, default="")
     reasons_for_resignation = models.CharField(max_length=200, default="")
 
-    status = models.CharField(max_length=200, default="")
+    status = models.CharField(max_length=200, default="active")
     coach = models.CharField(max_length=200, default="")
     level = models.CharField(max_length=200, default="")
 
@@ -222,8 +222,13 @@ class Composer(models.Model):
     translation = models.TextField(default="")
     result = models.CharField(max_length=200, default="")
     reviewing_user = models.CharField(max_length=200, default="")
+    reviewing_stamp = models.IntegerField(default=0)
     set_id = models.IntegerField(default=0)
     item = models.IntegerField(default=0)
+    score = models.FloatField(default=0.0)
+    efficiency = models.CharField(max_length=200, default="")
+    method = models.CharField(max_length=200, default="")
+    shape = models.CharField(max_length=200, default="")
 
 
 class Set(models.Model):
@@ -549,3 +554,7 @@ class SurveyResponse(models.Model):
     question_id = models.IntegerField(default=0)
     response_id = models.IntegerField(default=0)
     item = models.IntegerField(default=0)
+
+
+class Binder(models.Model):
+    binder = models.FileField()

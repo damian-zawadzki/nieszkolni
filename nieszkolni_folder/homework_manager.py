@@ -196,8 +196,6 @@ class HomeworkManager:
 
         elif action == "add_vocabulary":
 
-            print(reference)
-
             output = KnowledgeManager().add_catalogue_to_book_by_no(
                 client,
                 reference,

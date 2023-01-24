@@ -1,55 +1,44 @@
 {% extends 'base.html' %}
 {% block 'content' %}
+{% load static %}
 
 <h1>{{ current_client.upper }}'S HOMEWORK</h1>
 
-<div class="list_container">
-	<ul class="list">
+<div class="list visible">
 
-		{% for uncompleted_assignment in uncompleted_assignments %}
+	{% for overdue_assignment in overdue_assignments %}
+		<div class="list_item tr_clickable" onclick="jump({{ overdue_assignment.0 }})">
+			<div class="tab_icon_container feedy"><div class="tab_icon_box_border_error mini"><img class="tab_icon" src="{% static 'images/exclamation.png' %}" width="10" height="10"></div></div>
+			<div class="item_content">
+				<div class="item_title">{{ overdue_assignment.7 }}</div>
+				<div class="item_description">{{ overdue_assignment.1|date:"l" }} · {{ overdue_assignment.1 }}</div>
+			</div>
+			<a id="{{ overdue_assignment.0 }}" href="{% url 'assignment' item=overdue_assignment.0 %}"></a>
+		</div>
+	{% endfor %}
 
-			<form action="{% url 'check_homework' %}" method="POST">
-				{% csrf_token %}
-				<li class="list_item">
+	{% for uncompleted_assignment in uncompleted_assignments %}
+		<div class="list_item tr_clickable" onclick="jump({{ uncompleted_assignment.0 }})">
+			<div class="tab_icon_container feedy"><div class="tab_icon_box_border_only mini"><img class="tab_icon" src="{% static 'images/check.png' %}" width="10" height="10"></div></div>
+			<div class="item_content">
+				<div class="item_title">{{ uncompleted_assignment.7 }}</div>
+				<div class="item_description">{{ uncompleted_assignment.1|date:"l" }} · {{ uncompleted_assignment.1 }}</div>
+			</div>
+			<a id="{{ uncompleted_assignment.0 }}" href="{% url 'assignment' item=uncompleted_assignment.0 %}"></a>
+		</div>
+	{% endfor %}
 
-					<div class="list_content">{{ uncompleted_assignment.1 }}</div>
-					<div class="list_content_small">{{ uncompleted_assignment.0 }}</div>
-					<div class="list_content_inside">{{ uncompleted_assignment.7 }}</div>
+	{% for completed_assignment in completed_assignments %}
+		<div class="list_item tr_clickable" onclick="jump({{ completed_assignment.0 }})">
+			<div class="tab_icon_container feedy"><div class="tab_icon_box_border mini"><img class="tab_icon" src="{% static 'images/check.png' %}" width="10" height="10"></div></div>
+			<div class="item_content">
+				<div class="item_title">{{ completed_assignment.7 }}</div>
+				<div class="item_description">{{ completed_assignment.1|date:"l" }} · {{ completed_assignment.1 }}</div>
+			</div>
+			<a id="{{ completed_assignment.0 }}" href="{% url 'assignment' item=completed_assignment.0 %}"></a>
+		</div>
+	{% endfor %}
 
-					<input type="hidden" name="item" value="{{ uncompleted_assignment.0 }}">
-
-					<div class="list_button">
-						<button type="submit" class="button_main" name="action_on_check" value="check">Check</button>
-						<button type="submit" class="button_main" name="action_on_check" value="explore">Explore</button>
-					</div>
-
-				</li>
-			</form>
-
-		{% endfor %}
-		{% for completed_assignment in completed_assignments %}
-
-			<form action="{% url 'check_homework' %}" method="POST">
-				{% csrf_token %}
-				<li class="list_item list_item_complted list_item_crossed">
-
-					<div class="list_content">{{ completed_assignment.1 }}</div>
-					<div class="list_content_small">{{ completed_assignment.0 }}</div>
-					<div class="list_content_inside">{{ completed_assignment.7 }}</div>
-
-					<input type="hidden" name="item" value="{{ completed_assignment.0 }}">
-
-					<div class="list_button">
-						<button type="submit" class="button_main" name="action_on_check" value="uncheck">Uncheck</button>
-						<button type="submit" class="button_main" name="action_on_check" value="explore">Explore</button>
-					</div>
-
-				</li>
-			</form>
-
-		{% endfor %}
-
-	</ul>
 </div>
 
 {% include 'footer.html' %}

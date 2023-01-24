@@ -1,0 +1,11 @@
+@media (max-width: 768px) {
+    .input_content {
+        min-width: 75vw;
+        width: 75vw;
+    }
+
+    .side_menu {
+        min-width: 100vw;
+        width: 100vw;
+    }
+}

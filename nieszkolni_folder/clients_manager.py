@@ -89,7 +89,7 @@ class ClientsManager:
             if is_client is False:
 
                 try:
-                    add = ClientsManager().add_client(
+                    ClientsManager().add_client(
                         username,
                         internal_email_address
                         )
@@ -131,6 +131,7 @@ class ClientsManager:
             cursor.execute(f'''
                 SELECT name
                 FROM nieszkolni_app_client
+                WHERE status = 'active'
                 ORDER BY name ASC
                 ''')
 

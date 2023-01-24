@@ -49,7 +49,7 @@ class CurriculumManager:
             try:
                 deadline = TimeMachine().american_to_system_date(deadline)
             except Exception as e:
-                print(e)
+                pass
 
             deadline_number = TimeMachine().date_to_number(deadline)
             default_status = 'uncompleted'
@@ -122,6 +122,41 @@ class CurriculumManager:
                 AND status != 'invisible_uncompleted'
                 AND status != 'removed'
                 AND deadline_number <= '{display_limit}'
+                AND deadline_number <= '{today_number}'
+                ORDER BY deadline_number ASC
+                ''')
+
+            uncompleted_assignments = cursor.fetchall()
+
+        return uncompleted_assignments
+
+    def display_overdue_assignments(self, name):
+        today_number = TimeMachine().today_number()
+        this_sunday = TimeMachine().this_sunday()
+        display_limit = TimeMachine().date_to_number(this_sunday)
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                item,
+                deadline_text,
+                deadline_number,
+                name,
+                component_id,
+                component_type,
+                assignment_type,
+                title,
+                content,
+                matrix,
+                resources,
+                status
+                FROM nieszkolni_app_curriculum
+                WHERE name = '{name}'
+                AND status != 'completed'
+                AND status != 'invisible_uncompleted'
+                AND status != 'removed'
+                AND deadline_number <= '{display_limit}'
+                AND deadline_number > '{today_number}'
                 ORDER BY deadline_number ASC
                 ''')
 
@@ -828,7 +863,6 @@ class CurriculumManager:
                 ''')
 
             id_suffix = cursor.fetchone()
-            print(id_suffix)
 
             if id_suffix is None:
                 next_id_suffix = "01"

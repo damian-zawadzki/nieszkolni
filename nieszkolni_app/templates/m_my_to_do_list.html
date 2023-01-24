@@ -2,38 +2,9 @@
 {% block 'content' %}
 {% load static %}
 
-<h1>MY TO-DO LIST</h1>
+<div class="flex-parent jc-center">
+	<a href="{% url 'campus' %}">Your todo list has been moved to the campus page: here!</a>
+</div>
 
-<table class="m_table">
-
-	{% for uncomplated_assignment in uncomplated_assignments %}
-
-		<tr class="font tr_clickable" onclick="jump({{ uncomplated_assignment.0 }})">
-
-			<td class="m_td_sentences">{{ uncomplated_assignment.1 }}</td>
-			<td class="m_td_sentences">{{ uncomplated_assignment.7 }}</td>
-
-			<a id="{{ uncomplated_assignment.0 }}" href="{% url 'assignment' item=uncomplated_assignment.0 %}"></a>
-
-		</tr>
-
-	{% endfor %}
-
-	{% for complated_assignment in complated_assignments %}
-
-		<tr class="font list_item_complted tr_clickable" onclick="jump({{ complated_assignment.0 }})">
-
-			<td class="m_td_sentences">{{ complated_assignment.1 }}</td>
-			<td class="m_td_sentences">{{ complated_assignment.7 }}</td>
-
-			<a id="{{ complated_assignment.0 }}" href="{% url 'assignment' item=complated_assignment.0 %}"></a>
-
-		</tr>
-
-	{% endfor %}
-
-</table>
-
-<script src="{% static 'functions.js' %}"></script>  
 
 {% endblock %}

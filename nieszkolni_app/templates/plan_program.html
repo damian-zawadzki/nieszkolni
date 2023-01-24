@@ -41,12 +41,12 @@
    <div class="flex-parent jc-center">
       <div class="input_container">
         <label class="input_label">Semester</label>
-        <input type="number" class="input_content" min="1" max="16" name="semester">
+        <input type="number" class="input_content" min="1" max="16" name="semester" required>
       </div>
    </div>
 
   <div class="flex-parent jc-center">
-      <button type="submit" class="button_main" name="action_on_program" value="plan">Plan</button>
+      <button type="submit" class="button_main" name="action_on_program" value="plan" onclick="disableButton(this.id)">Plan</button>
   </div>
 
 </form>

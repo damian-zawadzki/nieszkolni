@@ -411,6 +411,19 @@ class BackOfficeManager:
 
                 return position
 
+    def count_reported_repertoire_line(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT COUNT(stamp)
+                FROM nieszkolni_app_repertoireline
+                WHERE status = 'not_in_stream'
+                OR status = 'not_in_repertoire'
+                ''')
+
+            counter = cursor.fetchone()
+
+            return counter[0]
+
     def process_repertoire_line(
             self,
             title,

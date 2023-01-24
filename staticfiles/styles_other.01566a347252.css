@@ -1,0 +1,165 @@
+:root {
+  --small-font: 2vh;
+  --medium-font: 3vh;
+  --large-font: 6vh;
+  --huge-font: 10vh;
+
+  --font-color: #3C4043;
+  --font-family: "Google Sans", Roboto, Arial, sans-serif;
+
+  --brand-color: #14C5D9;
+  --backgroud-color: #FFF;
+  --container-color: #F9F9F9;
+
+  --border-color: #D3D3D3;
+  --success-color: #D4AF37;
+  --transition-time: 2s;
+}
+
+/*Tags*/
+body {
+  height: 100%;
+  margin: 0px;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+a {
+  color: var(--font-color);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--brand-color);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-family);
+  letter-spacing: .25px;
+  word-wrap: break-word;
+}
+
+/*Use it for page titles*/
+h1 {
+  color: var(--font-color);
+  font-size: var(--large-font);
+  font-weight: 1000;
+  margin-bottom: 35px;
+  margin-top: 10vh;
+  text-align: center;
+}
+
+/*Use it for page subtitles*/
+h2 {
+  color: var(--font-color);
+  display: block;
+  font-size: var(--large-font);
+  font-weight: 1000;
+  left: 5vw;
+  margin-bottom: 35px;
+  position: relative;
+  text-align: left;
+}
+
+/*Use it for other pages*/
+h3, h4, h5 {
+  color: var(--font-color);
+  display: block;
+  left: 5vw;
+  position: relative;
+  text-align: left;
+  top: 0vh;
+}
+
+/*Use it for other titles*/
+h3 {
+  font-size: var(--large-font);
+  font-weight: 1000;
+  line-height: var(--large-font);
+}
+
+/*Use it for other subtitles*/
+h4 {
+  font-size: var(--medium-font);
+  font-weight: 1000;
+  opacity: 0.8;
+}
+
+/*Use it for other descriptions*/
+h5 {
+  font-size: var(--small-font);
+  font-weight: 750;
+  opacity: 0.6;
+}
+
+h6 {
+  color: #3c4043;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-size: 18px;
+  font-weight: 850;
+  text-align: left;
+}
+
+/*Other classes*/
+.invisible {
+  display: none;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+.custom_hover:hover {
+  transform: scale(1.05); 
+}
+
+.pointer:hover {
+  cursor: pointer; 
+}
+
+.fade_in {
+-webkit-animation: fadein 2s;
+   -moz-animation: fadein 2s;
+    -ms-animation: fadein 2s;
+     -o-animation: fadein 2s;
+        animation: fadein 2s;
+}
+
+.mini {
+  transform: scale(0.6);
+}
+
+.title {
+  color: var(--font-color);
+  display: block;
+  font-family: var(--font-family);
+  font-size: 2.5vh;
+  font-weight: 1000;
+  padding: 2vh 0vw 1vh 0vw;
+  position: relative;
+  text-align: left;
+  z-index: 0;
+}
+
+/*Keyframes*/
+@keyframes show_modal {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}

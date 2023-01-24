@@ -172,11 +172,13 @@
 	var target = parseInt({{ target|safe }});
 	var check = activity / target * 15;
 
-	if (check < 1) {
+
+	if (check < 0) {
+		var advancement = 0;
+	} else if (check < 1) {
 		var advancement = 1.1;
-	} else {
+	} else if (check < 1) {
 		var advancement = check;
-	}
 
 	function progress() {
 	  var element = document.getElementById("activity_stats");

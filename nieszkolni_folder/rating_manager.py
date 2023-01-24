@@ -57,7 +57,6 @@ class RatingManager:
                 ''')
 
             rows = cursor.fetchall()
-            print(rows)
 
             return rows
 

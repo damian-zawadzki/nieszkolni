@@ -1,6 +1,9 @@
 import os
 import django
+
 from django.db import connection
+from django.db import transaction
+
 from nieszkolni_app.models import Stream
 from nieszkolni_app.models import Theater
 from nieszkolni_app.models import RepertoireLine
@@ -8,6 +11,7 @@ from nieszkolni_app.models import Card
 from nieszkolni_app.models import Client
 from nieszkolni_app.models import Option
 from nieszkolni_app.models import Profile
+
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
 
@@ -54,10 +58,33 @@ class StreamManager:
                 DO NOTHING
                 ''')
 
-    def import_old_stream(self, stamp, name, date, command, value, email_address):
-        stamp = TimeMachine().undefined_date_time_to_number(stamp)
-        date_number = TimeMachine().undefined_date_to_number(date)
-        value = Cleaner().clean_quotation_marks(value)
+    def import_old_stream_handler(self, entries):
+
+        with transaction.atomic():
+            for entry in entries:
+                stamp = entry[0]
+                date_number = entry[1]
+                date = TimeMachine().american_to_system_date(entry[2])
+                name = entry[1]
+                command = entry[3]
+                value = Cleaner().clean_quotation_marks(entry[4])
+                stream_user = entry[5]
+                status = "active"
+
+                self.import_old_stream(
+                    stamp,
+                    name,
+                    date,
+                    date_number,
+                    command,
+                    value,
+                    stream_user
+                    )
+
+    def import_old_stream(self, stamp, name, date, date_number, command, value, email_address):
+        # stamp = TimeMachine().undefined_date_time_to_number(stamp)
+        # date_number = TimeMachine().undefined_date_to_number(date)
+        # value = Cleaner().clean_quotation_marks(value)
 
         if value is None:
             value = ""
@@ -95,8 +122,8 @@ class StreamManager:
                 status
                 )
                 VALUES (
-                {stamp},
-                {date_number},
+                '{stamp}',
+                '{date_number}',
                 '{date}',
                 '{name}',
                 '{command}',
@@ -1013,21 +1040,9 @@ class StreamManager:
             activity = []
             activity_history = []
             for row in rows:
-                entry = row[0]
-
-                try:
-                    point_raw = re.search(r";\d+$|;-\d+$", entry).group()
-                    point = re.sub(";", "", point_raw)
-                    point = int(point)
-                    activity.append(point)
-
-                    description_raw = re.search(r"\w.+;", entry).group()
-                    description = re.sub(";", "", description_raw)
-                    history = (description, point)
-                    activity_history.append(history)
-
-                except Exception as e:
-                    pass
+                entry = Cleaner().convert_acitivty_points_entry(row[0])
+                activity.append(entry[1])
+                activity_history.append(entry)
 
             activity_points = sum(activity)
 
@@ -1082,6 +1097,8 @@ class StreamManager:
                 ''')
 
             names = cursor.fetchall()
+
+            current_profiles = [x[0] for x in names]
 
         activity_start = TimeMachine().date_to_number(self.display_activity_start())
         activity_stop = TimeMachine().date_to_number(self.display_activity_stop())
@@ -1149,7 +1166,8 @@ class StreamManager:
 
                 ranking.append(item)
 
-            return ranking
+            result = [x for x in ranking if x[3] in current_profiles]
+            return result
 
     def display_ranking_by_client(self, client):
         rows = self.display_ranking()

@@ -910,11 +910,7 @@ class RoadmapManager:
                 WHERE id = '{grade_id}'
                 ''')
 
-    def display_grades(
-            self,
-            student,
-            course
-            ):
+    def display_grades(self, client, course):
 
         with connection.cursor() as cursor:
             cursor.execute(f'''
@@ -928,7 +924,7 @@ class RoadmapManager:
                 id,
                 test
                 FROM nieszkolni_app_grade
-                WHERE student = '{student}'
+                WHERE student = '{client}'
                 AND course = '{course}'
                 ORDER BY stamp DESC
                 ''')

@@ -1,12 +1,16 @@
 import os
 import django
 from django.db import connection
+
 from nieszkolni_app.models import SentenceStock
 from nieszkolni_app.models import Set
+from nieszkolni_app.models import Composer
+
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
 
 from nieszkolni_folder.knowledge_manager import KnowledgeManager
+from nieszkolni_folder.translation_manager import TranslationManager
 
 from copy import deepcopy
 import json
@@ -303,7 +307,12 @@ class SentenceManager:
                     result,
                     reviewing_user,
                     set_id,
-                    item
+                    item,
+                    score,
+                    efficiency,
+                    method,
+                    shape,
+                    reviewing_stamp
                     )
                     VALUES (
                     '{list_number}',
@@ -320,7 +329,12 @@ class SentenceManager:
                     '{result}',
                     '{reviewing_user}',
                     '{set_id}',
-                    '{item}'
+                    '{item}',
+                    '0.0',
+                    '',
+                    'manual',
+                    '',
+                    '0'
                     )
                     ON CONFLICT (sentence_number)
                     DO NOTHING
@@ -341,6 +355,80 @@ class SentenceManager:
                         "system",
                         "vocabulary"
                         )
+
+    def upload_sentence_lists(
+            self,
+            list_number,
+            sentence_number,
+            sentence_id,
+            name,
+            polish,
+            english,
+            glossary,
+            submission_stamp,
+            submission_date,
+            status,
+            translation,
+            result,
+            reviewing_user,
+            set_id,
+            item
+            ):
+
+        polish = Cleaner().clean_quotation_marks(polish)
+        english = Cleaner().clean_quotation_marks(english)
+        glossary = Cleaner().clean_quotation_marks(glossary)
+        translation = Cleaner().clean_quotation_marks(translation)
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                INSERT INTO nieszkolni_app_composer (
+                list_number,
+                sentence_number,
+                sentence_id,
+                name,
+                polish,
+                english,
+                glossary,
+                submission_stamp,
+                submission_date,
+                status,
+                translation,
+                result,
+                reviewing_user,
+                set_id,
+                item,
+                score,
+                efficiency,
+                method,
+                shape,
+                reviewing_stamp
+                )
+                VALUES (
+                '{list_number}',
+                '{sentence_number}',
+                '{sentence_id}',
+                '{name}',
+                '{polish}',
+                '{english}',
+                '{glossary}',
+                '{submission_stamp}',
+                '{submission_date}',
+                '{status}',
+                '{translation}',
+                '{result}',
+                '{reviewing_user}',
+                '{set_id}',
+                '{item}',
+                '0.0',
+                '',
+                'manual',
+                '',
+                '0'
+                )
+                ON CONFLICT (sentence_number)
+                DO NOTHING
+                ''')
 
     def find_list_number_by_item(self, item):
         with connection.cursor() as cursor:
@@ -401,7 +489,7 @@ class SentenceManager:
                 ''')
 
             sentences = cursor.fetchall()
-            print(sentences)
+
             return sentences
 
     def mark_sentence_list_as_planned(self, list_number):
@@ -439,17 +527,34 @@ class SentenceManager:
                 polish,
                 english,
                 translation,
-                sentence_number
+                sentence_number,
+                sentence_id
                 FROM nieszkolni_app_composer
                 WHERE status = 'translated'
+                LIMIT 1
                 ''')
 
-            entries = cursor.fetchall()
-            if len(entries) == 0:
-                return None
-            else:
-                entry = entries[0]
-                return entry
+            entry = cursor.fetchone()
+
+            return entry
+
+    def display_sentences_to_label(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                polish,
+                english,
+                translation,
+                sentence_number,
+                sentence_id
+                FROM nieszkolni_app_composer
+                WHERE status = 'uploaded'
+                LIMIT 1
+                ''')
+
+            entry = cursor.fetchone()
+
+            return entry
 
     def count_sentences_to_grade(self):
         with connection.cursor() as cursor:
@@ -467,16 +572,114 @@ class SentenceManager:
 
             return counter
 
-    def grade_sentence(self, sentence_number, result, reviewing_user):
+    def count_sentences_to_label(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT COUNT(english)
+                FROM nieszkolni_app_composer
+                WHERE status = 'uploaded'
+                ''')
+
+            counter = cursor.fetchone()
+            if counter is not None:
+                counter = counter[0]
+            else:
+                counter = 0
+
+            return counter
+
+    def analyze_and_grade_sentence(self, stack):
+
+        if stack == "grade":
+            row = self.display_sentences_to_grade()
+        elif stack == "label":
+            row = self.display_sentences_to_label()
+
+        if row is None:
+            return None 
+
+        polish = row[0]
+        english = row[1]
+        translation = row[2]
+        sentence_number = row[3]
+        sentence_id = row[4]
+        analysis = TranslationManager().run(translation, sentence_id)
+
+        score = analysis["score"]
+        label = analysis["label"]
+        method = analysis["method"]
+        shape = analysis["shape"]
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                UPDATE nieszkolni_app_composer
+                SET
+                score = '{score}',
+                method = '{method}',
+                shape = '{shape}'
+                WHERE sentence_number = {sentence_number}
+                ''')
+
+        while method != "manual":
+            self.analyze_and_grade_sentence(stack)
+            self.grade_sentence(
+                sentence_number,
+                label,
+                "automatic",
+                score,
+                label,
+                method,
+                shape
+                )
+
+        entry = {
+            "polish": polish,
+            "english": english,
+            "translation": translation,
+            "sentence_number": sentence_number,
+            "sentence_id": sentence_id,
+            "score": score,
+            "label": label,
+            "method": method,
+            "shape": shape
+            }
+
+        return entry
+
+    def grade_sentence(self, entry, result, current_user):
+        now_number = TimeMachine().now_number()
+
+        efficiency = entry["label"] == result
+        print(efficiency)
+        score = entry["score"]
+        method = entry["method"]
+        shape = entry["shape"]
+        sentence_number = entry["sentence_number"]
+
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 UPDATE nieszkolni_app_composer
                 SET
                 status = 'graded',
                 result = '{result}',
-                reviewing_user = '{reviewing_user}'
+                reviewing_user = '{current_user}',
+                score = '{score}',
+                efficiency = '{efficiency}',
+                method = '{method}',
+                shape = '{shape}',
+                reviewing_stamp = '{now_number}'
                 WHERE sentence_number = {sentence_number}
                 ''')
+
+    def count_ater_and_atess(self):
+
+        rows = Composer.objects.filter(status="graded").exclude(efficiency="")
+        results = [row.efficiency for row in rows]
+        ater = round(results.count("True")/len(results), 2)
+        ato = len([row for row in rows if row.method != "manual"])
+        sample_size = len(results)
+
+        return {"ater": ater, "ato": ato, "atess": sample_size}
 
     def display_graded_list(self, list_number):
         with connection.cursor() as cursor:

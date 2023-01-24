@@ -1,5 +1,8 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+
+from django.db import transaction
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -40,6 +43,8 @@ from nieszkolni_folder.back_office_planner import BackOfficePlanner
 from nieszkolni_folder.challenge_manager import ChallengeManager
 from nieszkolni_folder.survey_manager import SurveyManager
 from nieszkolni_folder.analytics_manager import AnalyticsManager
+from nieszkolni_folder.translation_manager import TranslationManager
+from nieszkolni_folder.dna_manager import DnaManager
 
 from io import BytesIO
 
@@ -91,46 +96,48 @@ def campus(request):
         challenges = ChallengeManager().display_planned_challenges(current_user)
         challenge_status = ChallengeManager().refresh_process(challenges)
 
+        score = ActivityManager().calculate_points_this_week(current_user)
+        ratings = RatingManager().display_unrated(current_user)
+
+        overdue_assignments = CurriculumManager().display_overdue_assignments(current_user)
+        uncompleted_assignments = CurriculumManager().display_uncompleted_assignments(current_user)
+        completed_assignments = CurriculumManager().display_completed_assignments(current_user)
+
+        context = {
+            "overdue_assignments": overdue_assignments,
+            "uncompleted_assignments": uncompleted_assignments,
+            "completed_assignments": completed_assignments,
+            "score": score,
+            "ratings": ratings,
+            "announcements": announcements
+            }
+
         if not challenge_status:
             return redirect("challenges")
 
         if user_agent.is_mobile:
-            return render(request, 'm_campus.html', {
-                "announcements": announcements
-                })
+            return render(request, 'm_campus.html', context)
         else:
-            return render(request, 'campus.html', {
-                "announcements": announcements
-                })
+            return render(request, 'campus.html', context)
 
 
 @login_required
-def summary(request, client):
+def office(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
+
         user_agent = get_user_agent(request)
 
-        end_of_semester = BackOfficeManager().display_end_of_semester()
-        activity_points = StreamManager().display_activity(current_user)
-        ranking = StreamManager().display_ranking_by_client(current_user)
-        countdown = BackOfficeManager().countdown_end_of_semester()
-        context = {
-                    "client": client,
-                    "activity_points": activity_points,
-                    "ranking": ranking,
-                    "countdown": countdown
-                    }
-
-        if request.method == "POST":
-            if request.POST["action_on_summary"] == "enter":
-                return redirect("campus")
-
         if user_agent.is_mobile:
-            return render(request, 'm_summary.html', context)
+            return render(request, 'm_office.html', {
+                "announcements": announcements
+                })
         else:
-            return render(request, 'summary.html', context)
+            return render(request, 'office.html', {
+                "announcements": announcements
+                })
 
 
 @login_required
@@ -454,12 +461,7 @@ def login_user(request):
             last_name = request.user.last_name
             current_user = first_name + " " + last_name
 
-            if user.is_staff:
-                messages.success(request, ("You have successfully logged in."))
-                return redirect("campus")
-
-            else:
-                return redirect("summary", client=current_user)
+            return redirect("campus")
 
         else:
             messages.error(request, ("Wrong password or username. Try again."))
@@ -571,7 +573,7 @@ def list_current_users(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        current_clients = ClientsManager().list_current_users()
+        clients = ClientsManager().list_current_users()
 
         if request.method == "POST":
             if request.POST["action_on_user"] == "more":
@@ -634,11 +636,25 @@ def list_current_users(request):
             else:
 
                 return render(request, "list_current_users.html", {
-                    "current_clients": current_clients
+                    "clients": clients
                     })
 
         return render(request, "list_current_users.html", {
-            "current_clients": current_clients
+            "clients": clients
+            })
+
+
+@staff_member_required
+def display_user(request, client):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        details = ClientsManager().load_user(client)
+
+        return render(request, "display_user.html", {
+            "details": details
             })
 
 
@@ -744,6 +760,67 @@ def management(request):
             })
 
 
+@staff_member_required
+def upload_composer(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        if request.method == "POST":
+            if request.POST["action_on_upload"] == "upload":
+                instance = Binder(binder=request.FILES["csv_file"], id=1)
+                instance.save()
+
+                return redirect("upload_composer")
+
+            elif request.POST["action_on_upload"] == "save":
+                file = Binder.objects.get(pk=1)
+                with open(file.binder.path, "rb") as file:
+                    file_converted = file.read().decode("utf8", errors="ignore")
+                    rows = StringToCsv().convert(file_converted)
+
+                    with transaction.atomic():
+                        for row in rows:
+                            list_number = row[0]
+                            sentence_number = row[1]
+                            sentence_id = row[2]
+                            name = row[3]
+                            polish = row[4]
+                            english = row[5]
+                            glossary = row[6]
+                            submission_stamp = row[7]
+                            submission_date = row[8]
+                            status = row[9]
+                            translation = row[10]
+                            result = row[11]
+                            reviewing_user = row[12]
+                            set_id = row[13]
+                            item = row[14]
+
+                            SentenceManager().upload_sentence_lists(
+                                list_number,
+                                sentence_number,
+                                sentence_id,
+                                name,
+                                polish,
+                                english,
+                                glossary,
+                                submission_stamp,
+                                submission_date,
+                                status,
+                                translation,
+                                result,
+                                reviewing_user,
+                                set_id,
+                                item
+                                )
+
+                    return redirect("upload_composer")
+
+        return render(request, "upload_composer.html", {})
+
+
 @login_required
 def profile_menu(request):
     if request.user.is_authenticated:
@@ -754,7 +831,7 @@ def profile_menu(request):
         return render(request, "profile_menu.html", {})
 
 
-@staff_member_required
+@login_required
 def portrait(request, client):
     if request.user.is_authenticated:
         first_name = request.user.first_name
@@ -762,39 +839,41 @@ def portrait(request, client):
         current_user = first_name + " " + last_name
 
         user_agent = get_user_agent(request)
-        profile = RoadmapManager().display_profile(current_user)
-        semesters = RoadmapManager().display_semesters(current_user)
-        tags = BackOfficeManager().display_tags()
-        end_of_semester = BackOfficeManager().display_end_of_semester()
-        activity_points = StreamManager().display_activity(current_user)
-        target = StreamManager().display_activity_target(current_user)
-        target_list = []
-        target_list.append(activity_points)
-        target_list.append(target)
+        courses = RoadmapManager().display_current_courses_by_client(
+                client
+                )
 
+        profile = RoadmapManager().display_profile(client)
         display_name = profile[1]
-        avatar = profile[2]
         current_semester = profile[4]
         current_degree = profile[6]
-        early_admission = profile[7]
 
-        degrees = RoadmapManager().display_degrees(current_user)
-        current_degree_status = degrees.get(current_degree)
-        courses = RoadmapManager().display_roadmap(current_user, current_semester)
+        target = StreamManager().display_activity_target(client)
+        quaterly_points = StreamManager().display_activity(client)
+        total_points = ActivityManager().get_points_over_lifetime_total(client)
+        last_week_points = ActivityManager().get_points(
+                client,
+                TimeMachine().last_sunday()
+                )
 
-        first_name = first_name.capitalize()
-
-        return render(request, "portrait.html", {
-            "display_name": display_name,
-            "avatar": avatar,
-            "end_of_semester": end_of_semester,
-            "activity_points": activity_points,
-            "target": target,
-            "tags": tags,
-            "first_name": first_name,
+        context = {
             "courses": courses,
-            "target_list": target_list
-            })
+            "display_name": display_name,
+            "current_semester": current_semester,
+            "current_degree": current_degree,
+            "first_name": first_name,
+            "target": target,
+            "last_week_points": last_week_points,
+            "quaterly_points": quaterly_points,
+            "total_points": total_points
+            }
+
+        user_agent = get_user_agent(request)
+
+        if user_agent.is_mobile:
+            return render(request, "m_portrait.html", context)
+        else:
+            return render(request, "portrait.html", context)
 
 
 @login_required
@@ -2580,30 +2659,41 @@ def upload_anki(request):
         clients = ClientsManager().list_current_clients()
 
         if request.method == "POST":
-            client = request.POST["client"]
-            deck = request.POST["deck"]
-            txt_file = request.FILES["txt_file"]
-            chunks = txt_file.chunks()
-            for chunk in chunks:
-                file = chunk.decode("utf8")
-                rows = file.splitlines()
+            if request.POST["action_on_anki"] == "upload":
+                instance = Binder(binder=request.FILES["txt_file"], id=1)
+                instance.save()
 
-                for row in rows:
-                    entry = row.split("\t")
-                    polish = entry[0]
-                    english = entry[1]
+                messages.success(request, ("File uploaded"))
+                return render(request, "upload_anki_2.html", {
+                    "clients": clients
+                    })
 
-                    VocabularyManager().add_entry(
-                        client,
-                        deck,
-                        english,
-                        polish,
-                        current_user)
+            elif request.POST["action_on_anki"] == "save":
+                file = Binder.objects.get(pk=1)
+                with open(file.binder.path, "rb") as file:
+                    file_converted = file.read().decode("utf8", errors="ignore")
 
-            messages.success(request, ("The file has been uploaded!"))
-            return render(request, "upload_anki.html", {
-                "clients": clients
-                })
+                    client = request.POST["client"]
+                    deck = request.POST["deck"]
+                    rows = file_converted.splitlines()
+
+                    with transaction.atomic():
+                        for row in rows:
+                            entry = row.split("\t")
+                            polish = entry[0]
+                            english = entry[1]
+
+                            VocabularyManager().add_entry(
+                                client,
+                                deck,
+                                english,
+                                polish,
+                                current_user)
+
+                        Binder.objects.get(pk=1).delete()
+
+                        messages.success(request, ("Flashcards added"))
+                        return redirect("upload_anki")
 
         return render(request, "upload_anki.html", {
             "clients": clients
@@ -2916,24 +3006,27 @@ def upload_stream(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        print(len(Stream.objects.all()))
+
         if request.method == "POST":
-            csv_file = request.FILES["csv_file"]
+            if request.POST["action_on_upload"] == "upload":
+                instance = Binder(binder=request.FILES["csv_file"], id=1)
+                instance.save()
 
-            file = csv_file.read().decode("utf8")
-            entries = StringToCsv().convert(file)
+                messages.success(request, ("The file has been uploaded!"))
+                return redirect("upload_stream")
 
-            for entry in entries:
-                StreamManager().import_old_stream(
-                    entry[0],
-                    entry[1],
-                    entry[2],
-                    entry[3],
-                    entry[4],
-                    entry[5],
-                    )
+            elif request.POST["action_on_upload"] == "save":
+                file = Binder.objects.get(pk=1)
+                with open(file.binder.path, "rb") as file:
+                    file_converted = file.read().decode("utf8", errors="ignore")
+                    entries = StringToCsv().convert(file_converted)
 
-            messages.success(request, ("The file has been uploaded!"))
-            return redirect("upload_stream")
+                    StreamManager().import_old_stream_handler(
+                            entries)
+
+                    messages.success(request, (f"The file has been saved!"))
+                    return redirect("upload_stream")
 
         return render(request, "upload_stream.html", {})
 
@@ -2978,6 +3071,7 @@ def check_homework(request, current_user=''):
         current_user = first_name + " " + last_name
 
         current_client = CurrentClientsManager().current_client(current_user)
+        overdue_assignments = CurriculumManager().display_overdue_assignments(current_client)
         uncompleted_assignments = CurriculumManager().display_uncompleted_assignments(current_client)
         completed_assignments = CurriculumManager().display_completed_assignments(current_client)
 
@@ -3014,6 +3108,7 @@ def check_homework(request, current_user=''):
                 return redirect("assignment", item=item)
 
         return render(request, "check_homework.html", {
+                "overdue_assignments": overdue_assignments,
                 "uncompleted_assignments": uncompleted_assignments,
                 "completed_assignments": completed_assignments,
                 "current_client": current_client
@@ -3335,18 +3430,41 @@ def grade_sentences(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        entry = SentenceManager().display_sentences_to_grade()
-        counter = SentenceManager().count_sentences_to_grade()
+        entry = SentenceManager().analyze_and_grade_sentence("grade")
+        counter = SentenceManager().count_sentences_to_label()
 
         if request.method == "POST":
             sentence_number = request.POST["sentence_number"]
             result = request.POST["result"]
 
-            SentenceManager().grade_sentence(sentence_number, result, current_user)
+            SentenceManager().grade_sentence(entry, result, current_user)
 
             return redirect("grade_sentences")
 
         return render(request, "grade_sentences.html", {
+            "entry": entry,
+            "counter": counter
+            })
+
+
+@staff_member_required
+def label_sentences(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        entry = SentenceManager().analyze_and_grade_sentence("label")
+        counter = SentenceManager().count_sentences_to_label()
+
+        if request.method == "POST":
+            result = request.POST["result"]
+
+            SentenceManager().grade_sentence(entry, result, current_user)
+
+            return redirect("label_sentences")
+
+        return render(request, "label_sentences.html", {
             "entry": entry,
             "counter": counter
             })
@@ -3547,6 +3665,7 @@ def repertoire_line(request):
         current_user = first_name + " " + last_name
 
         position = BackOfficeManager().display_reported_repertoire_line()
+        counter = BackOfficeManager().count_reported_repertoire_line()
 
         if request.method == "POST":
             if request.POST["repertoire_line_action"] == "add":
@@ -3576,7 +3695,8 @@ def repertoire_line(request):
 
         else:
             return render(request, "repertoire_line.html", {
-                "position": position
+                "position": position,
+                "counter": counter
                 })
 
 
@@ -3822,18 +3942,20 @@ def update_roadmap(request):
 
 
 @login_required
-def display_roadmap_details(request):
+def display_roadmap_details(request, course_id):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        roadmap_details = RoadmapManager().roadmap_details(roadmap_id_number)
-        course = roadmap_details[2]
-        course_details = RoadmapManager().display_course(course)
-        grades = RoadmapManager().display_grades(current_user, course)
-        assessment_method = course_details[5]
-        result = 0
+        course = RoadmapManager().display_course_by_id(course_id)
+
+        # roadmap_details = RoadmapManager().roadmap_details(roadmap_id_number)
+        # course = roadmap_details[2]
+        # course_details = RoadmapManager().display_course(course)
+        # grades = RoadmapManager().display_grades(current_user, course)
+        # assessment_method = course_details[5]
+        # result = 0
 
         if assessment_method == "statistics":
             assessment_system = course_details[7]
@@ -3841,10 +3963,7 @@ def display_roadmap_details(request):
             result = statistics[assessment_system]
 
         return render(request, "display_roadmap_details.html", {
-            "roadmap_details": roadmap_details,
-            "course_details": course_details,
-            "assessment_method": assessment_method,
-            "result": result
+            "course": course
             })
 
 
@@ -3921,9 +4040,7 @@ def add_profile(request):
                     professors_title_status
                     )
 
-                return render(request, "add_profile.html", {
-                "client_names": client_names
-                })
+                return redirect("profiles")
 
         return render(request, "add_profile.html", {
             "client_names": client_names
@@ -3940,15 +4057,6 @@ def profiles(request):
         profiles = RoadmapManager().display_profiles()
 
         if request.method == "POST":
-            if request.POST["action_on_profile"] == "more":
-                client_name = request.POST["client_name"]
-
-                profile = RoadmapManager().display_profile(client_name)
-
-                return render(request, "display_profile.html", {
-                    "profile": profile
-                    })
-
             if request.POST["action_on_profile"] == "edit":
                 client_name = request.POST["client_name"]
 
@@ -4033,13 +4141,13 @@ def profiles(request):
 
 
 @staff_member_required
-def display_profile(request):
+def display_profile(request, client):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        profile = RoadmapManager().display_profile()
+        profile = RoadmapManager().display_profile(client)
 
         return render(request, "display_profile.html", {
             "profile": profile
@@ -4415,6 +4523,9 @@ def add_grade(request):
                 current_user,
                 test
                 )
+
+            messages.success(request, ("Grade added"))
+            return redirect("add_grade")
 
         return render(request, "add_grade.html", {
             "courses": courses,
@@ -5182,9 +5293,16 @@ def programs(request):
 
         programs = RoadmapManager().display_programs()
 
-        return render(request, "programs.html", {
-            "programs": programs
-            })
+        user_agent = get_user_agent(request)
+
+        if user_agent.is_mobile:
+            return render(request, "m_programs.html", {
+                "programs": programs
+                })
+        else:
+            return render(request, "programs.html", {
+                "programs": programs
+                })
 
 
 @login_required
@@ -5263,9 +5381,16 @@ def courses(request):
 
         courses = RoadmapManager().display_courses()
 
-        return render(request, "courses.html", {
-            "courses": courses
-            })
+        user_agent = get_user_agent(request)
+
+        if user_agent.is_mobile:
+            return render(request, "m_courses.html", {
+                "courses": courses
+                })
+        else:
+            return render(request, "courses.html", {
+                "courses": courses
+                })
 
 
 @login_required
@@ -5839,7 +5964,7 @@ def rating(request, client, category, position):
                 )
 
             messages.success(request, ("Rated!"))
-            return redirect("assignments")
+            return redirect("campus")
 
         return render(request, "rating.html", {
             "client": client,
@@ -6422,7 +6547,7 @@ def remove_multiple_from_stream(request):
 
 
 @staff_member_required
-def analytics_new_entries_per_student(request, coach):
+def analytics_entries_per_student(request, coach):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
@@ -6432,23 +6557,93 @@ def analytics_new_entries_per_student(request, coach):
                 current_user
                 )
 
-        return render(request, "analytics_new_entries_per_student.html", {
+        rates = AnalyticsManager().count_entry_rate_per_student(
+                current_user
+                )
+
+        totals = AnalyticsManager().count_entry_total_per_student(
+                current_user
+                )
+
+        return render(request, "analytics_entries_per_student.html", {
             "rows": rows,
+            "rates": rates,
+            "totals": totals
             })
 
 
 @staff_member_required
-def analytics_new_entries(request):
+def analytics_entries(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
         rows = AnalyticsManager().count_all_new_entries_per_student_last_week()
+        rates = AnalyticsManager().count_all_entry_rate_per_student()
+        totals = AnalyticsManager().count_all_entry_total_per_student()
 
-        return render(request, "analytics_new_entries.html", {
-            "rows": rows
+        return render(request, "analytics_entries.html", {
+            "rows": rows,
+            "rates": rates,
+            "totals": totals
             })
+
+
+@staff_member_required
+def analytics_indicators(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        indicators = SentenceManager().count_ater_and_atess()
+
+        return render(request, "analytics_indicators.html", {
+            "indicators": indicators
+            })
+
+
+@staff_member_required
+def analytics_grades(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        activity_start = Option.objects.filter(
+                command="activity_start"
+                ).values_list(
+                "value", flat=True
+                )
+
+        activity_stop = Option.objects.filter(
+                command="activity_stop"
+                ).values_list(
+                "value", flat=True
+                )
+
+        activity_start = activity_start[0] if activity_start.exists() else None
+        activity_stop = activity_stop[0] if activity_stop.exists() else None
+
+        grades = AnalyticsManager().get_grade_range(
+            activity_start,
+            activity_stop
+            )
+
+        return render(request, "analytics_grades.html", {
+            "grades": grades
+            })
+
+
+@staff_member_required
+def lab(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        return render(request, "lab.html", {})
 
 
 def footer(request):

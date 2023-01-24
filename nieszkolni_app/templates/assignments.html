@@ -2,57 +2,9 @@
 {% block 'content' %}
 {% load static %}
 
-<h1>MY TO-DO LIST</h1>
-
-<div class="list_container">
-
-	<ul class="list">
-
-		{% for rating in ratings %}
-
-			<li class="list_item tr_clickable" onclick="jump({{ rating.2 }})">
-
-				<div class="list_content">{% now "Y-m-d" %}</div>
-				<div class="list_content_inside">Fill in a survey</div>
-
-				<a id="{{ rating.2 }}" href="{% url 'rating' client=rating.0 category=rating.1 position=rating.2 %}"></a>
-
-			</li>
-
-		{% endfor %}
-
-		{% for uncomplated_assignment in uncomplated_assignments %}
-
-			<li class="list_item tr_clickable" onclick="jump({{ uncomplated_assignment.0 }})">
-
-				<div class="list_content">{{ uncomplated_assignment.1 }}</div>
-				<div class="list_content_small">{{ uncomplated_assignment.0 }}</div>
-				<div class="list_content_inside">{{ uncomplated_assignment.7 }}</div>
-
-				<a id="{{ uncomplated_assignment.0 }}" href="{% url 'assignment' item=uncomplated_assignment.0 %}"></a>
-
-			</li>
-
-		{% endfor %}
-
-		{% for complated_assignment in complated_assignments %}
-
-			<li class="list_item list_item_complted list_item_crossed tr_clickable" onclick="jump({{ complated_assignment.0 }})">
-
-				<div class="list_content">{{ complated_assignment.1 }}</div>
-				<div class="list_content_small">{{ complated_assignment.0 }}</div>
-				<div class="list_content_inside">{{ complated_assignment.7 }}</div>
-
-				<a id="{{ complated_assignment.0 }}" href="{% url 'assignment' item=complated_assignment.0 %}"></a>
-
-			</li>
-
-		{% endfor %}
-
-	</ul>
+<div class="flex-parent jc-center">
+	<a href="{% url 'campus' %}">Your todo list has been moved to the campus page: here!</a>
 </div>
-
-<script src="{% static 'functions.js' %}"></script>  
 
 {% include 'footer.html' %}
 {% endblock %}

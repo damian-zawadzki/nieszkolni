@@ -131,9 +131,3 @@ class TimeMachine:
         date = datetime.strftime(end, today_pattern)
 
         return date
-
-x = TimeMachine().today_number()
-y = TimeMachine().number_to_system_date(x)
-print(x)
-print(y)
-

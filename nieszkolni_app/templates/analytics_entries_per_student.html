@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<h1>ANALYTICS: ENTRIES</h1>
+
+<div class="flex-parent jc-center">
+	<button type="button" class="button_main" onclick="showHideTable('new_last_week')">New Entries Last Week</button>
+	<button type="button" class="button_main" onclick="showHideTable('per_seniority')">Entries Per Seniority</button>
+	<button type="button" class="button_main" onclick="showHideTable('total')">Total Entries</button>
+</div>
+
+<table id="new_last_week" style="display: none;">
+
+	<tr>
+
+		<th>Client</th>
+		<th>Total</th>
+		<th>Vocabulary</th>
+		<th>Sentences</th>
+		<th>Memories</th>
+		<th>Pronunciation</th>
+
+	</tr>
+
+	{% for row in rows %}
+
+		<tr>
+
+			<td>{{ row.client }}</td>
+			<td>{{ row.total_new_entries }}</td>
+			<td>{{ row.new_vocabulary }}</td>
+			<td>{{ row.new_sentences }}</td>
+			<td>{{ row.new_memories }}</td>
+			<td>{{ row.new_pronunciation }}</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+<table id="per_seniority" style="display: none;">
+
+	<tr>
+
+		<th>Client</th>
+		<th>Total</th>
+		<th>Vocabulary</th>
+		<th>Sentences</th>
+		<th>Memories</th>
+		<th>Pronunciation</th>
+
+	</tr>
+
+	{% for rate in rates %}
+
+		<tr>
+
+			<td>{{ rate.client }}</td>
+			<td>{{ rate.average_rate }}</td>
+			<td>{{ rate.vocabulary_rate }}</td>
+			<td>{{ rate.sentences_rate }}</td>
+			<td>{{ rate.memories_rate }}</td>
+			<td>{{ rate.pronunciation_rate }}</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+<table id="total" style="display: none;">
+
+	<tr>
+
+		<th>Client</th>
+		<th>Total</th>
+		<th>Vocabulary</th>
+		<th>Sentences</th>
+		<th>Memories</th>
+		<th>Pronunciation</th>
+
+	</tr>
+
+	{% for total in totals %}
+
+		<tr>
+
+			<td>{{ total.client }}</td>
+			<td>{{ total.total }}</td>
+			<td>{{ total.vocabulary }}</td>
+			<td>{{ total.sentences }}</td>
+			<td>{{ total.memories }}</td>
+			<td>{{ total.pronunciation }}</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+<div class="break"></div>
+
+<script src="{% static 'functions.js' %}"></script>  
+
+{% endblock %}

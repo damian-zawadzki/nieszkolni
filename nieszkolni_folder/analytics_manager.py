@@ -4,9 +4,16 @@ import django
 from django.db import connection
 
 from nieszkolni_app.models import Client
+from nieszkolni_app.models import Stream
+from nieszkolni_app.models import Card
+from nieszkolni_app.models import Memory
+from nieszkolni_app.models import Pronunciation
+from nieszkolni_app.models import Grade
 
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
+
+from nieszkolni_folder.stream_manager import StreamManager
 
 import re
 
@@ -154,3 +161,129 @@ class AnalyticsManager:
         data.sort(key=lambda entry: entry["total_new_entries"])
 
         return data
+
+    def get_seniority(self, client):
+        today = TimeMachine().today()
+
+        lessons = Stream.objects.filter(name=client, command="Duration")
+        if not lessons.exists():
+            return 1
+
+        first_lesson = lessons.order_by("date_number")[0]
+
+        seniority = TimeMachine().count_seniority(first_lesson.date, today)
+
+        return seniority
+
+    def count_entry_rate_for_student(self, client):
+        seniority = self.get_seniority(client)
+
+        vocabulary = Card.objects.filter(client=client, deck="vocabulary")
+        sentences = Card.objects.filter(client=client, deck="sentences")
+        memories = Memory.objects.filter(name=client)
+        pronunciation = Pronunciation.objects.filter(name=client)
+
+        rates = {}
+
+        rates.update({"vocabulary_rate": round(len(vocabulary) / seniority)})
+        rates.update({"sentences_rate": round(len(sentences) / seniority)})
+        rates.update({"memories_rate": round(len(memories) / seniority)})
+        rates.update({"pronunciation_rate": round(len(pronunciation) / seniority)})
+
+        average_rate = round(sum(rates.values())/len(rates.values()), 1)
+        rates.update({"average_rate": average_rate})
+        rates.update({"client": client})
+
+        return rates
+
+    def count_entry_rate_per_student(self, coach):
+        clients = Client.objects.filter(coach=coach)
+
+        entries = []
+        for client in clients:
+            entry = self.count_entry_rate_for_student(
+                    client.name
+                    )
+            entry.update({"coach": coach})
+            entries.append(entry)
+
+        entries.sort(key=lambda entry: entry["average_rate"])
+
+        return entries
+
+    def count_all_entry_rate_per_student(self):
+        coaches = Client.objects.filter(user_type="coach", status="active")
+        data = []
+        for coach in coaches:
+            entries = self.count_entry_rate_per_student(coach.name)
+            data.extend(entries)
+
+        data.sort(key=lambda entry: entry["average_rate"])
+
+        return data
+
+    def count_entry_total_for_student(self, client):
+        vocabulary = Card.objects.filter(client=client, deck="vocabulary")
+        sentences = Card.objects.filter(client=client, deck="sentences")
+        memories = Memory.objects.filter(name=client)
+        pronunciation = Pronunciation.objects.filter(name=client)
+
+        totals = {}
+
+        totals.update({"vocabulary": len(vocabulary)})
+        totals.update({"sentences": len(sentences)})
+        totals.update({"memories": len(memories)})
+        totals.update({"pronunciation": len(pronunciation)})
+
+        total = sum(totals.values())
+        totals.update({"total": total})
+        totals.update({"client": client})
+
+        return totals
+
+    def count_entry_total_per_student(self, coach):
+        clients = Client.objects.filter(coach=coach)
+
+        entries = []
+        for client in clients:
+            entry = self.count_entry_total_for_student(
+                    client.name
+                    )
+            entry.update({"coach": coach})
+            entries.append(entry)
+
+        entries.sort(key=lambda entry: entry["total"])
+
+        return entries
+
+    def count_all_entry_total_per_student(self):
+        coaches = Client.objects.filter(user_type="coach", status="active")
+        data = []
+        for coach in coaches:
+            entries = self.count_entry_total_per_student(coach.name)
+            data.extend(entries)
+
+        data.sort(key=lambda entry: entry["total"])
+
+        return data
+
+    def get_grade_range(self, start=None, end=None):
+        start_number = TimeMachine().get_start_end_number(start, end)["start"]
+        end_number = TimeMachine().get_start_end_number(start, end)["end"]
+
+        clients = Client.objects.filter(status="active").values_list(
+                "name", flat=True
+                )
+
+        grades = []
+        for client in clients:
+            count = Grade.objects.filter(
+                date_number__gte=start_number,
+                date_number__lte=end_number,
+                student=client
+                ).count()
+
+            grades.append((client, count))
+
+        grades.sort(key=lambda x: x[1])
+        return grades

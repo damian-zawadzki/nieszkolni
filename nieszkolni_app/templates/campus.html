@@ -1,47 +1,125 @@
 {% extends 'base.html' %}
 {% block 'content' %}
+{% load static %}
 
-<div class="campus_box">
-	<div class="news">
-		
-		<table>
+<div class="feed">
+	<div class="feed_container pointer" id="todo_container" onclick="displayWidget(this)">
+		<div class="title noselect" id="todo_title">
+			My Todo List
+			<img class="invisible" src="{% static 'images/arrow_down.png' %}" width="10" height="10" id="arrow_down">
+			<img src="{% static 'images/arrow_up.png' %}" width="10" height="10" id="arrow_up">
+		</div>
+		<div class="list" id="todo_list">
 
-			<tr>
-				<th><h4>NEWS</h4></th>
-			</tr>
-
-			{% for announcement in announcements %}
-
-				<tr class="font">
-
-					<td class="td_sentences"><a href="{% url 'announcement' notification_id=announcement.0 %}">{{ announcement.4 }}</a></td>
-
-				</tr>
-
+			{% for overdue_assignment in overdue_assignments %}
+				<div class="list_item tr_clickable" onclick="jump({{ overdue_assignment.0 }})">
+					<div class="tab_icon_container feedy"><div class="tab_icon_box_border_error mini"><img class="tab_icon" src="{% static 'images/exclamation.png' %}" width="10" height="10"></div></div>
+					<div class="item_content">
+						<div class="item_title">{{ overdue_assignment.7 }}</div>
+						<div class="item_description">{{ overdue_assignment.1 }}</div>
+					</div>
+					<a id="{{ overdue_assignment.0 }}" href="{% url 'assignment' item=overdue_assignment.0 %}"></a>
+				</div>
 			{% endfor %}
 
-		</table>
+			{% for rating in ratings %}
+				<div class="list_item tr_clickable" onclick="jump({{ rating.2 }})">
+					<div class="tab_icon_container feedy"><div class="tab_icon_box_border_only mini"><img class="tab_icon" src="{% static 'images/check.png' %}" width="10" height="10"></div></div>
+					<div class="item_content">
+						<div class="item_title">Fill in the survey</div>
+						<div class="item_description">{% now "Y-m-d" %}</div>
+					</div>
+					<a id="{{ rating.2 }}" href="{% url 'rating' client=rating.0 category=rating.1 position=rating.2 %}"></a>
+				</div>
+			{% endfor %}
+
+			{% for uncompleted_assignment in uncompleted_assignments %}
+				<div class="list_item tr_clickable" onclick="jump({{ uncompleted_assignment.0 }})">
+					<div class="tab_icon_container feedy"><div class="tab_icon_box_border_only mini"><img class="tab_icon" src="{% static 'images/check.png' %}" width="10" height="10"></div></div>
+					<div class="item_content">
+						<div class="item_title">{{ uncompleted_assignment.7 }}</div>
+						<div class="item_description">{{ uncompleted_assignment.1 }}</div>
+					</div>
+					<a id="{{ uncompleted_assignment.0 }}" href="{% url 'assignment' item=uncompleted_assignment.0 %}"></a>
+				</div>
+			{% endfor %}
+
+			{% for completed_assignment in completed_assignments %}
+				<div class="list_item tr_clickable" onclick="jump({{ completed_assignment.0 }})">
+					<div class="tab_icon_container feedy"><div class="tab_icon_box_border mini"><img class="tab_icon" src="{% static 'images/check.png' %}" width="10" height="10"></div></div>
+					<div class="item_content">
+						<div class="item_title">{{ completed_assignment.7 }}</div>
+						<div class="item_description">{{ completed_assignment.1 }}</div>
+					</div>
+					<a id="{{ completed_assignment.0 }}" href="{% url 'assignment' item=completed_assignment.0 %}"></a>
+				</div>
+			{% endfor %}
+
+		</div>
 	</div>
 
-	
-	<ul class="profile_link_list campus">
-		<li class="side_navigation_item">
-			<h5>CAMPUS</h5>
-		</li>
+<!-- 	<div class="tabs profile">
+		<div class="tab feedy mini">
+			<div class="tab_icon_container profile"><div class="tab_icon_box"><img class="tab_icon" src="{% static 'images/calendar_7.png' %}"></div></div>
+			<div class="tab_content_container">
+				<div class="tab_title_box tab_title">Points Last Week</div>
+				<div class="tab_content_box tab_content profile">-10</div>
+			</div>
+		</div>
+		<div class="tab feedy mini">
+			<div class="tab_icon_container profile"><div class="tab_icon_box"><img class="tab_icon" src="{% static 'images/calendar_7.png' %}"></div></div>
+			<div class="tab_content_container">
+				<div class="tab_title_box tab_title">Target</div>
+				<div class="tab_content_box tab_content profile">-10</div>
+			</div>
+		</div>
+		<div class="tab feedy mini">
+			<div class="tab_icon_container profile"><div class="tab_icon_box"><img class="tab_icon" src="{% static 'images/calendar_7.png' %}"></div></div>
+			<div class="tab_content_container">
+				<div class="tab_title_box tab_title">Target</div>
+				<div class="tab_content_box tab_content profile">-10</div>
+			</div>
+		</div>
+	</div> -->
 
-		<li class="side_navigation_item">
-			<a class="side_navigation_link_2" href="{% url 'programs' %}">ACADEMIC PROGRAMS</a>
-		</li>
-		<li class="side_navigation_item">
-			<a class="side_navigation_link_2" href="{% url 'courses' %}">COURSES</a>
-		</li>
-		<li class="side_navigation_item">
-			<a class="side_navigation_link_2" href="{% url 'rules' %}">GUIDELINES</a>
-		</li>
+<!-- {% for announcement in announcements %}
+	<div class="tab">
+		<div class="tab_title">{{ announcement.4 }}</div>
+		<div>{{ announcement.5 }}</div>
+		<button type="button" class="button_main" onclick="jump('{{ announcement.0 }}')">Read more</button>
+		<a id="	{{ announcement.0 }}" href="{% url 'announcement' notification_id=announcement.0 %}"></a>
+	</div>
+{% endfor %} -->
 
-	</ul>
 </div>
 
+<script type="text/javascript">
+	function displayWidget(element) {
+		var container = document.getElementById(element.id);
+		var box = container.firstElementChild.nextElementSibling;
+		var title = container.firstElementChild;
+		var arrow_down = container.firstElementChild.firstElementChild;
+		var arrow_up = container.firstElementChild.firstElementChild.nextElementSibling;
+
+		if (!box.style.display || box.style.display == 'none') {
+			box.style.display = 'block';
+			container.style.zIndex = 10;
+			container.style.position = 'absolute';
+			container.style.height = 'auto';
+			title.style.fontSize = 6 + 'vh';
+			arrow_down.classList.remove('invisible');
+			arrow_up.classList.add('invisible');
+		} else {
+			box.style.display = 'none';
+			container.style.zIndex = 0;
+			container.style.position = 'relative';
+			container.style.height = 10 + 'vh';
+			title.style.fontSize = 2.5 + 'vh';
+			arrow_down.classList.add('invisible');
+			arrow_up.classList.remove('invisible');
+		}
+	}
+</script>
 
 {% include 'footer.html' %}
 {% endblock %}

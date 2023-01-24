@@ -152,6 +152,30 @@ class ActivityManager:
 
         return score
 
+    def get_points(self, client, start=None, end=None):
+        start_number = TimeMachine().get_start_end_number(start, end)["start"]
+        end_number = TimeMachine().get_start_end_number(start, end)["end"]
+
+        rows = Stream.objects.filter(
+            name=client,
+            command="Activity",
+            date_number__gte=start_number,
+            date_number__lt=end_number
+                )
+
+        if not rows.exists():
+            return 0
+        else:
+            entries = [row.value for row in rows]
+            points = [
+                Cleaner().convert_acitivty_points_entry(entry)
+                for entry in entries
+                ]
+
+            score = sum(points)
+
+            return score
+
     def get_points_over_lifetime(self, client):
         lessons = Stream.objects.filter(name=client, command="Duration")
         if not lessons.exists():
@@ -168,12 +192,12 @@ class ActivityManager:
             week = TimeMachine().number_to_week_number_sign(sunday[0])
             conditions.update({"week": week})
 
-            end_sunday = TimeMachine().number_to_system_date(sunday[0] + 7)
+            start_sunday = TimeMachine().number_to_system_date(sunday[0] - 7)
             points = StreamManager().activity_points_by_client_week(
                 client,
                 "homework",
-                sunday[1],
-                end_sunday
+                start_sunday,
+                sunday[1]
                     )
 
             points = sum(points)
@@ -182,6 +206,33 @@ class ActivityManager:
             results.append(conditions)
 
         return results
+
+    def get_points_over_lifetime_lists(self, client):
+        data = self.get_points_over_lifetime(client)
+
+        if data is None:
+            return ([0], [0])
+
+        activity_points = [x["activity_points"] for x in data]
+        weeks = [x["week"] for x in data]
+
+        activity_points.reverse()
+        weeks.reverse()
+
+        result = (activity_points, weeks)
+
+        return result
+
+    def get_points_over_lifetime_total(self, client):
+        data = self.get_points_over_lifetime(client)
+
+        if data is None:
+            return 0
+
+        activity_points = [x["activity_points"] for x in data]
+        activity_points = sum(activity_points)
+
+        return activity_points
 
     def calculate_points_this_week(self, client):
         today = TimeMachine().today_number()

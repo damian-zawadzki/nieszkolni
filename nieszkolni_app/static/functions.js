@@ -1,9 +1,17 @@
 // Menu
-const staff_side_menu = document.getElementById('side_menu')
+const staff_side_menu = document.getElementById('staff_side_menu')
 
 window.addEventListener('click', e =>
   e.target == staff_side_menu ? staff_side_menu.style.display = 'none' : false
   );
+
+const client_side_menu = document.getElementById('client_side_menu')
+
+window.addEventListener('click', e =>
+  e.target == client_side_menu ? client_side_menu.style.display = 'none' : false
+  );
+
+
 
 
 function showHide(element) {
