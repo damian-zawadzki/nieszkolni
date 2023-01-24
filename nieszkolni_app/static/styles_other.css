@@ -53,13 +53,12 @@ h1 {
 /*Use it for page subtitles*/
 h2 {
   color: var(--font-color);
-  display: block;
-  font-size: var(--large-font);
+  font-size: var(--medium-font);
   font-weight: 1000;
-  left: 5vw;
-  margin-bottom: 35px;
+  margin-bottom: 3vh;
   position: relative;
-  text-align: left;
+  text-align: center;
+  opacity: 0.9;
 }
 
 /*Use it for other pages*/
@@ -147,6 +146,10 @@ h6 {
   position: relative;
   text-align: left;
   z-index: 0;
+}
+
+.brand {
+  color: var(--brand-color);
 }
 
 /*Keyframes*/

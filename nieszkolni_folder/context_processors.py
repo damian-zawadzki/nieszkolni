@@ -1,6 +1,7 @@
 from nieszkolni_folder.audit_manager import AuditManager
 from nieszkolni_folder.challenge_manager import ChallengeManager
 from nieszkolni_folder.roadmap_manager import RoadmapManager
+from nieszkolni_folder.stream_manager import StreamManager
 
 
 def sections_processor(request):
@@ -24,12 +25,15 @@ def sections_processor(request):
         except Exception as e:
             avatar = ""
 
+        quaterly_points = StreamManager().display_activity(current_user)
+
         return {
             "current_user": current_user,
             "status": status,
             "superuser_status": superuser_status,
             "challenge_status": challenge_status,
-            "avatar": avatar
+            "avatar": avatar,
+            "quaterly_points": quaterly_points
             }
 
     else:

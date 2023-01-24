@@ -176,6 +176,32 @@ class ActivityManager:
 
             return score
 
+    def get_points_last_week(self, client):
+        last_sunday = TimeMachine().last_sunday()
+        previous_sunday = TimeMachine().previous_sunday(last_sunday)
+        last_sunday_number = TimeMachine().date_to_number(last_sunday)
+        previous_sunday_number = TimeMachine().date_to_number(previous_sunday)
+
+        rows = Stream.objects.filter(
+            name=client,
+            command="Activity",
+            date_number__gte=previous_sunday_number,
+            date_number__lt=last_sunday_number
+                )
+
+        if not rows.exists():
+            return 0
+        else:
+            entries = [row.value for row in rows]
+            points = [
+                Cleaner().convert_acitivty_points_entry(entry)[1]
+                for entry in entries
+                ]
+
+            score = sum(points)
+
+            return score
+
     def get_points_over_lifetime(self, client):
         lessons = Stream.objects.filter(name=client, command="Duration")
         if not lessons.exists():

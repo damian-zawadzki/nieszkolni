@@ -1,10 +1,28 @@
+:root {
+  --small-font: 2vh;
+  --medium-font: 3vh;
+  --large-font: 6vh;
+  --huge-font: 10vh;
+
+  --font-color: #3C4043;
+  --font-family: "Google Sans", Roboto, Arial, sans-serif;
+
+  --brand-color: #14C5D9;
+  --backgroud-color: #FFF;
+  --container-color: #F9F9F9;
+
+  --border-color: #D3D3D3;
+  --success-color: #D4AF37;
+
+  --transition-time: 2s;
+}
+
 /*Nagivation*/
 .navigation {
   background-color: var(--background-color);
   display: flex;
   height: 12vh;
   left: 0;
-/*  padding: 5vh 0vw;*/
   position: static;
   max-width: 100%;
   width: 100%;
@@ -130,4 +148,22 @@
 
 .clocked_out {
   background-color: #E0432D;
+}
+
+.navigation_counter_box {
+  display: block;
+  font-family: var(--font-family);
+  font-size: var(--small-font);
+  font-weight: 750;
+  position: absolute;
+  top: 4vh;
+  right: 5vw;
+  z-index: 100;
+}
+
+.navigation_counter {
+  background-color: var(--brand-color);
+  color: #FFF;
+  text-align: center;
+  width: 3vw;
 }

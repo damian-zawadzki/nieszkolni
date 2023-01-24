@@ -103,13 +103,35 @@ def campus(request):
         uncompleted_assignments = CurriculumManager().display_uncompleted_assignments(current_user)
         completed_assignments = CurriculumManager().display_completed_assignments(current_user)
 
+        last_week_points = ActivityManager().get_points_last_week(
+                current_user
+                )
+
+        lightbox = StreamManager().check_sensor_today_for_client(
+                current_user,
+                "lightbox"
+                )
+
+        if request.method == "POST":
+            if request.POST["action_on_campus"] == "lightbox":
+                StreamManager().add_to_stream(
+                        current_user,
+                        "Sensor",
+                        "lightbox",
+                        current_user
+                        )
+
+                return redirect("campus")
+
         context = {
             "overdue_assignments": overdue_assignments,
             "uncompleted_assignments": uncompleted_assignments,
             "completed_assignments": completed_assignments,
             "score": score,
             "ratings": ratings,
-            "announcements": announcements
+            "announcements": announcements,
+            "last_week_points": last_week_points,
+            "lightbox": lightbox
             }
 
         if not challenge_status:
@@ -851,9 +873,8 @@ def portrait(request, client):
         target = StreamManager().display_activity_target(client)
         quaterly_points = StreamManager().display_activity(client)
         total_points = ActivityManager().get_points_over_lifetime_total(client)
-        last_week_points = ActivityManager().get_points(
-                client,
-                TimeMachine().last_sunday()
+        last_week_points = ActivityManager().get_points_last_week(
+                client
                 )
 
         context = {
@@ -3040,8 +3061,6 @@ def upload_stream(request):
         first_name = request.user.first_name
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
-
-        print(len(Stream.objects.all()))
 
         if request.method == "POST":
             if request.POST["action_on_upload"] == "upload":

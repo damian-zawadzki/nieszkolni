@@ -93,6 +93,32 @@
 
 </div>
 
+{% if not lightbox %}
+	<div class="lightcontainer" id="lightbox">
+		<div class="lightbox">
+			<div class="tab light">
+				<div>
+					<div class="tab_title light brand">YOUR LAST WEEK'S RESULT</div>
+					<div class="tab_content light brand">
+						{% if last_week_points > 0 %}
+						 +{{ last_week_points }}
+						{% else %}
+							{{ last_week_points }}
+						{% endif %}
+					</div>
+				</div>
+			</div>
+			<div class="lightbox_button">
+				<form action="{% url 'campus' %}"  method="POST">
+					{% csrf_token %}
+					<button type="submit" class="button_main" onclick="showHide('lightbox')" name="action_on_campus" value="lightbox">OK</button>
+				</form>
+			</div>
+		</div>
+
+	</div>
+{% endif %}
+
 <script type="text/javascript">
 	function displayWidget(element) {
 		var container = document.getElementById(element.id);

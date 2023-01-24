@@ -65,10 +65,10 @@ class StreamManager:
                 stamp = entry[0]
                 date_number = entry[1]
                 date = TimeMachine().american_to_system_date(entry[2])
-                name = entry[1]
-                command = entry[3]
-                value = Cleaner().clean_quotation_marks(entry[4])
-                stream_user = entry[5]
+                name = entry[3]
+                command = entry[4]
+                value = Cleaner().clean_quotation_marks(entry[5])
+                stream_user = entry[6]
                 status = "active"
 
                 self.import_old_stream(
@@ -1250,3 +1250,24 @@ class StreamManager:
                     challenges.remove(challenge)
 
             return challenges
+
+    def check_sensor_today_for_client(self, client, sensor):
+        today_number = TimeMachine().today_number()
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT value
+                FROM nieszkolni_app_stream
+                WHERE command = 'Sensor'
+                AND name = '{client}'
+                AND date_number = '{today_number}'
+                AND value = '{sensor}'
+                LIMIT 1
+                ''')
+
+            data = cursor.fetchone()
+
+            if data is None:
+                return False
+            else:
+                return True
