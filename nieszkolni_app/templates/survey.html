@@ -5,9 +5,9 @@
 <h1>QUESTION: {{ count }} OF {{ total }}</h1>
 
 <div class="flex-parent jc-center">
-   <div class="phrase_card">
-      <div class="phrase_card_container">
-         <h5 class="phrase_card_question">{{ question.question }}</h5>
+   <div class="tab flashcard">
+      <div class="">
+         <div class="tab_title flashcard">{{ question.question }}</div>
 
          <form action="{% url 'survey' item=item %}" method="POST">
          {% csrf_token %}

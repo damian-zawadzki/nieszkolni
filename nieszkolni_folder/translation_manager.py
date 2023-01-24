@@ -18,9 +18,9 @@ import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.neural_network import MLPRegressor
 
-nltk.download('stopwords')
-nltk.download('words')
-nltk.download('wordnet')
+# nltk.download('stopwords')
+# nltk.download('words')
+# nltk.download('wordnet')
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()

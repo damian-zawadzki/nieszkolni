@@ -557,4 +557,5 @@ class SurveyResponse(models.Model):
 
 
 class Binder(models.Model):
+    title = models.CharField(max_length=200, default="")
     binder = models.FileField()

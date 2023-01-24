@@ -25,6 +25,7 @@ class SubmissionManager:
     def find_landing_page(self, item):
         conditions = CurriculumManager().display_assignment_conditions(item)
         activity_points = ChallengeManager().display_reward_by_item(item)
+        activity_points = activity_points if activity_points is not None else 0
 
         if conditions == "challenge":
             page = "applause"

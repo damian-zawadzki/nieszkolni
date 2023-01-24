@@ -49,7 +49,7 @@ class HomeworkManager:
 
             else:
                 difference = target - result
-                output = ("WARNING", f"{difference} days still left! Keep up the good work!")
+                output = ("WARNING", f"{difference} day(s) still left! Keep up the good work!")
 
             return output
 
@@ -156,7 +156,7 @@ class HomeworkManager:
                     current_user
                     )
 
-            product = ("assignments", client)
+            product = ("campus")
 
         elif action == "mark_as_read":
 
@@ -165,7 +165,7 @@ class HomeworkManager:
                 current_user
                 )
 
-            product = ("assignments", client)
+            product = ("campus")
 
         elif action == "mark_as_done":
 
@@ -174,7 +174,7 @@ class HomeworkManager:
                 current_user
                 )
 
-            product = ("assignments", client)
+            product = ("campus", client)
 
         elif action == "check_stats":
 
@@ -184,7 +184,7 @@ class HomeworkManager:
                     command
                     )
 
-            product = ("assignments", item, output)
+            product = ("campus", output)
 
         elif action == "take_quiz":
 
@@ -208,7 +208,7 @@ class HomeworkManager:
                     current_user
                     )
 
-            product = ("assignments", item, output)
+            product = ("campus", output)
 
         elif action == "translate":
             product = ("translate_sentences", item)

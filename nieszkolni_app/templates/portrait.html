@@ -112,7 +112,7 @@
 	  var element = document.getElementById("activity_stats");
 	  var width = 1;
 	  var interval = setInterval(frame, 50);
-	  var activity = parseInt({{ last_week_points|safe }});
+	  var activity = parseInt({{ quaterly_points|safe }});
 	  var target = parseInt({{ target|safe }});
 	  var check = activity / target * 15;
 

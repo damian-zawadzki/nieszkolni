@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+
+<h1>VOICE</h1>
+
+<form action="{% url 'voice' %}"  method="POST">
+    {% csrf_token %}
+
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Phrase</label>
+        <input type="text" class="input_content" name="phrase">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+      <button type="button" class="button_main" name="action_on_voice" value="check">Check</button>
+  </div>
+
+</form>
+
+{% endblock %}

@@ -45,6 +45,7 @@ from nieszkolni_folder.survey_manager import SurveyManager
 from nieszkolni_folder.analytics_manager import AnalyticsManager
 from nieszkolni_folder.translation_manager import TranslationManager
 from nieszkolni_folder.dna_manager import DnaManager
+from nieszkolni_folder.voice_manager import VoiceManager
 
 from io import BytesIO
 
@@ -1656,6 +1657,14 @@ def assignment(request, item):
                         getattr(messages, product[2][0]),
                         product[2][1]
                         )
+            elif product[0] == "campus":
+                messages.add_message(
+                        request,
+                        getattr(messages, product[1][0]),
+                        product[1][1]
+                        )
+
+                return redirect(product[0])
 
             return redirect(product[0], product[1])
 
@@ -6226,7 +6235,7 @@ def challenges(request):
         target = StreamManager().display_activity_target(current_user)
 
         if status is True:
-            return redirect("profile")
+            return redirect("campus")
 
         return render(request, "challenges.html", {
             "challenges": challenges,
@@ -6691,6 +6700,20 @@ def analytics_grades(request):
         return render(request, "analytics_grades.html", {
             "grades": grades
             })
+
+
+@staff_member_required
+def voice(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        x = VoiceManager().save("hello")
+        print(x)
+        VoiceManager().play("hello")
+
+        return render(request, "voice.html", {})
 
 
 @staff_member_required

@@ -1,6 +1,8 @@
 import os
 import django
+
 from django.db import connection
+
 from django.conf import settings as django_settings
 from django.http import HttpResponse
 

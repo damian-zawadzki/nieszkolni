@@ -201,6 +201,7 @@ urlpatterns = [
     path('analytics_indicators/', views.analytics_indicators, name="analytics_indicators"),
     path('analytics_grades/', views.analytics_grades, name="analytics_grades"),
     path('lab/', views.lab, name="lab"),
+    path('voice/', views.voice, name="voice"),
     path('remove_all_new_cards/', views.remove_all_new_cards, name="remove_all_new_cards"),
     path('remove_multiple_from_stream/', views.remove_multiple_from_stream, name="remove_multiple_from_stream"),
     re_path(r'^flashcard_question/$', views.flashcard_question, name='flashcard_question'),
