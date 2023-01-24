@@ -1041,8 +1041,10 @@ class StreamManager:
             activity_history = []
             for row in rows:
                 entry = Cleaner().convert_acitivty_points_entry(row[0])
-                activity.append(entry[1])
-                activity_history.append(entry)
+
+                if entry is not None:
+                    activity.append(entry[1])
+                    activity_history.append(entry)
 
             activity_points = sum(activity)
 
