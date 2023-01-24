@@ -6711,7 +6711,6 @@ def voice(request):
 
         x = SpeechManager().save("hello")
         print(x)
-        # SpeechManager().play("hello")
 
         return render(request, "voice.html", {})
 
