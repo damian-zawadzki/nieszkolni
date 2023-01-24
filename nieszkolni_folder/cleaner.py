@@ -19,7 +19,7 @@ class Cleaner:
 
             history = (description, point)
 
+            return history
+
         except Exception as e:
             pass
-
-        return history
