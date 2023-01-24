@@ -7,11 +7,11 @@
   <h1>GRADE SENTENCES: {{ counter }}</h1>
 
     <div class="flex-parent jc-center">
-      <div class="phrase_card">
-        <div class="phrase_card_container">
-          <h5 class="phrase_card_question">{{ entry.0 }}</h5>
-          <p><span class="phrase_card_description"><b>Correct: </b>{{ entry.1 }}</span></p>
-          <p><span class="section"><b>Translation: </b> {{ entry.2 }}</span></p>
+      <div class="tab flashcard">
+        <div class="">
+          <div class="tab_title flashcard">{{ entry.polish }}</div>
+          <div class="tab_content"><b>Correct: </b>{{ entry.english }}</div>
+          <div class="tab_content flashcard"><b>Translation: </b> {{ entry.translation }}</div>
           
           <form method="POST">
             {% csrf_token %}

@@ -271,7 +271,10 @@ class AnalyticsManager:
         start_number = TimeMachine().get_start_end_number(start, end)["start"]
         end_number = TimeMachine().get_start_end_number(start, end)["end"]
 
-        clients = Client.objects.filter(status="active").values_list(
+        clients = Client.objects.filter(
+                status="active",
+                user_type="client"
+                ).values_list(
                 "name", flat=True
                 )
 

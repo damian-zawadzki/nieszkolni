@@ -1232,7 +1232,7 @@ def translate_sentences(request, item):
                 StreamManager().add_to_stream(client, "T", 10, current_user)
 
                 messages.success(request, ("Your assignment has been submitted!"))
-                return redirect("assignments")
+                return redirect("campus")
 
         if assignment_type == "translation":
             return render(request, "translate_text.html", {
@@ -3466,7 +3466,8 @@ def grade_sentences(request):
         current_user = first_name + " " + last_name
 
         entry = SentenceManager().analyze_and_grade_sentence("grade")
-        counter = SentenceManager().count_sentences_to_label()
+        print(entry)
+        counter = SentenceManager().count_sentences_to_grade()
 
         if request.method == "POST":
             sentence_number = request.POST["sentence_number"]
@@ -4920,7 +4921,7 @@ def take_quiz(request, item):
 
                     return redirect("applause", activity_points=page[1])
                 else:
-                    return redirect("assignments")
+                    return redirect("campus")
 
             else:
                 answer_raw = request.POST["answer"]
@@ -6526,7 +6527,7 @@ def completed(request):
 
         if request.method == "POST":
             if request.POST["action_on_completed"] == "leave":
-                return redirect("assignments")
+                return redirect("campus")
 
         return render(request, "completed.html", {})
 

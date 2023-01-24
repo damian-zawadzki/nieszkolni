@@ -18,9 +18,9 @@ import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.neural_network import MLPRegressor
 
-nltk.download('stopwords')
-nltk.download('words')
-nltk.download('wordnet')
+# nltk.download('stopwords')
+# nltk.download('words')
+# nltk.download('wordnet')
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
@@ -110,15 +110,20 @@ class TranslationManager:
         return {"lexicon": lexicon, "glossary": glossary}
 
     def spellcheck(self, glossary):
-        model = CountVectorizer(
-                analyzer="word",
-                binary=True,
-                ngram_range=(1, 1),
-                min_df=0
-                )
+        try:
+            model = CountVectorizer(
+                    analyzer="word",
+                    binary=True,
+                    ngram_range=(1, 1),
+                    min_df=0
+                    )
 
-        model_data = model.fit(glossary)
-        phrases = model_data.vocabulary_
+            model_data = model.fit(glossary)
+            phrases = model_data.vocabulary_
+
+        except Exception as e:
+            phrases = []
+
         stop_words = set(stopwords.words("english"))
 
         check = [

@@ -7,12 +7,12 @@
   <h1>LABEL SENTENCES: {{ counter }}</h1>
 
     <div class="flex-parent jc-center">
-      <div class="phrase_card">
-        <div class="phrase_card_container">
-          <div class="phrase_card_question">{{ entry.polish }}</div>
-          <div><b>Correct: </b>{{ entry.english }}</div>
-          <div><b>Translation: </b> {{ entry.translation }}</div>
-          <div><b>Suggestion: </b>{{ entry.label }} <b>Score: </b>{{ entry.score }}</div>
+      <div class="tab flashcard">
+        <div class="">
+          <div class="tab_title flashcard">{{ entry.polish }}</div>
+          <div class="tab_content"><b>Correct: </b>{{ entry.english }}</div>
+          <div class="tab_content"><b>Translation: </b> {{ entry.translation }}</div>
+          <div class="tab_content flashcard"><b>Suggestion: </b>{{ entry.label }} <b>Score: </b>{{ entry.score }}</div>
           
           <form method="POST">
             {% csrf_token %}
