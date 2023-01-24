@@ -45,7 +45,7 @@ from nieszkolni_folder.survey_manager import SurveyManager
 from nieszkolni_folder.analytics_manager import AnalyticsManager
 from nieszkolni_folder.translation_manager import TranslationManager
 from nieszkolni_folder.dna_manager import DnaManager
-# from nieszkolni_folder.speech_manager import SpeechManager
+from nieszkolni_folder.speech_manager import SpeechManager
 
 from io import BytesIO
 
@@ -6709,9 +6709,9 @@ def voice(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        # x = SpeechManager().save("hello")
-        # print(x)
-        # # SpeechManager().play("hello")
+        x = SpeechManager().save("hello")
+        print(x)
+        # SpeechManager().play("hello")
 
         return render(request, "voice.html", {})
 
