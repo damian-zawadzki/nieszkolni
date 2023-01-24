@@ -30,7 +30,7 @@ class SubmissionManager:
             page = "applause"
 
         else:
-            page = "assignments"
+            page = "campus"
 
         return (page, activity_points)
 

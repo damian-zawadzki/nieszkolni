@@ -122,7 +122,7 @@ class CurriculumManager:
                 AND status != 'invisible_uncompleted'
                 AND status != 'removed'
                 AND deadline_number <= '{display_limit}'
-                AND deadline_number <= '{today_number}'
+                AND deadline_number >= '{today_number}'
                 ORDER BY deadline_number ASC
                 ''')
 
@@ -156,7 +156,7 @@ class CurriculumManager:
                 AND status != 'invisible_uncompleted'
                 AND status != 'removed'
                 AND deadline_number <= '{display_limit}'
-                AND deadline_number > '{today_number}'
+                AND deadline_number < '{today_number}'
                 ORDER BY deadline_number ASC
                 ''')
 

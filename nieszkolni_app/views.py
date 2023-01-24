@@ -2676,6 +2676,7 @@ def upload_anki(request):
                     client = request.POST["client"]
                     deck = request.POST["deck"]
                     rows = file_converted.splitlines()
+                    count = len(rows)
 
                     with transaction.atomic():
                         for row in rows:
@@ -2692,7 +2693,7 @@ def upload_anki(request):
 
                         Binder.objects.get(pk=1).delete()
 
-                        messages.success(request, ("Flashcards added"))
+                        messages.success(request, (f"{count} flashcards added"))
                         return redirect("upload_anki")
 
         return render(request, "upload_anki.html", {
