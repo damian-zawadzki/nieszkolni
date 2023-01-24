@@ -682,7 +682,7 @@ class SentenceManager:
         else:
             ater = 0
             ato = 0
-            atess = 0
+            sample_size = 0
 
         return {"ater": ater, "ato": ato, "atess": sample_size}
 

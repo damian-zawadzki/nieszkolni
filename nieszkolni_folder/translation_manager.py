@@ -2,6 +2,10 @@ import os
 import django
 from django.db import connection
 
+import nltk
+
+from nltk.corpus import words, wordnet, stopwords
+
 from nieszkolni_app.models import SentenceStock
 from nieszkolni_app.models import Submission
 from nieszkolni_app.models import Composer
@@ -10,8 +14,6 @@ from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
 
 import pandas as pd
-
-from nltk.corpus import words, wordnet, stopwords
 
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.neural_network import MLPRegressor
