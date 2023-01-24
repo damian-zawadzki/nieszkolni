@@ -18,7 +18,7 @@ os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
 
 
-class VoiceManager:
+class SpeechManager:
     def __init__(self):
         pass
 

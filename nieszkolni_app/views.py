@@ -45,7 +45,7 @@ from nieszkolni_folder.survey_manager import SurveyManager
 from nieszkolni_folder.analytics_manager import AnalyticsManager
 from nieszkolni_folder.translation_manager import TranslationManager
 from nieszkolni_folder.dna_manager import DnaManager
-from nieszkolni_folder.voice_manager import VoiceManager
+# from nieszkolni_folder.voice_manager import VoiceManager
 
 from io import BytesIO
 
