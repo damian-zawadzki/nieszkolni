@@ -2660,41 +2660,49 @@ def upload_anki(request):
 
         if request.method == "POST":
             if request.POST["action_on_anki"] == "upload":
-                instance = Binder(binder=request.FILES["txt_file"], id=1)
+                instance = Binder(binder=request.FILES["csv_file"], id=1)
                 instance.save()
 
                 messages.success(request, ("File uploaded"))
-                return render(request, "upload_anki_2.html", {
+                return render(request, "upload_anki.html", {
                     "clients": clients
                     })
 
             elif request.POST["action_on_anki"] == "save":
+                cards = []
+
                 file = Binder.objects.get(pk=1)
                 with open(file.binder.path, "rb") as file:
                     file_converted = file.read().decode("utf8", errors="ignore")
+                    entries = StringToCsv().convert(file_converted)
+                    count = len(entries)
 
-                    client = request.POST["client"]
-                    deck = request.POST["deck"]
-                    rows = file_converted.splitlines()
-                    count = len(rows)
+                    last_card_id = Card.objects.order_by("-card_id").first()
+                    print(last_card_id.card_id)
 
-                    with transaction.atomic():
-                        for row in rows:
-                            entry = row.split("\t")
-                            polish = entry[0]
-                            english = entry[1]
+                    for entry in entries:
+                        new_card = Card(
+                            card_id=int(entry[0]) + last_card_id.card_id,
+                            client=entry[1],
+                            deck=entry[2],
+                            polish=entry[3],
+                            english=entry[4],
+                            publication_date=entry[5],
+                            due_date=entry[6],
+                            interval=entry[7],
+                            number_of_reviews=entry[8],
+                            line=entry[9],
+                            coach=entry[10],
+                            initiation_date=entry[11]
+                            )
 
-                            VocabularyManager().add_entry(
-                                client,
-                                deck,
-                                english,
-                                polish,
-                                current_user)
+                        cards.append(new_card)
 
-                        Binder.objects.get(pk=1).delete()
+                new_cards = Card.objects.bulk_create(cards)
+                Binder.objects.get(pk=1).delete()
 
-                        messages.success(request, (f"{count} flashcards added"))
-                        return redirect("upload_anki")
+                messages.success(request, (f"{count} flashcards added"))
+                return redirect("upload_anki")
 
         return render(request, "upload_anki.html", {
             "clients": clients
