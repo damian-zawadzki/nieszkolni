@@ -675,7 +675,7 @@ class SentenceManager:
 
         rows = Composer.objects.filter(status="graded").exclude(efficiency="")
         results = [row.efficiency for row in rows]
-        if len(results) == 0: 
+        if len(results) != 0:
             ater = round(results.count("True")/len(results), 2)
             ato = len([row for row in rows if row.method != "manual"])
             sample_size = len(results)
