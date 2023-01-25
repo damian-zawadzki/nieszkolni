@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>REMOVE A PROFILE</h1>
+
+<form action="{% url 'remove_profile' %}" method="POST">
+  {% csrf_token %}
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Profile</label>
+
+        <select required class="input_content" name="profile">
+            <option disabled selected value></option>
+
+            {% for profile in profiles %}
+            <option value="{{ profile.0 }}">{{ profile.0 }}</option>
+            {% endfor %}
+
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+  	<button type="submit" class="button_main" name="action_on_profile" value="remove">Remove</button>
+  </div>
+
+</form>
+
+{% include 'footer.html' %}
+{% endblock %}

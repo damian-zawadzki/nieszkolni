@@ -586,6 +586,8 @@ class RoadmapManager:
             professors_title_status
             ):
 
+        name = name.strip()
+
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 INSERT INTO nieszkolni_app_profile (

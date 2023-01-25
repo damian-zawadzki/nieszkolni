@@ -516,6 +516,10 @@ def register_user(request):
             l_name = request.POST["last_name"]
             password = request.POST["password"]
 
+            f_name = f_name.strip()
+            l_name = l_name.strip()
+            password = password.strip()
+
             username = f_name.lower() + l_name.lower()
 
             user = authenticate(
@@ -2709,10 +2713,8 @@ def upload_anki(request):
                     count = len(entries)
 
                     last_card_id = Card.objects.order_by("-card_id").first()
-                    print(last_card_id.card_id)
 
                     for entry in entries:
-                        print(int(entry[0]) + last_card_id.card_id)
                         new_card = Card(
                             card_id=int(entry[0]) + last_card_id.card_id,
                             client=entry[1],
@@ -2740,6 +2742,8 @@ def upload_anki(request):
             "clients": clients
             })
 
+# Highly destructive actions
+
 
 @staff_member_required
 def remove_all_new_cards(request):
@@ -2763,6 +2767,28 @@ def remove_all_new_cards(request):
             "clients": clients
             })
 
+
+@staff_member_required
+def remove_profile(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        profiles = RoadmapManager().display_profiles()
+
+        if request.method == "POST":
+            if request.POST["action_on_profile"] == "remove":
+                profile = request.POST["profile"]
+
+                Profile.objects.get(name=profile).delete()
+
+                messages.success(request, ("Profile removed"))
+                return redirect("remove_profile")
+
+        return render(request, "remove_profile.html", {
+            "profiles": profiles
+            })
 
 
 @staff_member_required
@@ -3568,7 +3594,6 @@ def grade_sentences(request):
         current_user = first_name + " " + last_name
 
         entry = SentenceManager().analyze_and_grade_sentence("grade")
-        print(entry)
         counter = SentenceManager().count_sentences_to_grade()
 
         if request.method == "POST":

@@ -205,6 +205,7 @@ urlpatterns = [
     path('deans_office/', views.deans_office, name="deans_office"),
     path('hall_of_fame/', views.hall_of_fame, name="hall_of_fame"),
     path('remove_all_new_cards/', views.remove_all_new_cards, name="remove_all_new_cards"),
+    path('remove_profile/', views.remove_profile, name="remove_profile"),
     path('remove_multiple_from_stream/', views.remove_multiple_from_stream, name="remove_multiple_from_stream"),
     re_path(r'^flashcard_question/$', views.flashcard_question, name='flashcard_question'),
     re_path(r'^flashcard_answer/$', views.flashcard_answer, name='flashcard_answer'),
