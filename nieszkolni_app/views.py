@@ -2913,23 +2913,66 @@ def upload_memories(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        # if request.method == "POST":
+        #     csv_file = request.FILES["csv_file"]
+
+        #     file = csv_file.read().decode("utf8")
+        #     entries = StringToCsv().convert(file)
+
+        #     for entry in entries:
+        #         KnowledgeManager().add_memory(
+        #             entry[0],
+        #             entry[1],
+        #             entry[2],
+        #             entry[3],
+        #             entry[4]
+        #             )
+
+        #     messages.success(request, ("The file has been uploaded!"))
+            # return redirect("upload_memories")
+
         if request.method == "POST":
-            csv_file = request.FILES["csv_file"]
+            if request.POST["action_on_upload"] == "upload":
+                instance = Binder(binder=request.FILES["csv_file"], id=1)
+                instance.save()
 
-            file = csv_file.read().decode("utf8")
-            entries = StringToCsv().convert(file)
+                messages.success(request, ("File uploaded"))
+                return render(request, "upload_memories.html", {})
 
-            for entry in entries:
-                KnowledgeManager().add_memory(
-                    entry[0],
-                    entry[1],
-                    entry[2],
-                    entry[3],
-                    entry[4]
-                    )
+            elif request.POST["action_on_upload"] == "save":
+                rows = []
 
-            messages.success(request, ("The file has been uploaded!"))
-            return redirect("upload_memories")
+                file = Binder.objects.get(pk=1)
+                with open(file.binder.path, "rb") as file:
+                    file_converted = file.read().decode("utf8", errors="ignore")
+                    entries = StringToCsv().convert(file_converted)
+                    count = len(entries)
+
+                    now_number = TimeMachine().now_number()
+                    today_number = TimeMachine().today_number()
+
+                    for entry in entries:
+                        new_row = Memory(
+                            publication_stamp=now_number,
+                            publication_date=entry[0],
+                            coach=entry[1],
+                            name=entry[2],
+                            prompt=entry[3],
+                            left_option=entry[4],
+                            right_option=entry[5] if len(entry) == 6 else "",
+                            due_date=today_number,
+                            number_of_reviews=0,
+                            answers="",
+                            revision_days=""
+                            )
+
+                        rows.append(new_row)
+
+                Memory.objects.bulk_create(rows)
+                Binder.objects.get(pk=1).delete()
+
+                messages.success(request, (f"{count} entries saved"))
+                return redirect("upload_memories")
 
         return render(request, "upload_memories.html", {})
 
