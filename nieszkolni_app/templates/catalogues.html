@@ -3,7 +3,7 @@
 
 <h1>CATALOGUES</h1>
 
-<div class="list_container">
+<!-- <div class="list_container">
 	<ul class="list">
 
 		{% for catalogue in catalogues %}
@@ -27,6 +27,15 @@
 
 	</ul>
 </div>
+ -->
+<table>
+	{% for catalogue in catalogues %}
+		<tr>
+			<td>{{ catalogue.0 }}</td>
+			<td>{{ catalogue.1 }}</td>
+		</tr>
+	{% endfor %}
+</table>
 
 {% include 'footer.html' %}
 {% endblock %}

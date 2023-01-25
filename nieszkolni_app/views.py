@@ -2764,7 +2764,6 @@ def remove_all_new_cards(request):
 
 
 
-
 @staff_member_required
 def upload_catalogues(request):
     if request.user.is_authenticated:
@@ -4439,19 +4438,14 @@ def ranking(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        user_agent = get_user_agent(request)
         rows = StreamManager().display_ranking()
-        tags = BackOfficeManager().display_tags()
+        conext = {"rows": rows}
 
+        user_agent = get_user_agent(request)
         if user_agent.is_mobile:
-            return render(request, "m_ranking.html", {
-                "rows": rows
-                })
-
-        return render(request, "ranking.html", {
-            "rows": rows,
-            "tags": tags
-            })
+            return render(request, "m_ranking.html", context)
+        else:
+            return render(request, "ranking.html", conext)
 
 
 @login_required
@@ -5427,7 +5421,7 @@ def plan_program(request):
                     )
 
                 messages.success(request, (f"{info}"))
-                return redirect("programs")
+                return redirect("plan_program")
 
         return render(request, "plan_program.html", {
             "clients": clients,
@@ -6607,6 +6601,37 @@ def remove_multiple_from_stream(request):
         return render(request, "remove_multiple_from_stream.html", {
             "commands": commands,
             })
+
+
+@login_required
+def deans_office(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        user_agent = get_user_agent(request)
+        if user_agent.is_mobile:
+            return render(request, "m_deans_office.html", {})
+        else:
+            return render(request, "deans_office.html", {})
+
+
+@login_required
+def hall_of_fame(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        rows = StreamManager().display_hall_of_fame()
+        conext = {"rows": rows}
+
+        user_agent = get_user_agent(request)
+        if user_agent.is_mobile:
+            return render(request, "m_hall_of_fame.html", conext)
+        else:
+            return render(request, "hall_of_fame.html", conext)
 
 
 # Analytics

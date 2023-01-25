@@ -11,7 +11,7 @@
 			<div class="tab_icon_container feedy"><div class="tab_icon_box_border_error mini"><img class="tab_icon" src="{% static 'images/exclamation.png' %}" width="10" height="10"></div></div>
 			<div class="item_content">
 				<div class="item_title">{{ overdue_assignment.7 }}</div>
-				<div class="item_description">{{ overdue_assignment.1|date:"l" }} · {{ overdue_assignment.1 }}</div>
+				<div class="item_description">{{ overdue_assignment.1 }}</div>
 			</div>
 			<a id="{{ overdue_assignment.0 }}" href="{% url 'assignment' item=overdue_assignment.0 %}"></a>
 		</div>
@@ -22,7 +22,7 @@
 			<div class="tab_icon_container feedy"><div class="tab_icon_box_border_only mini"><img class="tab_icon" src="{% static 'images/check.png' %}" width="10" height="10"></div></div>
 			<div class="item_content">
 				<div class="item_title">{{ uncompleted_assignment.7 }}</div>
-				<div class="item_description">{{ uncompleted_assignment.1|date:"l" }} · {{ uncompleted_assignment.1 }}</div>
+				<div class="item_description">{{ uncompleted_assignment.1 }}</div>
 			</div>
 			<a id="{{ uncompleted_assignment.0 }}" href="{% url 'assignment' item=uncompleted_assignment.0 %}"></a>
 		</div>
@@ -33,7 +33,7 @@
 			<div class="tab_icon_container feedy"><div class="tab_icon_box_border mini"><img class="tab_icon" src="{% static 'images/check.png' %}" width="10" height="10"></div></div>
 			<div class="item_content">
 				<div class="item_title">{{ completed_assignment.7 }}</div>
-				<div class="item_description">{{ completed_assignment.1|date:"l" }} · {{ completed_assignment.1 }}</div>
+				<div class="item_description">{{ completed_assignment.1 }}</div>
 			</div>
 			<a id="{{ completed_assignment.0 }}" href="{% url 'assignment' item=completed_assignment.0 %}"></a>
 		</div>

@@ -1,0 +1,41 @@
+@media (max-width: 768px) {
+    .input_content {
+        min-width: 75vw;
+        width: 75vw;
+    }
+
+    .side_menu {
+        min-width: 100vw;
+        width: 100vw;
+    }
+
+    .tab.flashcard {
+        width: 90vw;
+        top: 10vh;
+    }
+
+    .tab_content.flashcard {
+        font-size: 2.5vh;
+    }
+
+    .feed {
+        min-width: 90vw;
+        width: 90vw;
+    }
+
+    .tab_icon_container.feedy {
+        width: 25%;
+    }
+
+    .navigation_counter {
+        width: 15vw;
+    }
+
+    .hamburgers_campus {
+        margin-left: 5vw;
+    }
+
+    .hamburger_campus {
+      margin: 2vh 1vw 2vh 0vw;
+    }
+}

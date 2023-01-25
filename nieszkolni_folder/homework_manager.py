@@ -156,7 +156,7 @@ class HomeworkManager:
                     current_user
                     )
 
-            product = ("campus")
+            product = ("campus", ("SUCCESS", "Task unchecked"))
 
         elif action == "mark_as_read":
 
@@ -165,7 +165,7 @@ class HomeworkManager:
                 current_user
                 )
 
-            product = ("campus")
+            product = ("campus", ("SUCCESS", "Marked as read"))
 
         elif action == "mark_as_done":
 
@@ -174,7 +174,7 @@ class HomeworkManager:
                 current_user
                 )
 
-            product = ("campus", client)
+            product = ("campus", ("SUCCESS", "Marked as done"))
 
         elif action == "check_stats":
 

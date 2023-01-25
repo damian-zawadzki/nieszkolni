@@ -6,10 +6,10 @@
   <form action="{% url 'take_quiz' item=item %}" method="POST">
   {% csrf_token %}
 
-    <div class="phrase_card">
-        <div class="phrase_card_container">
-        <p class="phrase_card_answer"><span class="section">{{ quiz.7 }}</span></p>
-        <h5 class="phrase_card_question" style="margin-bottom: 25px">{{ quiz.6 }}</h5>
+    <div class="tab flashcard">
+        <div class="">
+        <div class="tab_title flashcard">{{ quiz.7 }}</div>
+        <div class="tab_content flashcard" style="margin-bottom: 25px">{{ quiz.6 }}</div>
 
           <input type="hidden" name="quiz_question_id" value="{{ quiz_question_id }}">
           <input type="hidden" name="item" value="{{ item }}">

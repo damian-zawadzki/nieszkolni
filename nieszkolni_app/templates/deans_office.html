@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>DEAN'S OFFICE</h1>
+
+<div class="flex-parent jc-center">
+	<ul class="square_menu">
+		  <a class="square_menu_link" href="{% url 'programs' %}">ACADEMIC PROGRAMS</a>
+		  <a class="square_menu_link" href="{% url 'courses' %}">COURSES</a>
+		  <a class="square_menu_link" href="{% url 'rules' %}">GUIDELINES</a>
+	</ul>
+</div>
+
+
+{% endblock %}

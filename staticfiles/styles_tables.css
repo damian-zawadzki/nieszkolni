@@ -31,9 +31,10 @@ th {
   background-color: var(--backgroud-color);
   border-bottom: 1pt solid;
   border-bottom-color: #D3D3D3;
+  color: var(--font-color);
   font-size: var(--small-font);
   font-weight: 1000;
-  margin-bottom: 20px;
+  margin-bottom: 2vh;
   padding: 0vh 1vw 1vh 1vw;
   position: sticky;
   text-align: center;
@@ -45,7 +46,7 @@ th {
 td {
   border-bottom: 1pt solid;
   border-bottom-color: #D3D3D3;
-  margin-bottom: 20px;
+  margin-bottom: 2vh;
   padding: 2vh 1vw 2vh 1vw;
   text-align: center;
   vertical-align: middle;
@@ -65,15 +66,12 @@ table.m_table {
   border-collapse: separate;
   border-bottom-color: rgba(255,255,255,1);
   border-spacing: 0px;
-  font-size: 14px;
-  font-weight: 300;
-  height: 100px;
-  margin-left: 0%;
-  margin-right: 0%;
+  font-size: var(--small-font);
+  margin-left: 5vw;
+  margin-right: 5vw;
   margin-bottom: 1%;
-  max-width: 100%;
   overflow: hidden;
-  width: 100%;
+  width: 90vw;
   table-layout: auto;
 }
 

@@ -1171,6 +1171,76 @@ class StreamManager:
             result = [x for x in ranking if x[3] in current_profiles]
             return result
 
+    def display_hall_of_fame(self):
+        clients_list = list(Client.objects.filter(user_type="client").values_list(
+                "name",
+                flat=True
+                ))
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                value,
+                name
+                FROM nieszkolni_app_stream
+                WHERE command = 'Activity'
+                ''')
+
+            rows = cursor.fetchall()
+
+            activity = []
+            clients = []
+            data = ({"client": clients, "activity": activity})
+            for row in rows:
+                line = row[0]
+
+                try:
+                    point_raw = re.search(r";\d+$|;-\d+$", line).group()
+                    point = re.sub(";", "", point_raw)
+                    point = int(point)
+                    activity.append(point)
+
+                    client = row[1]
+                    clients.append(client)
+
+                except Exception as e:
+                    pass
+
+            table = pd.DataFrame(data, columns=["client", "activity"])
+            table_2 = table.groupby("client").sum()
+            table_3 = table_2.sort_values(by="activity", ascending=False)
+            table_4 = table_3.reset_index()
+            table_4.index = table_4.index + 1
+            table_4["rank"] = table_4["activity"].rank(
+                    method="dense",
+                    na_option="bottom",
+                    ascending=False
+                    ).astype(int)
+            table_5 = list(table_4.itertuples(index=True, name=None))
+            entries = table_5
+
+            profiles = self.display_display_names()
+            ranking = []
+            for entry in entries:
+
+                position = entry[3]
+                client = entry[1]
+                activity_points = entry[2]
+
+                if profiles.get(entry[1]) is None:
+                    display_name = entry[1]
+                    avatar = ""
+                else:
+                    display_name = profiles.get(entry[1])[0]
+                    avatar = profiles.get(entry[1])[1]
+
+                item = (position, display_name, activity_points, client, avatar)
+
+                ranking.append(item)
+
+            result = [x for x in ranking if x[3] in clients_list if x[0] < 5]
+            return result
+
     def display_ranking_by_client(self, client):
         rows = self.display_ranking()
 

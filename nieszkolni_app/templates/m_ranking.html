@@ -15,10 +15,15 @@
 
 	{% for row in rows %}
 
-		<tr class="font">
+		<tr class="font tr_clickable" onclick="jump('{{ row.3 }}')">
+
+			<a id="{{ row.3 }}" href="{% url 'portrait' client=row.3 %}"></a>
 
 			<td>{{ row.0 }}</td>
-			<td>{{ row.1 }}</td>
+			<td id="{{ row.0 }}" onmouseover="showOnHover(this.id)">
+				<!-- <img class="avatar_image" src="{{ row.4 }}" width="50" height="50"> -->
+				{{ row.1 }}
+			</td>
 			<td>{{ row.2 }}</td>
 
 		</tr>

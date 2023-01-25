@@ -134,6 +134,26 @@
   z-index: 100;
 }
 
+.hamburgers_campus {
+  display: inline-flex;
+  left: 0;
+  justify-content: center;
+  position: relative;
+  top: 0;
+}
+
+.hamburger_campus {
+  background-color: #fff;
+  border-radius: 24px;
+  border-style: none;
+  box-shadow: rgba(0, 0, 0, .2) 0 3px 5px 0px;
+  cursor: default;
+  padding: 10px;
+  position: relative;
+  margin: 2vh 1vw 2vh 1vw;
+  top: 0;
+}
+
 /*Clock*/
 .clock_dot {
   border-radius: 100%;

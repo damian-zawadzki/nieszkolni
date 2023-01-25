@@ -552,10 +552,10 @@ class KnowledgeManager:
                 catalogue_name
                 )
                 VALUES (
-                {publication_date},
+                '{publication_date}',
                 '{publicating_user}',
                 '{entry}',
-                {entry_number},
+                '{entry_number}',
                 '{catalogue_number}',
                 '{catalogue_name}'
                 )

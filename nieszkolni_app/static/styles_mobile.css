@@ -30,4 +30,12 @@
     .navigation_counter {
         width: 15vw;
     }
+
+    .hamburgers_campus {
+        margin-left: 5vw;
+    }
+
+    .hamburger_campus {
+      margin: 2vh 1vw 2vh 0vw;
+    }
 }
