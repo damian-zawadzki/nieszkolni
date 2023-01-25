@@ -5,13 +5,13 @@
 <h1>UPLOAD PRONUNCIATION</h1>
 
 <form action="{% url 'upload_pronunciation' %}" method="POST" enctype="multipart/form-data"> 
-{% csrf_token %}
+    {% csrf_token %}
 
     <div class="flex-parent jc-center">
         <button type="button" class="button_main">
             <label style="margin: 25px; font-weight: bold;">
                     Browse
-                <input type="file" style="display: none; margin: 25px;" name="csv_file" required="True" class="input_content">
+                <input type="file" style="display: none; margin: 25px;" name="csv_file" class="input_content">
             </label>
         </button>
         <label id="file_upload" style="display: none;" id="file_upload">
@@ -20,7 +20,8 @@
     </div>
 
     <div class="flex-parent jc-center">                    
-         <button type="submit" class="button_main">Upload</button>
+        <button type="submit" class="button_main" name="actoion_on_upload" value="upload">Upload</button>
+        <button type="submit" class="button_main" name="actoion_on_upload" value="save">Save</button>
     </div>
 
 </form>

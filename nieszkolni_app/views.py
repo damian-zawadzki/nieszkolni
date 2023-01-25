@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
 from django.db import transaction
+from django.db import IntegrityError
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
@@ -2987,20 +2988,51 @@ def upload_pronunciation(request):
         current_user = first_name + " " + last_name
 
         if request.method == "POST":
-            csv_file = request.FILES["csv_file"]
+            if request.POST["actoion_on_upload"] == "upload":
+                instance = Binder(binder=request.FILES["csv_file"], id=1)
+                instance.save()
 
-            file = csv_file.read().decode("utf8")
-            entries = StringToCsv().convert(file)
+                messages.success(request, ("File uploaded"))
+                return render(request, "upload_pronunciation.html", {})
 
-            for entry in entries:
-                KnowledgeManager().add_pronunciation(
-                    entry[0],
-                    entry[1],
-                    entry[2]
-                    )
+            elif request.POST["actoion_on_upload"] == "save":
+                rows = []
 
-            messages.success(request, ("The file has been uploaded!"))
-            return redirect("upload_pronunciation")
+                file = Binder.objects.get(pk=1)
+                with open(file.binder.path, "rb") as file:
+                    file_converted = file.read().decode("utf8", errors="ignore")
+                    entries = StringToCsv().convert(file_converted)
+                    count = len(entries)
+
+                    now_number = TimeMachine().now_number()
+                    today_number = TimeMachine().today_number()
+
+                    for entry in entries:
+                        check = Pronunciation.objects.filter(
+                                name=entry[1],
+                                entry=entry[2]
+                                ).exists()
+
+                        if not check:
+
+                            new_row = Pronunciation(
+                                publication_stamp=now_number,
+                                publication_date=entry[0],
+                                name=entry[1],
+                                entry=entry[2],
+                                due_date=today_number,
+                                number_of_reviews=0,
+                                answers="",
+                                revision_days=""
+                                )
+
+                            rows.append(new_row)
+
+                Pronunciation.objects.bulk_create(rows)
+                Binder.objects.get(pk=1).delete()
+
+                messages.success(request, (f"{count} entries added"))
+                return redirect("upload_pronunciation")
 
         return render(request, "upload_pronunciation.html", {})
 
