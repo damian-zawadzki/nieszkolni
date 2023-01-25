@@ -4539,13 +4539,13 @@ def ranking(request):
         current_user = first_name + " " + last_name
 
         rows = StreamManager().display_ranking()
-        conext = {"rows": rows}
+        context = {"rows": rows}
 
         user_agent = get_user_agent(request)
         if user_agent.is_mobile:
             return render(request, "m_ranking.html", context)
         else:
-            return render(request, "ranking.html", conext)
+            return render(request, "ranking.html", context)
 
 
 @login_required
