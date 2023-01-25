@@ -2792,6 +2792,30 @@ def remove_profile(request):
 
 
 @staff_member_required
+def remove_client(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        clients = ClientsManager().list_current_clients()
+
+        if request.method == "POST":
+            if request.POST["action_on_client"] == "remove":
+                client = request.POST["client"]
+
+                Client.objects.get(name=client).delete()
+
+                messages.success(request, ("Client removed"))
+                return redirect("remove_client")
+
+        return render(request, "remove_client.html", {
+            "clients": clients
+            })
+
+
+
+@staff_member_required
 def upload_catalogues(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
