@@ -2798,7 +2798,7 @@ def remove_client(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        clients = ClientsManager().list_current_clients()
+        clients = ClientsManager().list_all_users()
 
         if request.method == "POST":
             if request.POST["action_on_client"] == "remove":

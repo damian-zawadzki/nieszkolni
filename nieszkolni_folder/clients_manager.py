@@ -189,6 +189,19 @@ class ClientsManager:
 
             return current_employees
 
+    def list_all_users(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT name
+                FROM nieszkolni_app_client
+                ''')
+
+            rows = cursor.fetchall()
+
+            clients = [row[0] for row in rows]
+
+            return clients
+
     def load_user(self, name):
         with connection.cursor() as cursor:
             cursor.execute(f'''
