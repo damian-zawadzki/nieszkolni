@@ -1238,7 +1238,7 @@ class StreamManager:
 
                 ranking.append(item)
 
-            result = [x for x in ranking if x[3] in clients_list if x[0] < 5]
+            result = [x for x in ranking if x[3] in clients_list if x[0] < 5 if x[2] > 0]
             return result
 
     def display_ranking_by_client(self, client):

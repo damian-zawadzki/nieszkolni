@@ -3161,7 +3161,7 @@ def check_homework(request, current_user=''):
                         current_user
                         )
 
-                messages.success(request, ("Assignment marked as uncompleted!"))
+                messages.success(request, ("Marked as uncompleted!"))
                 return redirect("check_homework")
 
             elif request.POST["action_on_check"] == "explore":

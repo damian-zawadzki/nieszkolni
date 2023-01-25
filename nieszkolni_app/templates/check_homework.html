@@ -4,7 +4,7 @@
 
 <h1>{{ current_client.upper }}'S HOMEWORK</h1>
 
-<div class="list visible">
+<!-- <div class="list visible">
 
 	{% for overdue_assignment in overdue_assignments %}
 		<div class="list_item tr_clickable" onclick="jump({{ overdue_assignment.0 }})">
@@ -39,7 +39,72 @@
 		</div>
 	{% endfor %}
 
-</div>
+</div> -->
+
+<table>
+
+	{% for overdue_assignment in overdue_assignments %}
+
+		<form action="{% url 'check_homework' %}" method="POST">
+			{% csrf_token %}
+
+			<tr class="tr_clickable" onclick="jump('{{ overdue_assignments.0 }}')">
+				<td><b>overdue<b></td>
+				<td class="td_sentences">{{ overdue_assignment.7 }}</td>
+				<td>{{ overdue_assignment.1 }}</td>
+				<td><button type="submit" class="button_main" name="action_on_check" value="check">Check</button></td>
+				<td><button type="submit" class="button_main" name="action_on_check" value="remove">Remove</button></td>
+
+				<input type="hidden" name="item" value="{{ overdue_assignment.0 }}">
+				<a id="{{ overdue_assignment.0 }}" href="{% url 'assignment' item=overdue_assignment.0 %}"></a>
+			</tr>
+
+		</form>
+
+	{% endfor %}
+
+	{% for uncompleted_assignment in uncompleted_assignments %}
+
+		<form action="{% url 'check_homework' %}" method="POST">
+			{% csrf_token %}
+
+			<tr class="tr_clickable" onclick="jump('{{ uncompleted_assignment.0 }}')">
+				<td>uncompleted</td>
+				<td class="td_sentences">{{ uncompleted_assignment.7 }}</td>
+				<td>{{ uncompleted_assignment.1 }}</td>
+				<td><button type="submit" class="button_main" name="action_on_check" value="check">Check</button></td>
+				<td><button type="submit" class="button_main" name="action_on_check" value="remove">Remove</button></td>
+
+
+				<input type="hidden" name="item" value="{{ uncompleted_assignment.0 }}">
+				<a id="{{ uncompleted_assignment.0 }}" href="{% url 'assignment' item=uncompleted_assignment.0 %}"></a>
+			</tr>
+
+		</form>
+
+	{% endfor %}
+
+	{% for completed_assignment in completed_assignments %}
+
+		<form action="{% url 'check_homework' %}" method="POST">
+			{% csrf_token %}
+
+			<tr class="tr_clickable" onclick="jump('{{ completed_assignment.0 }}')">
+				<td>completed</td>
+				<td class="td_sentences">{{ completed_assignment.7 }}</td>
+				<td>{{ completed_assignment.1 }}</td>
+				<td><button type="submit" class="button_main" name="action_on_check" value="uncheck">Uncheck</button></td>
+				<td><button type="submit" class="button_main" name="action_on_check" value="remove">Remove</button></td>
+
+				<input type="hidden" name="item" value="{{ completed_assignment.0 }}">
+				<a id="{{ completed_assignment.0 }}" href="{% url 'assignment' item=completed_assignment.0 %}"></a>
+			</tr>
+
+		</form>
+
+	{% endfor %}
+
+</table>
 
 {% include 'footer.html' %}
 {% endblock %}

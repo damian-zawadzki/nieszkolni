@@ -38,30 +38,30 @@
 	</form>
 </div>
 
-<div class="list_container">
-	<ul class="list">
+<table>
 
-		{% for prompt in prompts %}
-			
+	{% for prompt in prompts %}
+
+		<tr>
+
 			<form action="{% url 'prompts' %}" method="POST">
 				{% csrf_token %}
-				<li class="list_item">
 
-					<div class="list_content">{{ prompt.0 }}</div>
-					<div class="list_content_inside">{{ prompt.1 }}</div>
-					<div class="list_content_small">{{ prompt.2 }}</div>
+				<td>{{ prompt.0 }}</td>
+				<td>{{ prompt.1 }}</td>
+				<td>{{ prompt.2 }}</td>
 
-					<input type="hidden" name="prompt" value="{{ prompt.0 }}">
-					<input type="hidden" name="parent" value="{{ prompt.1 }}">
-					<button type="submit" class="list_button button_main" name="prompts_action" value="delete_prompt">Delete</button>
+				<input type="hidden" name="prompt" value="{{ prompt.0 }}">
+				<input type="hidden" name="parent" value="{{ prompt.1 }}">
+				<td><button type="submit" class="list_button button_main" name="prompts_action" value="delete_prompt">Delete</button></td>
 
-				</li>
 			</form>
 
-		{% endfor %}
+		</tr>
 
-	</ul>
-</div>
+	{% endfor %}
+
+</table>
 
 {% include 'footer.html' %}
 {% endblock %}

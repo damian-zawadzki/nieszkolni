@@ -146,7 +146,6 @@ class HomeworkManager:
             product = ("check_homework", current_user)
 
         elif action == "submit":
-
             product = ("submit_assignment_automatically", item)
 
         elif action == "uncheck":
@@ -187,11 +186,9 @@ class HomeworkManager:
             product = ("campus", output)
 
         elif action == "take_quiz":
-
             product = ("take_quiz", item)
 
         elif action == "take_part":
-
             product = ("survey", item)
 
         elif action == "add_vocabulary":
