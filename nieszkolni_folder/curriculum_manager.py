@@ -908,6 +908,10 @@ class CurriculumManager:
             action = "check_stats"
             call = "Check"
             info = "flashcards_sentences_7"
+        elif assignment_type == "flashcards_sentences":
+            action = "check_stats"
+            call = "Check"
+            info = "flashcards_sentences_7"
         elif assignment_type == "survey":
             action = "take_part"
             call = "Take part"
