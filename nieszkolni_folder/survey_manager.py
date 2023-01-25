@@ -6,6 +6,8 @@ from nieszkolni_app.models import Survey
 from nieszkolni_app.models import SurveyQuestion
 from nieszkolni_app.models import SurveyOption
 from nieszkolni_app.models import SurveyResponse
+from nieszkolni_app.models import Curriculum
+from nieszkolni_app.models import Profile
 
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
@@ -13,6 +15,7 @@ from nieszkolni_folder.cleaner import Cleaner
 import re
 
 from nieszkolni_folder.curriculum_manager import CurriculumManager
+from nieszkolni_folder.curriculum_planner import CurriculumPlanner
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
@@ -307,3 +310,34 @@ class SurveyManager:
         if check:
             responses = SurveyResponse.objects.filter(question_id=question_id)
             return responses
+
+    def perform_action(self, item, action, response_id, current_user):
+        client = list(Curriculum.objects.filter(item=item).values_list(
+                "name",
+                flat=True
+                ))[0]
+
+        if action == "plan a course":
+            try:
+                course_ids_list = []
+                course_ids_list.append(response_id)
+                semester = Profile.objects.get(name=client).current_semester
+                program = "custom"
+
+                CurriculumPlanner().plan_courses(
+                    client,
+                    client,
+                    course_ids_list,
+                    semester,
+                    program
+                    )
+
+            except Exception as e:
+                pass
+        
+
+
+
+
+
+

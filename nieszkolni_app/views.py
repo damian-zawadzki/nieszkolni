@@ -6651,6 +6651,14 @@ def survey(request, item):
         if request.method == "POST":
             response = request.POST["response"]
 
+            if question.action != "none":
+                SurveyManager().perform_action(
+                    item,
+                    question.action,
+                    response,
+                    current_user
+                    )
+
             SurveyManager().respond(response, response_id)
 
             return redirect("survey", item=item)

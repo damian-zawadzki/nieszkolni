@@ -349,7 +349,8 @@ class ActivityManager:
         if date is None:
             date = TimeMachine().today()
         date_number = TimeMachine().date_to_number(date)
-        previous_sunday = TimeMachine().previous_sunday(date)
+        last_sunday = TimeMachine().previous_sunday(date)
+        previous_sunday = TimeMachine().previous_sunday(last_sunday)
         following_sunday = TimeMachine().following_sunday(date)
 
         assignments = CurriculumManager().assignments_and_status_from_to(

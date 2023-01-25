@@ -146,7 +146,8 @@ class RoadmapManager:
                 link,
                 reference_system,
                 threshold,
-                component_id
+                component_id,
+                course_id
                 FROM nieszkolni_app_course
                 ''')
 

@@ -3,25 +3,26 @@
 
 <h1>COURSES</h1>
 
-<div class="list_container">
-	<ul class="list">
+<table>
 
-		{% for course in courses %}
-		<form action="{% url 'list_courses' %}" method="POST">
-			{% csrf_token %}
-			<li class="list_item">
+	{% for course in courses %}
 
-				<div class="list_content">{{ course.0 }}</div>
+		<tr>
+			<form action="{% url 'list_courses' %}" method="POST">
+				{% csrf_token %}
+
+				<td>{{ course.10 }}</td>
+				<td>{{ course.0 }}</td>
+				<td><button type="submit" class="list_button button_main" name="action_on_course" value="more">More</button></td>
+
 				<input type="hidden" name="course" value="{{ course.0 }}">
-				<button type="submit" class="list_button button_main" name="action_on_course" value="more">More</button>
 
-			</li>
-		</form>
+			</form>
+		</tr>
 
-		{% endfor %}
-
-	</ul>
-</div>
+	{% endfor %}
+	
+</table>
 
 {% include 'footer.html' %}
 {% endblock %}

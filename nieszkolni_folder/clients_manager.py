@@ -194,6 +194,7 @@ class ClientsManager:
             cursor.execute(f'''
                 SELECT name
                 FROM nieszkolni_app_client
+                ORDER BY name ASC
                 ''')
 
             rows = cursor.fetchall()
