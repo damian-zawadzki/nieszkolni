@@ -24,7 +24,7 @@
 					<div class="tab_icon_container feedy"><div class="tab_icon_box_border_error mini"><img class="tab_icon" src="{% static 'images/exclamation.png' %}" width="10" height="10"></div></div>
 					<div class="item_content">
 						<div class="item_title">{{ overdue_assignment.7 }}</div>
-						<div class="item_description">{{ overdue_assignment.1|date:"l" }} · {{ overdue_assignment.1 }}</div>
+						<div class="item_description">{{ overdue_assignment.1 }}</div>
 					</div>
 					<a id="{{ overdue_assignment.0 }}" href="{% url 'assignment' item=overdue_assignment.0 %}"></a>
 				</div>
@@ -46,7 +46,7 @@
 					<div class="tab_icon_container feedy"><div class="tab_icon_box_border_only mini"><img class="tab_icon" src="{% static 'images/check.png' %}" width="10" height="10"></div></div>
 					<div class="item_content">
 						<div class="item_title">{{ uncompleted_assignment.7 }}</div>
-						<div class="item_description">{{ uncompleted_assignment.1|date:"l" }} · {{ uncompleted_assignment.1 }}</div>
+						<div class="item_description">{{ uncompleted_assignment.1 }}</div>
 					</div>
 					<a id="{{ uncompleted_assignment.0 }}" href="{% url 'assignment' item=uncompleted_assignment.0 %}"></a>
 				</div>
@@ -57,7 +57,7 @@
 					<div class="tab_icon_container feedy"><div class="tab_icon_box_border mini"><img class="tab_icon" src="{% static 'images/check.png' %}" width="10" height="10"></div></div>
 					<div class="item_content">
 						<div class="item_title">{{ completed_assignment.7 }}</div>
-						<div class="item_description">{{ completed_assignment.1|date:"l" }} · {{ completed_assignment.1 }}</div>
+						<div class="item_description">{{ completed_assignment.1 }}</div>
 					</div>
 					<a id="{{ completed_assignment.0 }}" href="{% url 'assignment' item=completed_assignment.0 %}"></a>
 				</div>
@@ -90,27 +90,47 @@
 		</div>
 	</div> -->
 
-
+	<div class="feed_open_container">
+		{% for announcement in announcements %}
+			<div class="tab post">
+				<div>
+					<div class="tab_title post">{{ announcement.4 }}</div>
+					<div class="tab_content post">{{ announcement.5 }}</div>
+					<button type="button" class="button_main_page top" onclick="jump('{{ announcement.0 }}')">Read more</button>
+					<a id="{{ announcement.0 }}" href="{% url 'announcement' notification_id=announcement.0 %}"></a>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+	
 </div>
 
-<!-- 	<table>
+{% if not lightbox %}
+	<div class="lightcontainer" id="lightbox">
+		<div class="lightbox">
+			<div class="tab light">
+				<div>
+					<div class="tab_title light brand">YOUR LAST WEEK'S RESULT</div>
+					<div class="tab_content light brand">
+						{% if last_week_points > 0 %}
+						 +{{ last_week_points }}
+						{% else %}
+							{{ last_week_points }}
+						{% endif %}
+					</div>
+				</div>
+			</div>
+			<div class="lightbox_button">
+				<form action="{% url 'campus' %}"  method="POST">
+					{% csrf_token %}
+					<button type="submit" class="button_main" onclick="showHide('lightbox')" name="action_on_campus" value="lightbox">OK</button>
+				</form>
+			</div>
+		</div>
 
-	<tr>
-		<th><h4>NEWS</h4></th>
-	</tr>
+	</div>
+{% endif %}
 
-	{% for announcement in announcements %}
-
-		<tr class="font">
-
-			<td class="td_sentences"><a href="{% url 'announcement' notification_id=announcement.0 %}">{{ announcement.4 }}</a></td>
-
-		</tr>
-
-	{% endfor %}
-
-	</table>
- -->
 
 <script type="text/javascript">
 	function displayWidget(element) {
@@ -132,7 +152,7 @@
 			box.style.display = 'none';
 			container.style.zIndex = 0;
 			container.style.position = 'relative';
-			container.style.height = 10 + 'vh';
+			container.style.height = 20 + 'vh';
 			title.style.fontSize = 2.5 + 'vh';
 			arrow_down.classList.add('invisible');
 			arrow_up.classList.remove('invisible');

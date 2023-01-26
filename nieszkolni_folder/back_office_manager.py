@@ -541,6 +541,35 @@ class BackOfficeManager:
                 )
 
     # Notifications
+    def add_notifications(
+            self,
+            sender,
+            recipients,
+            subject,
+            content,
+            notification_type,
+            status
+            ):
+
+        if recipients[0] == "all":
+            self.add_notification(
+                sender,
+                recipients[0],
+                subject,
+                content,
+                notification_type,
+                status
+                )
+        else:
+            for recipient in recipients:
+                self.add_notification(
+                    sender,
+                    recipient,
+                    subject,
+                    content,
+                    notification_type,
+                    status
+                    )
 
     def add_notification(
             self,
@@ -600,7 +629,7 @@ class BackOfficeManager:
 
     def display_latest_announcements(self):
         now_number = TimeMachine().today_number()
-        Seven_days_ago_stamp = now_number - 604800
+        seven_days_ago_stamp = now_number - 604800
 
         with connection.cursor() as cursor:
             cursor.execute(f'''
@@ -619,7 +648,38 @@ class BackOfficeManager:
                 OR notification_type = 'article'
                 OR notification_type = 'rule'
                 )
-                AND stamp >= {Seven_days_ago_stamp}
+                AND stamp >= {seven_days_ago_stamp}
+                ORDER BY stamp DESC
+                ''')
+
+            announcements = cursor.fetchall()
+
+            return announcements
+
+    def display_latest_announcements_for_client(self, client):
+        now_number = TimeMachine().today_number()
+        seven_days_ago_stamp = now_number - 604800
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                notification_id,
+                stamp,
+                sender,
+                recipient,
+                subject,
+                content,
+                notification_type,
+                status
+                FROM nieszkolni_app_notification
+                WHERE (
+                notification_type = 'visible_announcement'
+                OR notification_type = 'article'
+                OR notification_type = 'rule'
+                )
+                AND stamp >= {seven_days_ago_stamp}
+                AND (recipient = '{client}'
+                OR recipient = 'all')
                 ORDER BY stamp DESC
                 ''')
 

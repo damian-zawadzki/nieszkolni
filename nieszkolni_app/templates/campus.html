@@ -90,15 +90,19 @@
 		</div>
 	</div> -->
 
-<!-- {% for announcement in announcements %}
-	<div class="tab">
-		<div class="tab_title">{{ announcement.4 }}</div>
-		<div>{{ announcement.5 }}</div>
-		<button type="button" class="button_main" onclick="jump('{{ announcement.0 }}')">Read more</button>
-		<a id="	{{ announcement.0 }}" href="{% url 'announcement' notification_id=announcement.0 %}"></a>
+	<div class="feed_open_container">
+		{% for announcement in announcements %}
+			<div class="tab post">
+				<div>
+					<div class="tab_title post">{{ announcement.4 }}</div>
+					<div class="tab_content post">{{ announcement.5 }}</div>
+					<button type="button" class="button_main_page top" onclick="jump('{{ announcement.0 }}')">Read more</button>
+					<a id="{{ announcement.0 }}" href="{% url 'announcement' notification_id=announcement.0 %}"></a>
+				</div>
+			</div>
+		{% endfor %}
 	</div>
-{% endfor %} -->
-
+	
 </div>
 
 {% if not lightbox %}
@@ -147,7 +151,7 @@
 			box.style.display = 'none';
 			container.style.zIndex = 0;
 			container.style.position = 'relative';
-			container.style.height = 10 + 'vh';
+			container.style.height = 20 + 'vh';
 			title.style.fontSize = 2.5 + 'vh';
 			arrow_up.classList.add('invisible');
 			arrow_down.classList.remove('invisible');

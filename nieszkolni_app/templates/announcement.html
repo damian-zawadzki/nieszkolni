@@ -2,16 +2,17 @@
 {% block 'content' %}
 
 <div class="flex-parent jc-center">
-	<div class="news_card">
-    	<div class="task_card_container">
-	    	
-	      	<div class="task_card_title">{{ announcement.4 }}</div>
+	<div class="tab full">
+    	<div>
+	      	<div class="tab_title post">{{ announcement.4 }}</div>
 
 	      	{% if user.is_staff %}
-	      		<div class="task_card_details"><b>ID:</b> {{ announcement.0 }} <b>Timestamp:</b> {{ stamp }} <b>Type:</b> {{ announcement.6 }}</div>
+	      		<div class="tab_content full"><b>ID:</b> {{ announcement.0 }} <b>Timestamp:</b> {{ stamp }} <b>Type:</b> {{ announcement.6 }}</div>
 	      	{% endif %}
 	      	
-	      	<div class="task_card_content">{{ announcement.5|safe }}</div>
+	      	<div class="tab_content full">{{ announcement.5|safe }}</div>
+	      	<button type="button" class="button_main top" onclick="jump('campus')">Back</button>
+	      	<a id="campus" href="{% url 'campus' %}"></a>
     	</div>
   	</div>
 </div>

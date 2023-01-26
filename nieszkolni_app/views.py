@@ -92,8 +92,7 @@ def campus(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        announcements = BackOfficeManager().display_latest_announcements()
-        user_agent = get_user_agent(request)
+        announcements = BackOfficeManager().display_latest_announcements_for_client(current_user)
 
         challenges = ChallengeManager().display_planned_challenges(current_user)
         challenge_status = ChallengeManager().refresh_process(challenges)
@@ -113,6 +112,8 @@ def campus(request):
                 current_user,
                 "lightbox"
                 )
+
+        user_agent = get_user_agent(request)
 
         if request.method == "POST":
             if request.POST["action_on_campus"] == "lightbox":
@@ -4632,15 +4633,15 @@ def make_announcement(request):
         if request.method == "POST":
             if request.POST["action_on_announcement"] == "publish":
                 sender = current_user
-                recipient = "all"
+                recipients = request.POST.getlist("recipients")
                 subject = request.POST["subject"]
                 content = request.POST["content"]
                 notification_type = request.POST["notification_type"]
                 status = "sent"
 
-                BackOfficeManager().add_notification(
+                BackOfficeManager().add_notifications(
                     sender,
-                    recipient,
+                    recipients,
                     subject,
                     content,
                     notification_type,

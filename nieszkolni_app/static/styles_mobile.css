@@ -19,6 +19,11 @@
         font-size: 2vh;
     }
 
+    .tab.post, .tab.full {
+        min-width: 90vw;
+        width: 90vw;
+    }
+
     .feed {
         min-width: 90vw;
         width: 90vw;
@@ -37,6 +42,6 @@
     }
 
     .hamburger_campus {
-      margin: 2vh 1vw 2vh 0vw;
+        margin: 2vh 1vw 2vh 0vw;
     }
 }

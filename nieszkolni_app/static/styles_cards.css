@@ -71,6 +71,23 @@
   padding: 5vh 5vw;
 }
 
+.tab.post {
+  display: block;
+  margin: 5vh auto;
+  min-width: 90%;
+  max-width: 90%;
+  position: relative;
+  padding: 5vh 5vw;
+}
+
+.tab.full {
+  margin: 5vh auto;
+  min-width: 50%;
+  max-width: 50%;
+  position: relative;
+  padding: 5vh 5vw;
+}
+
 .m_tab.profile {
   height: 20vh;
   width: 90vw;
@@ -246,6 +263,14 @@
   margin: 1vh 1vw;
 }
 
+.tab_title.post {
+  font-family: var(--font-family);
+  font-size: var(--medium-font);
+  font-weight: 1000;
+  text-align: left;
+  margin: 1vh 0vw;
+}
+
 .tab_content.profile {
   font-family: var(--font-family);
   font-size: var(--large-font);
@@ -263,6 +288,28 @@
   font-family: var(--font-family);
   font-size: 10vh;
   font-weight: 1000;
+}
+
+.tab_content.post {
+  display: -webkit-box;
+     -webkit-line-clamp: 2;
+             line-clamp: 2; 
+     -webkit-box-orient: vertical;
+  font-family: var(--font-family);
+  font-size: var(--small-font);
+  font-weight: 500;
+  min-width: 90%;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+}
+
+.tab_content.full {
+  font-family: var(--font-family);
+  font-size: var(--small-font);
+  font-weight: 500;
+  line-height: 4vh;
+  text-align: left;
 }
 
 /*Squares*/

@@ -7,40 +7,46 @@
 <form action="{% url 'make_announcement' %}"  method="POST">
 	{% csrf_token %}
 
-  <div class="flex-parent jc-center">
-     <div class="input_container">
-      <label class="input_label">Recipient</label>
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+        <label class="input_label">Client</label>
 
-        <select required class="input_content" name="recipient">
-            <option selected disabled value></option>
-            <option value="all">all</option>
+        <ul>
+
+            <li class="checkbox_list">
+                <input type="checkbox" id="all" value="all" name="recipients">
+                <label for="all">all</label>
+            </li>
 
             {% for client in clients %}
-            <option value="{{ client }}">{{ client }}</option>
+                <li class="checkbox_list">
+                    <input type="checkbox" id="{{ client }}" value="{{ client }}" name="recipients">
+                    <label for="{{ client }}">{{ client }}</label>
+                </li>
             {% endfor %}
 
-        </select>
+        </ul>
 
+        </div>
     </div>
-  </div>
 
-  <div class="flex-parent jc-center">
-     <div class="input_container">
-      <label class="input_label">Subject</label>
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+            <label class="input_label">Subject</label>
             <input type="text" class="input_content" name="subject">
+        </div>
     </div>
-  </div>
 
-  <div class="flex-parent jc-center">
-     <div class="input_container">
-      <label class="input_label">Content</label>
-        <textarea type="text" class="input_content input_paragraph" name="content"></textarea>
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+            <label class="input_label">Content</label>
+            <textarea type="text" class="input_content input_paragraph" name="content"></textarea>
+        </div>
     </div>
-  </div>
 
-  <div class="flex-parent jc-center">
-     <div class="input_container">
-      <label class="input_label">Type</label>
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+        <label class="input_label">Type</label>
 
         <select required class="input_content" name="notification_type">
             <option selected disabled value></option>
@@ -51,13 +57,13 @@
             <option value="article">article</option>
         </select>
 
+        </div>
     </div>
-  </div>
 
 
-  <div class="flex-parent jc-center">
-      <button type="submit" class="button_main" name="action_on_announcement" value="publish">Publish</button>
-  </div>
+    <div class="flex-parent jc-center">
+        <button type="submit" class="button_main" name="action_on_announcement" value="publish">Publish</button>
+    </div>
 
 </form>
 

@@ -125,5 +125,8 @@
 
 .button_main_page:hover {
   font-weight: 1000;
+}
 
+.button_main.top, .button_main_page.top {
+  margin-top: 5vh;
 }
