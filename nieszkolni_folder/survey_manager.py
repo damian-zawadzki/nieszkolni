@@ -319,8 +319,7 @@ class SurveyManager:
 
         if action == "plan a course":
             try:
-                course_ids_list = []
-                course_ids_list.append(response_id)
+                course_ids_list = response_id.split(", ")
                 semester = Profile.objects.get(name=client).current_semester
                 program = "custom"
 

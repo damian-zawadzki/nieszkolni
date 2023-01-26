@@ -215,22 +215,29 @@ class CurriculumPlanner:
         for course in courses:
             matrix = course[0]
 
-            RoadmapManager().add_roadmap(
-                client,
-                semester,
-                matrix,
-                deadline_roadmap,
-                current_user,
-                -1,
-                "automatic",
-                program
-                )
+            check = Roadmap.objects.filter(
+                semester=semester,
+                course=matrix,
+                name=client
+                ).exists()
 
-            self.plan_curricula(
-                client,
-                matrix,
-                starting_date_number
-                )
+            if not check:
+                RoadmapManager().add_roadmap(
+                    client,
+                    semester,
+                    matrix,
+                    deadline_roadmap,
+                    current_user,
+                    -1,
+                    "automatic",
+                    program
+                    )
+
+                self.plan_curricula(
+                    client,
+                    matrix,
+                    starting_date_number
+                    )
 
     def client_to_plan_program(self):
         start = BackOfficeManager().display_start_of_semester()
