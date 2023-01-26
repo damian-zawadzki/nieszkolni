@@ -25,6 +25,7 @@
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   display: inline-flex;
   justify-content: center;
+  max-width: 60vw;
   padding: 2vh 0vw;
   text-align: center;
   transition: 0.3s;

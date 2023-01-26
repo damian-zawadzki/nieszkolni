@@ -6505,6 +6505,7 @@ def add_survey_question(request):
                 question_type = request.POST["question_type"]
                 options = request.POST.getlist("option")
                 action = request.POST["action"]
+                description = request.POST["description"]
 
                 option_ids = ";".join(options)
 
@@ -6512,7 +6513,8 @@ def add_survey_question(request):
                         question,
                         question_type,
                         option_ids,
-                        action
+                        action,
+                        description
                         )
 
                 messages.success(request, "Question added")

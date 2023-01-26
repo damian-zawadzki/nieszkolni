@@ -8,6 +8,7 @@
    <div class="tab flashcard">
       <div class="">
          <div class="tab_title flashcard">{{ question.question }}</div>
+         <div class="tab_content flashcard">{{ question.description|safe }}</div>
 
          <form action="{% url 'survey' item=item %}" method="POST">
          {% csrf_token %}

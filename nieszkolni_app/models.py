@@ -536,6 +536,7 @@ class Survey(models.Model):
 
 class SurveyQuestion(models.Model):
     question = models.TextField(default="")
+    description = models.TextField(default="")
     question_type = models.CharField(max_length=200, default="")
     option_ids = models.CharField(max_length=200, default="")
     action = models.CharField(max_length=200, default="")

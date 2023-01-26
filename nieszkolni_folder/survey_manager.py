@@ -75,10 +75,12 @@ class SurveyManager:
             question,
             question_type,
             option_ids,
-            action
+            action,
+            description
             ):
 
         question = Cleaner().clean_quotation_marks(question)
+        description = Cleaner().clean_quotation_marks(description)
 
         with connection.cursor() as cursor:
             cursor.execute(f'''
@@ -86,13 +88,15 @@ class SurveyManager:
                 question,
                 question_type,
                 option_ids,
-                action
+                action,
+                description
                 )
                 VALUES (
                 '{question}',
                 '{question_type}',
                 '{option_ids}',
-                '{action}'
+                '{action}',
+                '{description}'
                 )
                 ''')
 
@@ -104,7 +108,8 @@ class SurveyManager:
                 question,
                 question_type,
                 option_ids,
-                action
+                action,
+                description
                 FROM nieszkolni_app_surveyquestion
                 ''')
 
