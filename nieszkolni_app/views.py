@@ -1405,6 +1405,59 @@ def list_of_assignments_to_grade(request):
 
 
 @staff_member_required
+def grade_assignment(request, unique_id):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        essay = SubmissionManager().display_assignment(unique_id)
+
+        if request.method == "POST":
+            if request.POST["revision_action"] == "save_graded_assignment":
+                unique_id = request.POST["unique_id"]
+                reviewed_content = request.POST["reviewed_content"]
+                conditions = request.POST["conditions"]
+                comment = request.POST["comment"]
+                grade = request.POST["grade"]
+
+                save_revision = SubmissionManager().grade_assignment(
+                    unique_id,
+                    reviewed_content,
+                    current_user,
+                    conditions,
+                    comment,
+                    grade
+                    )
+
+                return redirect("list_of_assignments_to_grade")
+
+            elif request.POST["revision_action"] == "save_and_mark_graded_assignment":
+                unique_id = request.POST["unique_id"]
+                reviewed_content = request.POST["reviewed_content"]
+                conditions = request.POST["conditions"]
+                comment = request.POST["comment"]
+                grade = request.POST["grade"]
+
+                mark_as_graded = SubmissionManager().mark_as_graded(unique_id)
+
+                save_revision = SubmissionManager().grade_assignment(
+                    unique_id,
+                    reviewed_content,
+                    current_user,
+                    conditions,
+                    comment,
+                    grade
+                    )
+
+                return redirect("list_of_assignments_to_grade")
+
+        return render(request, "grade_assignment.html", {
+            "essay": essay
+            })
+
+
+@staff_member_required
 def upload_curriculum(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name

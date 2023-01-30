@@ -3,32 +3,28 @@
 
 <h1>ASSIGNMENTS TO GRADE</h1>
 
-<div class="list_container">
-	<ul class="list">
+<table>
 
-		{% for essay in essays %}
-			
-			<form action="{% url 'list_of_assignments_to_grade' %}" method="POST">
-				{% csrf_token %}
-				<li class="list_item">
+	<tr>
+		<th></th>
+	</tr>
 
-					<div class="list_content">{{ essay.1 }}</div>
-					<div class="list_content_inside">{{ essay.2 }}</div>
-					<div class="list_content_small">{{ essay.0 }}</div>
+	{% for essay in essays %}
 
-					<input type="hidden" name="unique_id" value="{{ essay.4 }}">
+		<tr>
+			<td>{{ essay.1 }}</td>
+			<td>{{ essay.2 }}</td>
+			<td>{{ essay.0 }}</td>
+			<td><button type="button" class="button_main" onclick="jump('{{ essay.4 }}')">Review</button></td>
 
-					<div class="list_button">
-						<button type="submit" class="button_main" name="revision_action" value="grade_assignment">Review</button>
-					</div>
+			<a id="{{ essay.4 }}" href="{% url 'grade_assignment' unique_id=essay.4 %}"></a>
 
-				</li>
-			</form>
+		</tr>
 
-		{% endfor %}
+	{% endfor %}
 
-	</ul>
-</div>
+
+</table>
 
 {% include 'footer.html' %}
 {% endblock %}

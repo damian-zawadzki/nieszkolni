@@ -26,6 +26,7 @@ def sections_processor(request):
             avatar = ""
 
         quaterly_points = StreamManager().display_activity(current_user)
+        target = StreamManager().display_activity_target(current_user)
 
         return {
             "current_user": current_user,
@@ -33,7 +34,8 @@ def sections_processor(request):
             "superuser_status": superuser_status,
             "challenge_status": challenge_status,
             "avatar": avatar,
-            "quaterly_points": quaterly_points
+            "quaterly_points": quaterly_points,
+            "target": target
             }
 
     else:

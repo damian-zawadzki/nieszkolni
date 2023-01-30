@@ -52,6 +52,7 @@ urlpatterns = [
     path('submit_assignment_automatically/<int:item>/', views.submit_assignment_automatically, name="submit_assignment_automatically"),
     path('list_of_submissions/', views.list_of_submissions, name="list_of_submissions"),
     path('list_of_assignments_to_grade/', views.list_of_assignments_to_grade, name="list_of_assignments_to_grade"),
+    path('grade_assignment/<int:unique_id>', views.grade_assignment, name="grade_assignment"),
     path('footer/', views.footer, name="footer"),
     path('display_curricula/', views.display_curricula, name="display_curricula"),
     path('coach/', views.coach, name="coach"),
