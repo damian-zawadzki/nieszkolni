@@ -64,6 +64,17 @@
 	</ul>
 </div>
 
+<div class="flex-parent jc-center">
+	<ul class="square_menu">
+	
+		<form action="{% url 'weekly_checklist' %}" method="POST">
+			{% csrf_token %}
+			<button type="submit" class="square_menu_link" id="update_model_b" name="action_on_system" value="update_model_sentences" onclick="disableButton(this.id)">UPDATE THE MODEL</button>
+		</form>
+			
+	</ul>
+</div>
+
 <script src="{% static 'functions.js' %}"></script>  
 
 {% include 'footer.html' %}

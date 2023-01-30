@@ -1716,6 +1716,7 @@ def assignment(request, item):
                         getattr(messages, product[2][0]),
                         product[2][1]
                         )
+
             elif product[0] == "campus":
                 messages.add_message(
                         request,
@@ -3331,6 +3332,7 @@ def check_homework(request, current_user=''):
                         output[1]
                         )
 
+                messages.success(request, ("Marked as completed"))
                 return redirect("check_homework")
 
             elif request.POST["action_on_check"] == "uncheck":
@@ -3340,13 +3342,16 @@ def check_homework(request, current_user=''):
                         current_user
                         )
 
-                messages.success(request, ("Marked as uncompleted!"))
+                messages.success(request, ("Marked as uncompleted"))
                 return redirect("check_homework")
 
-            elif request.POST["action_on_check"] == "explore":
+            elif request.POST["action_on_check"] == "remove":
                 item = request.POST["item"]
 
-                return redirect("assignment", item=item)
+                CurriculumManager().remove_curriculum(item)
+
+                messages.success(request, ("Removed"))
+                return redirect("check_homework")
 
         return render(request, "check_homework.html", {
                 "overdue_assignments": overdue_assignments,
@@ -3671,7 +3676,7 @@ def grade_sentences(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        entry = SentenceManager().analyze_and_grade_sentence("grade")
+        entry = SentenceManager().display_sentences_to_grade()
         counter = SentenceManager().count_sentences_to_grade()
 
         if request.method == "POST":
@@ -6140,6 +6145,17 @@ def weekly_checklist(request):
 
                 ActivityManager().settle_last_week_activity(current_user)
 
+                return redirect("weekly_checklist")
+
+            if request.POST["action_on_system"] == "update_model_sentences":
+
+                product = SentenceManager().update_model_sentences()
+
+                messages.add_message(
+                        request,
+                        getattr(messages, product[0][0]),
+                        product[0][1]
+                        )
                 return redirect("weekly_checklist")
 
         return render(request, "weekly_checklist.html", {

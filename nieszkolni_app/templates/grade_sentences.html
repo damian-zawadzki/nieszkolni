@@ -2,16 +2,18 @@
 {% block 'content' %}
 
 {% if entry == None %}
+  <h1>SENTENCES TO GRADE: {{ counter }}</h1>
+
 {% else %}
 
-  <h1>GRADE SENTENCES: {{ counter }}</h1>
+  <h1>SENTENCES TO GRADE: {{ counter }}</h1>
 
     <div class="flex-parent jc-center">
       <div class="tab flashcard">
         <div class="">
-          <div class="tab_title flashcard">{{ entry.polish }}</div>
-          <div class="tab_content"><b>Correct: </b>{{ entry.english }}</div>
-          <div class="tab_content flashcard"><b>Translation: </b> {{ entry.translation }}</div>
+          <div class="tab_title flashcard">{{ entry.0 }}</div>
+          <div class="tab_content"><b>Correct: </b>{{ entry.1 }}</div>
+          <div class="tab_content flashcard"><b>Translation: </b> {{ entry.2 }}</div>
           
           <form method="POST">
             {% csrf_token %}

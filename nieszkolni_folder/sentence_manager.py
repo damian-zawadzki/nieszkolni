@@ -588,6 +588,42 @@ class SentenceManager:
 
             return counter
 
+    def update_model_sentences(self):
+        rows = Composer.objects.filter(status="translated").distinct().values_list(
+                "sentence_id",
+                flat=True
+                )
+
+        if len(rows) != 0: 
+            for row in rows:
+                instances = Composer.objects.filter(
+                        status="graded",
+                        sentence_id=row
+                        )
+                count = len(instances)
+
+
+                if count > 0:
+                    
+                    sentences = Composer.objects.filter(
+                            status="translated"
+                            )
+
+                    entries = [
+                        (sentence.translation, -1)
+                        for sentence in sentences
+                        if sentence.sentence_id == row
+                        ]
+                    analysis = TranslationManager().run(entries, row)
+
+            return (("SUCCESS", "Updated"),)
+
+        else:
+            return (("WARNING", "No sentences to grade"),)
+
+
+
+
     def analyze_and_grade_sentence(self, stack):
 
         if stack == "grade":
@@ -648,13 +684,9 @@ class SentenceManager:
 
     def grade_sentence(self, entry, result, current_user):
         now_number = TimeMachine().now_number()
+        method = "manual"
 
-        efficiency = entry["label"] == result
-        print(efficiency)
-        score = entry["score"]
-        method = entry["method"]
-        shape = entry["shape"]
-        sentence_number = entry["sentence_number"]
+        sentence_number = entry[3]
 
         with connection.cursor() as cursor:
             cursor.execute(f'''
@@ -663,10 +695,7 @@ class SentenceManager:
                 status = 'graded',
                 result = '{result}',
                 reviewing_user = '{current_user}',
-                score = '{score}',
-                efficiency = '{efficiency}',
                 method = '{method}',
-                shape = '{shape}',
                 reviewing_stamp = '{now_number}'
                 WHERE sentence_number = {sentence_number}
                 ''')

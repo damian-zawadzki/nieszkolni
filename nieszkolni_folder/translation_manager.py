@@ -30,33 +30,25 @@ class TranslationManager:
     def __init__(self):
         pass
 
-    def run(self, english, sentence_id):
-        conversion = self.convert(english, sentence_id)
+    def run(self, entries, sentence_id):
+        conversion = self.convert(entries, sentence_id)
         data = conversion["data"]
         sample = conversion["sample"]
         count = conversion["count"]
 
-        alternation = self.alter(data, sample)
+        alternation = self.generate_lexicon(data, sample)
         lexicon = alternation["lexicon"]
-        glossary = alternation["glossary"]
-
-        check = self.spellcheck(glossary)
 
         dictionary = self.step_3(lexicon)
         data_matrix = self.process_data(data, dictionary)
         sample_matrix = self.process_sample(sample, dictionary)
-        prediction = self.predict(data_matrix, sample_matrix)
-        score = prediction["score"]
-        label = prediction["label"]
-        shape = prediction["shape"]
 
-        analysis = self.analyze(check, count, score, label, shape)
+        predictions = self.predict(data_matrix, sample_matrix)
+        sample = self.analyze(sample, predictions, count)
 
-        return analysis
-
-    def convert(self, english, sentence_id):
+    def convert(self, entries, sentence_id):
         sample = pd.DataFrame(
-            data=[(english, -1)],
+            data=entries,
             columns=["translation", "label"]
             )
 
@@ -100,16 +92,18 @@ class TranslationManager:
 
         return {"data": data, "sample": sample, "count": count}
 
-    def alter(self, data, sample):
+    def generate_lexicon(self, data, sample):
         lexicon = []
         dictionary = data["english"].to_list()
         glossary = sample["translation"].to_list()
         lexicon.extend(dictionary)
         lexicon.extend(glossary)
 
-        return {"lexicon": lexicon, "glossary": glossary}
+        return {"lexicon": lexicon}
 
-    def spellcheck(self, glossary):
+    def spellcheck(self, sentence):
+        glossary = list(sentence)
+
         try:
             model = CountVectorizer(
                     analyzer="word",
@@ -142,7 +136,7 @@ class TranslationManager:
 
         check = all(check)
 
-        return {"check": check, "remarks": remarks}
+        return check
 
     def step_3(self, lexicon):
         model = CountVectorizer(
@@ -197,8 +191,6 @@ class TranslationManager:
         return sample_matrix
 
     def predict(self, data_matrix, sample_matrix):
-        shape = f"{data_matrix.shape}/{sample_matrix.shape}"
-
         analysis = MLPRegressor(
                 max_iter=10000,
                 activation="identity",
@@ -208,31 +200,36 @@ class TranslationManager:
 
         calculations = analysis.predict(sample_matrix[:, :-1])
 
-        if calculations[0] > 0.95 and calculations[0] < 1.05:
-            label = 1
-        else:
-            label = 0
+        predictions = pd.DataFrame(data=calculations, columns=["score"])
+        predictions["score"] = predictions["score"].apply(lambda x: round(x, 3))
+        predictions["shape"] = f"{data_matrix.shape}/{sample_matrix.shape}"
 
-        return {"shape": shape, "label": label, "score": calculations[0]}
+        return predictions
 
-    def analyze(self, check, count, score, label, shape):
-        if not check:
-            label = 0
-            method = "automatic_typo"
+    def analyze(self, sample, prediction, count):
 
-        elif count > 20 and (0.999 < score < 1.001 or -0.005 < score < 0.005):
-            method = "automatic_confidence"
+        sample["spellcheck"] = sample["translation"].apply(
+                lambda x: self.spellcheck(x)
+                )
+        sample["score"] = prediction["score"]
 
-        else:
-            method = "manual"
+        sample["spellcheck_label"] = sample["spellcheck"].apply(
+                lambda x: 1 if x is True else 0
+                )
 
-        score = round(score, 3)
-        label = "correct" if label == 1 else "incorrect"
-        analysis = {
-            "score": score,
-            "label": label,
-            "method": method,
-            "shape": shape
-            }
+        sample["score_label"] = sample["score"].apply(
+                lambda x: 1 if (x > 0.999 and x < 1.001)
+                else (0 if (x > -0.005 and x < 0.005) else -1
+                ))
 
-        return analysis
+        sample["label"] = sample.apply(
+                lambda x: -1 if x["score_label"] == -1
+                else 1 if x["spellcheck_label"] == 1
+                and x["score_label"] == 1
+                else 0,
+                axis=1
+                )
+
+        print(sample)
+
+        return sample
