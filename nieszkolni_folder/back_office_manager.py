@@ -621,6 +621,7 @@ class BackOfficeManager:
                 status
                 FROM nieszkolni_app_notification
                 WHERE notification_type != 'comment'
+                ORDER BY stamp DESC
                 ''')
 
             announcements = cursor.fetchall()
