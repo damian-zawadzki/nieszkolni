@@ -125,6 +125,7 @@ urlpatterns = [
     path('announcements/', views.announcements, name="announcements"),
     path('make_announcement/', views.make_announcement, name="make_announcement"),
     path('announcement/<int:notification_id>/', views.announcement, name="announcement"),
+    path('update_announcement/<int:notification_id>/', views.update_announcement, name="update_announcement"),
     path('announcement/', views.announcement, name="announcement"),
     path('add_grade/', views.add_grade, name="add_grade"),
     path('results/', views.results, name="results"),

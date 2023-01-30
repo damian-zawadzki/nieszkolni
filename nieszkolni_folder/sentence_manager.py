@@ -676,12 +676,15 @@ class SentenceManager:
 
     def count_ater_and_atess(self):
 
-        rows = Composer.objects.filter(status="graded").exclude(efficiency="")
-        results = [row.efficiency for row in rows]
-        if len(results) != 0:
-            ater = round(results.count("True")/len(results), 2)
-            ato = len([row for row in rows if row.method != "manual"])
-            sample_size = len(results)
+        rows = Composer.objects.filter(status="graded")
+        if len(rows) != 0:
+            ato = len([
+                    row for row in rows
+                    if row.method != "manual"
+                    and row.method != ""
+                    ])
+            ater = round(ato/len(rows), 2)
+            sample_size = len(rows)
         else:
             ater = 0
             ato = 0

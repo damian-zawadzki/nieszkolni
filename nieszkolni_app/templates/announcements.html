@@ -15,6 +15,7 @@
 					{% csrf_token %}
 					  <div class="flex-parent jc-center">
 					  		<input type="hidden" name="notification_id" value="{{ announcement.0 }}">
+					    	<button type="submit" class="list_button button_main" name="action_on_announcement" value="update">Update</button>
 					    	<button type="submit" class="list_button button_main" name="action_on_announcement" value="more">More</button>
 					  </div>
 				</form>

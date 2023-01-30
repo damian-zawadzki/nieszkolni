@@ -722,6 +722,27 @@ class BackOfficeManager:
 
             return announcement
 
+    def update_notifications(
+            self,
+            notification_id,
+            subject,
+            content,
+            notification_type
+            ):
+
+        subject = Cleaner().clean_quotation_marks(subject)
+        content = Cleaner().clean_quotation_marks(content)
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                UPDATE nieszkolni_app_notification
+                SET
+                subject = '{subject}',
+                content = '{content}',
+                notification_type = '{notification_type}'
+                WHERE notification_id = '{notification_id}'
+                ''')
+
     def add_option(
             self,
             command,

@@ -4681,7 +4681,12 @@ def announcements(request):
             if request.POST["action_on_announcement"] == "more":
                 notification_id = request.POST["notification_id"]
 
-                return redirect(f"announcement/{notification_id}")
+                return redirect("announcement", notification_id=notification_id)
+
+            elif request.POST["action_on_announcement"] == "update":
+                notification_id = request.POST["notification_id"]
+
+                return redirect("update_announcement", notification_id=notification_id)
 
         return render(request, "announcements.html", {
             "announcements": announcements
@@ -4719,6 +4724,36 @@ def make_announcement(request):
 
         return render(request, "make_announcement.html", {
             "clients": clients
+            })
+
+
+@staff_member_required
+def update_announcement(request, notification_id):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        announcement = BackOfficeManager().display_announcement(notification_id)
+
+        if request.method == "POST":
+            if request.POST["action_on_announcement"] == "update":
+                subject = request.POST["subject"]
+                content = request.POST["content"]
+                notification_type = request.POST["notification_type"]
+
+                BackOfficeManager().update_notifications(
+                    notification_id,
+                    subject,
+                    content,
+                    notification_type
+                    )
+
+                return redirect("announcements")
+
+        return render(request, "update_announcement.html", {
+            "notification_id": notification_id,
+            "announcement": announcement
             })
 
 

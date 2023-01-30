@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+
+<h1>MAKE AN ANNOUNCEMENT</h1>
+
+<form action="{% url 'update_announcement' notification_id=notification_id %}"  method="POST">
+	{% csrf_token %}
+
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+            <label class="input_label">Subject</label>
+            <input type="text" class="input_content" name="subject" value="{{ announcement.4 }}">
+        </div>
+    </div>
+
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+            <label class="input_label">Content</label>
+            <textarea type="text" class="input_content input_paragraph" name="content">{{ announcement.5 }}</textarea>
+        </div>
+    </div>
+
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+        <label class="input_label">Type</label>
+
+        <select required class="input_content" name="notification_type">
+            <option selected value="{{ announcement.6 }}">{{ announcement.6 }}</option>
+            <option value="visible_announcement">visible announcement</option>
+            <option value="hidden_announcement">hidden announcement</option>
+            <option value="comment">comment</option>
+            <option value="rule">rule</option>
+            <option value="article">article</option>
+        </select>
+
+        </div>
+    </div>
+
+
+    <div class="flex-parent jc-center">
+        <button type="submit" class="button_main" name="action_on_announcement" value="update">Update</button>
+    </div>
+
+</form>
+
+{% endblock %}
