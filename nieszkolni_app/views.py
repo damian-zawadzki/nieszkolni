@@ -6937,9 +6937,11 @@ def analytics_indicators(request):
         current_user = first_name + " " + last_name
 
         indicators = SentenceManager().count_ater_and_atess()
+        averages = AnalyticsManager().current_average_score_per_coach()
 
         return render(request, "analytics_indicators.html", {
-            "indicators": indicators
+            "indicators": indicators,
+            "averages": averages
             })
 
 

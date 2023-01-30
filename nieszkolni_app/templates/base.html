@@ -83,7 +83,7 @@
       {% elif user.is_authenticated %}
 
           <div class="navigation_counter_box">
-            <div class="navigation_counter hamburger"><b><b>{{ quaterly_points }}</b></b>/<span class="navigation_counter_target">{{ target }}</span></div>
+            <div id="points_counter" class="navigation_counter hamburger"><b><b>{{ quaterly_points }}</b></b>/<span class="navigation_counter_target">{{ target }}</span></div>
           </div>
 
           <nav class="navigation">
@@ -218,7 +218,22 @@
 
     <script src="{% static 'functions.js' %}"></script>
     <script type="text/javascript">
+      function monitorPointsCounter() {
+        var counter = document.getElementById('points_counter');
+        var points = '{{ quaterly_points }}';
+        var target = '{{ target }}';
+        
+        if (points < 0) {
+          counter.style.backgroundColor = "#FF0000";
+        } else if (points >= target) {
+          counter.style.backgroundColor = "#D4AF37";
+        }
+      }
+
+      window.addEventListener('load', monitorPointsCounter());
       window.addEventListener('load', monitorClock());
+
+
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 

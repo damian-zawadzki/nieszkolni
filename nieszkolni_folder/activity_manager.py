@@ -218,12 +218,13 @@ class ActivityManager:
             week = TimeMachine().number_to_week_number_sign(sunday[0])
             conditions.update({"week": week})
 
-            start_sunday = TimeMachine().number_to_system_date(sunday[0] - 7)
+            start_sunday = TimeMachine().number_to_system_date(sunday[0])
+            end_sunday = TimeMachine().number_to_system_date(sunday[0] + 7)
             points = StreamManager().activity_points_by_client_week(
                 client,
                 "homework",
                 start_sunday,
-                sunday[1]
+                end_sunday
                     )
 
             points = sum(points)

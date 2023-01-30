@@ -290,3 +290,37 @@ class AnalyticsManager:
 
         grades.sort(key=lambda x: x[1])
         return grades
+
+    def current_average_score_per_coach(self):
+        coaches = Client.objects.filter(
+                status="active",
+                user_type="coach"
+                ).values_list(
+                "name", flat=True
+                )
+
+        results = []
+        for coach in coaches:
+            result = self.current_average_score_for_coach(coach)
+            results.append(result)
+
+        return results
+
+    def current_average_score_for_coach(self, coach):
+        clients = Client.objects.filter(
+                status="active",
+                user_type="client",
+                coach=coach
+                ).values_list(
+                "name", flat=True
+                )
+
+        total = []
+
+        for client in clients:
+            points = StreamManager().display_activity(client)
+            total.append(points)
+
+        average = round(sum(total)/len(clients), 1)
+
+        return (coach, average)

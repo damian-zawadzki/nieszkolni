@@ -117,6 +117,7 @@
       <select required class="input_content" name="coach">
 
           <option selected value="{{ details.coach }}">{{ details.coach }}</option>
+          <option value="inapplicable">inapplicable</option>
 
           {% for coach in coaches %}
             <option value="{{ coach }}">{{ coach }}</option>
@@ -132,6 +133,7 @@
       <select required class="input_content" name="level">
 
           <option selected value="{{ details.level }}">{{ details.level }}</option>
+          <option value="inapplicable">inapplicable</option>
           <option value="basic">basic</option>
           <option value="communicative">communicative</option>
           <option value="advanced">advanced</option>

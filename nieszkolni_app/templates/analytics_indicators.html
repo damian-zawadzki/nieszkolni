@@ -27,6 +27,13 @@
 		<td>{{ indicators.ato }}</td>
 	</tr>
 
+	{% for average in averages %}
+		<tr>
+			<td>{{ average.0 }}'s Student Average of Activity Points This Semster</td>
+			<td>{{ average.1 }}</td>
+		</tr>
+	{% endfor %}
+
 </table>
 
 <div class="break"></div>
