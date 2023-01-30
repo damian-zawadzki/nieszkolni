@@ -9,11 +9,10 @@
     <div class="flex-parent jc-center">
       <div class="tab flashcard">
         <div class="">
-          <div class="tab_title flashcard">{{ entry.polish }}</div>
-          <div class="tab_content"><b>Correct: </b>{{ entry.english }}</div>
-          <div class="tab_content"><b>Translation: </b> {{ entry.translation }}</div>
-          <div class="tab_content flashcard"><b>Suggestion: </b>{{ entry.label }} <b>Score: </b>{{ entry.score }}</div>
-          
+          <div class="tab_title flashcard">{{ entry.0 }}</div>
+          <div class="tab_content"><b>Correct: </b>{{ entry.1 }}</div>
+          <div class="tab_content"><b>Translation: </b> {{ entry.2 }}</div>
+
           <form method="POST">
             {% csrf_token %}
 

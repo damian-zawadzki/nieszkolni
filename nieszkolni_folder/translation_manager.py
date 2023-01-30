@@ -2,6 +2,8 @@ import os
 import django
 from django.db import connection
 
+import contractions
+
 import nltk
 
 from nltk.corpus import words, wordnet, stopwords
@@ -44,12 +46,14 @@ class TranslationManager:
         sample_matrix = self.process_sample(sample, dictionary)
 
         predictions = self.predict(data_matrix, sample_matrix)
-        sample = self.analyze(sample, predictions, count)
+        analysis = self.analyze(sample, predictions, count)
+
+        return analysis
 
     def convert(self, entries, sentence_id):
         sample = pd.DataFrame(
             data=entries,
-            columns=["translation", "label"]
+            columns=["translation", "label", "english", "sentence_number"]
             )
 
         rows = SentenceStock.objects.filter(sentence_id=sentence_id)
@@ -101,42 +105,29 @@ class TranslationManager:
 
         return {"lexicon": lexicon}
 
-    def spellcheck(self, sentence):
-        glossary = list(sentence)
+    # def spellcheck(self, sentence):
+    #     stop_words = set(stopwords.words("english"))
 
-        try:
-            model = CountVectorizer(
-                    analyzer="word",
-                    binary=True,
-                    ngram_range=(1, 1),
-                    min_df=0
-                    )
+    #     sentence = contractions.fix(sentence)
+    #     terms = nltk.word_tokenize(sentence)
+    #     phrases = set(
+    #         term.lower() for term in terms
+    #         if term.isalpha()
+    #         )
 
-            model_data = model.fit(glossary)
-            phrases = model_data.vocabulary_
 
-        except Exception as e:
-            phrases = []
+    #     # check = [
+    #     #     phrase in words.words()
+    #     #     or phrase in wordnet.words()
+    #     #     or phrase in stop_words
+    #     #     for phrase in phrases
+    #     #     ]
 
-        stop_words = set(stopwords.words("english"))
+    #     check.append(phrases.issubset(set(words.words())))
 
-        check = [
-            phrase in words.words()
-            or phrase in wordnet.words()
-            or phrase in stop_words
-            for phrase in phrases
-            ]
+    #     check = all(check)
 
-        remarks = "/".join([
-            phrase for phrase in phrases
-            if phrase not in words.words()
-            and phrase not in wordnet.words()
-            and phrase not in stop_words
-            ])
-
-        check = all(check)
-
-        return check
+    #     return check
 
     def step_3(self, lexicon):
         model = CountVectorizer(
@@ -208,28 +199,43 @@ class TranslationManager:
 
     def analyze(self, sample, prediction, count):
 
-        sample["spellcheck"] = sample["translation"].apply(
-                lambda x: self.spellcheck(x)
-                )
+        sample["shape"] = prediction["shape"]
         sample["score"] = prediction["score"]
-
-        sample["spellcheck_label"] = sample["spellcheck"].apply(
-                lambda x: 1 if x is True else 0
-                )
 
         sample["score_label"] = sample["score"].apply(
                 lambda x: 1 if (x > 0.999 and x < 1.001)
-                else (0 if (x > -0.005 and x < 0.005) else -1
-                ))
+                else (0 if (x > -0.005 and x < 0.005) else -1)
+                )
 
-        sample["label"] = sample.apply(
-                lambda x: -1 if x["score_label"] == -1
-                else 1 if x["spellcheck_label"] == 1
-                and x["score_label"] == 1
-                else 0,
+        sample["length_ratio"] = sample.apply(
+                lambda x: len(x["english"].split(" "))/len(x["translation"].split(" ")),
                 axis=1
                 )
 
-        print(sample)
+        sample["length_label"] = sample["length_ratio"].apply(
+                lambda x: 1 if 0.75 < x < 1.25 else 0
+                )
+
+        sample["label"] = sample.apply(
+                lambda x: 1 if x["score_label"] == 1
+                and x["length_label"] == 1
+                else
+                (0 if x["score_label"] == 0
+                    or x["length_label"] == 0
+                    else -1),
+                axis=1
+                )
+
+        sample["result"] = sample["label"].apply(
+                lambda x: "correct" if x == 1
+                else ("incorrect" if x == 0 else "undefined")
+                )
+
+        sample = sample[[
+            "sentence_number",
+            "result",
+            "score",
+            "shape"
+            ]].values.tolist()
 
         return sample

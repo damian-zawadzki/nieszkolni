@@ -594,7 +594,7 @@ class SentenceManager:
                 flat=True
                 )
 
-        if len(rows) != 0: 
+        if len(rows) != 0:
             for row in rows:
                 instances = Composer.objects.filter(
                         status="graded",
@@ -602,91 +602,65 @@ class SentenceManager:
                         )
                 count = len(instances)
 
-
                 if count > 0:
-                    
                     sentences = Composer.objects.filter(
                             status="translated"
                             )
 
                     entries = [
-                        (sentence.translation, -1)
+                        (
+                            sentence.translation,
+                            -1,
+                            sentence.english,
+                            sentence.sentence_number
+                        )
                         for sentence in sentences
                         if sentence.sentence_id == row
                         ]
-                    analysis = TranslationManager().run(entries, row)
 
-            return (("SUCCESS", "Updated"),)
+                    products = TranslationManager().run(entries, row)
+
+                    for product in products:
+                        if product[1] != "undefined":
+                            self.grade_sentence_automatically(
+                                        product[0],
+                                        product[1],
+                                        product[2],
+                                        "automatic_confidence",
+                                        product[3]
+                                        )
+
+            return ("SUCCESS", "Updated")
 
         else:
-            return (("WARNING", "No sentences to grade"),)
+            return ("WARNING", "No sentences to grade")
 
-
-
-
-    def analyze_and_grade_sentence(self, stack):
-
-        if stack == "grade":
-            row = self.display_sentences_to_grade()
-        elif stack == "label":
-            row = self.display_sentences_to_label()
-
-        if row is None:
-            return None 
-
-        polish = row[0]
-        english = row[1]
-        translation = row[2]
-        sentence_number = row[3]
-        sentence_id = row[4]
-        analysis = TranslationManager().run(translation, sentence_id)
-
-        score = analysis["score"]
-        label = analysis["label"]
-        method = analysis["method"]
-        shape = analysis["shape"]
+    def grade_sentence_automatically(
+            self,
+            sentence_number,
+            result,
+            score,
+            method,
+            shape
+            ):
+        now_number = TimeMachine().now_number()
 
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 UPDATE nieszkolni_app_composer
                 SET
+                status = 'graded',
+                result = '{result}',
+                reviewing_user = 'automatic',
+                reviewing_stamp = '{now_number}',
                 score = '{score}',
                 method = '{method}',
                 shape = '{shape}'
                 WHERE sentence_number = {sentence_number}
                 ''')
 
-        while method != "manual":
-            self.analyze_and_grade_sentence(stack)
-            self.grade_sentence(
-                sentence_number,
-                label,
-                "automatic",
-                score,
-                label,
-                method,
-                shape
-                )
-
-        entry = {
-            "polish": polish,
-            "english": english,
-            "translation": translation,
-            "sentence_number": sentence_number,
-            "sentence_id": sentence_id,
-            "score": score,
-            "label": label,
-            "method": method,
-            "shape": shape
-            }
-
-        return entry
-
-    def grade_sentence(self, entry, result, current_user):
+    def grade_sentence_manually(self, sentence_number, result, current_user):
         now_number = TimeMachine().now_number()
-        method = "manual"
-
-        sentence_number = entry[3]
 
         with connection.cursor() as cursor:
             cursor.execute(f'''
@@ -695,8 +669,8 @@ class SentenceManager:
                 status = 'graded',
                 result = '{result}',
                 reviewing_user = '{current_user}',
-                method = '{method}',
-                reviewing_stamp = '{now_number}'
+                reviewing_stamp = '{now_number}',
+                method = 'manual'
                 WHERE sentence_number = {sentence_number}
                 ''')
 

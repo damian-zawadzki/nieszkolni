@@ -3683,7 +3683,11 @@ def grade_sentences(request):
             sentence_number = request.POST["sentence_number"]
             result = request.POST["result"]
 
-            SentenceManager().grade_sentence(entry, result, current_user)
+            SentenceManager().grade_sentence_manually(
+                    sentence_number,
+                    result,
+                    current_user
+                    )
 
             return redirect("grade_sentences")
 
@@ -3700,13 +3704,18 @@ def label_sentences(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        entry = SentenceManager().analyze_and_grade_sentence("label")
+        entry = SentenceManager().display_sentences_to_label()
         counter = SentenceManager().count_sentences_to_label()
 
         if request.method == "POST":
+            sentence_number = request.POST["sentence_number"]
             result = request.POST["result"]
 
-            SentenceManager().grade_sentence(entry, result, current_user)
+            SentenceManager().grade_sentence_manually(
+                    sentence_number,
+                    result,
+                    current_user
+                    )
 
             return redirect("label_sentences")
 
@@ -6153,8 +6162,8 @@ def weekly_checklist(request):
 
                 messages.add_message(
                         request,
-                        getattr(messages, product[0][0]),
-                        product[0][1]
+                        getattr(messages, product[0]),
+                        product[1]
                         )
                 return redirect("weekly_checklist")
 
