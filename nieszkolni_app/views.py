@@ -4929,12 +4929,18 @@ def results(request):
 
         assignments = ActivityManager().get_uncompleted_assignments_list(current_client)
 
+        flashcards = VocabularyManager().count_study_time_per_day(
+                current_client,
+                "vocabulary"
+                )
+
         context = {
             "current_client": current_client,
             "grades": grades,
             "results": results,
             "activities": activities,
-            "assignments": assignments
+            "assignments": assignments,
+            "flashcards": flashcards
             }
 
         return render(request, "results.html", context)
@@ -7012,6 +7018,9 @@ def analytics_entries(request):
         rows = AnalyticsManager().count_all_new_entries_per_student_last_week()
         rates = AnalyticsManager().count_all_entry_rate_per_student()
         totals = AnalyticsManager().count_all_entry_total_per_student()
+
+        x = VocabularyManager().count_study_time_per_day("Megan Collins", "vocabulary")
+        print(x)
 
         return render(request, "analytics_entries.html", {
             "rows": rows,

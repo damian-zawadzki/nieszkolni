@@ -1,5 +1,6 @@
 import os
 import django
+
 from django.db import connection
 
 from nieszkolni_app.models import Card
@@ -8,6 +9,8 @@ from nieszkolni_app.models import Client
 from nieszkolni_folder.time_machine import TimeMachine
 
 import json
+
+import pandas as pd
 
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
@@ -376,3 +379,59 @@ class VocabularyManager:
 
     def remove_all_new_cards(self, client):
         Card.objects.filter(client=client, number_of_reviews=0).delete()
+
+    def display_cards_time(self, client, deck):
+        today_number = TimeMachine().today_number()
+        deadline = today_number - 2
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                durations,
+                card_revision_days
+                FROM nieszkolni_app_card
+                WHERE client = '{client}'
+                AND number_of_reviews != 0
+                AND deck = '{deck}'
+                AND durations != ''
+                AND card_revision_days != ''
+                ''')
+
+            cards = cursor.fetchall()
+
+            entries = []
+            for card in cards:
+                durations = card[0][1:].split(";")
+                days = card[1][1:].split(";")
+
+                entry = map(
+                        lambda x, y:
+                        (x, y),
+                        durations,
+                        days
+                        )
+
+                entries.extend(list(entry))
+
+            return entries
+
+    def count_study_time_per_day(self, client, deck):
+        entries = self.display_cards_time(client, deck)
+
+        days = set([entry[1] for entry in entries])
+        data = []
+
+        for day in days:
+            duration = round(sum([
+                int(entry[0]) for entry in entries
+                if entry[1] == day
+                ])/60, 1)
+
+            day_text = TimeMachine().number_to_system_date(day)
+
+            data.append((day, day_text, duration))
+
+        data.sort(key=lambda x: x[0], reverse=True)
+
+        return data
+
