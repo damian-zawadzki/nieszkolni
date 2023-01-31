@@ -96,6 +96,8 @@ class KnowledgeManager:
             return entries
 
     def check_if_in_pronunciation(self, name, entry):
+        entry = Cleaner().clean_quotation_marks(entry)
+
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 SELECT entry

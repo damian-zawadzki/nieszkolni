@@ -435,6 +435,7 @@ class BackOfficeManager:
             date_number
             ):
 
+        title = Cleaner().clean_quotation_marks(title)
         stamp = position[0]
         client = position[2]
         number_of_episodes = position[4]
@@ -528,6 +529,7 @@ class BackOfficeManager:
             date_number
             ):
 
+        title = Cleaner().clean_quotation_marks(title)
         check_if_in = self.check_if_in_repertoire(title)
 
         if check_if_in is False:
