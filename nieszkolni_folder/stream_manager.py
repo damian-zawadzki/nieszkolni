@@ -58,6 +58,37 @@ class StreamManager:
                 DO NOTHING
                 ''')
 
+    def add_to_stream_with_date(self, name, command, value, stream_user, date):
+        stamp = TimeMachine().now_number()
+        date_number = TimeMachine().number_to_system_date(date)
+        status = "active"
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                INSERT INTO nieszkolni_app_stream (
+                stamp,
+                date_number,
+                date,
+                name,
+                command,
+                value,
+                stream_user,
+                status
+                )
+                VALUES (
+                '{stamp}',
+                '{date_number}',
+                '{date}',
+                '{name}',
+                '{command}',
+                '{value}',
+                '{stream_user}',
+                '{status}'
+                )
+                ON CONFLICT
+                DO NOTHING
+                ''')
+
     def import_old_stream_handler(self, entries):
 
         with transaction.atomic():

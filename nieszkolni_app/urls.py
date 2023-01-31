@@ -56,6 +56,7 @@ urlpatterns = [
     path('footer/', views.footer, name="footer"),
     path('display_curricula/', views.display_curricula, name="display_curricula"),
     path('coach/', views.coach, name="coach"),
+    path('teacher/', views.teacher, name="teacher"),
     path('coach_menu/', views.coach_menu, name="coach_menu"),
     path('session_mode/', views.session_mode, name="session_mode"),
     path('agenda/', views.agenda, name="agenda"),

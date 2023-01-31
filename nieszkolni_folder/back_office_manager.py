@@ -386,6 +386,7 @@ class BackOfficeManager:
             else:
 
                 stamp = position[0]
+                date = position[1]
                 client = position[2]
                 title = position[3]
                 number_of_episodes = position[4]
@@ -404,7 +405,8 @@ class BackOfficeManager:
                             title,
                             duration,
                             title_type,
-                            position
+                            position,
+                            date
                             )
 
                         return self.display_reported_repertoire_line()
@@ -429,7 +431,8 @@ class BackOfficeManager:
             title,
             duration,
             title_type,
-            position
+            position,
+            date
             ):
 
         stamp = position[0]
@@ -451,7 +454,8 @@ class BackOfficeManager:
                 client,
                 title,
                 number_of_episodes,
-                "automatic"
+                "automatic",
+                date
                 )
 
             self.mark_repertoire_line_as_processed(stamp)
@@ -520,7 +524,8 @@ class BackOfficeManager:
             client,
             title,
             number_of_episodes,
-            current_user
+            current_user,
+            date
             ):
 
         check_if_in = self.check_if_in_repertoire(title)
@@ -533,11 +538,12 @@ class BackOfficeManager:
                 "not_in_stream"
                 )
         else:
-            StreamManager().add_to_stream(
+            StreamManager().add_to_stream_with_date(
                 client,
                 "PO",
                 f'{title} *{number_of_episodes}',
-                current_user
+                current_user,
+                date
                 )
 
     # Notifications

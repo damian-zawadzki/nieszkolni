@@ -427,7 +427,7 @@
   display: inline-block;
   margin: 50px;
 }
-
+session_navigation
 .side_navigation {
   background-color: var(--container-color);
   height: 100%;
@@ -702,7 +702,7 @@ task_card_content_list {
 .session_label, .session_label:hover, .session_label:focus  {
   color: #fff;
   background-color: #D95B72;
-  font-family: "Google Sans", Roboto, Arial, sans-serif;
+  font-family: var(--font-family);
   font-size: 20px;
   font-weight: 750;
   letter-spacing: .5px;
@@ -720,10 +720,6 @@ task_card_content_list {
 }
 
 /*Session styles - Content */
-
-.session_box {
-  position: relative;
-}
 
 .session_hidden {
   display: hidden;

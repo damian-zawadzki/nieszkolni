@@ -2289,6 +2289,18 @@ def coach(request):
 
 
 @staff_member_required
+def teacher(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        context = {"current_user": current_user}
+
+        return render(request, "teacher.html", context)
+
+
+@staff_member_required
 def coach_menu(request):
     return render(request, "coach_menu.html", {})
 
@@ -3855,6 +3867,7 @@ def report_listening(request):
 
         client = CurrentClientsManager().current_client(current_user)
         titles = BackOfficeManager().display_titles()
+        today = TimeMachine().today()
 
         if request.method == "POST":
             title = request.POST["title"]
@@ -3865,7 +3878,8 @@ def report_listening(request):
                 client,
                 title,
                 number_of_episodes,
-                current_user
+                current_user,
+                today
                 )
 
             return redirect("report_listening")
@@ -3924,6 +3938,7 @@ def repertoire_line(request):
 
         if request.method == "POST":
             if request.POST["repertoire_line_action"] == "add":
+                date = request.POST["date"]
                 title = request.POST["title"]
                 duration = request.POST["duration"]
                 title_type = request.POST["title_type"]
@@ -3932,7 +3947,8 @@ def repertoire_line(request):
                     title,
                     duration,
                     title_type,
-                    position
+                    position,
+                    date
                     )
 
                 return redirect("repertoire_line")

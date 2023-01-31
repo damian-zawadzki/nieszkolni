@@ -1,0 +1,43 @@
+:root {
+  --small-font: 2vh;
+  --medium-font: 3vh;
+  --large-font: 6vh;
+  --huge-font: 10vh;
+
+  --font-color: #3C4043;
+  --font-family: "Google Sans", Roboto, Arial, sans-serif;
+
+  --brand-color: #14C5D9;
+  --brand-color-shade: #0F97A6;
+  --backgroud-color: #FFF;
+  --container-color: #F9F9F9;
+
+  --border-color: #D3D3D3;
+  --success-color: #D4AF37;
+
+  --transition-time: 2s;
+}
+
+.session_navigation {
+  background-color: var(--backgroud-color);
+}
+
+.session_menu {
+  display: block;
+  background-color: var(--backgroud-color);
+  left: 0vw;
+  overflow: hidden;
+  position: fixed;
+  top: 15vh;
+  transition: 0.3s;
+  width: 25vw;
+  z-index: 1;
+}
+
+.session_item {
+  list-style-type: none;
+}
+
+.session_box {
+  position: relative;
+}
