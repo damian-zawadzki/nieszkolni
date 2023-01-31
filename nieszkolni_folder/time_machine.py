@@ -424,3 +424,14 @@ class TimeMachine:
         difference_weeks = difference_weeks if difference_weeks > 0 else 1
 
         return difference_weeks
+
+    def convert_to_date_time(self, list_of_tuples, i):
+        results = []
+        for item in list_of_tuples:
+            item_list = list(item)
+            item_list[i] = TimeMachine().number_to_system_date_time(item_list[i])
+            result = tuple(item_list)
+            results.append(result)
+
+        return results
+

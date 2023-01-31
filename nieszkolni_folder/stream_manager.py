@@ -60,7 +60,7 @@ class StreamManager:
 
     def add_to_stream_with_date(self, name, command, value, stream_user, date):
         stamp = TimeMachine().now_number()
-        date_number = TimeMachine().number_to_system_date(date)
+        date_number = TimeMachine().date_to_number(date)
         status = "active"
 
         with connection.cursor() as cursor:
@@ -215,6 +215,10 @@ class StreamManager:
                 ''')
 
             rows = cursor.fetchall()
+            rows = TimeMachine().convert_to_date_time(
+                    rows,
+                    0
+                    )
 
             return rows
 

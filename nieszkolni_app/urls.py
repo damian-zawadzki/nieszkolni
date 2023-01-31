@@ -96,6 +96,7 @@ urlpatterns = [
     path('display_memories/', views.display_memories, name="display_memories"),
     path('display_memory/<int:unique_id>/', views.display_memory, name="display_memory"),
     path('stream/', views.stream, name="stream"),
+    path('add_stream/', views.add_stream, name="add_stream"),
     path('stream/<int:start>/<int:end>', views.stream, name="stream"),
     path('client_stream/', views.client_stream, name="client_stream"),
     path('upload_stream/', views.upload_stream, name="upload_stream"),

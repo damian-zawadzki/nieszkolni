@@ -3235,6 +3235,38 @@ def stream(request):
 
 
 @staff_member_required
+def add_stream(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        clients = ClientsManager().list_current_clients()
+        commands = KnowledgeManager().display_prompts("stream")
+
+        if request.method == "POST":
+            client = request.POST["client"]
+            date = request.POST["date"]
+            command = request.POST["command"]
+            value = request.POST["value"]
+
+            StreamManager().add_to_stream_with_date(
+                client,
+                command,
+                value,
+                current_user,
+                date
+                )
+
+            return redirect("add_stream")
+
+        return render(request, "add_stream.html", {
+            "clients": clients,
+            "commands": commands
+            })
+
+
+@staff_member_required
 def client_stream(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
