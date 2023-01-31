@@ -1827,7 +1827,7 @@ def my_pronunciation(request):
 
 
 @staff_member_required
-def display_curricula(request):
+def display_curricula(request, client=None):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
@@ -1835,18 +1835,34 @@ def display_curricula(request):
 
         clients = ClientsManager().list_current_clients()
 
+        if client is not None:
+            assignments = CurriculumManager().display_assignments_for_student(client)
+        else:
+            assignments = []
+
         if request.method == "POST":
             if request.POST["action_on_curriculum"] == "filter":
-                name = request.POST["name"]
-                assignments = CurriculumManager().display_assignments_for_student(name)
+                client = request.POST["client"]
 
-                return render(request, "display_curricula.html", {
-                    "clients": clients,
-                    "assignments": assignments
-                    })
+                return redirect("display_curricula", client=client)
+
+            elif request.POST["action_on_curriculum"] == "more":
+                item = request.POST["item"]
+
+                return redirect("assignment", item=item)
+
+            elif request.POST["action_on_curriculum"] == "remove":
+                item = request.POST["item"]
+
+                CurriculumManager().remove_curriculum(item)
+
+                messages.success(request, ("Removed"))
+                return redirect("display_curricula", client=client)
 
         return render(request, "display_curricula.html", {
-            "clients": clients
+            "client": client,
+            "clients": clients,
+            "assignments": assignments
             })
 
 

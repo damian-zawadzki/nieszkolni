@@ -2,14 +2,14 @@
 {% block 'content' %}
 <h1>CURRICULA</h1>
 
-<form action="{% url 'display_curricula' %}" method="POST">
+<form action="{% url 'display_curricula' client=client %}" method="POST">
 	{% csrf_token %}
 
   <div class="flex-parent jc-center">
      <div class="input_container">
-      <label class="input_label">Name</label>
+      <label class="input_label">Client</label>
 
-        <select required class="input_content" name="name">
+        <select required class="input_content" name="client">
 
             <option disabled selected value></option>
 
@@ -38,16 +38,16 @@
 			<td>{{ assignment.0 }}</td>
 			<td>{{ assignment.3 }}</td>
 			<td>{{ assignment.4 }}</td>
+			
+			<form action="{% url 'display_curricula' client=client %}" method="POST">
+				{% csrf_token %}
 
-			<td>
-				<form action="{% url 'assignment' %}" method="POST">
-					{% csrf_token %}
+				<input type="hidden" name="item" value="{{ assignment.0 }}">
+				<td><button type="submit" class="list_button button_main" name="action_on_curriculum" value="more">More</button></td>
+				<td><button type="submit" class="list_button button_main" name="action_on_curriculum" value="remove">Remove</button></td>
 
-					<input type="hidden" name="item" value="{{ assignment.0 }}">
-					<button type="submit" class="list_button button_main" name="go_to" value="assignment">More</button>
-
-				</form>
-			</td>
+			</form>
+			
 
 		</tr>
 
