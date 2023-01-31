@@ -224,8 +224,8 @@
     <script type="text/javascript">
       function monitorPointsCounter() {
         var counter = document.getElementById('points_counter');
-        var points = '{{ quaterly_points }}';
-        var target = '{{ target }}';
+        var points = parseInt('{{ quaterly_points }}');
+        var target = parseInt('{{ target }}');
         
         if (points < 0) {
           counter.style.backgroundColor = "#FF0000";

@@ -178,15 +178,15 @@ class ActivityManager:
 
     def get_points_last_week(self, client):
         last_sunday = TimeMachine().last_sunday()
-        previous_sunday = TimeMachine().previous_sunday(last_sunday)
+        this_sunday = TimeMachine().previous_sunday(last_sunday)
         last_sunday_number = TimeMachine().date_to_number(last_sunday)
-        previous_sunday_number = TimeMachine().date_to_number(previous_sunday)
+        this_sunday_number = TimeMachine().date_to_number(this_sunday)
 
         rows = Stream.objects.filter(
             name=client,
             command="Activity",
-            date_number__gte=previous_sunday_number,
-            date_number__lt=last_sunday_number
+            date_number__gte=last_sunday_number,
+            date_number__lt=this_sunday_number
                 )
 
         if not rows.exists():

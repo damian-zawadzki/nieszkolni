@@ -423,11 +423,11 @@ class VocabularyManager:
 
         for day in days:
             rows = [
-                int(entry[0]) for entry in entries
+                int(entry[0]) if int(entry[0]) <= 60 else 60
+                for entry in entries
                 if entry[1] == day
                 ]
 
-            duration = [row for row in rows if row <= 60]
             duration = round(sum(duration)/60, 1)
 
             day_text = TimeMachine().number_to_system_date(day)
@@ -437,4 +437,3 @@ class VocabularyManager:
         data.sort(key=lambda x: x[0], reverse=True)
 
         return data
-
