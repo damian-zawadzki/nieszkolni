@@ -3924,7 +3924,7 @@ def report_listening(request):
 
         client = CurrentClientsManager().current_client(current_user)
         titles = BackOfficeManager().display_titles()
-        today = TimeMachine().today()
+        today_number = TimeMachine().today_number()
 
         if request.method == "POST":
             title = request.POST["title"]
@@ -3936,7 +3936,7 @@ def report_listening(request):
                 title,
                 number_of_episodes,
                 current_user,
-                today
+                today_number
                 )
 
             return redirect("report_listening")
@@ -3995,7 +3995,7 @@ def repertoire_line(request):
 
         if request.method == "POST":
             if request.POST["repertoire_line_action"] == "add":
-                date = request.POST["date"]
+                date_number = request.POST["date_number"]
                 title = request.POST["title"]
                 duration = request.POST["duration"]
                 title_type = request.POST["title_type"]
@@ -4005,7 +4005,7 @@ def repertoire_line(request):
                     duration,
                     title_type,
                     position,
-                    date
+                    date_number
                     )
 
                 return redirect("repertoire_line")

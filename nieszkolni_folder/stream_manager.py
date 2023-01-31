@@ -58,9 +58,9 @@ class StreamManager:
                 DO NOTHING
                 ''')
 
-    def add_to_stream_with_date(self, name, command, value, stream_user, date):
+    def add_to_stream_with_date(self, name, command, value, stream_user, date_number):
         stamp = TimeMachine().now_number()
-        date_number = TimeMachine().date_to_number(date)
+        date = TimeMachine().number_to_system_date(date_number)
         status = "active"
 
         with connection.cursor() as cursor:

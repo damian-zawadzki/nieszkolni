@@ -432,7 +432,7 @@ class BackOfficeManager:
             duration,
             title_type,
             position,
-            date
+            date_number
             ):
 
         stamp = position[0]
@@ -455,7 +455,7 @@ class BackOfficeManager:
                 title,
                 number_of_episodes,
                 "automatic",
-                date
+                date_number
                 )
 
             self.mark_repertoire_line_as_processed(stamp)
@@ -525,7 +525,7 @@ class BackOfficeManager:
             title,
             number_of_episodes,
             current_user,
-            date
+            date_number
             ):
 
         check_if_in = self.check_if_in_repertoire(title)
@@ -543,7 +543,7 @@ class BackOfficeManager:
                 "PO",
                 f'{title} *{number_of_episodes}',
                 current_user,
-                date
+                date_number
                 )
 
     # Notifications
