@@ -3267,6 +3267,31 @@ def add_stream(request):
 
 
 @staff_member_required
+def remove_from_stream(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        clients = ClientsManager().list_current_clients()
+
+        if request.method == "POST":
+            client = request.POST["client"]
+            stamp = request.POST["stamp"]
+
+            StreamManager().remove_from_stream(
+                client,
+                stamp
+                )
+
+            return redirect("remove_from_stream")
+
+        return render(request, "remove_from_stream.html", {
+            "clients": clients
+            })
+
+
+@staff_member_required
 def client_stream(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name

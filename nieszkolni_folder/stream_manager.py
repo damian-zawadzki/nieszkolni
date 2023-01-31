@@ -89,6 +89,16 @@ class StreamManager:
                 DO NOTHING
                 ''')
 
+    def remove_from_stream(self, client, stamp):
+        stamp = TimeMachine().date_time_to_number(stamp)
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                DELETE FROM nieszkolni_app_stream
+                WHERE name = '{client}'
+                AND stamp = '{stamp}'
+                ''')
+
     def import_old_stream_handler(self, entries):
 
         with transaction.atomic():
