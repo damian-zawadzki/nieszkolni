@@ -7019,9 +7019,6 @@ def analytics_entries(request):
         rates = AnalyticsManager().count_all_entry_rate_per_student()
         totals = AnalyticsManager().count_all_entry_total_per_student()
 
-        x = VocabularyManager().count_study_time_per_day("Megan Collins", "vocabulary")
-        print(x)
-
         return render(request, "analytics_entries.html", {
             "rows": rows,
             "rates": rates,
@@ -7074,6 +7071,20 @@ def analytics_grades(request):
 
         return render(request, "analytics_grades.html", {
             "grades": grades
+            })
+
+
+@staff_member_required
+def analytics_activity(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        conditions = ActivityManager().get_points_last_week_per_client()
+
+        return render(request, "analytics_activity.html", {
+            "conditions": conditions
             })
 
 

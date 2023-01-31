@@ -294,3 +294,9 @@ class ClientsManager:
                 maximal_interval_sentences = '{daily_limit_of_new_sentences}'
                 WHERE name = '{name}'
                 ''')
+
+    def get_coach_by_client(self, client):
+        client = Client.objects.get(name=client)
+        coach = client.coach
+
+        return coach

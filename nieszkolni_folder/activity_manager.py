@@ -261,6 +261,33 @@ class ActivityManager:
 
         return activity_points
 
+    def get_points_last_week_per_client(self):
+        last_sunday = TimeMachine().last_sunday()
+        previous_sunday = TimeMachine().previous_sunday(last_sunday)
+        clients = ClientsManager().list_current_clients()
+        results = []
+
+        for client in clients:
+            coach = ClientsManager().get_coach_by_client(client)
+            conditions = self.get_conditions(client, last_sunday)
+
+            points = StreamManager().activity_points_by_client_week(
+                client,
+                "homework",
+                previous_sunday,
+                last_sunday
+                    )
+
+            points = sum(points)
+
+            conditions.update({"activity_points": points})
+            conditions.update({"client": client})
+            conditions.update({"coach": coach})
+
+            results.append(conditions)
+
+        return results
+
     def calculate_points_this_week(self, client):
         today = TimeMachine().today_number()
         last_sunday = TimeMachine().last_sunday()

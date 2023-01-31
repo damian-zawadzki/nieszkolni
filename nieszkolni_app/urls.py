@@ -203,6 +203,7 @@ urlpatterns = [
     path('flashcard/<str:username>/<str:deck>/', views.flashcard, name="flashcard"),
     path('analytics_entries_per_student/<str:coach>/', views.analytics_entries_per_student, name="analytics_entries_per_student"),
     path('analytics_entries/', views.analytics_entries, name="analytics_entries"),
+    path('analytics_activity/', views.analytics_activity, name="analytics_activity"),
     path('analytics_indicators/', views.analytics_indicators, name="analytics_indicators"),
     path('analytics_grades/', views.analytics_grades, name="analytics_grades"),
     path('lab/', views.lab, name="lab"),
