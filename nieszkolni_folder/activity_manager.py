@@ -178,7 +178,7 @@ class ActivityManager:
 
     def get_points_last_week(self, client):
         last_sunday = TimeMachine().last_sunday()
-        this_sunday = TimeMachine().previous_sunday(last_sunday)
+        this_sunday = TimeMachine().this_sunday()
         last_sunday_number = TimeMachine().date_to_number(last_sunday)
         this_sunday_number = TimeMachine().date_to_number(this_sunday)
 
