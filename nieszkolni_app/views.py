@@ -93,6 +93,7 @@ def campus(request):
         current_user = first_name + " " + last_name
 
         announcements = BackOfficeManager().display_latest_announcements_for_client(current_user)
+        announcements = TimeMachine().convert_to_date_time_clean(announcements, 1)
 
         challenges = ChallengeManager().display_planned_challenges(current_user)
         challenge_status = ChallengeManager().refresh_process(challenges)
@@ -4858,7 +4859,7 @@ def announcement(request, notification_id):
         user_agent = get_user_agent(request)
 
         announcement = BackOfficeManager().display_announcement(notification_id)
-        stamp = TimeMachine().number_to_system_date_time(announcement[1])
+        stamp = TimeMachine().number_to_system_date_time_clean(announcement[1])
 
         if user_agent.is_mobile:
             return render(request, "m_announcement.html", {

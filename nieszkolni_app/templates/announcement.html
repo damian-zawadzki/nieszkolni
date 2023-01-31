@@ -9,7 +9,7 @@
 	      	{% if user.is_staff %}
 	      		<div class="tab_content full"><b>ID:</b> {{ announcement.0 }} <b>Timestamp:</b> {{ stamp }} <b>Type:</b> {{ announcement.6 }}</div>
 	      	{% else %}
-	      		<div class="tab_content full"><b>Timestamp:</b> {{ stamp }}</div>
+	      		<div class="tab_description">{{ stamp }} by {{ announcement.2 }}</div>
 	      	{% endif %}
 	      	
 	      	<div class="tab_content full">{{ announcement.5|safe }}</div>

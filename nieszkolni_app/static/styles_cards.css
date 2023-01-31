@@ -312,6 +312,15 @@
   text-align: left;
 }
 
+.tab_description {
+  font-family: var(--font-family);
+  font-size: var(--small-font);
+  font-weight: 500;
+  line-height: 4vh;
+  opacity: 0.5;
+  text-align: left;
+}
+
 /*Squares*/
 .square_menu {
   column-gap: 1vw;

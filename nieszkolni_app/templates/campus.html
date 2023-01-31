@@ -93,6 +93,7 @@
 			<div class="tab post">
 				<div>
 					<div class="tab_title post">{{ announcement.4 }}</div>
+					<div class="tab_description">{{ announcement.1 }} by {{ announcement.2 }}</div>
 					<div class="tab_content post">{{ announcement.5|safe }}</div>
 					<button type="button" class="button_main_page top" onclick="jump('{{ announcement.0 }}')">Read more</button>
 					<a id="{{ announcement.0 }}" href="{% url 'announcement' notification_id=announcement.0 %}"></a>

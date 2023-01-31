@@ -11,11 +11,13 @@ class TimeMachine:
     global now_pattern
     global now_pattern_colons
     global now_pattern_colons_2
+    global now_pattern_colons_3
     global today_pattern
     global timezone
     now_pattern = "%Y-%m-%d %H-%M-%S-%f"
     now_pattern_colons = "%Y-%m-%d %H:%M:%S"
     now_pattern_colons_2 = "%Y-%m-%dT%H:%M"
+    now_pattern_colons_3 = "%Y-%m-%d %H:%M"
     today_pattern = "%Y-%m-%d"
     timezone = ZoneInfo("Europe/Warsaw")
 
@@ -196,6 +198,14 @@ class TimeMachine:
         difference = timedelta(seconds=date_time_number)
         end = start + difference
         date_time = datetime.strftime(end, now_pattern_colons)
+
+        return date_time
+
+    def number_to_system_date_time_clean(self, date_time_number):
+        start = datetime.strptime("2000-01-01 00:00:00", now_pattern_colons)
+        difference = timedelta(seconds=date_time_number)
+        end = start + difference
+        date_time = datetime.strftime(end, now_pattern_colons_3)
 
         return date_time
 
@@ -430,6 +440,16 @@ class TimeMachine:
         for item in list_of_tuples:
             item_list = list(item)
             item_list[i] = TimeMachine().number_to_system_date_time(item_list[i])
+            result = tuple(item_list)
+            results.append(result)
+
+        return results
+
+    def convert_to_date_time_clean(self, list_of_tuples, i):
+        results = []
+        for item in list_of_tuples:
+            item_list = list(item)
+            item_list[i] = TimeMachine().number_to_system_date_time_clean(item_list[i])
             result = tuple(item_list)
             results.append(result)
 
