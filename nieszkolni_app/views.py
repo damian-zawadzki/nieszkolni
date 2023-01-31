@@ -2355,7 +2355,7 @@ def session_mode(request):
                 in_pronunciation = KnowledgeManager().check_if_in_pronunciation(current_client, entry)
                 if len(in_pronunciation) == 0:
 
-                    add_pronunciation = KnowledgeManager().add_pronunciation(current_client, entry, current_user)
+                    KnowledgeManager().add_pronunciation(current_client, entry, current_user)
 
                     return render(request, "session_mode.html", {
                         "current_client": current_client,
@@ -3250,12 +3250,14 @@ def add_stream(request):
             command = request.POST["command"]
             value = request.POST["value"]
 
+            date_number = TimeMachine().date_to_number(date)
+
             StreamManager().add_to_stream_with_date(
                 client,
                 command,
                 value,
                 current_user,
-                date
+                date_number
                 )
 
             return redirect("add_stream")
