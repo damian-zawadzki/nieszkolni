@@ -45,6 +45,8 @@ class Client(models.Model):
     daily_limit_of_new_sentences = models.IntegerField(default=25, null=True)
     maximal_interval_sentences = models.IntegerField(default=90, null=True)
 
+    wage = models.IntegerField(default=50)
+
 
 class Submission(models.Model):
     unique_id = models.AutoField(primary_key=True)

@@ -200,6 +200,7 @@ urlpatterns = [
     path('responses/', views.responses, name="responses"),
     path('my_results/', views.my_results, name="my_results"),
     path('my_courses/', views.my_courses, name="my_courses"),
+    path('bill/', views.bill, name="bill"),
     path('flashcard/<str:username>/<str:deck>/', views.flashcard, name="flashcard"),
     path('analytics_entries_per_student/<str:coach>/', views.analytics_entries_per_student, name="analytics_entries_per_student"),
     path('analytics_entries/', views.analytics_entries, name="analytics_entries"),

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>BILL</h1>
+
+<form action="{% url 'bill' %}"  method="POST">
+   {% csrf_token %}
+
+   {% if user.is_superuser %}
+
+	   <div class="flex-parent jc-center">
+	     <div class="input_container">
+	        <label class="input_label">Employee</label>
+
+	        <select required class="input_content" name="employee">
+	            <option value="{{ current_user }}">{{ current_user }}</option>
+
+	            {% for employee in employees %}
+	            	<option value="{{ employee }}">{{ employee }}</option>
+	            {% endfor %}
+
+	        </select>
+
+	    </div>
+	   </div>
+
+   {% else %}
+
+   	<input type="hidden" class="input_content" name="employee" value="{{ current_user }}">
+
+   {% endif %}
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">From</label>
+         <input type="date" class="input_content" name="start">
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <div class="input_container">
+         <label class="input_label">To</label>
+         <input type="date" class="input_content" name="end">
+      </div>
+   </div>
+
+   <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_bill" value="calculate">Calculate</button>
+   </div>
+
+</form>
+
+<table>
+
+   <tr>
+      <th>Wage</th>
+      <th>Hours</th>
+   </tr>
+
+   {% for entry in entries %}
+
+      <tr>
+         <td>{{ entry.0 }}</td>
+         <td>{{ entry.1 }}</td>
+      </tr>
+
+   {% endfor %}
+   
+</table>
+
+<div class="break"></div>
+
+{% include 'footer.html' %}
+{% endblock %}

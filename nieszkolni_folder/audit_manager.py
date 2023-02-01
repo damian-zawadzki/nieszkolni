@@ -6,6 +6,8 @@ from nieszkolni_app.models import Curriculum
 from nieszkolni_app.models import Module
 from nieszkolni_app.models import Matrix
 from nieszkolni_app.models import Library
+from nieszkolni_app.models import Client
+from nieszkolni_app.models import Stream
 
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
@@ -505,3 +507,62 @@ class AuditManager:
                 category.update({"category_value": data[2]})
 
             return category
+
+    def count_billable_hours(self, coach, start=None, end=None):
+        start_number = TimeMachine().get_start_end_number(start, end)["start"]
+        end_number = TimeMachine().get_start_end_number(start, end)["end"]
+
+        wages = list(Client.objects.filter(
+                coach=coach
+                ).values_list(
+                "wage",
+                flat=True
+                ).distinct())
+
+        rows = []
+        for wage in wages:
+            clients = list(Client.objects.filter(
+                user_type="client",
+                wage=wage
+                ).values_list(
+                "name",
+                flat=True
+                ))
+
+            row = []
+
+            for client in clients:
+                lessons = Stream.objects.filter(
+                    name="client",
+                    date_number__gte=start_number,
+                    date_number__lte=end_number,
+                    command="Duration",
+                    stream_user=coach,
+                    ).values_list(
+                    "name",
+                    flat=True
+                    ).count()
+
+                late_cancelations = Stream.objects.filter(
+                    name="client",
+                    date_number__gte=start_number,
+                    date_number__lte=end_number,
+                    command="Late cancelation",
+                    stream_user=coach,
+                    ).values_list(
+                    "name",
+                    flat=True
+                    ).count()
+
+                row.append((client, wage, lessons))
+                row.append((client, wage, late_cancelations))
+
+            rows.append(row)
+
+        data = []
+
+        for wage in wages:
+            meetings = sum([row[2] for row in rows if row[1] == wage])
+            data.append((wage, meetings))
+
+        return data

@@ -428,7 +428,7 @@ class VocabularyManager:
                 if entry[1] == day
                 ]
 
-            duration = round(sum(duration)/60, 1)
+            duration = round(sum(rows)/60, 1)
 
             day_text = TimeMachine().number_to_system_date(day)
 

@@ -44,7 +44,8 @@ class ClientsManager:
                 daily_limit_of_new_vocabulary,
                 maximal_interval_vocabulary,
                 daily_limit_of_new_sentences,
-                maximal_interval_sentences
+                maximal_interval_sentences,
+                wage
                 )
                 VALUES (
                 'client',
@@ -64,7 +65,8 @@ class ClientsManager:
                 '25',
                 '90',
                 '25',
-                '90'
+                '90',
+                '60'
                 )
                 ON CONFLICT (name)
                 DO NOTHING
@@ -224,7 +226,8 @@ class ClientsManager:
                 daily_limit_of_new_vocabulary,
                 maximal_interval_vocabulary,
                 daily_limit_of_new_sentences,
-                maximal_interval_sentences
+                maximal_interval_sentences,
+                wage
                 FROM nieszkolni_app_client
                 WHERE name = '{name}'
                 ''')
@@ -249,7 +252,8 @@ class ClientsManager:
                 "daily_limit_of_new_vocabulary": details[14],
                 "maximal_interval_vocabulary": details[15],
                 "daily_limit_of_new_sentences": details[16],
-                "maximal_interval_sentences": details[17]
+                "maximal_interval_sentences": details[17],
+                "wage": details[18]
             }
 
             return entry
@@ -270,7 +274,8 @@ class ClientsManager:
             daily_limit_of_new_vocabulary,
             maximal_interval_vocabulary,
             daily_limit_of_new_sentences,
-            maximal_interval_sentences
+            maximal_interval_sentences,
+            wage
             ):
 
         with connection.cursor() as cursor:
@@ -291,7 +296,8 @@ class ClientsManager:
                 daily_limit_of_new_vocabulary = '{daily_limit_of_new_vocabulary}',
                 maximal_interval_vocabulary = '{maximal_interval_vocabulary}',
                 daily_limit_of_new_sentences = '{daily_limit_of_new_sentences}',
-                maximal_interval_sentences = '{daily_limit_of_new_sentences}'
+                maximal_interval_sentences = '{daily_limit_of_new_sentences}',
+                wage = '{wage}'
                 WHERE name = '{name}'
                 ''')
 

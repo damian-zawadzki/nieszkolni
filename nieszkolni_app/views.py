@@ -568,6 +568,7 @@ def register_client(request):
                 maximal_interval_vocabulary = request.POST["maximal_interval_vocabulary"]
                 daily_limit_of_new_sentences = request.POST["daily_limit_of_new_sentences"]
                 maximal_interval_sentences = request.POST["maximal_interval_sentences"]
+                wage = request.POST["wage"]
 
                 ClientsManager().edit_user(
                     user_type,
@@ -584,7 +585,8 @@ def register_client(request):
                     daily_limit_of_new_vocabulary,
                     maximal_interval_vocabulary,
                     daily_limit_of_new_sentences,
-                    maximal_interval_sentences
+                    maximal_interval_sentences,
+                    wage
                     )
 
                 return redirect("list_current_users")
@@ -642,6 +644,7 @@ def list_current_users(request):
                 maximal_interval_vocabulary = request.POST["maximal_interval_vocabulary"]
                 daily_limit_of_new_sentences = request.POST["daily_limit_of_new_sentences"]
                 maximal_interval_sentences = request.POST["maximal_interval_sentences"]
+                wage = request.POST["wage"]
 
                 ClientsManager().edit_user(
                     user_type,
@@ -658,7 +661,8 @@ def list_current_users(request):
                     daily_limit_of_new_vocabulary,
                     maximal_interval_vocabulary,
                     daily_limit_of_new_sentences,
-                    maximal_interval_sentences
+                    maximal_interval_sentences,
+                    wage
                     )
 
                 return redirect("list_current_users")
@@ -6185,6 +6189,37 @@ def timesheet(request):
 
 
 @staff_member_required
+def bill(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        employees = ClientsManager().list_current_staff()
+
+        if request.method == "POST":
+            if request.POST["action_on_bill"] == "calculate":
+                employee = request.POST["employee"]
+                start = request.POST["start"]
+                end = request.POST["end"]
+
+                entries = AuditManager().count_billable_hours(
+                    employee,
+                    start,
+                    end
+                    )
+
+                return render(request, "bill.html", {
+                    "entries": entries,
+                    "employees": employees
+                    })
+
+        return render(request, "bill.html", {
+            "employees": employees
+            })
+
+
+@staff_member_required
 def update_timesheet(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
@@ -6965,6 +7000,23 @@ def deans_office(request):
 
 @login_required
 def hall_of_fame(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        rows = StreamManager().display_hall_of_fame()
+        conext = {"rows": rows}
+
+        user_agent = get_user_agent(request)
+        if user_agent.is_mobile:
+            return render(request, "m_hall_of_fame.html", conext)
+        else:
+            return render(request, "hall_of_fame.html", conext)
+
+
+@login_required
+def inquiry(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
