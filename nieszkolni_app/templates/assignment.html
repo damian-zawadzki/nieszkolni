@@ -20,19 +20,6 @@
       <div class="task_card_details"><b>Deadline:</b> {{ assignment.1 }} <b>Item:</b> {{ assignment.0 }}</div>
       <div class="task_card_content">{{ assignment.8 }}</div>
 
-
-      {% if assignment.6 == 'reading' %}
-
-      	<div><b>Resources</b></div>
-      	<div class="task_card_content"><span><a href="{{ assignment.10 }}" target="_blank">Here.</a></span></div>
-
-      {% elif assignment.10 != '-' %}
-
-      	<div><b>Resources</b></div>
-      	<div class="task_card_content"><span>{{ assignment.10|safe }}</span></div>
-
-      {% endif %}
-
       {% if user.is_staff %}
 
       	<div><b>Reference</b></div>
@@ -45,6 +32,21 @@
 				{% csrf_token %}
 
 					<div class="flex-parent jc-center">
+
+						
+
+						{% if assignment.6 == 'reading' %}
+
+							<button type="button" class="button_main" onclick="jump('reading')">Read</button>
+							<a id="reading" href="{{ assignment.10 }}" target="_blank"></a>
+
+						{% elif assignment.10 == '-' %}
+						{% elif assignment.10 %}
+
+							<button type="button" class="button_main" onclick="jump('reading')">Check resources</button>
+							<a id="reading" href="{{ assignment.10 }}" target="_blank"></a>
+
+						{% endif %}
 
 						<button type="submit" class="button_main" name="action_on_assignment" value="{{ assignment.18 }}">{{ assignment.17 }}</button>
 

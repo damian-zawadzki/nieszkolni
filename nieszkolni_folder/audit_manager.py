@@ -532,7 +532,7 @@ class AuditManager:
             row = []
 
             for client in clients:
-                lessons = Stream.objects.filter(
+                lessons = len(Stream.objects.filter(
                     name="client",
                     date_number__gte=start_number,
                     date_number__lte=end_number,
@@ -541,9 +541,9 @@ class AuditManager:
                     ).values_list(
                     "name",
                     flat=True
-                    ).count()
+                    ))
 
-                late_cancelations = Stream.objects.filter(
+                late_cancelations = len(Stream.objects.filter(
                     name="client",
                     date_number__gte=start_number,
                     date_number__lte=end_number,
@@ -552,7 +552,7 @@ class AuditManager:
                     ).values_list(
                     "name",
                     flat=True
-                    ).count()
+                    ))
 
                 row.append((client, wage, lessons))
                 row.append((client, wage, late_cancelations))

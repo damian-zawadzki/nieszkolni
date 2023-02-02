@@ -169,6 +169,7 @@ class DocumentManager:
         paragraph_format.alignment = WD_ALIGN_PARAGRAPH.LEFT
         paragraph_format.alignment
 
+        i = 1
         for entry in entries:
             run = paragraph_2.add_run(entry[0])
             font = run.font
@@ -179,7 +180,9 @@ class DocumentManager:
             font.color.rgb = RGBColor(0, 0, 0)
             run.add_break()
 
-            run = paragraph_2.add_run(entry[1])
+            sentence = f"{i}. {entry[1]}"
+
+            run = paragraph_2.add_run(sentence)
             font = run.font
             font.name = "Times New Roman"
             font.size = Pt(12)
@@ -195,6 +198,8 @@ class DocumentManager:
             font.color.rgb = RGBColor(0, 0, 0)
             run.add_break()
             run.add_break()
+
+            i += 1
 
         file_bytes = BytesIO()
         document.save(file_bytes)

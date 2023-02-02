@@ -2435,6 +2435,17 @@ def session_mode(request):
                 left_option = request.POST["left_option"]
                 right_option = request.POST["right_option"]
 
+                check = KnowledgeManager().check_if_in_memories(
+                        current_client,
+                        prompt,
+                        left_option,
+                        right_option
+                        )
+
+                if check is True:
+                    messages.error(request, ("Such a memory already exists"))
+                    return redirect("session_mode")
+
                 KnowledgeManager().add_memory(
                     current_user,
                     current_client,
@@ -2509,7 +2520,6 @@ def upload_dictionary(request):
                     )
 
             messages.success(request, ("The file has been uploaded!"))
-
             return render(request, "upload_dictionary.html", {})
 
         return render(request, "upload_dictionary.html", {})
@@ -2900,7 +2910,6 @@ def remove_client(request):
         return render(request, "remove_client.html", {
             "clients": clients
             })
-
 
 
 @staff_member_required

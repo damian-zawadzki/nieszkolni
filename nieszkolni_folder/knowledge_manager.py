@@ -743,6 +743,28 @@ class KnowledgeManager:
                 DO NOTHING
                 ''')
 
+    def check_if_in_memories(
+            self,
+            client,
+            prompt,
+            left_option,
+            right_option=""
+            ):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT DISTINCT publication_stamp
+                FROM nieszkolni_app_memory
+                WHERE name = '{client}'
+                AND prompt = '{prompt}'
+                AND left_option = '{left_option}'
+                AND right_option = '{right_option}'
+                ''')
+
+            data = cursor.fetchone()
+
+            return False if data is None else True
+
     def display_all_memories(self):
         with connection.cursor() as cursor:
             cursor.execute(f'''
