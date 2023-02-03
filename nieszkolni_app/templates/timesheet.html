@@ -32,7 +32,7 @@
             <option selected value="all">all</option>
 
             {% for category in categories %}
-               <option value="{{ category }}">{{ category }}</option>
+               <option value="{{ category.0 }}">{{ category.0 }}</option>
             {% endfor %}
 
          </select>
