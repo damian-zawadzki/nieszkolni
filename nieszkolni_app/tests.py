@@ -158,8 +158,7 @@ class Front(TestCase):
     def test_vocabulary_login(self):
         self.client.login(username=username, password=password)
         response = self.client.get("/vocabulary/")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "congratulations.html")
+        self.assertEqual(response.status_code, 302)
 
     def test_sentences_deny_anonymous(self):
         response = self.client.get("/sentences/")
@@ -168,14 +167,13 @@ class Front(TestCase):
     def test_sentences_login(self):
         self.client.login(username=username, password=password)
         response = self.client.get("/sentences/")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "congratulations.html")
+        self.assertEqual(response.status_code, 302)
 
-    def test_sentences_deny_anonymous(self):
+    def test_pronunciation_deny_anonymous(self):
         response = self.client.get("/my_pronunciation/")
         self.assertRedirects(response, "/login_user/?next=/my_pronunciation/")
 
-    def test_sentences_login(self):
+    def test_pronunciation_login(self):
         self.client.login(username=username, password=password)
         response = self.client.get("/my_pronunciation/")
         self.assertEqual(response.status_code, 200)

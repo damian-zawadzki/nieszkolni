@@ -234,64 +234,11 @@ def vocabulary(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        deck = "vocabulary"
-        all_due_entries = VocabularyManager().display_due_entries(current_user, deck)
-
-        if len(all_due_entries) == 0:
-            VocabularyManager().reset_line(current_user)
-            return render(request, 'congratulations.html', {})
-
-        else:
-            global card_opening_time
-
-            now_number = TimeMachine().now_number()
-            card_opening_time = now_number
-
-            card_id = all_due_entries[0][0]
-            polish = all_due_entries[0][1]
-            english = all_due_entries[0][2]
-            interval = all_due_entries[0][3]
-            old_due_today = len(VocabularyManager().display_old_due_entries(current_user, deck))
-            new_due_today = len(VocabularyManager().display_new_due_entries(current_user, deck))
-            problematic_due_today = len(VocabularyManager().display_problematic_due_entries(current_user, deck))
-
-            if request.method == "POST":
-                if request.POST["answer"] == "show":
-
-                    return render(request, 'view_answer.html', {
-                        "english": english,
-                        "polish": polish,
-                        "old_due_today": old_due_today,
-                        "new_due_today": new_due_today,
-                        "problematic_due_today": problematic_due_today,
-                        "deck": deck,
-                        "interval": interval
-                        })
-
-                elif request.POST["answer"] != "edit":
-                    return render(request, 'vocabulary.html', {
-                        "polish": polish,
-                        "old_due_today": old_due_today,
-                        "new_due_today": new_due_today,
-                        "problematic_due_today": problematic_due_today,
-                        "deck": deck,
-                        "interval": interval
-                        })
-                else:
-                    return render(request, "edit_card.html", {
-                        "card_id": card_id,
-                        "polish": polish,
-                        "english": english
-                        })
-
-            return render(request, 'vocabulary.html', {
-                "polish": polish,
-                "old_due_today": old_due_today,
-                "new_due_today": new_due_today,
-                "problematic_due_today": problematic_due_today,
-                "deck": deck,
-                "interval": interval
-                })
+        return redirect(
+            "flashcard",
+            username=current_user,
+            deck="vocabulary"
+            )
 
 
 @login_required
@@ -301,63 +248,11 @@ def sentences(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        deck = "sentences"
-        all_due_entries = VocabularyManager().display_due_entries(current_user, deck)
-
-        if len(all_due_entries) == 0:
-            VocabularyManager().reset_line(current_user)
-            return render(request, 'congratulations.html', {})
-
-        else:
-            global card_opening_time
-
-            now_number = TimeMachine().now_number()
-            card_opening_time = now_number
-
-            card_id = all_due_entries[0][0]
-            polish = all_due_entries[0][1]
-            english = all_due_entries[0][2]
-            interval = all_due_entries[0][3]
-            old_due_today = len(VocabularyManager().display_old_due_entries(current_user, deck))
-            new_due_today = len(VocabularyManager().display_new_due_entries(current_user, deck))
-            problematic_due_today = len(VocabularyManager().display_problematic_due_entries(current_user, deck))
-
-            if request.method == "POST":
-                if request.POST["answer"] == "show":
-                    return render(request, 'view_answer.html', {
-                        "english": english,
-                        "polish": polish,
-                        "old_due_today": old_due_today,
-                        "new_due_today": new_due_today,
-                        "problematic_due_today": problematic_due_today,
-                        "deck": deck,
-                        "interval": interval
-                        })
-
-                elif request.POST["answer"] != "edit":
-                    return render(request, 'sentences.html', {
-                        "polish": polish,
-                        "old_due_today": old_due_today,
-                        "new_due_today": new_due_today,
-                        "problematic_due_today": problematic_due_today,
-                        "deck": deck,
-                        "interval": interval
-                        })
-                else:
-                    return render(request, "edit_card.html", {
-                        "card_id": card_id,
-                        "polish": polish,
-                        "english": english
-                        })
-
-            return render(request, 'sentences.html', {
-                "polish": polish,
-                "old_due_today": old_due_today,
-                "new_due_today": new_due_today,
-                "problematic_due_today": problematic_due_today,
-                "deck": deck,
-                "interval": interval
-                })
+        return redirect(
+            "flashcard",
+            username=current_user,
+            deck="sentences"
+            )
 
 
 @login_required
