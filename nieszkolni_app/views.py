@@ -6034,15 +6034,18 @@ def timesheet(request):
         current_user = first_name + " " + last_name
 
         employees = ClientsManager().list_current_staff()
+        categories = AuditManager().display_categories()
 
         if request.method == "POST":
             if request.POST["action_on_timesheet"] == "filter":
                 employee = request.POST["employee"]
+                category = request.POST["category"]
                 start = request.POST["start"]
                 end = request.POST["end"]
 
                 entries = AuditManager().display_entries(
                     employee,
+                    category,
                     start,
                     end
                     )
@@ -6088,7 +6091,8 @@ def timesheet(request):
 
         return render(request, "timesheet.html", {
             "current_user": current_user,
-            "employees": employees
+            "employees": employees,
+            "categories": categories
             })
 
 
@@ -7033,6 +7037,20 @@ def analytics_grades(request):
 
 @staff_member_required
 def analytics_activity(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        conditions = ActivityManager().get_points_last_week_per_client()
+
+        return render(request, "analytics_activity.html", {
+            "conditions": conditions
+            })
+
+
+@staff_member_required
+def analytics_timesheet(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name

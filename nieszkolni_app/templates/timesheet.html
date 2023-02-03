@@ -8,25 +8,42 @@
 
    {% if user.is_superuser %}
 
-	   <div class="flex-parent jc-center">
-	     <div class="input_container">
-	        <label class="input_label">Employee</label>
+      <div class="flex-parent jc-center">
+         <div class="input_container">
+         <label class="input_label">Employee</label>
 
-	        <select required class="input_content" name="employee">
-	            <option value="{{ current_user }}">{{ current_user }}</option>
+         <select required class="input_content" name="employee">
+            <option value="{{ current_user }}">{{ current_user }}</option>
 
-	            {% for employee in employees %}
-	            	<option value="{{ employee }}">{{ employee }}</option>
-	            {% endfor %}
+            {% for employee in employees %}
+               <option value="{{ employee }}">{{ employee }}</option>
+            {% endfor %}
 
-	        </select>
+         </select>
 
-	    </div>
-	   </div>
+         </div>
+      </div>
+
+      <div class="flex-parent jc-center">
+         <div class="input_container">
+         <label class="input_label">Category</label>
+
+         <select required class="input_content" name="category">
+            <option selected value="all">all</option>
+
+            {% for category in categories %}
+               <option value="{{ category }}">{{ category }}</option>
+            {% endfor %}
+
+         </select>
+
+         </div>
+      </div>
 
    {% else %}
 
    	<input type="hidden" class="input_content" name="employee" value="{{ current_user }}">
+      <input type="hidden" class="input_content" name="category" value="all">
 
    {% endif %}
 

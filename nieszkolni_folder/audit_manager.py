@@ -286,7 +286,7 @@ class AuditManager:
 
             return entry
 
-    def display_entries(self, clocking_user, start, end):
+    def display_entries(self, clocking_user, category, start, end):
         start_number = TimeMachine().date_to_number(start)
         end_number = TimeMachine().date_to_number(end)
 
@@ -321,27 +321,31 @@ class AuditManager:
                 status = row[9]
                 category_name = row[6]
 
-                if status == "awaiting":
-                    category_name = f"<b><b>Awaiting approval: </b></b>{category_name}"
+                if category == category_name or category == "all":
 
-                entry = {
-                    "entry_id": row[0],
-                    "stamp": row[1],
-                    "clock_in": TimeMachine().number_to_system_date_time(row[2]),
-                    "clock_out": TimeMachine().number_to_system_date_time(row[3]),
-                    "duration": self.convert_to_h_min(round(int(row[4])/60)),
-                    "category_number": row[5],
-                    "category_name": category_name,
-                    "date_number":  TimeMachine().number_to_system_date(row[7]),
-                    "remarks": row[8],
-                    "status": status,
-                    "clocking_user": row[10],
-                    "entry_type": row[11],
-                    "category_value": row[12],
-                    "tags": row[13]
-                    }
+                    if status == "awaiting":
+                        category_name = f"<b><b>Awaiting approval: </b></b>{category_name}"
 
-                entries.append(entry)
+                    entry = {
+                        "entry_id": row[0],
+                        "stamp": row[1],
+                        "clock_in": TimeMachine().number_to_system_date_time(row[2]),
+                        "clock_out": TimeMachine().number_to_system_date_time(row[3]),
+                        "duration": self.convert_to_h_min(round(int(row[4])/60)),
+                        "category_number": row[5],
+                        "category_name": category_name,
+                        "date_number":  TimeMachine().number_to_system_date(row[7]),
+                        "remarks": row[8],
+                        "status": status,
+                        "clocking_user": row[10],
+                        "entry_type": row[11],
+                        "category_value": row[12],
+                        "tags": row[13]
+                        }
+
+                    print(entry)
+
+                    entries.append(entry)
 
             return entries
 
@@ -533,7 +537,7 @@ class AuditManager:
 
             for client in clients:
                 lessons = len(Stream.objects.filter(
-                    name="client",
+                    name=client,
                     date_number__gte=start_number,
                     date_number__lte=end_number,
                     command="Duration",
@@ -544,7 +548,7 @@ class AuditManager:
                     ))
 
                 late_cancelations = len(Stream.objects.filter(
-                    name="client",
+                    name=client,
                     date_number__gte=start_number,
                     date_number__lte=end_number,
                     command="Late cancelation",
@@ -557,7 +561,7 @@ class AuditManager:
                 row.append((client, wage, lessons))
                 row.append((client, wage, late_cancelations))
 
-            rows.append(row)
+            rows.extend(row)
 
         data = []
 
