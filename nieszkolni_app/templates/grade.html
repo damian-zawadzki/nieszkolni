@@ -2,11 +2,12 @@
 {% block 'content' %}
 
 <div class="flex-parent jc-center">
-	<div class="phrase_card">
-    	<div class="phrase_card_container">
+	<div class="tab flashcard">
+    	<div class="">
 	    	
-	      	<div class="phrase_card_question">{{ grade.4 }}</div>
-      		<div class="phrase_card_description"><b>Type:</b> {{ grade.2 }} <b>Examiner:</b> {{ grade.3 }} <b></div>
+	      	<div class="tab_title flashcard">{{ grade.4 }}</div>
+      		<div class="tab_content flashcard"><b>Type:</b> {{ grade.2 }} <b>Examiner:</b> {{ grade.3 }} <b></div>
+      			
       		<div class="flex-parent jc-center">
 	      		<div class="phrase_card_answer"><b>{{ grade.1 }}%</b></div>
 	      	</div>

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<h1>MY FLASHCARDS</h1>
+
+<div class="flex-parent jc-center">
+	<button type="button" class="button_main" onclick="showHideWidgets('search', 'studied_today')">Search Flashcards</button>
+	<button type="button" class="button_main" onclick="showHideTable('studied_today'); hide('search')">Flashcards Studied Today</button>
+</div>
+
+<div id="search" style="display: none;">
+	<form action="{% url 'cards' client=client %}"  method="POST">
+	   {% csrf_token %}
+
+		<div class="flex-parent jc-center">
+			<div class="input_container">
+			<label class="input_label">Search All the Flashcard</label>
+
+			<input type="text" class="input_content" name="card_id" list="flashcards" required>
+			<datalist id="flashcards">
+
+				{% for flashcard in flashcards %}
+					<option value="{{ flashcard.0 }}: {{ flashcard.1 }}">{{ flashcard.2 }}</option>
+				{% endfor %}
+
+			</datalist>
+
+			</div>
+		</div>
+
+	   <div class="flex-parent jc-center">
+	      <button type="submit" class="button_main" name="action_on_cards" value="open">Open</button>
+	   </div>
+
+	</form>
+</div>
+
+<table id="studied_today" style="display: none;">
+	
+	{% for card_today in cards_today %}
+
+		<tr>
+
+			<td>{{ card_today.1 }}</td>
+			<td>{{ card_today.2 }}</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+<div class="break"></div>
+
+<script src="{% static 'functions.js' %}"></script> 
+
+{% endblock %}

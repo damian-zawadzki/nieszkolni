@@ -85,6 +85,38 @@ class VocabularyManager:
 
             return entries
 
+    def display_cards(self, client):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                card_id,
+                english,
+                polish,
+                interval
+                FROM nieszkolni_app_card
+                WHERE client = '{client}'
+                ''')
+
+            entries = cursor.fetchall()
+
+            return entries
+
+    def display_card(self, card_id):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                card_id,
+                english,
+                polish,
+                interval
+                FROM nieszkolni_app_card
+                WHERE card_id = '{card_id}'
+                ''')
+
+            entry = cursor.fetchone()
+
+            return entry
+
     def display_due_entries(self, client, deck):
         old_entries = self.display_old_due_entries(client, deck)
         new_entries = self.display_new_due_entries(client, deck)
@@ -380,6 +412,12 @@ class VocabularyManager:
     def remove_all_new_cards(self, client):
         Card.objects.filter(client=client, number_of_reviews=0).delete()
 
+    def remove_card(self, card_id):
+        card = Card.objects.filter(card_id=card_id)
+
+        if card.exists():
+            card.delete()
+
     def display_cards_time(self, client, deck):
         today_number = TimeMachine().today_number()
         deadline = today_number - 2
@@ -437,3 +475,22 @@ class VocabularyManager:
         data.sort(key=lambda x: x[0], reverse=True)
 
         return data
+
+    def display_cards_studied_per_date(self, client, date):
+        date_number = TimeMachine().date_to_number(date)
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                card_id,
+                english,
+                polish,
+                interval
+                FROM nieszkolni_app_card
+                WHERE client = '{client}'
+                AND card_revision_days LIKE ';{date_number}%'
+                ''')
+
+            entries = cursor.fetchall()
+
+            return entries

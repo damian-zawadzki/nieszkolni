@@ -243,7 +243,7 @@
 .tab_title {
   font-family: var(--font-family);
   font-size: var(--small-font);
-  font-weight: 750;
+  font-weight: 1000;
   text-align: left;
 }
 
@@ -253,6 +253,24 @@
   font-weight: 1000;
   text-align: center;
   margin: 1vh 1vw;
+}
+
+.tab_title.flashcard_new {
+  font-family: var(--font-family);
+  font-size: var(--medium-font);
+  font-weight: 500;
+  line-height: var(--medium-font);
+  text-align: center;
+  margin: 3vh 1vw;
+}
+
+.tab_subtitle.flashcard_new {
+  font-family: var(--font-family);
+  font-size: var(--medium-font);
+  font-weight: 600;
+  line-height: var(--medium-font);
+  text-align: center;
+  margin: 3vh 1vw;
 }
 
 .tab_title.light {

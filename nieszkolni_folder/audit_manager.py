@@ -343,8 +343,6 @@ class AuditManager:
                         "tags": row[13]
                         }
 
-                    print(entry)
-
                     entries.append(entry)
 
             return entries

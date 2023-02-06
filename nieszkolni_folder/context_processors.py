@@ -2,6 +2,7 @@ from nieszkolni_folder.audit_manager import AuditManager
 from nieszkolni_folder.challenge_manager import ChallengeManager
 from nieszkolni_folder.roadmap_manager import RoadmapManager
 from nieszkolni_folder.stream_manager import StreamManager
+from nieszkolni_folder.current_clients_manager import CurrentClientsManager
 
 
 def sections_processor(request):
@@ -14,6 +15,11 @@ def sections_processor(request):
             superuser_status = True
         else:
             superuser_status = False
+
+        if request.user.is_staff:
+            current_client = CurrentClientsManager().current_client(current_user)
+        else:
+            current_client = current_user
 
         status = AuditManager().check_if_clocked_in(current_user)
 
@@ -30,6 +36,7 @@ def sections_processor(request):
 
         return {
             "current_user": current_user,
+            "current_client": current_client,
             "status": status,
             "superuser_status": superuser_status,
             "challenge_status": challenge_status,

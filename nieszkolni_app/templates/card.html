@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<div class="flex-parent jc-center">
+  <form action="{% url 'card' client=client card_id=card_id  %}" method="POST">
+    {% csrf_token %}
+
+    <div class="tab flashcard">
+      <div>
+        <div class="tab_title flashcard_new">{{ flashcard.1 }}</div>
+        <div class="tab_subtitle flashcard_new">{{ flashcard.2 }}</div>
+
+        {% if user.is_staff %}
+
+          <button type="submit" class="button_main" name="action_on_card" value="remove">Remove</button>
+
+        {% endif %}
+
+      </div>
+    </div>
+
+  </form>
+</div>
+
+{% endblock %}

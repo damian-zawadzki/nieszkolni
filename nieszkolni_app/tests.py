@@ -80,9 +80,10 @@ class Front(TestCase):
 
     def test_coach_login_staff(self):
         self.client.login(username=username, password=password)
+        url = reverse("coach")
         self.user.is_staff = True
         self.user.save()
-        response = self.client.get("/coach/")
+        response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_staff_deny_anonymous(self):

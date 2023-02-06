@@ -167,6 +167,75 @@ def office(request):
 
 
 @login_required
+def cards(request, client):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        if client is None:
+            return redirect("campus")
+
+        today = TimeMachine().today()
+
+        flashcards = VocabularyManager().display_cards(
+                client
+                )
+
+        cards_today = VocabularyManager().display_cards_studied_per_date(
+                client,
+                today
+                )
+
+        if request.method == "POST":
+            if request.POST["action_on_cards"] == "open":
+                card_id_raw = request.POST["card_id"]
+                card_id = card_id_raw.split(": ")[0]
+
+                return redirect("card", client=client, card_id=card_id)
+
+        context = {
+            "client": client,
+            "flashcards": flashcards,
+            "cards_today": cards_today
+            }
+
+        user_agent = get_user_agent(request)
+
+        if user_agent.is_mobile:
+            return render(request, 'm_cards.html', context)
+        else:
+            return render(request, 'cards.html', context)
+
+
+@login_required
+def card(request, client, card_id):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        flashcard = VocabularyManager().display_card(
+                card_id
+                )
+
+        if request.method == "POST":
+            if request.POST["action_on_card"] == "remove":
+
+                VocabularyManager().remove_card(card_id)
+
+                return redirect("cards", client=client)
+
+        context = {
+            "client": client,
+            "card_id": card_id,
+            "flashcard": flashcard
+            }
+
+        return render(request, 'card.html', context)
+
+
+@login_required
 def flashcard(request, username, deck):
     if request.user.is_authenticated:
         first_name = request.user.first_name
@@ -253,107 +322,6 @@ def sentences(request):
             username=current_user,
             deck="sentences"
             )
-
-
-@login_required
-def view_answer(request):
-    if request.user.is_authenticated:
-        first_name = request.user.first_name
-        last_name = request.user.last_name
-        current_user = first_name + " " + last_name
-
-        # If a button is clicked
-        if request.method == "POST":
-            if request.POST["answer"] != "play":
-                deck = request.POST["deck"]
-
-                all_due_entries = VocabularyManager().display_due_entries(current_user, deck)
-
-                card_id = all_due_entries[0][0]
-                polish = all_due_entries[0][1]
-                english = all_due_entries[0][2]
-                old_due_today = len(VocabularyManager().display_old_due_entries(current_user, deck))
-                new_due_today = len(VocabularyManager().display_new_due_entries(current_user, deck))
-                problematic_due_today = len(VocabularyManager().display_problematic_due_entries(current_user, deck))
-                interval = all_due_entries[0][3]
-
-                if request.POST["answer"] != "edit":
-                    answer = request.POST["answer"]
-                    VocabularyManager().update_card(card_id, answer, card_opening_time)
-
-                    all_due_entries = VocabularyManager().display_due_entries(current_user, deck)
-
-                    # If there are no more cards to review
-                    if len(all_due_entries) == 0:
-                        VocabularyManager().reset_line(current_user)
-                        return redirect('congratulations')
-
-                    else:
-                        return redirect(f'{deck}')
-                else:
-                    return render(request, "edit_card.html", {
-                        "card_id": card_id,
-                        "polish": polish,
-                        "english": english
-                        })
-            else:
-                deck = request.POST["deck"]
-
-                all_due_entries = VocabularyManager().display_due_entries(current_user, deck)
-
-                card_id = all_due_entries[0][0]
-                polish = all_due_entries[0][1]
-                english = all_due_entries[0][2]
-                old_due_today = len(VocabularyManager().display_old_due_entries(current_user, deck))
-                new_due_today = len(VocabularyManager().display_new_due_entries(current_user, deck))
-                problematic_due_today = len(VocabularyManager().display_problematic_due_entries(current_user, deck))
-                interval = all_due_entries[0][3]
-
-                english_1 = re.sub(r"\ssb\s", " somebody ", english)
-                english_2 = re.sub(r"\ssb$", " somebody", english_1)
-                english_3 = re.sub(r"\ssth\s", " something ", english_2)
-                english_4 = re.sub(r"\ssth$", " something", english_3)
-
-                tts = gTTS(english_4, lang="en", tld="com")  
-                tts.save('recording.mp3')
-
-        # If no button is clicked
-        return render(request, 'view_answer.html', {
-            "deck": deck,
-            "polish": polish,
-            "english": english, 
-            "old_due_today": old_due_today,
-            "new_due_today": new_due_today,
-            "problematic_due_today": problematic_due_today,
-            "interval": interval})
-
-
-@login_required
-def edit_card(request):
-    if request.user.is_authenticated:
-        first_name = request.user.first_name
-        last_name = request.user.last_name
-        current_user = first_name + " " + last_name
-
-        if request.method == "POST":
-            card_id = request.POST["card_id"]
-
-            if "change" in request.POST:
-                if request.POST["change"] == "edit":
-                    polish = request.POST["polish"]
-                    english = request.POST["english"]
-                    commit_change = VocabularyManager().edit_card(card_id, polish, english)
-                    messages.success(request, ("The changes have been made!"))
-
-                    return redirect("vocabulary")
-
-                elif request.POST["change"] == "delete":
-                    commit_change = VocabularyManager().delete_card(card_id)
-                    messages.success(request, ("The card has been deleted!"))
-
-                    return redirect("vocabulary")
-
-        return render(request, "edit_card.html", {"card_id": card_id, "polish": polish, "english": english})
 
 
 @login_required
@@ -4869,7 +4837,7 @@ def grade(request, grade_id):
 
                 RoadmapManager().remove_grade(grade_id)
 
-                return redirect("grades")
+                return redirect("results")
 
         context = {
             "grade_id": grade_id,
@@ -6054,6 +6022,7 @@ def timesheet(request):
 
                 return render(request, "timesheet_details.html", {
                     "employee": employee,
+                    "category": category,
                     "start": start,
                     "end": end,
                     "entries": entries,
@@ -6067,16 +6036,19 @@ def timesheet(request):
 
             elif request.POST["action_on_timesheet"] == "download":
                 employee = request.POST["employee"]
+                category = request.POST["category"]
                 start = request.POST["start"]
                 end = request.POST["end"]
 
                 entries = AuditManager().display_entries(
                     employee,
+                    category,
                     start,
                     end
                     )
 
                 duration = AuditManager().display_total_duration_h_min(entries)
+
                 path = DocumentManager().create_timesheet_pdf(
                     employee,
                     start,

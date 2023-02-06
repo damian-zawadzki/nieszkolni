@@ -12,7 +12,10 @@ window.addEventListener('click', e =>
   );
 
 
-
+function hide(element) {
+  var object = document.getElementById(element);
+  object.style.display = "none";
+}
 
 function showHide(element) {
   var object = document.getElementById(element);
