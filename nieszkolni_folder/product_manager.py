@@ -85,6 +85,12 @@ class ProductManager:
             client
             ):
 
+        product = Product.objects.get(id=product_id)
+
+        if product.quantity <= 0:
+            output = ("ERROR", "No free seats available")
+            return output
+
         order_id = self.place_order(product_id, client)
 
         if order_id is not None:
@@ -100,7 +106,6 @@ class ProductManager:
             client
             ):
 
-        # try:
         now_number = TimeMachine().now_number()
 
         order = Order()
@@ -113,10 +118,6 @@ class ProductManager:
         order.save()
 
         return order.pk
-
-        # except Exception as e:
-        #     print(e)
-        #     return None
 
     def execute_order(
             self,
