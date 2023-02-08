@@ -406,7 +406,16 @@ class ActivityManager:
                 else:
                     completed.append(assignment[0])
 
-        uncompleted = [x for x in assignments if x[0] in uncompleted]
+        uncompleted = [
+            (
+                x[0],
+                x[1],
+                x[2],
+                x[3],
+                TimeMachine().number_to_system_date(x[4]) if x[4] != 0 else 0,
+                x[5]
+            )
+            for x in assignments if x[0] in uncompleted]
 
         return uncompleted
 

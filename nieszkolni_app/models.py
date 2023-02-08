@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 
 class Card(models.Model):
@@ -307,6 +308,7 @@ class Profile(models.Model):
     masters_degree_status = models.CharField(max_length=200, default="")
     doctorate_degree_status = models.CharField(max_length=200, default="")
     professors_title_status = models.CharField(max_length=200, default="")
+    current_program = models.CharField(max_length=200, default="")
 
 
 class Roadmap(models.Model):
@@ -562,3 +564,39 @@ class SurveyResponse(models.Model):
 class Binder(models.Model):
     title = models.CharField(max_length=200, default="")
     binder = models.FileField()
+
+
+class Product(models.Model):
+    creation_stamp = models.IntegerField(default=0)
+    modification_stamp = models.IntegerField(default=0)
+    title = models.CharField(max_length=200, default="")
+    description = models.TextField(default="")
+    category = models.CharField(max_length=200, default="")
+    points = models.IntegerField(default=0)
+    quantity = models.IntegerField(default=0)
+    allocation_per_client = models.IntegerField(default=0)
+    status = models.CharField(
+        max_length=200,
+        default="",
+        choices=(
+            ("available", "available"),
+            ("unavailable", "unavailable")
+            )
+        )
+    reference = models.IntegerField(default=0)
+    image = models.URLField(
+        max_length=200,
+        default="https://media.istockphoto.com/id/1147521090/photo/empty-white-studio-room-abstract-background.jpg?b=1&s=170667a&w=0&k=20&c=qIL0XrSQi0fjnzyd1QsrtOCUdBmHvU8AhCwr_cxmofg="
+        )
+
+
+class Order(models.Model):
+    creation_stamp = models.IntegerField(default=0)
+    modification_stamp = models.IntegerField(default=0)
+    product_id = models.IntegerField(default=0)
+    seller = models.CharField(max_length=200, default="")
+    client = models.CharField(max_length=200, default="")
+    status = models.CharField(
+        max_length=200,
+        default=""
+        )

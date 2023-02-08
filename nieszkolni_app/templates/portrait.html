@@ -4,7 +4,7 @@
 
 <div class="break"></div>
 <h3>{{ display_name }}</h3>
-<h4>{{ courses.0.0 }}</h4>
+<h4>{{ current_program }}</h4>
 <h5>{{ current_degree.title }}, semester {{ current_semester }}</h5>
 
 <div class="activity_figure">{{ quaterly_points }}/{{ target }}</div>
@@ -114,17 +114,17 @@
 	  var interval = setInterval(frame, 50);
 	  var activity = parseInt({{ quaterly_points|safe }});
 	  var target = parseInt({{ target|safe }});
-	  var check = activity / target * 15;
+	  var check = activity / target * 20;
 
 	  if (check < 0) {
 	  	var advancement = 0;
 	  } else if (check < 1) {
 	  	var advancement = 1.1;
+	  } else if (check >= 20) {
+	  	var advancement = 20;
 	  } else if (check > 1) {
-	  	var advancement = check;
-	  } else if (check >= 15) {
-			var advancement = 15;
-		};
+			var advancement = check;
+	};
 
 	  function frame() {
 	    if (width >= advancement) {

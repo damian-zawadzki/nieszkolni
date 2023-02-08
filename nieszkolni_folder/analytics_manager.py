@@ -261,8 +261,9 @@ class AnalyticsManager:
         data = []
         for coach in coaches:
             entries = self.count_entry_total_per_student(coach.name)
-            entries[0].update({"coach": coach.name})
-            data.extend(entries)
+            if len(entries) != 0:
+                entries[0].update({"coach": coach.name})
+                data.extend(entries)
 
         data.sort(key=lambda entry: entry["total"])
 
@@ -315,6 +316,9 @@ class AnalyticsManager:
                 ).values_list(
                 "name", flat=True
                 )
+
+        if len(clients) == 0:
+            return (coach, 0)
 
         total = []
 

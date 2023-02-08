@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<form action="{% url 'analytics' %}" method="POST">
+	{% csrf_token %}
+
+	<div class="flex-parent jc-center">
+		<ul class="square_menu">
+
+			<a class="square_menu_link" href="{% url 'analytics_entries' %}">ENTRIES</a>
+			<a class="square_menu_link" href="{% url 'analytics_activity' %}">ACTIVITY</a>
+			<a class="square_menu_link" href="{% url 'analytics_grades' %}">GRADES</a>
+			<a class="square_menu_link" href="{% url 'analytics_indicators' %}">INDICATORS</a>
+
+		</ul>
+	</div>
+	
+</form>
+
+{% endblock %}

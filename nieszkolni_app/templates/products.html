@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+
+<h1>DEALS</h1>
+
+<div class="flex-parent jc-center">
+  <ul class="square_menu">
+
+    {% for product in products %}
+
+      <a class="square_menu_link" href="{% url 'product' product_id=product.id %}">{{ product.title.upper }}</a>
+
+    {% endfor %}
+
+  </ul>
+</div>
+
+<div class="break"></div>
+
+{% endblock %}

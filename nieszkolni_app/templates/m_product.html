@@ -1,0 +1,38 @@
+{% extends 'no_navigation.html' %}
+{% block 'content' %}
+
+<div class="program_box flex-parent jc-center">
+	<div class="program_container">
+    	<div class="task_card_container">
+   			
+			<div class="program_photo_container">
+				<img src="{{ product.image }}" alt="" class="program_photo">
+			</div>
+
+			<div class="program_photo_container">
+	      		<div class="program_degree">{{ product.title }}</div>
+	      		<div class="program_description">{{ product.description|safe }}</div>
+	      		<hr class="line"></div>
+	      		<div class="program_description"><b>Activity Points:</b> {{ product.points }}</div>
+	      		<div class="program_description"><b>Available spots:</b> {{ product.quantity }}</div>
+	      	</div>
+
+			<form action="{% url 'product' product_id=product_id %}"  method="POST">
+				{% csrf_token %}
+
+				<div class="flex-parent jc-center">
+				  <button type="submit" class="button_main" name="action_on_product" value="sign_up">Sign up</button>
+
+					{% if user.is_staff %}
+					  	<button type="submit" class="button_main" name="action_on_product" value="update">Update</button>
+					{% endif %}
+
+				</div>
+
+			</form>
+
+    	</div>
+  	</div>
+</div>
+
+{% endblock %}

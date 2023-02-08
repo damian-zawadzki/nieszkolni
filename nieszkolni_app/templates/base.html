@@ -69,6 +69,10 @@
                   <a class="side_menu_link" href="{% url 'staff' %}">STAFF</a>
                 </div>
 
+                <div class="side_menu_box">
+                  <a class="side_menu_link" href="{% url 'analytics' %}">ANALYTICS</a>
+                </div>
+
                 {% if user.is_superuser %}
                   <div class="side_menu_box">
                     <a class="side_menu_link" href="{% url 'management' %}">MANAGEMENT</a>

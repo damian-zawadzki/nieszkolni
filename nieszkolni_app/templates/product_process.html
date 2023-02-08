@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+
+<h1>PRODUCTS</h1>
+
+<div class="flex-parent jc-center">
+  <ul class="square_menu">
+
+    <a class="square_menu_link" href="{% url 'add_product' %}">ADD A PRODUCT</a>
+    <a class="square_menu_link" href="{% url 'products' %}">PRODUCTS</a>
+
+  </ul>
+</div>
+
+<div class="break"></div>
+
+{% endblock %}

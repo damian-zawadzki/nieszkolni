@@ -13,12 +13,14 @@ class Front(TestCase):
         global username
         global password
         global current_user
+        global current_client
 
         username = "joedoe"
         password = "1234"
         first_name = "Joe"
         last_name = "Doe"
         current_user = first_name + " " + last_name
+        current_client = "Damian Bunny"
 
         self.user = User.objects.create_user(
                 username,
@@ -28,7 +30,19 @@ class Front(TestCase):
                 last_name=last_name
                 )
 
-        self.customer = Client.objects.create(name="Joe Doe")
+        self.user.save()
+
+        self.user_2 = User.objects.create_user(
+                "damianbunny",
+                "damianbunny@dummy.com",
+                "1234",
+                first_name="Damian",
+                last_name="Bunny"
+                )
+
+        self.user_2.save()
+
+        self.coach = Client.objects.create(name="Joe Doe")
 
     def test_campus_deny_anonymous(self):
         response = self.client.get("/campus/", follow=True)
@@ -79,11 +93,17 @@ class Front(TestCase):
         self.assertEqual(response.status_code, 302)
 
     def test_coach_login_staff(self):
+        Card.objects.create(client=current_client)
+        Client.objects.create(name=current_client)
+        CurrentClient.objects.create(
+            coach=current_user,
+            name=current_client
+            )
+
         self.client.login(username=username, password=password)
-        url = reverse("coach")
         self.user.is_staff = True
         self.user.save()
-        response = self.client.get(url)
+        response = self.client.get(reverse("coach"))
         self.assertEqual(response.status_code, 200)
 
     def test_staff_deny_anonymous(self):

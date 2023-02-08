@@ -8,28 +8,29 @@
 
 	<tr>
 
-		<th>Indicator</th>
+		<th class="td_sentences">Indicator</th>
 		<th>Value</th>
 
 	</tr>
 
 
 	<tr>
-		<td>Automatic Translation Efficiency Rate</td>
+		<td class="td_sentences">Automatic Translation Efficiency Rate</td>
 		<td>{{ indicators.ater }}</td>
 	</tr>
 	<tr>
-		<td>Automatic Translation Efficiency Sample Size</td>
-		<td>{{ indicators.atess }}</td>
-	</tr>
-	<tr>
-		<td>Automatic Translation Occurances</td>
+		<td class="td_sentences">Automatic Translation Occurances</td>
 		<td>{{ indicators.ato }}</td>
 	</tr>
+	<tr>
+		<td class="td_sentences">Automatic Translation Efficiency Sample Size</td>
+		<td>{{ indicators.atess }}</td>
+	</tr>
+
 
 	{% for average in averages %}
 		<tr>
-			<td>{{ average.0 }}'s Student Average of Activity Points This Semster</td>
+			<td class="td_sentences">{{ average.0 }}'s Student Average of Activity Points This Semster</td>
 			<td>{{ average.1 }}</td>
 		</tr>
 	{% endfor %}

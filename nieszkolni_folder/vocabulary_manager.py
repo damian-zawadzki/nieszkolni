@@ -85,6 +85,21 @@ class VocabularyManager:
 
             return entries
 
+    def display_all_cards(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                card_id,
+                english,
+                polish,
+                interval
+                FROM nieszkolni_app_card
+                ''')
+
+            entries = cursor.fetchall()
+
+            return entries
+
     def display_cards(self, client):
         with connection.cursor() as cursor:
             cursor.execute(f'''
@@ -355,9 +370,33 @@ class VocabularyManager:
 
         return new_cards
 
+    def edit_cards(
+            self,
+            card_id,
+            english,
+            polish
+            ):
+
+        pattern = Card.objects.get(pk=card_id)
+
+        cards = Card.objects.filter(
+                polish=pattern.polish,
+                english=pattern.english
+                )
+
+        for card in cards:
+            card.polish = polish
+            card.english = english
+            card.save()
+
     def edit_card(self, card_id, polish, english):
         with connection.cursor() as cursor:
-            cursor.execute(f"UPDATE nieszkolni_app_card SET polish = '{polish}', english = '{english}' WHERE card_id = {card_id}")
+            cursor.execute(f'''
+                UPDATE nieszkolni_app_card
+                SET polish = '{polish}',
+                english = '{english}'
+                WHERE card_id = {card_id}
+                ''')
 
         return "Card edited!"
 
@@ -366,6 +405,18 @@ class VocabularyManager:
             cursor.execute(f"DELETE FROM nieszkolni_app_card WHERE card_id = {card_id}")
 
         return "Card deleted!"
+
+    def remove_cards(
+            self,
+            card_id
+            ):
+
+        pattern = Card.objects.get(pk=card_id)
+
+        cards = Card.objects.filter(
+                polish=pattern.polish,
+                english=pattern.english
+                ).delete()
 
     # Deck specific functions
     def download_database(self):

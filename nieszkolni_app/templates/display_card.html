@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<div class="flex-parent jc-center">
+  <form action="{% url 'display_card' card_id=card_id  %}" method="POST">
+    {% csrf_token %}
+
+    <div class="tab flashcard">
+      <div>
+        <div class="tab_title flashcard_new"><input class="input_content" name="english" value="{{ card.1 }}"></div>
+        <div class="tab_subtitle flashcard_new"><input class="input_content" name="polish" value="{{ card.2 }}"></div>
+          <button type="submit" class="button_main" name="action_on_card" value="edit">Edit</button>
+          <button type="submit" class="button_main" name="action_on_card" value="remove">Remove</button>
+          <button type="submit" class="button_main" name="action_on_card" value="back">Back</button>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+{% endblock %}

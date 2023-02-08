@@ -9,7 +9,8 @@
 		  <a class="square_menu_link" href="{% url 'session_mode' %}">SESSION MODE</a>
 		  <a class="square_menu_link" href="{% url 'examination_mode' %}">EXAMINATION MODE</a>
 		  <a class="square_menu_link" href="{% url 'add_grade' %}">GRADE THE STUDENT</a>
-		  <a class="square_menu_link" href="{% url 'results' %}">STUDENTS' RESULTS</a>
+		  <a class="square_menu_link" href="{% url 'results' %}">STUDENT'S RESULTS</a>
+		  <a class="square_menu_link" href="{% url 'cards' client=current_client %}">STUDENT'S FLASHCARDS</a>
 		  <a class="square_menu_link" href="{% url 'report_listening' %}">REPORT LISTENING</a>
 		  <a class="square_menu_link" href="{% url 'report_reading' %}">REPORT READING</a>
 		  <a class="square_menu_link" href="{% url 'client_stream' %}">CLIENT'S STREAM ENTRIES</a>
@@ -18,5 +19,6 @@
 	</ul>
 </div>
 
+<div class="break"></div>
 
 {% endblock %}

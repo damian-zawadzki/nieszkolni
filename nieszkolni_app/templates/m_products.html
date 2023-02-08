@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+<h1>DEALS</h1>
+
+<table class="m_table">
+
+	{% for product in products %}
+
+		<tr class="tr_clickable" onclick="jump('{{ product.id }}')">
+
+			<td>{{ product.title }}</td>
+			<a id="{{ product.id }}" href="{% url 'product' product_id=product.id %}"></a>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+<div class="break"></div>
+
+{% include 'footer.html' %}
+{% endblock %}

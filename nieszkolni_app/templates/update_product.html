@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+
+<h1>UPDATE THE PRODUCT</h1>
+
+<form action="{% url 'update_product' product_id=product_id %}"  method="POST">
+	{% csrf_token %}
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Product</label>
+      <select required class="input_content" name="reference">
+        <option selected value="{{ product.reference }}"><b>{{ product.reference }}</b></option>
+
+        {% for course in courses %}
+          <option value="{{ course.10 }}">{{ course.0 }}</option>
+        {% endfor %}
+
+      </select>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Name</label>
+        <input type="text" class="input_content" name="title" value="{{ product.title }}">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Description</label>
+        <textarea type="text" class="input_content input_paragraph" name="description">{{ product.description }}</textarea>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Image</label>
+        <input type="url" class="input_content" name="image" value="{{ product.image }}">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Category</label>
+      <select required class="input_content" name="category">
+        <option selected value="{{ product.category }}"><b>{{ product.category }}</b></option>
+
+        {% for category in categories %}
+          <option value="{{ category.0 }}">{{ category.0 }}</option>
+        {% endfor %}
+
+      </select>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Activity points</label>
+        <input type="number" class="input_content" name="points" value="{{ product.points }}">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Available quantity</label>
+        <input type="number" class="input_content" name="quantity" value="{{ product.quantity }}">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Available quantity per client</label>
+        <input type="number" class="input_content" name="allocation_per_client" value="{{ product.allocation_per_client }}">
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Status</label>
+      <select required class="input_content" name="status">
+        <option selected value="{{ product.status }}">{{ product.status }}</option>
+        <option value="available">available</option>
+        <option value="unavailable">unavailable</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+      <button type="submit" class="button_main" name="action_on_product" value="update">Update</button>
+  </div>
+
+</form>
+
+<div class="break"></div>
+
+{% endblock %}

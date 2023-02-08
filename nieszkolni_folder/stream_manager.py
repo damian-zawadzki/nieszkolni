@@ -132,23 +132,23 @@ class StreamManager:
         status = "active"
 
         if email_address == "dam.zawadzki@gmail.com":
-            stream_user = "Damien Bunny"
+            stream_user = "Damian Zawadzki"
         elif email_address == "Marta":
-            stream_user = "Marta Bubble"
+            stream_user = "Marta Bańkowska"
         elif email_address == "asystenttrenerajezykowego@gmail.com":
-            stream_user = "Marta Bubble"
+            stream_user = "Marta Bańkowska"
         elif email_address == "dam.zawadzki@gmail.com Zawadzki":
-            stream_user = "Damien Bunny"
+            stream_user = "Damian Zawadzki"
         elif email_address == "coachangielskiego@gmail.com":
-            stream_user = "Nadia Cukoo"
+            stream_user = "Nadia Kukulska"
         elif email_address == "asystentcoachajezykowego@gmail.com":
-            stream_user = "Peter Borough"
+            stream_user = "Piotr Gmitrzak"
         elif email_address == "":
-            stream_user = "Damien Bunny"
+            stream_user = "Damian Zawadzki"
         elif email_address == "asystentcoachajezykowego@gmail.com ":
-            stream_user = "Peter Borough"
+            stream_user = "Piotr Gmitrzak"
         else:
-            stream_user = "Damien Bunny"
+            stream_user = "Damian Zawadzki"
 
         with connection.cursor() as cursor:
             cursor.execute(f'''

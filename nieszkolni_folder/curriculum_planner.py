@@ -8,6 +8,7 @@ from nieszkolni_app.models import Module
 from nieszkolni_app.models import Matrix
 from nieszkolni_app.models import Library
 from nieszkolni_app.models import Roadmap
+from nieszkolni_app.models import Profile
 
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
@@ -238,6 +239,25 @@ class CurriculumPlanner:
                     matrix,
                     starting_date_number
                     )
+
+    def plan_courses_now(
+            self,
+            client,
+            current_user,
+            course_ids_list
+            ):
+
+        profile = Profile.objects.get(name=client)
+        semester = profile.current_semester
+        program = profile.current_program
+
+        self.plan_courses(
+            client,
+            current_user,
+            course_ids_list,
+            semester,
+            program
+            )
 
     def client_to_plan_program(self):
         start = BackOfficeManager().display_start_of_semester()

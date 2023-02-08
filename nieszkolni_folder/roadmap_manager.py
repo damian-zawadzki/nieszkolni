@@ -584,7 +584,8 @@ class RoadmapManager:
             bachelors_degree_status,
             masters_degree_status,
             doctorate_degree_status,
-            professors_title_status
+            professors_title_status,
+            current_program
             ):
 
         name = name.strip()
@@ -620,7 +621,8 @@ class RoadmapManager:
                 bachelors_degree_status,
                 masters_degree_status,
                 doctorate_degree_status,
-                professors_title_status
+                professors_title_status,
+                current_program
                 )
                 VALUES (
                 '{name}',
@@ -651,7 +653,8 @@ class RoadmapManager:
                 '{bachelors_degree_status}',
                 '{masters_degree_status}',
                 '{doctorate_degree_status}',
-                '{professors_title_status}'
+                '{professors_title_status}',
+                '{current_program}'
                 )
                 ON CONFLICT (name)
                 DO NOTHING
@@ -687,7 +690,8 @@ class RoadmapManager:
             bachelors_degree_status,
             masters_degree_status,
             doctorate_degree_status,
-            professors_title_status
+            professors_title_status,
+            current_program
             ):
 
         with connection.cursor() as cursor:
@@ -721,7 +725,8 @@ class RoadmapManager:
                 bachelors_degree_status = '{bachelors_degree_status}',
                 masters_degree_status = '{masters_degree_status}',
                 doctorate_degree_status = '{doctorate_degree_status}',
-                professors_title_status = '{professors_title_status}'
+                professors_title_status = '{professors_title_status}',
+                current_program = '{current_program}'
                 WHERE name = '{name}'
                 ''')
 
@@ -757,7 +762,8 @@ class RoadmapManager:
                 bachelors_degree_status,
                 masters_degree_status,
                 doctorate_degree_status,
-                professors_title_status
+                professors_title_status,
+                current_program
                 FROM nieszkolni_app_profile
                 ORDER BY name ASC
                 ''')
@@ -798,7 +804,8 @@ class RoadmapManager:
                 bachelors_degree_status,
                 masters_degree_status,
                 doctorate_degree_status,
-                professors_title_status
+                professors_title_status,
+                current_program
                 FROM nieszkolni_app_profile
                 WHERE name = '{name}'
                 ''')
@@ -1514,5 +1521,24 @@ class RoadmapManager:
                 ''')
 
             program = cursor.fetchone()
+
+            return program
+
+    def get_program_by_id(self, program_id):
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT program_name
+                FROM nieszkolni_app_program
+                WHERE id = '{program_id}'
+                ''')
+
+            data = cursor.fetchone()
+
+            if data is not None:
+                program = data[0]
+
+            else:
+                program = "Unassigned"
 
             return program

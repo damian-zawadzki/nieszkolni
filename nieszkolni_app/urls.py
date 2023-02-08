@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.urls import path, re_path, include
 
-from . import views
+from .views import views
+from .views import staff_views
 
 urlpatterns = [
     path('', views.welcome, name="welcome"),
@@ -186,21 +187,69 @@ urlpatterns = [
     path('display_challenge_set/<int:process_number>/', views.display_challenge_set, name="display_challenge_set"),
     path('translate_sentences/<int:item>/', views.translate_sentences, name="translate_sentences"),
     path('applause/<int:activity_points>/', views.applause, name="applause"),
-    path('add_survey_option/', views.add_survey_option, name="add_survey_option"),
-    path('add_survey_question/', views.add_survey_question, name="add_survey_question"),
-    path('display_survey_question/<int:question_id>/', views.display_survey_question, name="display_survey_question"),
-    path('add_survey/', views.add_survey, name="add_survey"),
-    path('display_surveys/', views.display_surveys, name="display_surveys"),
-    path('display_survey/<int:survey_id>/', views.display_survey, name="display_survey"),
-    path('add_question_to_survey/', views.add_question_to_survey, name="add_question_to_survey"),
-    path('survey/<int:item>/', views.survey, name="survey"),
-    path('completed/', views.completed, name="completed"),
-    path('responses/', views.responses, name="responses"),
+
+    # Surveys
+    path(
+        'survey_process/',
+        staff_views.survey_process,
+        name="survey_process"
+        ),
+    path(
+        'add_survey_option/',
+        staff_views.add_survey_option,
+        name="add_survey_option"
+        ),
+    path(
+        'add_survey_question/',
+        staff_views.add_survey_question,
+        name="add_survey_question"
+        ),
+    path(
+        'display_survey_question/<int:question_id>/',
+        staff_views.display_survey_question,
+        name="display_survey_question"
+        ),
+    path(
+        'add_survey/',
+        staff_views.add_survey,
+        name="add_survey"
+        ),
+    path(
+        'display_surveys/',
+        staff_views.display_surveys,
+        name="display_surveys"
+        ),
+    path(
+        'display_survey/<int:survey_id>/',
+        staff_views.display_survey,
+        name="display_survey"
+        ),
+    path(
+        'add_question_to_survey/',
+        staff_views.add_question_to_survey,
+        name="add_question_to_survey"
+        ),
+    path(
+        'survey/<int:item>/',
+        staff_views.survey,
+        name="survey"
+        ),
+    path(
+        'completed/',
+        staff_views.completed,
+        name="completed"
+        ),
+    path(
+        'responses/',
+        staff_views.responses,
+        name="responses"
+        ),
+
     path('my_results/', views.my_results, name="my_results"),
     path('my_courses/', views.my_courses, name="my_courses"),
     path('bill/', views.bill, name="bill"),
     path('flashcard/<str:username>/<str:deck>/', views.flashcard, name="flashcard"),
-    path('cards/<str:client>/', views.cards, name="cards"),
+    
     path('card/<str:client>/<int:card_id>/', views.card, name="card"),
     path('analytics_entries_per_student/<str:coach>/', views.analytics_entries_per_student, name="analytics_entries_per_student"),
     path('analytics_entries/', views.analytics_entries, name="analytics_entries"),
@@ -217,4 +266,59 @@ urlpatterns = [
     path('remove_multiple_from_stream/', views.remove_multiple_from_stream, name="remove_multiple_from_stream"),
     re_path(r'^flashcard_question/$', views.flashcard_question, name='flashcard_question'),
     re_path(r'^flashcard_answer/$', views.flashcard_answer, name='flashcard_answer'),
+    path(
+        'analytics/',
+        views.analytics,
+        name="analytics"
+        ),
+
+    # Product
+    path(
+        'product_process/',
+        staff_views.product_process,
+        name="product_process"
+        ),
+    path(
+        'add_product/',
+        staff_views.add_product,
+        name="add_product"
+        ),
+    path(
+        'products/',
+        staff_views.products,
+        name="products"
+        ),
+    path(
+        'product/<int:product_id>',
+        staff_views.product,
+        name="product"
+        ),
+    path(
+        'update_product/<int:product_id>',
+        staff_views.update_product,
+        name="update_product"
+        ),
+
+    # Card
+    path(
+        'card_process/',
+        staff_views.card_process,
+        name="card_process"
+        ),
+    path(
+        'display_cards/',
+        staff_views.display_cards,
+        name="display_cards"
+        ),
+    path(
+        'display_card/<int:card_id>',
+        staff_views.display_card,
+        name="display_card"
+        ),
+    path(
+        'cards/<str:client>/',
+        views.cards,
+        name="cards"
+        ),
+
        ]

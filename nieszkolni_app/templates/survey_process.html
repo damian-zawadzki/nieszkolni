@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+
+<h1>SURVEYS</h1>
+
+<div class="flex-parent jc-center">
+  <ul class="square_menu">
+
+    <a class="square_menu_link" href="{% url 'display_surveys' %}">SURVEYS</a>
+    <a class="square_menu_link" href="{% url 'add_survey' %}">CREATE A SURVEY</a>
+    <a class="square_menu_link" href="{% url 'add_question_to_survey' %}">ADD A QUESTION TO A SURVEY</a>
+    <a class="square_menu_link" href="{% url 'add_survey_question' %}">SURVEY QUESTIONS</a>
+    <a class="square_menu_link" href="{% url 'add_survey_option' %}">SURVEY OPTIONS</a>
+    <a class="square_menu_link" href="{% url 'responses' %}">RESPONSES</a>
+
+  </ul>
+</div>
+
+<div class="break"></div>
+
+{% endblock %}

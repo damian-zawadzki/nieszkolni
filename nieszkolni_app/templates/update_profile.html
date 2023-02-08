@@ -49,6 +49,20 @@
 
   <div class="flex-parent jc-center">
      <div class="input_container">
+      <label class="input_label">Current program</label>
+
+        <select required class="input_content" name="current_program">
+            <option selected value="{{ profile.29 }}">{{ profile.29 }}</option>
+            {% for program in programs %}
+            <option value="{{ program.1 }}">{{ program.1 }}</option>
+            {% endfor %}
+        </select>
+
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
       <label class="input_label">Current semester</label>
         <input type="number" class="input_content" name="current_semester" value="{{ profile.4 }}">
     </div>
