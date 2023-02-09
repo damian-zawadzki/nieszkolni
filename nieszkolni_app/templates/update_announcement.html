@@ -23,15 +23,66 @@
 
     <div class="flex-parent jc-center">
         <div class="input_container">
-        <label class="input_label">Type</label>
+        <label class="input_label">Content type</label>
+
+        <select required class="input_content" id="type" name="content_type" onchange="showHideLimit()">
+            <option value="{{ announcement.8 }}">{{ announcement.8 }}</option>
+            <option value="announcement">announcement</option>
+            <option value="article">article</option>
+            <option value="comment">comment</option>
+            <option value="listing">listing</option>
+            <option value="rule">rule</option>
+        </select>
+
+        </div>
+    </div>
+
+    <div class="flex-parent jc-center" id="limit_box" style="display: none;">
+        <div class="input_container">
+            <label class="input_label">Limit</label>
+            <input type="number" class="input_content" id="limit_input" name="threshold" value="{{ announcement.10 }}">
+        </div>
+    </div>
+
+    <input type="hidden" class="input_content" id="threshold_input_2" name="threshold" value="{{ announcement.10 }}">
+
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+        <label class="input_label">Color</label>
+
+        <select required class="input_content" name="color">
+            <option selected value="{{ announcement.9 }}">{{ announcement.9 }}</option>
+            <option value="white">white</option>
+            <option value="blue">blue</option>
+            <option value="green">green</option>
+            <option value="red">red</option>
+            <option value="gray">gray</option>
+        </select>
+
+        </div>
+    </div>
+
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+        <label class="input_label">Visibility in feed</label>
 
         <select required class="input_content" name="notification_type">
             <option selected value="{{ announcement.6 }}">{{ announcement.6 }}</option>
-            <option value="visible_announcement">visible announcement</option>
-            <option value="hidden_announcement">hidden announcement</option>
-            <option value="comment">comment</option>
-            <option value="rule">rule</option>
-            <option value="article">article</option>
+            <option value="visible">visible</option>
+            <option value="hidden">hidden</option>
+        </select>
+
+        </div>
+    </div>
+
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+        <label class="input_label">Status</label>
+
+        <select required class="input_content" name="status">
+            <option selected value="{{ announcement.7 }}">{{ announcement.7 }}</option>
+            <option value="sent">sent</option>
+            <option value="unsent">unsent</option>
         </select>
 
         </div>
@@ -43,5 +94,25 @@
     </div>
 
 </form>
+
+<div class="break"></div>
+
+<script type="text/javascript">
+    function showHideLimit() {
+        var box = document.getElementById('limit_box');
+        var line = document.getElementById('threshold_input_2');
+        var type = document.getElementById('type');
+
+        if (type.value == 'listing') {
+            box.style.display = 'flex';
+            line.remove();
+        } else {
+            box.style.display = 'none';
+            line.style.display = 'block';
+        }
+    }
+
+    window.addEventListener('load', showHideLimit())
+</script>
 
 {% endblock %}

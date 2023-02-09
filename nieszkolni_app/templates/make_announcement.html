@@ -46,15 +46,49 @@
 
     <div class="flex-parent jc-center">
         <div class="input_container">
-        <label class="input_label">Type</label>
+        <label class="input_label">Content type</label>
+
+        <select required class="input_content" id="type" name="content_type" onchange="showHideLimit()">
+            <option value="announcement">announcement</option>
+            <option value="article">article</option>
+            <option value="comment">comment</option>
+            <option value="listing">listing</option>
+            <option value="rule">rule</option>
+        </select>
+
+        </div>
+    </div>
+
+    <div class="flex-parent jc-center" id="limit_box" style="display: none">
+        <div class="input_container">
+            <label class="input_label">Limit</label>
+            <input type="number" class="input_content" name="threshold" value="0">
+        </div>
+    </div>
+
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+        <label class="input_label">Color</label>
+
+        <select required class="input_content" name="color">
+            <option value="white">white</option>
+            <option value="blue">blue</option>
+            <option value="green">green</option>
+            <option value="red">red</option>
+            <option value="gray">gray</option>
+        </select>
+
+        </div>
+    </div>
+
+    <div class="flex-parent jc-center">
+        <div class="input_container">
+        <label class="input_label">Visibility in feed</label>
 
         <select required class="input_content" name="notification_type">
             <option selected disabled value></option>
-            <option value="visible_announcement">visible announcement</option>
-            <option value="hidden_announcement">hidden announcement</option>
-            <option value="comment">comment</option>
-            <option value="rule">rule</option>
-            <option value="article">article</option>
+            <option value="visible">visible</option>
+            <option value="hidden">hidden</option>
         </select>
 
         </div>
@@ -66,5 +100,20 @@
     </div>
 
 </form>
+
+<div class="break"></div>
+
+<script type="text/javascript">
+    function showHideLimit() {
+        var limit = document.getElementById('limit_box');
+        var type = document.getElementById('type');
+
+        if (type.value == 'listing') {
+            limit.style.display = 'flex';
+        } else {
+            limit.style.display = 'none';
+        }
+    }
+</script>
 
 {% endblock %}

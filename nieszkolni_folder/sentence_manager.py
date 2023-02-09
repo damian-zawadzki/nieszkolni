@@ -485,7 +485,7 @@ class SentenceManager:
                 sentence_number,
                 polish
                 FROM nieszkolni_app_composer
-                WHERE list_number = {list_number}
+                WHERE list_number = '{list_number}'
                 ''')
 
             sentences = cursor.fetchall()

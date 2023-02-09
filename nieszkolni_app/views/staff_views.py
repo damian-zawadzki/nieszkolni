@@ -48,6 +48,7 @@ from nieszkolni_folder.translation_manager import TranslationManager
 from nieszkolni_folder.dna_manager import DnaManager
 from nieszkolni_folder.speech_manager import SpeechManager
 from nieszkolni_folder.product_manager import ProductManager
+from nieszkolni_folder.procedure_manager import ProcedureManager
 
 from io import BytesIO
 
@@ -604,3 +605,18 @@ def display_card(request, card_id):
             }
 
         return render(request, "display_card.html", context)
+
+# Contest
+
+
+@staff_member_required
+def contest_process(request):
+
+    context = {}
+
+    return render(
+        request,
+        "contest_process.html",
+        context
+        )
+

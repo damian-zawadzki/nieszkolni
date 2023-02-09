@@ -19,7 +19,7 @@
         font-size: 2vh;
     }
 
-    .tab.post, .tab.full, .tab.light {
+    .tab.post, .tab.full, .tab.light, .tab.announcement {
         min-width: 90vw;
         width: 90vw;
     }

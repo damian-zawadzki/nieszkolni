@@ -321,4 +321,12 @@ urlpatterns = [
         name="cards"
         ),
 
+    # Contest
+
+    path(
+        'contest_process/',
+        views.contest_process,
+        name="contest_process"
+        ),
+
        ]

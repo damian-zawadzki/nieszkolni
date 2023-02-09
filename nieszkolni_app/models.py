@@ -364,6 +364,9 @@ class Notification(models.Model):
     content = models.TextField(default="")
     notification_type = models.CharField(max_length=200, default="")
     status = models.CharField(max_length=200, default="")
+    content_type = models.CharField(max_length=200, default="")
+    color = models.CharField(max_length=200, default="")
+    threshold = models.IntegerField(default=0)
 
 
 class Option(models.Model):
@@ -600,3 +603,24 @@ class Order(models.Model):
         max_length=200,
         default=""
         )
+
+
+class Contest(models.Model):
+    creation_stamp = models.IntegerField(default=0)
+    modification_stamp = models.IntegerField(default=0)
+    start = models.IntegerField(default=0)
+    end = models.IntegerField(default=0)
+    procedure = models.CharField(max_length=200, default="")
+    method = models.CharField(max_length=200, default="")
+    threshold = models.IntegerField(default=0)
+    reward = models.IntegerField(default=0)
+    participants = models.TextField(default="")
+    status = models.CharField(max_length=200, default="")
+
+
+class Taker(models.Model):
+    creation_stamp = models.IntegerField(default=0)
+    modification_stamp = models.IntegerField(default=0)
+    client = models.CharField(max_length=200, default="")
+    listing = models.CharField(max_length=200, default="")
+    status = models.CharField(max_length=200, default="")

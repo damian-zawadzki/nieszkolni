@@ -1,6 +1,8 @@
 import os
 import django
+
 from django.db import connection
+
 from nieszkolni_app.models import Library
 from nieszkolni_app.models import LibraryLine
 from nieszkolni_app.models import Theater
@@ -9,6 +11,8 @@ from nieszkolni_app.models import Notification
 from nieszkolni_app.models import Option
 from nieszkolni_app.models import Store
 from nieszkolni_app.models import Ticket
+from nieszkolni_app.models import Taker
+
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
 
@@ -556,7 +560,10 @@ class BackOfficeManager:
             subject,
             content,
             notification_type,
-            status
+            status,
+            content_type,
+            color,
+            threshold
             ):
 
         if recipients[0] == "all":
@@ -566,7 +573,10 @@ class BackOfficeManager:
                 subject,
                 content,
                 notification_type,
-                status
+                status,
+                content_type,
+                color,
+                threshold
                 )
         else:
             for recipient in recipients:
@@ -576,7 +586,10 @@ class BackOfficeManager:
                     subject,
                     content,
                     notification_type,
-                    status
+                    status,
+                    content_type,
+                    color,
+                    threshold
                     )
 
     def add_notification(
@@ -586,7 +599,10 @@ class BackOfficeManager:
             subject,
             content,
             notification_type,
-            status
+            status,
+            content_type,
+            color,
+            threshold
             ):
 
         subject = Cleaner().clean_quotation_marks(subject)
@@ -602,17 +618,52 @@ class BackOfficeManager:
                 subject,
                 content,
                 notification_type,
-                status
+                status,
+                content_type,
+                color,
+                threshold
                 )
                 VALUES (
-                {stamp},
+                '{stamp}',
                 '{sender}',
                 '{recipient}',
                 '{subject}',
                 '{content}',
                 '{notification_type}',
-                '{status}'
+                '{status}',
+                '{content_type}',
+                '{color}',
+                '{threshold}'
                 )
+                ''')
+
+    def update_notifications(
+            self,
+            notification_id,
+            subject,
+            content,
+            notification_type,
+            status,
+            content_type,
+            color,
+            threshold
+            ):
+
+        subject = Cleaner().clean_quotation_marks(subject)
+        content = Cleaner().clean_quotation_marks(content)
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                UPDATE nieszkolni_app_notification
+                SET
+                subject = '{subject}',
+                content = '{content}',
+                notification_type = '{notification_type}',
+                status = '{status}',
+                content_type = '{content_type}',
+                color = '{color}',
+                threshold = '{threshold}'
+                WHERE notification_id = '{notification_id}'
                 ''')
 
     def display_announcements(self):
@@ -626,7 +677,10 @@ class BackOfficeManager:
                 subject,
                 content,
                 notification_type,
-                status
+                status,
+                content_type,
+                color,
+                threshold
                 FROM nieszkolni_app_notification
                 WHERE notification_type != 'comment'
                 ORDER BY stamp DESC
@@ -650,14 +704,15 @@ class BackOfficeManager:
                 subject,
                 content,
                 notification_type,
-                status
+                status,
+                content_type,
+                color,
+                threshold
                 FROM nieszkolni_app_notification
-                WHERE (
-                notification_type = 'visible_announcement'
-                OR notification_type = 'article'
-                OR notification_type = 'rule'
-                )
-                AND stamp >= {seven_days_ago_stamp}
+                WHERE (notification_type = 'visible'
+                OR notification_type = 'visible_announcement')
+                AND status = 'sent'
+                AND stamp >= '{seven_days_ago_stamp}'
                 ORDER BY stamp DESC
                 ''')
 
@@ -679,14 +734,15 @@ class BackOfficeManager:
                 subject,
                 content,
                 notification_type,
-                status
+                status,
+                content_type,
+                color,
+                threshold
                 FROM nieszkolni_app_notification
-                WHERE (
-                notification_type = 'visible_announcement'
-                OR notification_type = 'article'
-                OR notification_type = 'rule'
-                )
-                AND stamp >= {seven_days_ago_stamp}
+                WHERE (notification_type = 'visible'
+                OR notification_type = 'visible_announcement')
+                AND status = 'sent'
+                AND stamp >= '{seven_days_ago_stamp}'
                 AND (recipient = '{client}'
                 OR recipient = 'all')
                 ORDER BY stamp DESC
@@ -695,6 +751,72 @@ class BackOfficeManager:
             announcements = cursor.fetchall()
 
             return announcements
+
+    def display_announcement(self, notification_id):
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                SELECT
+                notification_id,
+                stamp,
+                sender,
+                recipient,
+                subject,
+                content,
+                notification_type,
+                status,
+                content_type,
+                color,
+                threshold
+                FROM nieszkolni_app_notification
+                WHERE notification_id = '{notification_id}'
+                ''')
+
+            announcement = cursor.fetchone()
+
+            return announcement
+
+    def add_taker(self, client, listing, seats):
+        now_number = TimeMachine().now_number()
+
+        is_taker = Taker.objects.filter(client=client, listing=listing).exists()
+
+        if is_taker:
+            output = ("ERROR", "You're already on the list")
+            return output
+
+        takers = len(Taker.objects.filter(listing=listing))
+        print(takers)
+        print(seats)
+        list_full = takers >= seats
+        if list_full:
+            output = ("ERROR", "The list is already full")
+            return output
+
+        taker = Taker()
+        taker.creation_stamp = now_number
+        taker.modification_stamp = now_number
+        taker.client = client
+        taker.listing = listing
+        taker.status = "active"
+        taker.save()
+
+        output = ("SUCCESS", "You're on the list")
+        return output
+
+    def display_takers(self, listing):
+        rows = Taker.objects.filter(listing=listing)
+        takers = [row.client for row in rows]
+
+        return takers
+
+    def check_taker(self, client, listing):
+        check = Taker.objects.filter(client=client, listing=listing).exists()
+        return check
+
+    def remove_taker(self, client, listing):
+        check = Taker.objects.filter(client=client, listing=listing).delete()
+        output = ("SUCCESS", "You're off the list")
+        return output
 
     def display_rules(self):
         with connection.cursor() as cursor:
@@ -710,47 +832,6 @@ class BackOfficeManager:
             rules = cursor.fetchall()
 
             return rules
-
-    def display_announcement(self, notification_id):
-        with connection.cursor() as cursor:
-            cursor.execute(f'''
-                SELECT
-                notification_id,
-                stamp,
-                sender,
-                recipient,
-                subject,
-                content,
-                notification_type,
-                status
-                FROM nieszkolni_app_notification
-                WHERE notification_id = '{notification_id}'
-                ''')
-
-            announcement = cursor.fetchone()
-
-            return announcement
-
-    def update_notifications(
-            self,
-            notification_id,
-            subject,
-            content,
-            notification_type
-            ):
-
-        subject = Cleaner().clean_quotation_marks(subject)
-        content = Cleaner().clean_quotation_marks(content)
-
-        with connection.cursor() as cursor:
-            cursor.execute(f'''
-                UPDATE nieszkolni_app_notification
-                SET
-                subject = '{subject}',
-                content = '{content}',
-                notification_type = '{notification_type}'
-                WHERE notification_id = '{notification_id}'
-                ''')
 
     def add_option(
             self,

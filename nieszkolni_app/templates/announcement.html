@@ -2,21 +2,95 @@
 {% block 'content' %}
 
 <div class="flex-parent jc-center">
-	<div class="tab full">
-    	<div>
-	      	<div class="tab_title post">{{ announcement.4 }}</div>
-
+	<div class="tab announcement">
+		<div class="tab_title_area" id="title">
+	      		<div class="tab_title post">{{ announcement.4 }}</div>
+	    </div>
+    	<div class="tab_content_area">
 	      	{% if user.is_staff %}
 	      		<div class="tab_content full"><b>ID:</b> {{ announcement.0 }} <b>Timestamp:</b> {{ stamp }} <b>Type:</b> {{ announcement.6 }}</div>
 	      	{% else %}
 	      		<div class="tab_description">{{ stamp }} by {{ announcement.2 }}</div>
 	      	{% endif %}
-	      	
+
 	      	<div class="tab_content full">{{ announcement.5|safe }}</div>
-	      	<button type="button" class="button_main top" onclick="jump('campus')">Back</button>
-	      	<a id="campus" href="{% url 'campus' %}"></a>
+
+	      	{% if announcement.8 == 'listing' %}
+	      		<div class="tab_content full"></br><b>Takers</b></div>
+
+	      			{% for taker in takers %}
+	      				<div class="tab_content full">{{ forloop.counter }}. {{ taker }}</div>
+	      			{% endfor %}
+
+	      	{% endif %}
+	      	
+	      	<form action="{% url 'announcement' notification_id=notification_id %}" method="POST">
+				{% csrf_token %}
+	      	
+	      		{% if announcement.8 == 'listing' %}
+	      			{% if is_taker %}
+	      				<button type="submit" class="button_main top bigger" name="action_on_announcement" value="drop_out">Drop Out </button>
+	      			{% else %}
+	      				<button type="submit" class="button_main top bigger" name="action_on_announcement" value="sign_up">Sign Up</button>
+	      			{% endif %}
+	      		{% endif %}
+
+	      		<button type="submit" class="button_main top bigger" name="action_on_announcement" value="back">Back</button>
+
+	      	</form>
+
     	</div>
   	</div>
 </div>
+
+<script type="text/javascript">
+	function colorTitles() {
+		var color = '{{ announcement.9 }}';
+		var title = document.getElementById('title');
+
+		var buttons = document.getElementsByTagName('button');
+		for (let i = 0; i < buttons.length; i++) {
+		    let button = buttons[i];
+		    let type = button.getAttribute('type') || 'submit'; // Submit is the default
+		    // ...
+		}
+
+		if (color == 'blue') {
+			title.style.background = 'linear-gradient(180deg, #14C5D9 40%, #FFFFFF 20%)';
+		} else if (color == 'green') {
+			title.style.background = 'linear-gradient(180deg, #4BC0C0 40%, #FFFFFF 20%)';
+		} else if (color == 'red') {
+			title.style.background = 'linear-gradient(180deg, #FF6384 40%, #FFFFFF 20%)';
+		} else if (color == 'gray') {
+			title.style.background = 'linear-gradient(180deg, #333538 40%, #FFFFFF 20%)';
+		}
+	}
+
+	function colorButtons() {
+		var color = '{{ announcement.9 }}';
+
+		if (color == 'blue') {
+			var color_hex = '#14C5D9';
+		} else if (color == 'green') {
+			var color_hex = '#4BC0C0';
+		} else if (color == 'red') {
+			var color_hex = '#FF6384';
+		} else if (color == 'gray') {
+			var color_hex = '#333538';
+		} else if (color == 'white') {
+			var color_hex = '#FFF';
+		};
+
+		var buttons = document.getElementsByName('action_on_announcement');
+		for (let i = 0; i < buttons.length; i++) {
+			let button = buttons[i];
+			button.style.backgroundColor = color_hex;
+			// button.style.styleSheet.cssText = '.button_main:hover {background-color: #FFFFFF}';
+		}
+	}
+
+	window.addEventListener('load', colorTitles())
+	window.addEventListener('load', colorButtons())
+</script>
 
 {% endblock %}

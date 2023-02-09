@@ -4724,6 +4724,9 @@ def make_announcement(request):
                 subject = request.POST["subject"]
                 content = request.POST["content"]
                 notification_type = request.POST["notification_type"]
+                content_type = request.POST["content_type"]
+                color = request.POST["color"]
+                threshold = request.POST["threshold"]
                 status = "sent"
 
                 BackOfficeManager().add_notifications(
@@ -4732,7 +4735,10 @@ def make_announcement(request):
                     subject,
                     content,
                     notification_type,
-                    status
+                    status,
+                    content_type,
+                    color,
+                    threshold
                     )
 
                 return redirect("announcements")
@@ -4756,12 +4762,20 @@ def update_announcement(request, notification_id):
                 subject = request.POST["subject"]
                 content = request.POST["content"]
                 notification_type = request.POST["notification_type"]
+                status = request.POST["status"]
+                content_type = request.POST["content_type"]
+                color = request.POST["color"]
+                threshold = request.POST["threshold"]
 
                 BackOfficeManager().update_notifications(
                     notification_id,
                     subject,
                     content,
-                    notification_type
+                    notification_type,
+                    status,
+                    content_type,
+                    color,
+                    threshold
                     )
 
                 return redirect("announcements")
@@ -4783,18 +4797,56 @@ def announcement(request, notification_id):
 
         announcement = BackOfficeManager().display_announcement(notification_id)
         stamp = TimeMachine().number_to_system_date_time_clean(announcement[1])
+        listing = f"announcement_{notification_id}"
+        takers = BackOfficeManager().display_takers(listing)
+        is_taker = BackOfficeManager().check_taker(current_user, listing)
+
+        if request.method == "POST":
+            if request.POST["action_on_announcement"] == "back":
+                return redirect("campus")
+
+            elif request.POST["action_on_announcement"] == "sign_up":
+                
+                output = BackOfficeManager().add_taker(
+                    current_user,
+                    listing,
+                    announcement[10]
+                    )
+
+                messages.add_message(
+                        request,
+                        getattr(messages, output[0]),
+                        output[1]
+                        )
+                return redirect("announcement", notification_id=notification_id)
+
+            elif request.POST["action_on_announcement"] == "drop_out":
+                
+                output = BackOfficeManager().remove_taker(
+                    current_user,
+                    listing
+                    )
+
+                messages.add_message(
+                        request,
+                        getattr(messages, output[0]),
+                        output[1]
+                        )
+                return redirect("announcement", notification_id=notification_id)
+
+        context = {
+            "notification_id": notification_id,
+            "announcement": announcement,
+            "stamp": stamp,
+            "takers": takers,
+            "is_taker": is_taker
+        }
 
         if user_agent.is_mobile:
-            return render(request, "m_announcement.html", {
-                "announcement": announcement,
-                "stamp": stamp
-                })
+            return render(request, "m_announcement.html", context)
 
         else:
-            return render(request, "announcement.html", {
-                "announcement": announcement,
-                "stamp": stamp
-                })
+            return render(request, "announcement.html", context)
 
 
 @staff_member_required

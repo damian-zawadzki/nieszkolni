@@ -845,6 +845,7 @@ class KnowledgeManager:
                 INNER JOIN nieszkolni_app_prompt
                 ON nieszkolni_app_memory.prompt = nieszkolni_app_prompt.prompt
                 WHERE nieszkolni_app_memory.name = '{name}'
+                AND nieszkolni_app_prompt.pattern != ''
                 ''')
 
             memories = cursor.fetchall()

@@ -130,3 +130,13 @@
 .button_main.top, .button_main_page.top {
   margin-top: 5vh;
 }
+
+.bigger:hover {
+  color: var(--backgroud-color);
+  transform: scale(1.1);
+}
+
+.bigger:active {
+  color: var(--backgroud-color);
+  transform: scale(1.1);
+}

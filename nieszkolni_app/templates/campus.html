@@ -64,35 +64,15 @@
 		</div>
 	</div>
 
-<!-- 	<div class="tabs profile">
-		<div class="tab feedy mini">
-			<div class="tab_icon_container profile"><div class="tab_icon_box"><img class="tab_icon" src="{% static 'images/calendar_7.png' %}"></div></div>
-			<div class="tab_content_container">
-				<div class="tab_title_box tab_title">Points Last Week</div>
-				<div class="tab_content_box tab_content profile">-10</div>
-			</div>
-		</div>
-		<div class="tab feedy mini">
-			<div class="tab_icon_container profile"><div class="tab_icon_box"><img class="tab_icon" src="{% static 'images/calendar_7.png' %}"></div></div>
-			<div class="tab_content_container">
-				<div class="tab_title_box tab_title">Target</div>
-				<div class="tab_content_box tab_content profile">-10</div>
-			</div>
-		</div>
-		<div class="tab feedy mini">
-			<div class="tab_icon_container profile"><div class="tab_icon_box"><img class="tab_icon" src="{% static 'images/calendar_7.png' %}"></div></div>
-			<div class="tab_content_container">
-				<div class="tab_title_box tab_title">Target</div>
-				<div class="tab_content_box tab_content profile">-10</div>
-			</div>
-		</div>
-	</div> -->
-
 	<div class="feed_open_container">
 		{% for announcement in announcements %}
 			<div class="tab post">
-				<div>
+				<div class="tab_title_area" name="title">
+					<input type="hidden" name="color" value="{{ announcement.9 }}">
 					<div class="tab_title post">{{ announcement.4 }}</div>
+				</div>
+				<div class="tab_content_area">
+					
 					<div class="tab_description">{{ announcement.1 }} by {{ announcement.2 }}</div>
 					<div class="tab_content post">{{ announcement.5|safe }}</div>
 					<button type="button" class="button_main_page top" onclick="jump('{{ announcement.0 }}')">Read more</button>
@@ -156,6 +136,33 @@
 			arrow_down.classList.remove('invisible');
 		}
 	}
+</script>
+
+<script type="text/javascript">
+	function colorTitles() {
+		var titles = document.getElementsByName('title');
+		for (let i = 0; i < titles.length; i++) {
+			let title = titles[i];
+			let input = title.firstElementChild;
+			let color = input.value;
+
+			if (color == 'blue') {
+				var color_hex = '#14C5D9';
+			} else if (color == 'green') {
+				var color_hex = '#4BC0C0';
+			} else if (color == 'red') {
+				var color_hex = '#FF6384';
+			} else if (color == 'gray') {
+				var color_hex = '#333538';
+			} else if (color == 'white') {
+				var color_hex = '#FFF';
+			};
+
+			title.style.background = 'linear-gradient(180deg, ' + color_hex + ' 40%, #FFFFFF 20%)';
+		}
+	}
+
+	window.addEventListener('load', colorTitles())
 </script>
 
 {% include 'footer.html' %}
