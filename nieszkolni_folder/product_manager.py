@@ -4,6 +4,8 @@ from django.db import connection
 
 from nieszkolni_app.models import Product
 from nieszkolni_app.models import Order
+from nieszkolni_app.models import Roadmap
+from nieszkolni_app.models import Profile
 
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
@@ -88,7 +90,7 @@ class ProductManager:
         product = Product.objects.get(id=product_id)
 
         if product.quantity <= 0:
-            output = ("ERROR", "No free seats available")
+            output = [("ERROR", "No free seats available")]
             return output
 
         order_id = self.place_order(product_id, client)
@@ -96,7 +98,7 @@ class ProductManager:
         if order_id is not None:
             output = self.execute_order(order_id)
         else:
-            output = ("ERROR", "Your order couldn't be realized")
+            output = [("ERROR", "Your order couldn't be realized")]
 
         return output
 
@@ -136,31 +138,36 @@ class ProductManager:
         check_allocation = executed_orders < product.allocation_per_client
 
         if not check_allocation:
-            output = ("ERROR", "This product is not available for you")
+            output = [("ERROR", f"You've purchased this product before")]
             return output
 
         if product.category == "course":
             course_ids_list = []
             course_ids_list.append(product.reference)
 
-            CurriculumPlanner().plan_courses_now(
+            outputs = CurriculumPlanner().plan_courses_now(
                 order.client,
                 order.client,
                 course_ids_list
                 )
 
-            order.status = "executed"
-            order.save()
+            if outputs[0][0] != "ERROR":
 
-            product.quantity = product.quantity - 1
-            product.save()
+                order.status = "executed"
+                order.save()
 
-            StreamManager().add_to_stream(
-                order.client,
-                "Activity",
-                f"product {product.id};{product.points}",
-                "automatic"
-                )
+                product.quantity = product.quantity - 1
+                product.save()
 
-            output = ("SUCCESS", ("You've signed up for the course"))
-            return output
+                StreamManager().add_to_stream(
+                    order.client,
+                    "Activity",
+                    f"product {product.id};{product.points}",
+                    "automatic"
+                    )
+
+            else:
+                order.status = "failed"
+                order.save()
+
+            return outputs

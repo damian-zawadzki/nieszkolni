@@ -204,6 +204,8 @@ class CurriculumPlanner:
             program
             ):
 
+        outputs = []
+
         if len(course_ids_list) > 1:
             course_ids = tuple(course_ids_list)
         else:
@@ -213,16 +215,29 @@ class CurriculumPlanner:
         deadline_roadmap = BackOfficeManager().display_end_of_semester()
         starting_date_number = TimeMachine().academic_week_start_number()
 
+        check_courses = len(courses) == 0
+        if check_courses:
+            output = ("ERROR", "No such product exists")
+            outputs.append(output)
+            return outputs
+
         for course in courses:
             matrix = course[0]
 
-            check = Roadmap.objects.filter(
+            check_registration = Roadmap.objects.filter(
                 semester=semester,
                 course=matrix,
                 name=client
                 ).exists()
 
-            if not check:
+            if check_registration:
+                output_client = ("ERROR", "You're already registered for this course")
+                output_staff = ("ERROR", "Client is already registered for this course")
+                if client != current_user:
+                    outputs.append(output_staff)
+                else:
+                    outputs.append(output_client)
+            else:
                 RoadmapManager().add_roadmap(
                     client,
                     semester,
@@ -240,6 +255,15 @@ class CurriculumPlanner:
                     starting_date_number
                     )
 
+                output_client = ("SUCCESS", "You've successfully registered for this course")
+                output_staff = ("SUCCESS", "Client registered for the course")
+                if client != current_user:
+                    outputs.append(output_staff)
+                else:
+                    outputs.append(output_client)
+
+        return outputs
+
     def plan_courses_now(
             self,
             client,
@@ -251,13 +275,15 @@ class CurriculumPlanner:
         semester = profile.current_semester
         program = profile.current_program
 
-        self.plan_courses(
+        outputs = self.plan_courses(
             client,
             current_user,
             course_ids_list,
             semester,
             program
             )
+
+        return outputs
 
     def client_to_plan_program(self):
         start = BackOfficeManager().display_start_of_semester()

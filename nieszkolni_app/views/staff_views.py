@@ -161,12 +161,16 @@ def product(request, product_id):
 
         elif request.POST["action_on_product"] == "sign_up":
 
-            output = ProductManager().run_order(
+            outputs = ProductManager().run_order(
                     product_id,
                     get_current_user(request)
                     )
-
-            messages.add_message(request, getattr(messages, output[0]), output[1])
+            for output in outputs:
+                messages.add_message(
+                    request,
+                    getattr(messages, output[0]),
+                    output[1]
+                    )
             return redirect("products")
 
     user_agent = get_user_agent(request)

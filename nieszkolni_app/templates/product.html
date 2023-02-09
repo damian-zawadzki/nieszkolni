@@ -13,8 +13,8 @@
 	      		<div class="program_degree">{{ product.title }}</div>
 	      		<div class="program_description">{{ product.description|safe }}</div>
 	      		<hr class="line"></div>
-	      		<div class="program_description"><b>Activity Points:</b> {{ product.points }}</div>
-	      		<div class="program_description"><b>Available spots:</b> {{ product.quantity }}</div>
+	      		<div class="program_description"><b>Reward:</b> {{ product.points }} activity points</div>
+	      		<div class="program_description"><b>Available seats:</b> {{ product.quantity }}</div>
 	      	</div>
 
 			<form action="{% url 'product' product_id=product_id %}"  method="POST">
