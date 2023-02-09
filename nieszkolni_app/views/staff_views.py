@@ -273,6 +273,9 @@ def add_survey_option(request):
                 messages.success(request, "Option added")
                 return redirect("add_survey_option")
 
+            elif request.POST["action_on_survey"] == "back":
+                return redirect("survey_process")
+
         return render(request, "add_survey_option.html", {
             "options": options
             })
@@ -309,6 +312,9 @@ def add_survey_question(request):
                 messages.success(request, "Question added")
                 return redirect("add_survey_question")
 
+            elif request.POST["action_on_survey"] == "back":
+                return redirect("survey_process")
+
         return render(request, "add_survey_question.html", {
             "options": options,
             "questions": questions
@@ -324,6 +330,26 @@ def display_survey_question(request, question_id):
 
         question = SurveyManager().display_question(question_id)[0]
         options = SurveyManager().display_question(question_id)[1]
+
+        if request.method == "POST":
+            if request.POST["action_on_survey"] == "update":
+                question = request.POST["question"]
+                description = request.POST["description"]
+
+                SurveyManager().update_question(
+                        question,
+                        description,
+                        question_id
+                        )
+
+                messages.success(request, "Question updated")
+                return redirect(
+                    "display_survey_question",
+                    question_id=question_id
+                    )
+
+            elif request.POST["action_on_survey"] == "back":
+                return redirect("add_survey_question")
 
         return render(request, "display_survey_question.html", {
             "question_id": question_id,

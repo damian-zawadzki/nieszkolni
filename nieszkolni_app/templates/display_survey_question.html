@@ -1,24 +1,35 @@
 {% extends 'base.html' %}
 {% block 'content' %}
 
-<div class="flex-parent jc-center">
+<form action="{% url 'display_survey_question' question_id=question_id %}"  method="POST">
+    {% csrf_token %}
 
-    <div class="tab flashcard">
-      <div class="">
-        <div class="tab_title flashcard">{{ question.1 }}</div>
+    <div class="flex-parent jc-center">
 
-        {% if options %}
-            {% for option in options %}
-                <button type="button" class="button_main">{{ option.1 }}</button>
-            {% endfor %}
-        {% else %}
-            <input type="text" class="input_content">
-        {% endif %}
+        <div class="tab flashcard">
+          <div class="">
+            <input class="input_content" name="question" value="{{ question.1 }}">
+            <textarea class="input_content input_paragraph" name="description">{{ question.5 }}</textarea>
 
-      </div>
+            {% if options %}
+                {% for option in options %}
+                    <button type="button" class="button_main">{{ option.1 }}</button>
+                {% endfor %}
+            {% else %}
+                <input type="text" class="input_content">
+            {% endif %}
+
+          </div>
+        </div>
+
     </div>
 
-</div>
+    <div class="flex-parent jc-center">
+        <button type="submit" class="button_main" name="action_on_survey" value="update">Update</button>
+        <button type="submit" class="button_main" name="action_on_survey" value="back">Back</button>
+    </div>
+
+</form>
 
 
 

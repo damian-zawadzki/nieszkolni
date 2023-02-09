@@ -100,6 +100,25 @@ class SurveyManager:
                 )
                 ''')
 
+    def update_question(
+            self,
+            question,
+            description,
+            question_id
+            ):
+
+        question = Cleaner().clean_quotation_marks(question)
+        description = Cleaner().clean_quotation_marks(description)
+
+        with connection.cursor() as cursor:
+            cursor.execute(f'''
+                UPDATE nieszkolni_app_surveyquestion
+                SET
+                question = '{question}',
+                description = '{description}'
+                WHERE id = '{question_id}'
+                ''')
+
     def display_questions(self):
         with connection.cursor() as cursor:
             cursor.execute(f'''
@@ -165,7 +184,8 @@ class SurveyManager:
                 question,
                 question_type,
                 option_ids,
-                action
+                action,
+                description
                 FROM nieszkolni_app_surveyquestion
                 WHERE id = '{question_id}'
                 ''')
