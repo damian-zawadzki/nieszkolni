@@ -111,6 +111,21 @@ def add_product(request):
             messages.success(request, ("Product added"))
             return redirect("product_process")
 
+        elif request.POST["action_on_product"] == "filter":
+            category = request.POST["category"]
+
+            if category == "course":
+                data = json.dumps(list(Course.objects.all().values()))
+
+            elif category == "vocabulary":
+                data = json.dumps(list(Catalogue.objects.all().values(
+                    "catalogue_number",
+                    "catalogue_name"
+                    ).distinct()
+                    ))
+
+            return HttpResponse(data)
+
     context = {
         "categories": categories,
         "courses": courses
@@ -126,7 +141,7 @@ def add_product(request):
 @login_required
 def products(request):
 
-    products = Product.objects.filter(status="available")
+    products = Product.objects.filter(status="available").order_by("-creation_stamp")
     context = {
         "products": products
         }

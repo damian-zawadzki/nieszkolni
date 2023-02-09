@@ -191,6 +191,7 @@ class VocabularyManager:
                 AND due_date <= {today_number}
                 AND number_of_reviews != 0
                 AND interval != 0
+                AND english != ''
                 ''')
 
             entries = cursor.fetchall()
@@ -231,6 +232,7 @@ class VocabularyManager:
                 AND deck = '{deck}'
                 AND due_date <= {today_number}
                 AND number_of_reviews = 0
+                AND english != ''
                 ''')
 
             entries = cursor.fetchall()
@@ -267,6 +269,7 @@ class VocabularyManager:
                 AND due_date <= {today_number}
                 AND number_of_reviews != 0
                 AND interval = 0
+                AND english != ''
                 ORDER BY line ASC 
                 ''')
 

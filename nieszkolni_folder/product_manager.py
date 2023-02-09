@@ -14,6 +14,7 @@ import re
 
 from nieszkolni_folder.stream_manager import StreamManager
 from nieszkolni_folder.curriculum_planner import CurriculumPlanner
+from nieszkolni_folder.knowledge_manager import KnowledgeManager
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
@@ -150,6 +151,37 @@ class ProductManager:
                 order.client,
                 course_ids_list
                 )
+
+            if outputs[0][0] != "ERROR":
+
+                order.status = "executed"
+                order.save()
+
+                product.quantity = product.quantity - 1
+                product.save()
+
+                StreamManager().add_to_stream(
+                    order.client,
+                    "Activity",
+                    f"product {product.id};{product.points}",
+                    "automatic"
+                    )
+
+            else:
+                order.status = "failed"
+                order.save()
+
+            return outputs
+
+        elif product.category == "vocabulary":
+            output = KnowledgeManager().add_catalogue_to_book_by_no(
+                order.client,
+                product.reference,
+                order.client,
+                "vocabulary"
+                )
+            outputs = []
+            outputs.append(output)
 
             if outputs[0][0] != "ERROR":
 

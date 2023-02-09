@@ -9,13 +9,25 @@
 
   <div class="flex-parent jc-center">
      <div class="input_container">
-      <label class="input_label">Product</label>
-      <select required class="input_content" name="reference">
+      <label class="input_label">Category</label>
+      <select required class="input_content" id="category_select" name="category" onchange="filterOptions()">
         <option selected disabled value></option>
 
-        {% for course in courses %}
-          <option value="{{ course.10 }}">{{ course.0 }}</option>
+        {% for category in categories %}
+          <option value="{{ category.0 }}">{{ category.0 }}</option>
         {% endfor %}
+
+      </select>
+    </div>
+  </div>
+
+  <div class="flex-parent jc-center">
+     <div class="input_container">
+      <label class="input_label">Product</label>
+      <select required class="input_content" id="reference" name="reference">
+        <option selected disabled value></option>
+
+        <option value="{{ course.10 }}">{{ course.0 }}</option>
 
       </select>
     </div>
@@ -39,20 +51,6 @@
      <div class="input_container">
       <label class="input_label">Image</label>
         <input type="url" class="input_content" name="image">
-    </div>
-  </div>
-
-  <div class="flex-parent jc-center">
-     <div class="input_container">
-      <label class="input_label">Category</label>
-      <select required class="input_content" name="category">
-        <option selected disabled value></option>
-
-        {% for category in categories %}
-          <option value="{{ category.0 }}">{{ category.0 }}</option>
-        {% endfor %}
-
-      </select>
     </div>
   </div>
 
@@ -95,5 +93,52 @@
 </form>
 
 <div class="break"></div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+<script type="text/javascript">
+  function filterOptions() {
+    var selection = document.getElementById('category_select');
+    var category = selection.value;
+    var reference = document.getElementById('reference');
+
+    reference.innerHTML = "";
+
+    var dummy_option = document.createElement("option");
+    reference.appendChild(dummy_option);
+    dummy_option.text = '';
+    dummy_option.disabled = true;
+    dummy_option.selected = true;
+    
+
+    $.ajax(
+    {
+        type: "POST",
+        url: {% url 'add_product' %},
+        data: {
+          'action_on_product': 'filter',
+          'category': category,
+          'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        success: function(data) 
+        {
+            var options = JSON.parse(data)
+
+            for (let i = 0; i < options.length; i++) {
+              var option = document.createElement("option");
+              if (category == 'course') {
+                option.text = options[i]['course'];
+                option.value = options[i]['course_id'];
+                reference.appendChild(option);
+              } else {
+                option.text = options[i]['catalogue_name'];
+                option.value = options[i]['catalogue_number'];
+                reference.appendChild(option);
+              }
+            }
+        }
+     })
+  }
+</script>
 
 {% endblock %}

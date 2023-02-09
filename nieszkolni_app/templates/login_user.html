@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block 'content' %}
+{% load static %}
 
 <h1>LOG IN</h1>
 
@@ -19,9 +20,11 @@
     </div>
   </div>
   <div class="flex-parent jc-center">
-  <button type="submit" class="button_main">Log in</button>
+  <button type="submit" class="button_main" id="login_b" onclick="disableButton(this.id)">Log in</button>
   </div>
 
 </form>
+
+<script src="{% static 'functions.js' %}"></script>
 
 {% endblock %}
