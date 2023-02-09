@@ -140,3 +140,8 @@
   color: var(--backgroud-color);
   transform: scale(1.1);
 }
+
+.bigger:focused {
+  color: var(--backgroud-color);
+  transform: scale(1.1);
+}

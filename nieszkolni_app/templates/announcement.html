@@ -48,13 +48,6 @@
 		var color = '{{ announcement.9 }}';
 		var title = document.getElementById('title');
 
-		var buttons = document.getElementsByTagName('button');
-		for (let i = 0; i < buttons.length; i++) {
-		    let button = buttons[i];
-		    let type = button.getAttribute('type') || 'submit'; // Submit is the default
-		    // ...
-		}
-
 		if (color == 'blue') {
 			title.style.background = 'linear-gradient(180deg, #14C5D9 40%, #FFFFFF 20%)';
 		} else if (color == 'green') {
@@ -77,15 +70,15 @@
 			var color_hex = '#FF6384';
 		} else if (color == 'gray') {
 			var color_hex = '#333538';
-		} else if (color == 'white') {
-			var color_hex = '#FFF';
 		};
 
 		var buttons = document.getElementsByName('action_on_announcement');
 		for (let i = 0; i < buttons.length; i++) {
 			let button = buttons[i];
 			button.style.backgroundColor = color_hex;
-			// button.style.styleSheet.cssText = '.button_main:hover {background-color: #FFFFFF}';
+			if (color == 'white') {
+				button.classList.remove('bigger');
+			}
 		}
 	}
 
