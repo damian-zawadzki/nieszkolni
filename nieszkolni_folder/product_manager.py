@@ -15,6 +15,7 @@ import re
 from nieszkolni_folder.stream_manager import StreamManager
 from nieszkolni_folder.curriculum_planner import CurriculumPlanner
 from nieszkolni_folder.knowledge_manager import KnowledgeManager
+from nieszkolni_folder.vocabulary_manager import VocabularyManager
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
@@ -174,13 +175,23 @@ class ProductManager:
             return outputs
 
         elif product.category == "vocabulary":
+            outputs = []
+
+            counts = VocabularyManager().display_counts(
+                order.client,
+                "vocabulary"
+                )
+            if counts[1] > 20:
+                output = ("ERROR", "You have too much new vocabulary. Go below 100 new phrases and try again")
+                outputs.append(output)
+                return outputs
+
             output = KnowledgeManager().add_catalogue_to_book_by_no(
                 order.client,
                 product.reference,
                 order.client,
                 "vocabulary"
                 )
-            outputs = []
             outputs.append(output)
 
             if outputs[0][0] != "ERROR":

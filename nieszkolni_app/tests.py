@@ -217,9 +217,9 @@ class Front(TestCase):
         self.client.login(username=username, password=password)
         Card.objects.create(client=current_user)
         url = reverse("flashcard", args=["Joe Doe", "vocabulary"])
-        response = self.client.post(url)
+        response = self.client.post(url, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "flashcard.html")
+        self.assertTemplateUsed(response, "congratulations.html")
 
     def test_my_courses_deny_anonymous(self):
         response = self.client.get("/my_courses/")
