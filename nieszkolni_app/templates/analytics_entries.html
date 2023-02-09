@@ -8,6 +8,7 @@
 	<button type="button" class="button_main" onclick="showHideTable('new_last_week')">New Entries Last Week</button>
 	<button type="button" class="button_main" onclick="showHideTable('per_seniority')">Entries Per Seniority</button>
 	<button type="button" class="button_main" onclick="showHideTable('total')">Total Entries</button>
+	<button type="button" class="button_main" onclick="showHideTable('unopened')">Unopened Cards</button>
 </div>
 
 <table id="new_last_week" style="display: none;">
@@ -99,6 +100,30 @@
 			<td>{{ total.sentences }}</td>
 			<td>{{ total.memories }}</td>
 			<td>{{ total.pronunciation }}</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+<table id="unopened" style="display: none;">
+
+	<tr>
+
+		<th>Coach</th>
+		<th>Client</th>
+		<th>Total</th>
+
+	</tr>
+
+	{% for unopened_card in unopened_cards %}
+
+		<tr>
+
+			<td>{{ unopened_card.coach }}</td>
+			<td>{{ unopened_card.client }}</td>
+			<td>{{ unopened_card.total }}</td>
 
 		</tr>
 

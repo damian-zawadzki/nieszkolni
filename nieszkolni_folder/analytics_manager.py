@@ -162,6 +162,25 @@ class AnalyticsManager:
 
         return data
 
+    def count_unopened_entries_per_student(self):
+        clients = Client.objects.filter(user_type="client", status="active")
+        data = []
+        for client in clients:
+            total = len(Card.objects.filter(
+                client=client.name,
+                number_of_reviews=0))
+            entry = {
+                "coach": client.coach,
+                "client": client.name,
+                "total": total
+                }
+
+            data.append(entry)
+
+        data.sort(key=lambda entry: entry["total"], reverse=True)
+
+        return data
+
     def get_seniority(self, client):
         today = TimeMachine().today()
 

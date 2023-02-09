@@ -6745,11 +6745,13 @@ def analytics_entries(request):
         rows = AnalyticsManager().count_all_new_entries_per_student_last_week()
         rates = AnalyticsManager().count_all_entry_rate_per_student()
         totals = AnalyticsManager().count_all_entry_total_per_student()
+        unopened_cards = AnalyticsManager().count_unopened_entries_per_student()
 
         return render(request, "analytics_entries.html", {
             "rows": rows,
             "rates": rates,
-            "totals": totals
+            "totals": totals,
+            "unopened_cards": unopened_cards
             })
 
 
