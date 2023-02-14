@@ -30,13 +30,18 @@ class KnowledgeManager:
     def __init__(self):
         today_pattern = "%Y-%m-%d"
 
-    def add_pronunciation(self, name, entry, coach):
+    def add_pronunciation(self, client, entry, coach):
 
-        verify_client = ClientsManager().verify_client(name)
+        verify_client = ClientsManager().verify_client(client)
         if verify_client is False:
             return "The client does not exist!"
 
         entry = Cleaner().clean_quotation_marks(entry)
+
+        check = self.check_if_pronunciation_deactivated(client, entry)
+        if check:
+            self.activate_pronunciation(client, entry, coach)
+            return ("SUCCESS", "Entry reactivated")
 
         now_number = TimeMachine().now_number()
         today_number = TimeMachine().today_number()
@@ -52,18 +57,20 @@ class KnowledgeManager:
                 due_date,
                 number_of_reviews,
                 answers,
-                revision_days
+                revision_days,
+                status
                 )
                 VALUES (
                 '{now_number}',
                 '{today_number}',
                 '{coach}',
-                '{name}',
+                '{client}',
                 '{entry}',
                 '{today_number}',
                 0,
                 '',
-                ''
+                '',
+                'active'
                 )
                 ON CONFLICT
                 DO NOTHING
@@ -75,6 +82,7 @@ class KnowledgeManager:
                 SELECT entry
                 FROM nieszkolni_app_pronunciation
                 WHERE name = '{name}'
+                AND status = 'active'
                 ''')
             entries = cursor.fetchall()
 
@@ -90,6 +98,7 @@ class KnowledgeManager:
             cursor.execute(f'''
                 SELECT DISTINCT entry
                 FROM nieszkolni_app_pronunciation
+                WHERE status = 'active'
                 ''')
             entries = cursor.fetchall()
 
@@ -104,21 +113,48 @@ class KnowledgeManager:
                 FROM nieszkolni_app_pronunciation
                 WHERE name = '{name}'
                 AND entry = '{entry}'
+                AND status = 'active'
                 ''')
 
             result = cursor.fetchall()
 
             return result
 
-    def remove_pronunciation_for_client(self, client):
+    def check_if_pronunciation_deactivated(self, client, entry):
+        entry = Pronunciation.objects.filter(
+            name=client,
+            entry=entry,
+            status="inactive"
+            )
+
+        if entry.exists():
+            return True
+        else:
+            return False
+
+    def activate_pronunciation(self, client, entry, coach):
+        entry = Pronunciation.objects.filter(
+            name=client,
+            entry=entry,
+            status="inactive"
+            ).first()
+
+        entry.status = "active"
+        entry.coach = coach
+        entry.save()
+
+    def deactivate_pronunciation(self, client):
         try:
-            Pronunciation.objects.filter(name=client).delete()
+            entries = Pronunciation.objects.filter(name=client)
+            for entry in entries:
+                entry.status = "inactive"
+                entry.save()
             output = ("SUCCESS", f"All pronunciation entries of {client}'s removed")
 
         except Exception as e:
             output = ("ERROR", "Error")
 
-        return output        
+        return output
 
     # Dictionary
 
@@ -343,18 +379,25 @@ class KnowledgeManager:
                 WHERE english = '{english}'
                 ''')
 
-    def translate_book_entry(self, english, polish, current_user):
+    def translate_book_entry(
+            self,
+            original_english,
+            english,
+            polish,
+            current_user
+            ):
         today_number = TimeMachine().today_number()
 
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 UPDATE nieszkolni_app_book
                 SET
+                english = '{english}',
                 polish = '{polish}',
                 status = 'translated',
                 translation_date = '{today_number}',
                 translating_user = '{current_user}'
-                WHERE english = '{english}'
+                WHERE english = '{original_english}'
                 ''')
 
     def comment_on_book_entry(self, english, comment):

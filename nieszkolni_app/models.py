@@ -133,6 +133,7 @@ class Pronunciation(models.Model):
     number_of_reviews = models.IntegerField(default=0)
     answers = models.TextField(default="")
     revision_days = models.TextField(default="")
+    status = models.CharField(max_length=200, default="active")
 
 
 class Dictionary(models.Model):

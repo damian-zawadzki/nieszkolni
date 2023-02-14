@@ -1644,7 +1644,7 @@ def my_pronunciation(request):
 
 
 @staff_member_required
-def remove_all_pronunciation_entries(request):
+def deactivate_pronunciation_entries(request):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
@@ -1657,7 +1657,7 @@ def remove_all_pronunciation_entries(request):
             if request.POST["action_on_pronunciation"] == "remove":
                 client = request.POST["client"]
 
-                output = KnowledgeManager().remove_pronunciation_for_client(
+                output = KnowledgeManager().deactivate_pronunciation(
                     client
                     )
 
@@ -1667,9 +1667,9 @@ def remove_all_pronunciation_entries(request):
                     output[1]
                     )
 
-                return redirect("remove_all_pronunciation_entries")
+                return redirect("deactivate_pronunciation_entries")
 
-        return render(request, "remove_all_pronunciation_entries.html", context)
+        return render(request, "deactivate_pronunciation_entries.html", context)
 
 
 @staff_member_required
@@ -2411,6 +2411,7 @@ def translate_wordbook(request):
                 comment = request.POST["comment"]
 
                 KnowledgeManager().translate_book_entry(
+                        entry[1],
                         english,
                         polish,
                         current_user
@@ -2510,6 +2511,7 @@ def translate_sentencebook(request):
                 comment = request.POST["comment"]
 
                 KnowledgeManager().translate_book_entry(
+                        entry[1],
                         english,
                         polish,
                         current_user

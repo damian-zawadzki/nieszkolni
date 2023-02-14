@@ -274,9 +274,9 @@ urlpatterns = [
 
     # Pronunciation
     path(
-        'remove_all_pronunciation_entries/',
-        views.remove_all_pronunciation_entries,
-        name="remove_all_pronunciation_entries"
+        'deactivate_pronunciation_entries/',
+        views.deactivate_pronunciation_entries,
+        name="deactivate_pronunciation_entries"
         ),
 
 
