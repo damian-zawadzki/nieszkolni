@@ -252,6 +252,8 @@ class KnowledgeManager:
 
     def add_to_book(self, name, english, publicating_user, deck):
         english = Cleaner().clean_quotation_marks(english)
+        english = english.strip()
+
         polish = self.translate(english)
         deck = deck
         today_number = TimeMachine().today_number()
@@ -285,7 +287,7 @@ class KnowledgeManager:
                     '{name}',
                     '{english}',
                     '',
-                    {today_number},
+                    '{today_number}',
                     '{publicating_user}',
                     0,
                     '',
@@ -498,17 +500,15 @@ class KnowledgeManager:
             entry = cursor.fetchone()
 
             if entry is not None:
-                name = entry[5]
+                unique_id = entry[0]
                 english = entry[1]
                 polish = self.translate(english)
                 publicating_user = entry[4]
 
                 if polish is not None:
-                    VocabularyManager().add_entry(
-                        name,
-                        deck,
+                    self.approve_book_entry(
+                        unique_id,
                         english,
-                        polish,
                         publicating_user
                         )
 
