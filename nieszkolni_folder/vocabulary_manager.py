@@ -53,8 +53,8 @@ class VocabularyManager:
         else:
             entry.client = client
             entry.deck = deck
-            entry.english = english
-            entry.polish = polish
+            entry.english = english.strip()
+            entry.polish = polish.strip()
             entry.publication_date = today_number
             entry.due_date = today_number
             entry.interval = 0

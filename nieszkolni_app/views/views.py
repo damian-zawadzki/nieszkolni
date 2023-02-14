@@ -2447,7 +2447,7 @@ def approve_wordbook(request):
         counter = KnowledgeManager().count_translated_book("vocabulary")
 
         if entry is None:
-            messages.success(request, ("You've translated all the wordbook entries!"))
+            messages.success(request, ("You've approved all the wordbook entries!"))
             return render(request, "approve_wordbook.html", {})
 
         if request.method == "POST":
@@ -2547,7 +2547,7 @@ def approve_sentencebook(request):
         counter = KnowledgeManager().count_translated_book("sentences")
 
         if entry is None:
-            messages.success(request, ("You've translated all the sentencebook entries!"))
+            messages.success(request, ("You've approved all the sentencebook entries!"))
             return render(request, "approve_sentencebook.html", {})
 
         if request.method == "POST":

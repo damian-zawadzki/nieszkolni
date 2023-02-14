@@ -37,6 +37,7 @@ class KnowledgeManager:
             return "The client does not exist!"
 
         entry = Cleaner().clean_quotation_marks(entry)
+        entry = entry.strip()
 
         check = self.check_if_pronunciation_deactivated(client, entry)
         if check:
@@ -489,6 +490,8 @@ class KnowledgeManager:
                 FROM nieszkolni_app_book
                 WHERE status = 'translated'
                 AND deck = '{deck}'
+                AND (english != ''
+                OR polish != '')
                 LIMIT 1
                 ''')
 
@@ -550,7 +553,6 @@ class KnowledgeManager:
                 FROM nieszkolni_app_book
                 WHERE status = 'returned'
                 AND publicating_user = '{current_user}'
-                ORDER BY english ASC
                 LIMIT 1
                 ''')
 
@@ -759,6 +761,9 @@ class KnowledgeManager:
 
         left_option = Cleaner().clean_quotation_marks(left_option)
         right_option = Cleaner().clean_quotation_marks(right_option)
+
+        left_option = left_option.strip()
+        right_option = right_option.strip()
 
         publication_stamp = TimeMachine().now_number()
         publication_date = TimeMachine().today_number()
