@@ -110,6 +110,18 @@ class KnowledgeManager:
 
             return result
 
+    def remove_pronunciation_for_client(self, client):
+        try:
+            Pronunciation.objects.filter(name=client).delete()
+            output = ("SUCCESS", f"All pronunciation entries of {client}'s removed")
+
+        except Exception as e:
+            output = ("ERROR", "Error")
+
+        return output        
+
+    # Dictionary
+
     def upload_dictionary(self, english, polish, publicating_user, publication_date, deck):
         english = english.replace('"', "")
         english = english.replace("'", "’")

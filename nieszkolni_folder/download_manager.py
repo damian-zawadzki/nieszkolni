@@ -73,6 +73,14 @@ class DownloadManager:
             end_date
             )
 
+        check_download = SentenceManager().check_sentences_before_download(
+                start_date,
+                end_date
+                )
+        if not check_download:
+            output = ("ERROR", "Grade all the sentences")
+            return output
+
         sentence_lists = list(sentence_lists_raw.values())
 
         for sentence_list in sentence_lists:

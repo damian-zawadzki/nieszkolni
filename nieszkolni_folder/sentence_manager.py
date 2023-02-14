@@ -707,6 +707,25 @@ class SentenceManager:
 
             return entries
 
+    def check_sentences_before_download(self, start_date, end_date):
+        start = TimeMachine().date_to_number(start_date)
+        end = TimeMachine().date_to_number(end_date)
+
+        total = len(Composer.objects.filter(
+            submission_date__gte=start,
+            submission_date__lte=end
+            ))
+
+        graded = len(Composer.objects.filter(
+            submission_date__gte=start,
+            submission_date__lte=end,
+            status="graded"
+            ))
+
+        result = total == graded
+
+        return result
+
     def download_graded_sentence_lists(self, start_date, end_date):
         start = TimeMachine().date_to_number(start_date)
         end = TimeMachine().date_to_number(end_date)
@@ -728,10 +747,14 @@ class SentenceManager:
                 AND submission_date >= {start}
                 AND submission_date <= {end}
                 ORDER BY list_number ASC, sentence_number ASC
-
                 ''')
 
             items = cursor.fetchall()
+
+            check_download = self.check_sentences_before_download(
+                start_date,
+                end_date
+                )
 
             listings = {item[3]: [] for item in items}
 

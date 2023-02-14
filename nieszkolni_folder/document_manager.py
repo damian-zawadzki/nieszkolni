@@ -114,7 +114,7 @@ class DocumentManager:
 
     def create_sentences_doc(self, entries):
 
-        list_number = entries[0][4]
+        list_number = str(entries[0][3])
         name = entries[0][4]
         submission_date = entries[0][5]
         reviewing_user = entries[0][6]
@@ -140,6 +140,7 @@ class DocumentManager:
             Submitted on: {date}
             Reviewed on: {today}
             Reviewed by: {reviewing_user}
+            List number: {list_number}
             Item: {item}
             '''
             )

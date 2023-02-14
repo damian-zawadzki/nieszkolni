@@ -1622,70 +1622,6 @@ def assignment(request, item):
                 })
 
 
-# @login_required
-# def assignment(request):
-#     if request.user.is_authenticated:
-#         first_name = request.user.first_name
-#         last_name = request.user.last_name
-#         current_user = first_name + " " + last_name
-
-#         user_agent = get_user_agent(request)
-#         no_submissions = KnowledgeManager().display_list_of_prompts("no_submission")
-
-#         if request.method == "POST":
-#             item = request.POST["item"]
-
-#             if request.POST["go_to"] == "assignment":
-
-#                 assignment = CurriculumManager().display_assignment(item)
-
-#                 if request.POST["go_to"] != "submission":
-
-#                     if user_agent.is_mobile:
-#                         return render(request, "m_assignment.html", {
-#                                 "assignment": assignment,
-#                                 "current_user": current_user,
-#                                 "no_submissions": no_submissions
-#                                 })
-
-#                     else:
-#                         return render(request, "assignment.html", {
-#                             "assignment": assignment,
-#                             "current_user": current_user,
-#                             "no_submissions": no_submissions
-#                             })
-
-#             elif request.POST["go_to"] == "check":
-
-#                 check = CurriculumManager().change_status_to_completed(
-#                     item,
-#                     current_user
-#                     )
-
-#                 assignment_type = CurriculumManager().check_assignment_type(item)
-#                 if assignment_type == "reading":
-
-#                     position = CurriculumManager().check_position_in_library(item)
-#                     value = position[2]
-
-#                     StreamManager().add_to_stream(
-#                         current_user,
-#                         "PV",
-#                         value,
-#                         current_user
-#                         )
-
-#                 return redirect("check_homework")
-
-#             elif request.POST["go_to"] == "uncheck":
-#                 uncheck = CurriculumManager().change_status_to_uncompleted(
-#                     item,
-#                     current_user
-#                     )
-
-#                 return redirect("check_homework")
-
-
 @login_required
 def my_pronunciation(request):
     if request.user.is_authenticated:
@@ -1705,6 +1641,35 @@ def my_pronunciation(request):
             return render(request, "my_pronunciation.html", {
                 "entries": entries
                 })
+
+
+@staff_member_required
+def remove_all_pronunciation_entries(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        clients = ClientsManager().list_current_clients()
+        context = {"clients": clients}
+
+        if request.method == "POST":
+            if request.POST["action_on_pronunciation"] == "remove":
+                client = request.POST["client"]
+
+                output = KnowledgeManager().remove_pronunciation_for_client(
+                    client
+                    )
+
+                messages.add_message(
+                    request,
+                    getattr(messages, output[0]),
+                    output[1]
+                    )
+
+                return redirect("remove_all_pronunciation_entries")
+
+        return render(request, "remove_all_pronunciation_entries.html", context)
 
 
 @staff_member_required
@@ -2732,6 +2697,7 @@ def remove_all_new_cards(request):
         current_user = first_name + " " + last_name
 
         clients = ClientsManager().list_current_clients()
+        context = {"clients": clients}
 
         if request.method == "POST":
             if request.POST["action_on_cards"] == "remove":
@@ -2742,9 +2708,7 @@ def remove_all_new_cards(request):
                 messages.success(request, (f"Flashcards removed"))
                 return redirect("remove_all_new_cards")
 
-        return render(request, "remove_all_new_cards.html", {
-            "clients": clients
-            })
+        return render(request, "remove_all_new_cards.html", context)
 
 
 @staff_member_required
@@ -3973,6 +3937,22 @@ def download_assignments(request):
             if request.POST["action_on_download"] == "download":
                 start_date = request.POST["start_date"]
                 end_date = request.POST["end_date"]
+
+                check_download = SentenceManager().check_sentences_before_download(
+                        start_date,
+                        end_date
+                        )
+
+                if not check_download:
+                    output = ("ERROR", "Grade all the sentences")
+
+                    messages.add_message(
+                        request,
+                        getattr(messages, output[0]),
+                        output[1]
+                        )
+
+                    return redirect("download_assignments")
 
                 response = DownloadManager().download_assignments(
                         start_date,
