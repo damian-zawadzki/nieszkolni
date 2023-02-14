@@ -4874,31 +4874,31 @@ def results(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        current_client = CurrentClientsManager().current_client(current_user)
-        grades = RoadmapManager().display_current_grades_by_client(
-                current_client
-                )
+        # current_client = CurrentClientsManager().current_client(current_user)
+        # grades = RoadmapManager().display_current_grades_by_client(
+        #         current_client
+        #         )
 
-        results = RoadmapManager().display_current_results_by_client(
-                current_client
-                )
+        # results = RoadmapManager().display_current_results_by_client(
+        #         current_client
+        #         )
 
-        activities = ActivityManager().get_points_over_lifetime(current_client)
+        # activities = ActivityManager().get_points_over_lifetime(current_client)
 
-        assignments = ActivityManager().get_uncompleted_assignments_list(current_client)
+        # assignments = ActivityManager().get_uncompleted_assignments_list(current_client)
 
-        flashcards = VocabularyManager().count_study_time_per_day(
-                current_client,
-                "vocabulary"
-                )
+        # flashcards = VocabularyManager().count_study_time_per_day(
+        #         current_client,
+        #         "vocabulary"
+        #         )
 
         context = {
-            "current_client": current_client,
-            "grades": grades,
-            "results": results,
-            "activities": activities,
-            "assignments": assignments,
-            "flashcards": flashcards
+            # "current_client": current_client,
+            # "grades": grades,
+            # "results": results,
+            # "activities": activities,
+            # "assignments": assignments,
+            # "flashcards": flashcards
             }
 
         return render(request, "results.html", context)
