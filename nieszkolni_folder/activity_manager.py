@@ -257,7 +257,7 @@ class ActivityManager:
             )
 
         points = sum([
-            Cleaner().convert_acitivty_points_entry(entry.value)[1]
+            Cleaner().translate_acitivty_points_entry(entry.value)
             for entry in entries
             ])
 

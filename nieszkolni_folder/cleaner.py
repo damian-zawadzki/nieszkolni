@@ -26,3 +26,14 @@ class Cleaner:
 
         except Exception as e:
             pass
+
+    def translate_acitivty_points_entry(self, entry):
+        try:
+            point_raw = re.search(r";\d+$|;-\d+$", entry).group()
+            point = re.sub(";", "", point_raw)
+            point = int(point)
+
+            return point
+
+        except Exception as e:
+            return 0
