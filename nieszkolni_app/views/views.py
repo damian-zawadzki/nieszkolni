@@ -3,6 +3,7 @@ from django.http import HttpResponse
 
 from django.db import transaction
 from django.db import IntegrityError
+from django.db import connection
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm

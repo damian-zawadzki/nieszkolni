@@ -251,15 +251,17 @@ class ActivityManager:
         return result
 
     def get_points_over_lifetime_total(self, client):
-        data = self.get_points_over_lifetime(client)
+        entries = Stream.objects.filter(
+            name=client,
+            command="Activity"
+            )
 
-        if data is None:
-            return 0
+        points = sum([
+            Cleaner().convert_acitivty_points_entry(entry.value)[1]
+            for entry in entries
+            ])
 
-        activity_points = [x["activity_points"] for x in data]
-        activity_points = sum(activity_points)
-
-        return activity_points
+        return points
 
     def get_points_last_week_per_client(self):
         last_sunday = TimeMachine().last_sunday()
