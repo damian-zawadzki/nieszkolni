@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<h1>MY GRADES</h1>
+
+<table class="m_table">
+
+	<tr class="font">
+
+		<th>Date</th>
+		<th class="td_sentences">Course</th>
+		<th>Grade</th>
+		<th>Test</th>
+
+	</tr>
+
+	{% for grade in grades %}
+
+		<tr class="font">
+
+			<td>{{ grade.0 }}</td>
+			<td class="td_sentences">{{ grade.4 }}</td>
+			<td>{{ grade.1 }}%</td>
+			<td>{{ grade.7 }}</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+<div class="break"></div>
+
+<script src="{% static 'functions.js' %}"></script>  
+
+{% endblock %}

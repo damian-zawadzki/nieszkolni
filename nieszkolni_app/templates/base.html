@@ -129,15 +129,19 @@
                 </div>
 
                 <div class="side_menu_box">
-                  <a class="side_menu_link" href="{% url 'assignments' %}">MY TO-DO LIST</a>
+                  <a class="side_menu_link" href="{% url 'my_activity_points' client=current_user %}">MY ACTIVITY POINTS</a>
+                </div>
+
+                <div class="side_menu_box">
+                  <a class="side_menu_link" href="{% url 'my_grades' client=current_user %}">MY GRADES</a>
+                </div>
+
+                <div class="side_menu_box">
+                  <a class="side_menu_link" href="{% url 'my_final_grades' client=current_user %}">MY FINAL GRADES</a>
                 </div>
 
                 <div class="side_menu_box">
                   <a class="side_menu_link" href="{% url 'my_courses' %}">MY COURSES</a>
-                </div>
-
-                <div class="side_menu_box">
-                  <a class="side_menu_link" href="{% url 'my_results' %}">MY RESULTS</a>
                 </div>
 
                 <div class="side_menu_box">

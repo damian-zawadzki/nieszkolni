@@ -116,13 +116,13 @@ def add_product(request):
             category = request.POST["category"]
 
             if category == "course":
-                data = json.dumps(list(Course.objects.all().values()))
+                data = json.dumps(list(Course.objects.all().values().order_by("course")))
 
             elif category == "vocabulary":
                 data = json.dumps(list(Catalogue.objects.all().values(
                     "catalogue_number",
                     "catalogue_name"
-                    ).distinct()
+                    ).distinct().order_by("catalogue_name")
                     ))
 
             return HttpResponse(data)

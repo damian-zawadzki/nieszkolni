@@ -188,6 +188,23 @@ urlpatterns = [
     path('translate_sentences/<int:item>/', views.translate_sentences, name="translate_sentences"),
     path('applause/<int:activity_points>/', views.applause, name="applause"),
 
+    # Client
+    path(
+        'my_grades/<str:client>',
+        views.my_grades,
+        name="my_grades"
+        ),
+    path(
+        'my_final_grades/<str:client>',
+        views.my_final_grades,
+        name="my_final_grades"
+        ),
+    path(
+        'my_activity_points/<str:client>',
+        views.my_activity_points,
+        name="my_activity_points"
+        ),
+
     # Surveys
     path(
         'survey_process/',
@@ -245,7 +262,6 @@ urlpatterns = [
         name="responses"
         ),
 
-    path('my_results/', views.my_results, name="my_results"),
     path('my_courses/', views.my_courses, name="my_courses"),
     path('bill/', views.bill, name="bill"),
     path('flashcard/<str:username>/<str:deck>/', views.flashcard, name="flashcard"),

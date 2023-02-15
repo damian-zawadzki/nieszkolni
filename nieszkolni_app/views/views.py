@@ -5755,34 +5755,73 @@ def my_courses(request):
 
 
 @login_required
-def my_results(request):
+def my_grades(request, client):
     if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
         grades = RoadmapManager().display_current_grades_by_client(
-                current_user
+                client
                 )
-
-        results = RoadmapManager().display_current_results_by_client(
-                current_user
-                )
-
-        activities = ActivityManager().get_points_over_lifetime(current_user)
 
         context = {
-            "grades": grades,
-            "results": results,
+            "client": client,
+            "grades": grades
+            }
+
+        user_agent = get_user_agent(request)
+
+        if user_agent.is_mobile:
+            return render(request, "m_my_grades.html", context)
+        else:
+            return render(request, "my_grades.html", context)
+
+
+@login_required
+def my_final_grades(request, client):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        grades = RoadmapManager().display_current_results_by_client(
+                client
+                )
+
+        context = {
+            "client": client,
+            "grades": grades
+            }
+
+        user_agent = get_user_agent(request)
+
+        if user_agent.is_mobile:
+            return render(request, "m_my_final_grades.html", context)
+        else:
+            return render(request, "my_final_grades.html", context)
+
+
+@login_required
+def my_activity_points(request, client):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        activities = ActivityManager().get_points_over_lifetime(client)
+
+        context = {
+            "client": client,
             "activities": activities
             }
 
         user_agent = get_user_agent(request)
 
         if user_agent.is_mobile:
-            return render(request, "m_my_results.html", context)
+            return render(request, "m_my_activity_points.html", context)
         else:
-            return render(request, "my_results.html", context)
+            return render(request, "my_activity_points.html", context)
 
 
 @login_required

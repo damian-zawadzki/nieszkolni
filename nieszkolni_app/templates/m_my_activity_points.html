@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<h1>MY ACTIVITY POINTS</h1>
+
+<table class="m_table">
+
+	<tr class="font">
+
+		<th>Week</th>
+		<th>No of uncompleted assignments or completed after the deadline</th>
+		<th>Uncompleted assignments marked by the coach</th>
+		<th>Watching and listening minutes</th>
+		<th>Days of studying flashcards</th>
+		<th>Minutes of lessons</th>
+
+	</tr>
+
+	{% for activity in activities %}
+
+		<tr class="font">
+
+			<td>{{ activity.week }}</td>
+			<td>{{ activity.uncompleted_count }}</td>
+			<td>{{ activity.homework_count }}</td>
+			<td>{{ activity.po }}</td>
+			<td>{{ activity.flashcards_check }}</td>
+			<td>{{ activity.duration }}</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+<div class="break"></div>
+
+<script src="{% static 'functions.js' %}"></script>  
+
+{% endblock %}

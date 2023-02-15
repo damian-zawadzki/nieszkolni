@@ -231,15 +231,17 @@ class Front(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "my_courses.html")
 
-    def test_my_result_deny_anonymous(self):
-        response = self.client.get("/my_results/")
-        self.assertRedirects(response, "/login_user/?next=/my_results/")
+    def test_my_grades_deny_anonymous(self):
+        url = reverse("my_grades", args=["Joe Doe"])
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 302)
 
-    def test_my_result_login(self):
+    def test_my_grades_login(self):
         self.client.login(username=username, password=password)
-        response = self.client.get("/my_results/")
+        url = reverse("my_grades", args=["Joe Doe"])
+        response = self.client.post(url, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "my_results.html")
+        self.assertTemplateUsed(response, "my_grades.html")
 
 
 '''
