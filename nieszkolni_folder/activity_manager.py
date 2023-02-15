@@ -152,7 +152,7 @@ class ActivityManager:
 
         return score
 
-    def get_points(self, client, start=None, end=None):
+    def get_history(self, client, start=None, end=None):
         start_number = TimeMachine().get_start_end_number(start, end)["start"]
         end_number = TimeMachine().get_start_end_number(start, end)["end"]
 
@@ -164,17 +164,31 @@ class ActivityManager:
                 )
 
         if not rows.exists():
-            return 0
+            return None
         else:
-            entries = [row.value for row in rows]
-            points = [
-                Cleaner().convert_acitivty_points_entry(entry)
-                for entry in entries
+            history = [(
+                row.date,
+                Cleaner().convert_acitivty_points_entry(row.value)[0],
+                Cleaner().convert_acitivty_points_entry(row.value)[1]
+                )
+                for row in rows
                 ]
 
-            score = sum(points)
+            return history
 
-            return score
+    def check_conditions_last_week(self, client):
+        last_sunday = TimeMachine().last_sunday()
+
+        data = self.get_conditions(client, last_sunday)
+
+        results = {
+            "homework": data["uncompleted_count"] == 0 and data["homework_count"] == 0,
+            "po": data["po"] >= 30,
+            "flashcards": data["flashcards_check"] >= 3,
+            "duration": data["duration"] > 0
+        }
+
+        return results
 
     def get_points_last_week(self, client):
         last_sunday = TimeMachine().last_sunday()
@@ -196,6 +210,33 @@ class ActivityManager:
             points = [
                 Cleaner().convert_acitivty_points_entry(entry)[1]
                 for entry in entries
+                ]
+
+            score = sum(points)
+
+            return score
+
+    def get_homework_points_last_week(self, client):
+        last_sunday = TimeMachine().last_sunday()
+        this_sunday = TimeMachine().this_sunday()
+        last_sunday_number = TimeMachine().date_to_number(last_sunday)
+        this_sunday_number = TimeMachine().date_to_number(this_sunday)
+
+        rows = Stream.objects.filter(
+            name=client,
+            command="Activity",
+            date_number__gte=last_sunday_number,
+            date_number__lt=this_sunday_number
+                )
+
+        if not rows.exists():
+            return 0
+        else:
+            entries = [Cleaner().convert_acitivty_points_entry(row.value) for row in rows]
+            points = [
+                entry[1]
+                for entry in entries
+                if re.search("homework", entry[0])
                 ]
 
             score = sum(points)
@@ -233,22 +274,6 @@ class ActivityManager:
             results.append(conditions)
 
         return results
-
-    def get_points_over_lifetime_lists(self, client):
-        data = self.get_points_over_lifetime(client)
-
-        if data is None:
-            return ([0], [0])
-
-        activity_points = [x["activity_points"] for x in data]
-        weeks = [x["week"] for x in data]
-
-        activity_points.reverse()
-        weeks.reverse()
-
-        result = (activity_points, weeks)
-
-        return result
 
     def get_points_over_lifetime_total(self, client):
         entries = Stream.objects.filter(
@@ -374,52 +399,6 @@ class ActivityManager:
             score *= 2
 
         return score
-
-    def get_uncompleted_assignments_list(self, client, date=None):
-        if date is None:
-            date = TimeMachine().today()
-        date_number = TimeMachine().date_to_number(date)
-        last_sunday = TimeMachine().previous_sunday(date)
-        previous_sunday = TimeMachine().previous_sunday(last_sunday)
-        following_sunday = TimeMachine().following_sunday(date)
-
-        assignments = CurriculumManager().assignments_and_status_from_to(
-                client,
-                previous_sunday,
-                following_sunday
-                )
-
-        no_submissions = KnowledgeManager().display_list_of_prompts("no_submission")
-
-        completed = []
-        uncompleted = []
-
-        for assignment in assignments:
-            if assignment[2] not in no_submissions:
-                deadline = assignment[1]
-                completion_date = assignment[4]
-
-                if completion_date > deadline:
-                    uncompleted.append(assignment[0])
-
-                elif completion_date == 0 and deadline < date_number:
-                    uncompleted.append(assignment[0])
-
-                else:
-                    completed.append(assignment[0])
-
-        uncompleted = [
-            (
-                x[0],
-                x[1],
-                x[2],
-                x[3],
-                TimeMachine().number_to_system_date(x[4]) if x[4] != 0 else 0,
-                x[5]
-            )
-            for x in assignments if x[0] in uncompleted]
-
-        return uncompleted
 
     def check_if_settle_this_week(self):
         week_sign = TimeMachine().this_week_number_sign()

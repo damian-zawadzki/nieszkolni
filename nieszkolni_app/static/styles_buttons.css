@@ -145,3 +145,7 @@
   color: var(--backgroud-color);
   transform: scale(1.1);
 }
+
+.gray {
+  background-color: #000000;
+}

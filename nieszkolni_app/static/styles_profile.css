@@ -158,30 +158,3 @@
   overflow-y: auto;
   z-index: 0;
 }
-
-.lightcontainer {
-  background-color: var(--backgroud-color);
-  height: 100%;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 100%;
-  z-index: 200;
-}
-
-.lightbox {
-  background-color: var(--backgroud-color);
-  display: block;
-  left: 50%;
-  position: fixed;
-  text-align: center;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 201;
-}
-
-.lightbox_button {
-  margin: 3vh 3vw;
-  position: relative;
-  top: 0;
-}

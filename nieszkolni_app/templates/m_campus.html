@@ -87,26 +87,63 @@
 {% if not lightbox %}
 	<div class="lightcontainer" id="lightbox">
 		<div class="lightbox">
-			<div class="tab light">
-				<div>
-					<div class="tab_title light brand">YOUR LAST WEEK'S RESULT</div>
-					<div class="tab_content light brand">
-						{% if last_week_points > 0 %}
-						 +{{ last_week_points }}
+			<div class="lightbox_title mobile" id="lightbox_title">YOUR LAST WEEK'S RESULTS</div>
+			<div class="lightbox_row">
+				<div class="check_container">
+					<div class="check_text mobile" id="homework_text">All tasks on time</div>
+					<div class="check_circle" id="homework_circle">
+						{% if conditions.homework %}
+							<img class="check_image" src="{% static 'images/check.png' %}">
 						{% else %}
-							{{ last_week_points }}
+							<img class="check_image" src="{% static 'images/exclamation.png' %}">
+						{% endif %}
+					</div>
+				</div>
+				<div class="check_container">
+					<div class="check_text mobile" id="po_text">30 min of TV</div>
+					<div class="check_circle" id="po_circle">
+						{% if conditions.po %}
+							<img class="check_image" src="{% static 'images/check.png' %}">
+						{% else %}
+							<img class="check_image" src="{% static 'images/exclamation.png' %}">
+						{% endif %}
+					</div>
+				</div>
+				<div class="check_container">
+					<div class="check_text mobile" id="flashcards_text">Flashcards for 3 days</div>
+					<div class="check_circle" id="flashcards_circle">
+						{% if conditions.flashcards %}
+							<img class="check_image" src="{% static 'images/check.png' %}">
+						{% else %}
+							<img class="check_image" src="{% static 'images/exclamation.png' %}">
+						{% endif %}
+					</div>
+				</div>
+				<div class="check_container">
+					<div class="check_text mobile" id="duration_text">Present in class</div>
+					<div class="check_circle" id="duration_circle">
+						{% if conditions.duration %}
+							<img class="check_image" src="{% static 'images/check.png' %}">
+						{% else %}
+							<img class="check_image" src="{% static 'images/exclamation.png' %}">
 						{% endif %}
 					</div>
 				</div>
 			</div>
+			<div class="lightbox_result" id="result_text">
+				{% if last_week_points > 0 %}
+				 +{{ last_week_points }}
+				{% else %}
+					{{ last_week_points }}
+				{% endif %}
+			</div>
 			<div class="lightbox_button">
 				<form action="{% url 'campus' %}"  method="POST">
 					{% csrf_token %}
-					<button type="submit" class="button_main" onclick="showHide('lightbox')" name="action_on_campus" value="lightbox">OK</button>
+					<button type="submit" class="button_main top" id="lightbox_b" onclick="showHide('lightbox')" name="action_on_campus" value="lightbox">OK</button>
 				</form>
 			</div>
 		</div>
-
 	</div>
 {% endif %}
 
@@ -163,6 +200,72 @@
 	}
 
 	window.addEventListener('load', colorTitles())
+</script>
+
+<script type="text/javascript">
+	function adjustLightbox() {
+		var homework_circle = document.getElementById('homework_circle');
+		var homework_text = document.getElementById('homework_text'); 
+		var homework = '{{ conditions.homework }}'
+
+		var po_circle = document.getElementById('po_circle');
+		var po_text = document.getElementById('po_text'); 
+		var po = '{{ conditions.po }}'
+
+		var flashcards_circle = document.getElementById('flashcards_circle');
+		var flashcards_text = document.getElementById('flashcards_text'); 
+		var flashcards = '{{ conditions.flashcards }}'
+
+		var duration_circle = document.getElementById('duration_circle');
+		var duration_text = document.getElementById('duration_text'); 
+		var duration = '{{ conditions.duration }}'
+
+		var result_text = document.getElementById('result_text');
+		var result = '{{ last_week_points }}';
+
+		var button = document.getElementById('lightbox_b');
+		var title = document.getElementById('lightbox_title');
+
+		if (homework == 'False') {
+			homework_circle.style.backgroundColor = '#EB4F4D';
+			homework_text.style.color = '#EB4F4D';
+		}
+
+		if (po == 'False') {
+			po_circle.style.backgroundColor = '#EB4F4D';
+			po_text.style.color = '#EB4F4D';
+		}
+
+		if (flashcards == 'False') {
+			flashcards_circle.style.backgroundColor = '#EB4F4D';
+			flashcards_text.style.color = '#EB4F4D';
+		}
+
+		if (duration == 'False') {
+			duration_circle.style.backgroundColor = '#EB4F4D';
+			duration_text.style.color = '#EB4F4D';
+		}
+
+		if (result < 0) {
+			result_text.style.color = '#EB4F4D';
+		} else if (result == 6) {
+			result_text.style.color = '#D4AF37';
+			button.style.backgroundColor = '#D4AF37';
+			button.style.color = '#FFFFFF';
+			title.style.color = '#D4AF37';
+			homework_circle.style.backgroundColor = '#D4AF37';
+			homework_text.style.color = '#D4AF37';
+			po_circle.style.backgroundColor = '#D4AF37';
+			po_text.style.color = '#D4AF37';
+			flashcards_circle.style.backgroundColor = '#D4AF37';
+			flashcards_text.style.color = '#D4AF37';
+			duration_circle.style.backgroundColor = '#D4AF37';
+			duration_text.style.color = '#D4AF37';
+
+		}
+	}
+
+	window.addEventListener('load', adjustLightbox())
 </script>
 
 {% include 'footer.html' %}

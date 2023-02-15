@@ -1,0 +1,160 @@
+:root {
+  --small-font: 2vh;
+  --medium-font: 3vh;
+  --large-font: 6vh;
+  --huge-font: 10vh;
+
+  --font-color: #3C4043;
+  --font-family: "Google Sans", Roboto, Arial, sans-serif;
+
+  --brand-color: #14C5D9;
+  --brand-color-shade: #0F97A6;
+  --backgroud-color: #FFF;
+  --container-color: #F9F9F9;
+
+  --border-color: #D3D3D3;
+  --success-color: #D4AF37;
+
+  --transition-time: 2s;
+}
+
+.profile_courses {
+  background-color: var(--backgroud-color);
+  border-top: 1px solid var(--border-color);
+  left: 5vw;
+  overflow: hidden;
+  position: relative;
+  top: 5vh;
+  transition: 0.3s;
+  width: 15vw;
+}
+
+.profile_title {
+  color: var(--font-color);
+  display: block;
+  font-family: var(--font-family);
+  font-size: 2.5vh;
+  font-weight: 1000;
+  white-space: wrap;
+  padding: 2vh 0vw 1vh 0vw;
+  position: relative;
+  text-align: left;
+  z-index: 0;
+}
+
+.profile_container {
+  display: block;
+  background-color: var(--backgroud-color);
+  border-top: 1px solid var(--border-color);
+  height: 8vh;
+  left: 5vw;
+  overflow: hidden;
+  position: relative;
+  top: 5vh;
+  transition: 0.3s;
+  width: 20vw;
+  z-index: 0;
+}
+
+.m_profile_container {
+  display: block;
+  background-color: var(--backgroud-color);
+  border-top: 1px solid var(--border-color);
+  height: 8vh;
+  left: 5vw;
+  overflow: hidden;
+  position: relative;
+  top: 5vh;
+  transition: 0.3s;
+  width: 90vw;
+  z-index: 0;
+}
+
+.activity_chart {
+  height: 2vh;
+  margin: 0 auto;
+  position: relative;
+  top: 15vh;
+  transition: all 0.5s;
+  width: 15vw;
+}
+
+.activity_progress_box {
+  background-color: var(--font-color);
+  border-radius: 2vmin;
+  display: inline-block;
+  height: 2vh;
+  width: 20vw;
+}
+
+.m_activity_progress_box {
+  background-color: var(--font-color);
+  border-radius: 2vmin;
+  display: inline-block;
+  height: 2vh;
+  width: 90vw;
+}
+
+.activity_progress_bar {
+  background-color: var(--brand-color);
+  border-radius: 2vmin;
+  height: 2vh;
+  width: 0vw;
+  z-index: 101;
+}
+
+.acivity_container {
+  align-items: center;
+  display: block;
+  height: 8vh;
+  left: 5vw;
+  position: relative;
+  top: 5vh;
+  width: 15vw;
+}
+
+.acivity_box {
+  align-items: center;
+  background-color: var(--backgroud-color);
+  display: none;
+  height: 90%;
+  justify-content: space-between;
+  left: 0;
+  position: relative;
+  top: 1vh;
+  width: 16vw;
+}
+
+.activity_figure {
+  color: #333538;
+  display: block;
+  font-family: var(--font-family);
+  font-size: var(--small-font);
+  font-weight: 1000;
+  height: 3vh;
+  left: 5vw;
+  position: relative;
+  top: 5vh;
+  width: 15vw;
+}
+
+.course {
+  font-family: var(--font-family);
+  font-size: var(--small-font);
+  font-weight: 500;
+  padding: 0.5vh 0vw;
+}
+
+.course:hover {
+  font-weight: 1000; 
+}
+
+.course_box {
+  background-color: var(--backgroud-color);
+  display: none;
+  position: relative;
+  height: 90%;
+  list-style: none;
+  overflow-y: auto;
+  z-index: 0;
+}

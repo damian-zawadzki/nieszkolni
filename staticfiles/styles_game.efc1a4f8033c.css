@@ -1,0 +1,117 @@
+:root {
+  --small-font: 2vh;
+  --medium-font: 3vh;
+  --large-font: 6vh;
+  --huge-font: 10vh;
+
+  --font-color: #3C4043;
+  --font-family: "Google Sans", Roboto, Arial, sans-serif;
+
+  --brand-color: #14C5D9;
+  --brand-color-shade: #0F97A6;
+  --backgroud-color: #FFF;
+  --container-color: #F9F9F9;
+
+  --border-color: #D3D3D3;
+  --success-color: #D4AF37;
+
+  --transition-time: 2s;
+}
+
+/*Lightbox*/
+
+.lightcontainer {
+  background-color: var(--backgroud-color);
+  height: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 200;
+}
+
+.lightbox {
+  display: block;
+  left: 50%;
+  position: fixed;
+  text-align: center;
+  top: 25%;
+  transform: translate(-50%, -25%);
+  z-index: 201;
+}
+
+.lightbox_title {
+  color: var(--brand-color);
+  font-family: var(--font-family);
+  font-size: var(--large-font);
+  font-weight: 1000;
+  letter-spacing: .25px;
+  margin-bottom: 35px;
+  margin-top: 10vh;
+  text-align: center;
+  word-wrap: break-word;
+}
+
+.lightbox_title.mobile {
+  font-size: var(--medium-font);
+}
+
+.lightbox_row {
+  align-items: flex-end;
+  display: inline-flex;
+  width: 100%;
+}
+
+.check_container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 1vh 1vw;
+  max-width: 25%;
+}
+
+.check_text {
+  color: var(--brand-color);
+  font-family: var(--font-family);
+  font-size: var(--small-font);
+  font-weight: 750;
+  padding: 0vh 0vw;
+  min-width: 10vw;
+}
+
+.check_text.mobile {
+  min-width: 20vw;
+}
+
+.check_circle {
+  align-items: center;
+  background-color: var(--brand-color);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  margin: 3vh 0vw;
+  height: 7vmin;
+  width: 7vmin;
+}
+
+.check_image {
+  height: 4vmin;
+  width: 4vmin;
+}
+
+.lightbox_result {
+  color: var(--brand-color);
+  font-family: var(--font-family);
+  font-size: 20vh;
+  font-weight: 1000;
+  line-height: 20vh;
+  text-align: center;
+  text-shadow: 0 3px 5px rgba(0, 0, 0, .2);
+}
+
+.lightbox_button {
+  margin: 3vh 3vw;
+  position: relative;
+  top: 0;
+}

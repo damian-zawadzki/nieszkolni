@@ -6,7 +6,19 @@ from .views import staff_views
 
 urlpatterns = [
     path('', views.welcome, name="welcome"),
-    path('campus/', views.campus, name="campus"),
+
+    # Campus
+    path(
+        'campus/',
+        views.campus,
+        name="campus"
+        ),
+    path(
+        'lightbox_results/',
+        views.lightbox_results,
+        name="lightbox_results"
+        ),
+
     path('vocabulary/', views.vocabulary, name="vocabulary"),
     path('sentences/', views.sentences, name="sentences"),
     path('congratulations/', views.congratulations, name="congratulations"),
@@ -203,6 +215,11 @@ urlpatterns = [
         'my_activity_points/<str:client>',
         views.my_activity_points,
         name="my_activity_points"
+        ),
+    path(
+        'my_deadlines/<str:client>',
+        views.my_deadlines,
+        name="my_deadlines"
         ),
 
     # Surveys

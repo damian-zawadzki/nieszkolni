@@ -620,4 +620,3 @@ def contest_process(request):
         "contest_process.html",
         context
         )
-

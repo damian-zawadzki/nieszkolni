@@ -25,7 +25,7 @@ class Cleaner:
             return history
 
         except Exception as e:
-            pass
+            return ("-", 0)
 
     def translate_acitivty_points_entry(self, entry):
         try:

@@ -40,10 +40,26 @@
   display: block;
   background-color: var(--backgroud-color);
   border-top: 1px solid var(--border-color);
-  height: 8vh;
+  height: 20vh;
+  min-height: 12vh;
   overflow-x: hidden;
   overflow-y: hidden;
   position: relative;
+  top: 0vh;
+  transition: 0.3s;
+  width: 100%;
+  z-index: 0;
+}
+
+.feed_open_container {
+  display: block;
+  background-color: var(--backgroud-color);
+  border-top: 1px solid var(--border-color);
+/*  height: 8vh;*/
+  overflow-x: hidden;
+  overflow-y: visible;
+  position: relative;
+  text-align: center;
   top: 0vh;
   transition: 0.3s;
   width: 100%;

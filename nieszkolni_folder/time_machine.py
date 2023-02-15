@@ -435,6 +435,16 @@ class TimeMachine:
 
         return difference_weeks
 
+    def convert_to_date(self, list_of_tuples, i):
+        results = []
+        for item in list_of_tuples:
+            item_list = list(item)
+            item_list[i] = TimeMachine().number_to_system_date(item_list[i])
+            result = tuple(item_list)
+            results.append(result)
+
+        return results
+
     def convert_to_date_time(self, list_of_tuples, i):
         results = []
         for item in list_of_tuples:
@@ -454,4 +464,11 @@ class TimeMachine:
             results.append(result)
 
         return results
+
+    def get_date_from_today(self, number_of_days):
+        today_number = self.today_number()
+        date_number = today_number - number_of_days
+        date = self.number_to_system_date(date_number)
+
+        return date
 

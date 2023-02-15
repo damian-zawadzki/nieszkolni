@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<h1>MY DEADLINES</h1>
+
+<table class="m_table" id="table_deadlines">
+
+	<tr class="tr_clickable">
+
+		<th>Assignment</th>
+		<th>Deadline</th>
+		<th>Completion Date</th>
+		<th>Missed Deadline</th>
+
+	</tr>
+
+	{% for assignment in assignments %}
+
+		<tr class="font" id="{{ assignment.0 }}">
+
+			<td>{{ assignment.6 }}</td>
+			<td>{{ assignment.1 }}</td>
+			<td>{{ assignment.4 }}</td>
+			<td>{{ assignment.7 }}</td>
+
+		</tr>
+
+	{% endfor %}
+
+</table>
+
+<div class="break"></div>
+
+<script src="{% static 'functions.js' %}"></script>
+<script type="text/javascript">
+	function highlightMissedDeadlines() {
+		var cells = document.getElementById('table_deadlines').getElementsByTagName('td');
+		for (i = 0; i < cells.length; i++) {
+			if (cells[i].innerHTML == 'yes') {
+				cells[i].style.color = '#EB4F4D';
+				cells[i].style.fontWeight = 750;
+			}
+		}
+	}
+	
+	window.addEventListener('load', highlightMissedDeadlines())
+</script>
+
+
+{% endblock %}

@@ -184,6 +184,12 @@
 .navigation_counter {
   background-color: var(--brand-color);
   color: #FFF;
+  letter-spacing: 1;
   text-align: center;
-  width: 3vw;
+  width: 5vw;
+}
+
+.navigation_counter_target {
+  font-size: 80%;
+  opacity: 0.7;
 }

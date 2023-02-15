@@ -811,6 +811,9 @@ class KnowledgeManager:
             right_option=""
             ):
 
+        left_option = Cleaner().clean_quotation_marks(left_option)
+        right_option = Cleaner().clean_quotation_marks(right_option)
+
         with connection.cursor() as cursor:
             cursor.execute(f'''
                 SELECT DISTINCT publication_stamp

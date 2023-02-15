@@ -525,7 +525,8 @@ class CurriculumManager:
                 assignment_type,
                 status,
                 completion_date,
-                deadline_text
+                deadline_text,
+                title
                 FROM nieszkolni_app_curriculum
                 WHERE name = '{client}'
                 AND deadline_number > '{start_number}'
@@ -535,6 +536,44 @@ class CurriculumManager:
             assignments = cursor.fetchall()
 
             return assignments
+
+    def get_assignments_fortnight(self, client):
+        today = TimeMachine().today()
+        fortnight = TimeMachine().get_date_from_today(14)
+
+        rows = CurriculumManager().assignments_and_status_from_to(
+            client,
+            fortnight,
+            today
+            )
+
+        # rows = TimeMachine().convert_to_date(rows, 1)
+        # rows = TimeMachine().convert_to_date(rows, 4)
+
+        assignments = []
+        for row in rows:
+            if row[4] != 0:
+                row = list(row)
+                if row[1] < row[4]:
+                    row.append("yes") 
+                else:
+                    row.append("")
+                row[1] = TimeMachine().number_to_system_date(row[1])
+                row[4] = TimeMachine().number_to_system_date(row[4])
+                row = tuple(row)
+                assignments.append(row)
+            else:
+                row = list(row)
+                if row[1] < TimeMachine().today_number():
+                    row.append("yes") 
+                else:
+                    row.append("")
+
+                row[1] = TimeMachine().number_to_system_date(row[1])
+                row[4] = "uncompleted"
+                assignments.append(row)
+
+        return assignments
 
     def component_id_to_component(self, component_id):
         component_raw = re.search(r"\w.+_", component_id).group()

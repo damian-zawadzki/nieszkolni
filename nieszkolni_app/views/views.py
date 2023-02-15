@@ -120,7 +120,7 @@ def campus(request):
         uncompleted_assignments = CurriculumManager().display_uncompleted_assignments(current_user)
         completed_assignments = CurriculumManager().display_completed_assignments(current_user)
 
-        last_week_points = ActivityManager().get_points_last_week(
+        last_week_points = ActivityManager().get_homework_points_last_week(
                 current_user
                 )
 
@@ -128,6 +128,7 @@ def campus(request):
                 current_user,
                 "lightbox"
                 )
+        conditions = ActivityManager().check_conditions_last_week(current_user)
 
         user_agent = get_user_agent(request)
 
@@ -150,7 +151,8 @@ def campus(request):
             "ratings": ratings,
             "announcements": announcements,
             "last_week_points": last_week_points,
-            "lightbox": lightbox
+            "lightbox": lightbox,
+            "conditions": conditions
             }
 
         if not challenge_status:
@@ -160,6 +162,22 @@ def campus(request):
             return render(request, 'm_campus.html', context)
         else:
             return render(request, 'campus.html', context)
+
+
+@staff_member_required
+def lightbox_results(request):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        context = {}
+
+        return render(
+            request,
+            "lightbox_results.html",
+            context
+            )
 
 
 @login_required
@@ -5810,11 +5828,18 @@ def my_activity_points(request, client):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
-        activities = ActivityManager().get_points_over_lifetime(client)
+        today = TimeMachine().today()
+        moon = TimeMachine().get_date_from_today(29)
+
+        points = ActivityManager().get_history(
+            client,
+            moon,
+            today
+            )
 
         context = {
             "client": client,
-            "activities": activities
+            "points": points
             }
 
         user_agent = get_user_agent(request)
@@ -5823,6 +5848,30 @@ def my_activity_points(request, client):
             return render(request, "m_my_activity_points.html", context)
         else:
             return render(request, "my_activity_points.html", context)
+
+
+@login_required
+def my_deadlines(request, client):
+    if request.user.is_authenticated:
+        first_name = request.user.first_name
+        last_name = request.user.last_name
+        current_user = first_name + " " + last_name
+
+        assignments = CurriculumManager().get_assignments_fortnight(
+            client
+            )
+
+        context = {
+            "client": client,
+            "assignments": assignments
+            }
+
+        user_agent = get_user_agent(request)
+
+        if user_agent.is_mobile:
+            return render(request, "m_my_deadlines.html", context)
+        else:
+            return render(request, "my_deadlines.html", context)
 
 
 @login_required

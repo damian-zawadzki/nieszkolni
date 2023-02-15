@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+{% load static %}
+
+<div class="lightcontainer" id="lightbox">
+	<div class="lightbox">
+		<div class="lightbox_title">YOUR LAST WEEK'S RESULTS</div>
+		<div class="lightbox_row">
+			<div class="check_container">
+				<div class="check_text">All tasks on time</div>
+				<div class="check_circle">
+					{% if conditions.tasks %}
+						<img class="check_image" src="{% static 'images/check.png' %}">
+					{% else %}
+						<img class="check_image" src="{% static 'images/exclamation.png' %}">
+					{% endif %}
+				</div>
+			</div>
+			<div class="check_container">
+				<div class="check_text">30 min of TV</div>
+				<div class="check_circle"><img class="check_image" src="{% static 'images/check.png' %}"></div>
+			</div>
+			<div class="check_container">
+				<div class="check_text">Flashcards for 3 days</div>
+				<div class="check_circle"><img class="check_image" src="{% static 'images/check.png' %}"></div>
+			</div>
+			<div class="check_container">
+				<div class="check_text">Present in class</div>
+				<div class="check_circle"><img class="check_image" src="{% static 'images/check.png' %}"></div>
+			</div>
+		</div>
+		<div class="lightbox_result">6</div>
+		<div class="lightbox_button">
+			<form action="{% url 'campus' %}"  method="POST">
+				{% csrf_token %}
+				<button type="submit" class="button_main" onclick="showHide('lightbox')" name="action_on_campus" value="lightbox">OK</button>
+			</form>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
