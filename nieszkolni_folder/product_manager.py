@@ -181,7 +181,7 @@ class ProductManager:
                 order.client,
                 "vocabulary"
                 )
-            if counts[1] > 20:
+            if counts[1] > 100:
                 output = ("ERROR", "You have too much new vocabulary. Go below 100 new phrases and try again")
                 outputs.append(output)
                 return outputs

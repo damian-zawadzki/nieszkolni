@@ -12,10 +12,13 @@ from nieszkolni_folder.cleaner import Cleaner
 from nieszkolni_folder.document_manager import DocumentManager
 from nieszkolni_folder.submission_manager import SubmissionManager
 from nieszkolni_folder.sentence_manager import SentenceManager
+from nieszkolni_folder.quiz_manager import QuizManager
 
 import re
+
 from io import BytesIO
 from zipfile import ZipFile
+
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
@@ -81,6 +84,20 @@ class DownloadManager:
             file_path = os.path.join(django_settings.MEDIA_ROOT, path)
             file_paths.append((path, file_path))
 
+        # Quizzes
+        quizzes_raw = QuizManager().download_graded_quizzes(
+            start_date,
+            end_date
+            )
+
+        quizzes = list(quizzes_raw.values())
+
+        for quiz in quizzes:
+            path = DocumentManager().create_quizzes_doc(quiz)
+
+            file_path = os.path.join(django_settings.MEDIA_ROOT, path)
+            file_paths.append((path, file_path))
+
         zone = BytesIO()
         zip_file = ZipFile(zone, "w")
 
@@ -104,3 +121,10 @@ class DownloadManager:
             response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
 
             return response
+
+    def download_pdf(self, data):
+
+        response = HttpResponse(data[0], content_type="application/pdf")
+        response['Content-Disposition'] = f"attachment; filename={data[1]}"
+
+        return response

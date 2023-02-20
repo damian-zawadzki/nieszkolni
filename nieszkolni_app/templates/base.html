@@ -99,21 +99,21 @@
 
             <div class="hamburgers">
               <div>
-                <button type="button" class="hamburger" onclick="showHide('client_side_menu')"><img src="{% static 'images/hamburger.png' %}" width="15" height="15"></button>
+                <button type="button" class="hamburger" id="circle_1" onclick="showHide('client_side_menu')"><img src="{% static 'images/hamburger.png' %}" width="15" height="15"></button>
               </div>
 
               <div>
-                <button type="button" class="hamburger" onclick="jump('my_profile')"><img src="{{ avatar }}" width="15" height="15"></button>
+                <button type="button" class="hamburger" id="circle_2" onclick="jump('my_profile')"><img src="{{ avatar }}" width="15" height="15"></button>
               </div>
               <a type="hidden" href="{% url 'portrait' client=current_user %}" id="my_profile"></a>
 
               <div>
-                <button type="button" class="hamburger" onclick="jump('ranking')"><img src="{% static 'images/ranking.png' %}" width="15" height="15"></button>
+                <button type="button" class="hamburger" id="circle_3" onclick="jump('ranking')"><img src="{% static 'images/ranking.png' %}" width="15" height="15"></button>
               </div>
               <a type="hidden" href="{% url 'ranking' %}" id="ranking"></a>
 
               <div>
-                <button type="button" class="hamburger" onclick="jump('campus')"><img src="{% static 'images/college.png' %}" width="15" height="15"></button>
+                <button type="button" class="hamburger" id="circle_4" onclick="jump('campus')"><img src="{% static 'images/college.png' %}" width="15" height="15"></button>
               </div>
               <a type="hidden" href="{% url 'campus' %}" id="campus"></a>
             <div>

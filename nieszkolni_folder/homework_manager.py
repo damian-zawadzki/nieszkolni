@@ -28,6 +28,8 @@ class HomeworkManager:
 
     def check_stats(self, item, current_user, command):
         if command == "flashcards_7":
+            today_number = TimeMachine().today_number()
+
             assignment = CurriculumManager().display_assignment(item)
             client = assignment[3]
             target = int(assignment[12])
@@ -46,6 +48,16 @@ class HomeworkManager:
                     )
 
                 output = ("SUCCESS", "Task completed!")
+
+            elif today_number > end:
+
+                CurriculumManager().change_status_to_completed(
+                    item,
+                    current_user
+                    )
+
+                difference = target - result
+                output = ("WARNING", f"Maybe you'll meet the deadline this week")
 
             else:
                 difference = target - result

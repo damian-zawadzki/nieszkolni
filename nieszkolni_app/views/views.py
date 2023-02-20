@@ -171,6 +171,8 @@ def lightbox_results(request):
         last_name = request.user.last_name
         current_user = first_name + " " + last_name
 
+        QuizManager().download_graded_quizzes()
+
         context = {}
 
         return render(
@@ -277,13 +279,16 @@ def flashcard(request, username, deck):
                 deck
                 )
 
+        dark_mode = Client.objects.get(name=current_user).dark_mode
+
         if flashcard is None:
             return redirect("congratulations")
 
         else:
             return render(request, 'flashcard.html', {
                 "deck": deck,
-                "flashcard": flashcard
+                "flashcard": flashcard,
+                "dark_mode": dark_mode
                 })
 
 
@@ -599,6 +604,7 @@ def options(request, template_name="404"):
         daily_limit_of_new_sentences = client.daily_limit_of_new_sentences
         maximal_interval_vocabulary = client.maximal_interval_vocabulary
         maximal_interval_sentences = client.maximal_interval_sentences
+        dark_mode = client.dark_mode
 
         if request.method == "POST":
             if request.POST["action_on_client_option"] == "change_vocabulary_limit":
@@ -607,6 +613,7 @@ def options(request, template_name="404"):
                 client.daily_limit_of_new_vocabulary = new_limit
                 client.save()
 
+                messages.success(request, ("Settings changed"))
                 return redirect("options")
 
             elif request.POST["action_on_client_option"] == "change_sentences_limit":
@@ -615,6 +622,7 @@ def options(request, template_name="404"):
                 client.daily_limit_of_new_sentences = new_limit
                 client.save()
 
+                messages.success(request, ("Settings changed"))
                 return redirect("options")
 
             elif request.POST["action_on_client_option"] == "change_vocabulary_interval":
@@ -623,6 +631,7 @@ def options(request, template_name="404"):
                 client.maximal_interval_vocabulary = new_limit
                 client.save()
 
+                messages.success(request, ("Settings changed"))
                 return redirect("options")
 
             elif request.POST["action_on_client_option"] == "change_sentences_interval":
@@ -631,23 +640,38 @@ def options(request, template_name="404"):
                 client.maximal_interval_sentences = new_limit
                 client.save()
 
+                messages.success(request, ("Settings changed"))
                 return redirect("options")
 
+            elif request.POST["action_on_client_option"] == "turn_on_dark_mode":
+
+                client.dark_mode = 1
+                client.save()
+
+                messages.success(request, ("Dark mode turned on"))
+                return redirect("options")
+
+            elif request.POST["action_on_client_option"] == "turn_off_dark_mode":
+
+                client.dark_mode = 0
+                client.save()
+
+                messages.success(request, ("Dark mode turned off"))
+                return redirect("options")
+
+        context = {
+            "daily_limit_of_new_vocabulary": daily_limit_of_new__vocabulary,
+            "daily_limit_of_new_sentences": daily_limit_of_new_sentences,
+            "maximal_interval_vocabulary": maximal_interval_vocabulary,
+            "maximal_interval_sentences": maximal_interval_sentences,
+            "dark_mode": dark_mode
+        }
+
         if user_agent.is_mobile:
-            return render(request, "m_options.html", {
-                    "daily_limit_of_new_vocabulary": daily_limit_of_new__vocabulary,
-                    "daily_limit_of_new_sentences": daily_limit_of_new_sentences,
-                    "maximal_interval_vocabulary": maximal_interval_vocabulary,
-                    "maximal_interval_sentences": maximal_interval_sentences
-                    })
+            return render(request, "m_options.html", context)
 
         else:
-            return render(request, "options.html", {
-                "daily_limit_of_new_vocabulary": daily_limit_of_new__vocabulary,
-                "daily_limit_of_new_sentences": daily_limit_of_new_sentences,
-                "maximal_interval_vocabulary": maximal_interval_vocabulary,
-                "maximal_interval_sentences": maximal_interval_sentences
-                })
+            return render(request, "options.html", context)
 
 
 @staff_member_required
@@ -6228,6 +6252,33 @@ def timesheet(request):
                     )
 
                 response = DownloadManager().download_document(path)
+
+                return response
+
+            elif request.POST["action_on_timesheet"] == "download_pdf":
+                employee = request.POST["employee"]
+                category = request.POST["category"]
+                start = request.POST["start"]
+                end = request.POST["end"]
+
+                entries = AuditManager().display_entries(
+                    employee,
+                    category,
+                    start,
+                    end
+                    )
+
+                duration = AuditManager().display_total_duration_h_min(entries)
+
+                path = DocumentManager().create_timesheet_pdf(
+                    employee,
+                    start,
+                    end,
+                    duration,
+                    entries
+                    )
+
+                response = DownloadManager().download_pdf(path)
 
                 return response
 

@@ -45,6 +45,7 @@ class Client(models.Model):
     maximal_interval_vocabulary = models.IntegerField(default=90, null=True)
     daily_limit_of_new_sentences = models.IntegerField(default=25, null=True)
     maximal_interval_sentences = models.IntegerField(default=90, null=True)
+    dark_mode = models.IntegerField(default=0, null=True)
 
     wage = models.IntegerField(default=50)
 

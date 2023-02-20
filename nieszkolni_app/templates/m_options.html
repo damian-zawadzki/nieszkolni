@@ -58,6 +58,21 @@
 		</form>
 	</tr>
 
+	<tr>
+		<form action="{% url 'options' %}" method="POST">
+			{% csrf_token %}
+			<td>Dark Mode in Flashcards</td>
+			<td></td>
+			<td>
+				{% if dark_mode == 1 %}
+					<button type="submit" class="button_main" name="action_on_client_option" value="turn_off_dark_mode">Turn Off</button>
+				{% else %}
+					<button type="submit" class="button_main" name="action_on_client_option" value="turn_on_dark_mode">Turn On</button>
+				{% endif %}
+			</td>
+		</form>
+	</tr>
+
 </table>
 
 <div class="break"></div>

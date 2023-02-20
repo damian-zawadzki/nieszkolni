@@ -1,10 +1,13 @@
 import os
 import django
 from django.db import connection
+
 from nieszkolni_app.models import Question
 from nieszkolni_app.models import Assessment
 from nieszkolni_app.models import Quiz
+
 from nieszkolni_folder.curriculum_manager import CurriculumManager
+
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
 
@@ -485,42 +488,16 @@ class QuizManager:
 
     def display_result(self, quiz_id):
 
-        correct = 0
+        correct = Quiz.objects.filter(
+            quiz_id=quiz_id,
+            result="correct"
+            ).count()
+        incorrect = Quiz.objects.filter(
+            quiz_id=quiz_id,
+            result="incorrect"
+            ).count()
 
-        with connection.cursor() as cursor:
-            cursor.execute(f'''
-                SELECT COUNT(result)
-                FROM nieszkolni_app_quiz
-                WHERE quiz_id = '{quiz_id}'
-                AND result = 'correct'
-                ''')
-
-            correct_result = cursor.fetchone()
-
-            if correct_result is None:
-                correct = 0
-            else:
-                correct = correct_result[0]
-
-        incorrect = 0
-
-        with connection.cursor() as cursor:
-            cursor.execute(f'''
-                SELECT COUNT(result)
-                FROM nieszkolni_app_quiz
-                WHERE quiz_id = '{quiz_id}'
-                AND result = 'incorrect'
-                ''')
-
-            incorrect_result = cursor.fetchone()
-
-            if incorrect_result is None:
-                incorrect = 0
-            else:
-                incorrect = incorrect_result[0]
-
-        result_raw = correct/(correct + incorrect) * 100
-        result = re.search(r"\d{1,3}", str(result_raw)).group()
+        result = round(correct/(correct + incorrect) * 100)
 
         return result
 
@@ -548,8 +525,30 @@ class QuizManager:
                 AND client = '{client}'
                 ''')
 
+    # Displaying quizzes
 
-# to be sorted
+    def download_graded_quizzes(self, start=None, end=None):
+        start_number = TimeMachine().get_start_end_number(start, end)["start"]
+        end_number = TimeMachine().get_start_end_number(start, end)["end"]
+
+        quizzes = Quiz.objects.filter(
+            date_number__gte=start_number,
+            date_number__lte=end_number,
+            status="answered"
+            ).values_list("quiz_id", "client").distinct()
+
+        entries = {quiz[0]: [] for quiz in quizzes}
+
+        for quiz in quizzes:
+            question = self.display_quizzes(quiz[1], quiz[0])
+            questions = entries.get(quiz[0])
+            questions.extend(question)
+            entry = {quiz[0]: questions}
+            entries.update(entry)
+
+        return entries
+            
+    # to be sorted
 
     def display_quiz_ids(self):
         with connection.cursor() as cursor:

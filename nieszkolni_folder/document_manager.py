@@ -8,14 +8,21 @@ from django.core.files.base import ContentFile
 
 from nieszkolni_folder.time_machine import TimeMachine
 from nieszkolni_folder.cleaner import Cleaner
+
 from nieszkolni_app.models import Material
 from nieszkolni_app.models import Paper
+
+from nieszkolni_folder.quiz_manager import QuizManager
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Inches
 from docx.shared import Pt
 from docx.shared import RGBColor
+
+from django.http import HttpResponse
+
+from fpdf import FPDF
 
 os.environ["DJANGO_SETTINGS_MODULE"] = 'nieszkolni_folder.settings'
 django.setup()
@@ -42,7 +49,7 @@ class DocumentManager:
 
         today = TimeMachine().today()
         name_slug = name.replace(" ", "_")
-        paper_title = f"A_{date}_{item}---{name_slug}.docx"
+        paper_title = f"A_assignment_{date}_{item}---{name_slug}.docx"
 
         document = Document()
 
@@ -123,7 +130,7 @@ class DocumentManager:
         today = TimeMachine().today()
         name_slug = name.replace(" ", "_")
         date = TimeMachine().number_to_system_date(submission_date)
-        paper_title = f"A_{date}_{item}---{name_slug}.docx"
+        paper_title = f"A_sentences_{date}_{item}---{name_slug}.docx"
 
         document = Document()
 
@@ -156,7 +163,7 @@ class DocumentManager:
         paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
         paragraph_format.alignment
 
-        run = paragraph_1.add_run(list_number)
+        run = paragraph_1.add_run(f"Set: {list_number}")
         font = run.font
         font.name = "Times New Roman"
         font.size = Pt(20)
@@ -214,7 +221,107 @@ class DocumentManager:
 
         return paper_title
 
-    def create_timesheet_pdf(
+    def create_quizzes_doc(self, entries):
+
+        quiz_id = entries[0][1]
+        name = entries[0][3]
+        submission_date = entries[0][6]
+        collection_name = entries[0][8]
+        result = QuizManager().display_result(quiz_id)
+
+        name_slug = name.replace(" ", "_")
+        date = TimeMachine().number_to_system_date(submission_date)
+        paper_title = f"A_quiz_{date}_{quiz_id}---{name_slug}.docx"
+
+        document = Document()
+
+        paragraph_0 = document.add_paragraph()
+
+        paragraph_0 = document.add_heading()
+        paragraph_format = paragraph_0.paragraph_format
+        paragraph_format.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+        paragraph_format.alignment
+
+        run = paragraph_0.add_run(
+            f'''
+            Filled in by: {name}
+            Submitted on: {date}
+            Reviewed on: {date}
+            Quiz number: {quiz_id}
+            Score: {result}%
+            '''
+            )
+        font = run.font
+        font.name = "Times New Roman"
+        font.size = Pt(12)
+        font.bold = False
+        font.color.rgb = RGBColor(0, 0, 0)
+
+        # Heading
+        paragraph_1 = document.add_heading()
+        paragraph_format = paragraph_1.paragraph_format
+        paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+        paragraph_format.alignment
+
+        run = paragraph_1.add_run(f"Quiz: {collection_name}")
+        font = run.font
+        font.name = "Times New Roman"
+        font.size = Pt(20)
+        font.bold = True
+        font.color.rgb = RGBColor(0, 0, 0)
+
+        # Content
+        paragraph_2 = document.add_paragraph()
+
+        paragraph_format = paragraph_2.paragraph_format
+        paragraph_format.alignment = WD_ALIGN_PARAGRAPH.LEFT
+        paragraph_format.alignment
+
+        i = 1
+        for entry in entries:
+            run = paragraph_2.add_run(entry[5])
+            font = run.font
+            font.name = "Times New Roman"
+            font.size = Pt(10)
+            font.bold = False
+            font.italic = True
+            font.color.rgb = RGBColor(0, 0, 0)
+            run.add_break()
+
+            sentence = f"{i}. {entry[10]}"
+
+            run = paragraph_2.add_run(sentence)
+            font = run.font
+            font.name = "Times New Roman"
+            font.size = Pt(12)
+            font.bold = True
+            font.color.rgb = RGBColor(0, 0, 0)
+            run.add_break()
+
+            run = paragraph_2.add_run(entry[4])
+            font = run.font
+            font.name = "Times New Roman"
+            font.size = Pt(12)
+            font.bold = False
+            font.color.rgb = RGBColor(0, 0, 0)
+            run.add_break()
+            run.add_break()
+
+            i += 1
+
+        file_bytes = BytesIO()
+        document.save(file_bytes)
+        file_bytes.seek(0)
+
+        paper = Paper()
+        paper.stamp = TimeMachine().now_number()
+        paper.title = paper_title
+        paper.content.save(paper_title, ContentFile(file_bytes.read()))
+        paper.save()
+
+        return paper_title
+
+    def create_timesheet_document(
             self,
             employee,
             start,
@@ -307,6 +414,62 @@ class DocumentManager:
         paper.save()
 
         return paper_title
+
+    def create_timesheet_pdf(
+            self,
+            employee,
+            start,
+            end,
+            duration,
+            entries
+            ):
+
+        today = TimeMachine().today()
+        employee_slug = employee.replace(" ", "_")
+        title = f"timesshet_{today}---{employee_slug}.pdf"
+
+        pdf = FPDF("P", "mm", "A4")
+        pdf.add_page()
+
+        pdf.set_font("courier", "", 10)
+        pdf.cell(50, 5, "Employee:", 0, 0, 1)
+        pdf.cell(50, 5, f"{employee}", 0, 1, 1)
+        pdf.cell(50, 5, "Generated on:", 0, 0, 1)
+        pdf.cell(50, 5, f"{today}", 0, 1, 1)
+        pdf.cell(50, 5, "From:", 0, 0, 1)
+        pdf.cell(50, 5, f"{start}", 0, 1, 1)
+        pdf.cell(50, 5, "To:", 0, 0, 1)
+        pdf.cell(50, 5, f"{end}", 0, 1, 1)
+        pdf.cell(50, 5, "Duration:", 0, 0, 1)
+        pdf.cell(50, 5, f"{duration}", 0, 1, 1)
+
+        pdf.set_font("courier", "B", 24)
+        pdf.cell(40, 10, "", 0, 1)
+        pdf.cell(40, 10, "Timesheet", 0, 1)
+        pdf.cell(40, 10, "", 0, 1)
+
+        pdf.set_font("courier", "B", 10)
+        pdf.cell(45, 5, "Start", 0, 0, 1)
+        pdf.cell(45, 5, "End:", 0, 0, 1)
+        pdf.cell(25, 5, "Duration:", 0, 0, 1)
+        pdf.cell(85, 5, "Category:", 0, 1, 1)
+
+        pdf.set_font("courier", "", 10)
+        for entry in entries:
+            clock_in = entry["clock_in"]
+            clock_out = entry["clock_out"]
+            duration = entry["duration"]
+            category_name = entry["category_name"].replace("<b>", "").replace("</b>", "")
+
+            pdf.cell(45, 8, f"{clock_in}", 0, 0, 1)
+            pdf.cell(45, 8, f"{clock_out}", 0, 0, 1)
+            pdf.cell(25, 5, f"{duration}", 0, 0, 1)
+            pdf.multi_cell(85, 5, f"{category_name}", 0, 1, 0)
+
+        file = bytes(pdf.output(dest="S").encode('latin-1'))
+        data = (file, title)
+
+        return data
 
     def add_material(self, title, content):
         title = Cleaner().clean_quotation_marks(title)

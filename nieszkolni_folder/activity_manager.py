@@ -161,7 +161,7 @@ class ActivityManager:
             command="Activity",
             date_number__gte=start_number,
             date_number__lt=end_number
-                )
+                ).order_by("-date_number")
 
         if not rows.exists():
             return None
